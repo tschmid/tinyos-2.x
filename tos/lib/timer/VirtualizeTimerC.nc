@@ -124,8 +124,6 @@ implementation
       else
 	call TimerFrom.startOneShotAt(now, min_remaining - elapsed);
     }
-    if (dosleep)
-      t3 = TCNT3 - tt0;
   }
   
 
