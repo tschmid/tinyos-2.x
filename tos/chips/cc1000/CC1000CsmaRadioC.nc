@@ -108,6 +108,7 @@ implementation {
   Csma.BusyWait -> BusyWaitMicroC;
 
   Rssi.ActualRssi -> Hpl;
+  Rssi.Resource -> Hpl;
   Control.CC -> Hpl;
   Control.BusyWait -> BusyWaitMicroC;
 }
