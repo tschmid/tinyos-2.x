@@ -63,7 +63,7 @@ module Atm128AdcP
 {
   provides {
     interface Init;
-    interface StdControl;
+    interface AsyncStdControl;
     interface Atm128AdcSingle;
     interface Atm128AdcMultiple;
   }
@@ -101,12 +101,12 @@ implementation
      called. This drops A/D conversion latency by a factor of two (but
      increases idle mode power consumption a little). 
   */
-  command error_t StdControl.start() {
+  async command error_t AsyncStdControl.start() {
     atomic call HplAtm128Adc.enableAdc();
     return SUCCESS;
   }
 
-  command error_t StdControl.stop() {
+  async command error_t AsyncStdControl.stop() {
     atomic call HplAtm128Adc.disableAdc();
 
     return SUCCESS;

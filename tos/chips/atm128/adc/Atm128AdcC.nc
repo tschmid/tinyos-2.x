@@ -52,7 +52,7 @@ implementation
 {
   components Atm128AdcP, HplAtm128AdcC, PlatformC, MainC,
     new RoundRobinArbiterC(UQ_ATM128ADC_RESOURCE) as AdcArbiter,
-    new StdControlPowerManagerC() as PM;
+    new AsyncStdControlPowerManagerC() as PM;
 
   Resource = AdcArbiter;
   ResourceConfigure = AdcArbiter;
@@ -65,7 +65,7 @@ implementation
   Atm128AdcP.Atm128Calibrate -> PlatformC;
 
   PM.Init <- MainC;
-  PM.StdControl -> Atm128AdcP;
+  PM.AsyncStdControl -> Atm128AdcP;
   PM.ArbiterInit -> AdcArbiter;
   PM.ResourceController -> AdcArbiter;
 }
