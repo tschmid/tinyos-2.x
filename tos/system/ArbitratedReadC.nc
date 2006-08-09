@@ -29,12 +29,7 @@ generic module ArbitratedReadC(typedef width_t) {
 }
 implementation {
   command error_t Read.read[uint8_t client]() {
-#if 1
     return call Resource.request[client]();
-#else
-    signal Resource.granted[client]();
-    return SUCCESS;
-#endif
   }
 
   event void Resource.granted[uint8_t client]() {
