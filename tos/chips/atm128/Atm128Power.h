@@ -29,16 +29,6 @@
 
 //================== ATmega128 Power Management ==========================
 
-/* Sleep modes */
-enum {
-  ATM128_SLEEP_IDLE = 0, 
-  ATM128_SLEEP_ADC,
-  ATM128_SLEEP_POWER_DOWN,
-  ATM128_SLEEP_POWER_SAVE,
-  ATM128_SLEEP_STANDBY = 3,             //!< enable standby bit (sm2)
-  ATM128_SLEEP_EXTENDED_STANDBY = 4,    //!< enable standby bit (sm2)
-};
-
 /* MCU Control Register */
 typedef struct
 {
