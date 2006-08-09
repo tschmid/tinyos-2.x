@@ -48,7 +48,7 @@ configuration HplAtm128UartC
 }
 implementation
 {
-  components HplAtm128UartP, PlatformC;
+  components HplAtm128UartP, PlatformC, McuSleepC;
 
   Uart0Init = HplAtm128UartP.Uart0Init;
   Uart0TxControl = HplAtm128UartP.Uart0TxControl;
@@ -61,4 +61,5 @@ implementation
   Uart1 = HplAtm128UartP.Uart1;
 
   HplAtm128UartP.Atm128Calibrate -> PlatformC;
+  HplAtm128UartP.McuPowerState -> McuSleepC;
 }
