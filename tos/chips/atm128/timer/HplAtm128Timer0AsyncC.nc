@@ -46,8 +46,6 @@ module HplAtm128Timer0AsyncC
 }
 implementation
 {
-  bool inOverflow;
-
   command error_t Init.init() {
     SET_BIT(ASSR, AS0);  // set Timer/Counter0 to asynchronous mode
     return SUCCESS;
@@ -162,15 +160,12 @@ implementation
   default async event void Compare.fired() { }
   AVR_ATOMIC_HANDLER(SIG_OUTPUT_COMPARE0) {
     stabiliseTimer0();
-    __nesc_enable_interrupt();
     signal Compare.fired();
   }
 
   default async event void Timer.overflow() { }
   AVR_ATOMIC_HANDLER(SIG_OVERFLOW0) {
     stabiliseTimer0();
-    inOverflow = TRUE;
     signal Timer.overflow();
-    inOverflow = FALSE;
   }
 }
