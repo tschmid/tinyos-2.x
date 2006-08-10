@@ -34,18 +34,20 @@
  */
 configuration HplCC1000C {
   provides {
-    interface Read<uint16_t> as RssiAdc;
+    interface ReadNow<uint16_t> as RssiAdc;
+    interface Resource as RssiResource;
     interface HplCC1000Spi;
     interface HplCC1000;
   }
 }
 implementation {
   components HplCC1000P, HplCC1000SpiP;
-  components new AdcReadClientC() as RssiChannel;
+  components new AdcReadNowClientC() as RssiChannel;
 
   HplCC1000 = HplCC1000P;
   HplCC1000Spi = HplCC1000SpiP;
   RssiAdc = RssiChannel;
+  RssiResource = RssiChannel;
 
   RssiChannel.Atm128AdcConfig -> HplCC1000P;
 
