@@ -168,7 +168,7 @@ implementation
 
   async command bool Alarm.isRunning()
   {
-    return call AlarmFrom.isRunning();
+    atomic return call AlarmFrom.isRunning() || m_skip_overflows;
   }
 
   async command void Alarm.stop()
@@ -261,6 +261,7 @@ implementation
   default async event void Alarm.fired()
   {
   }
+
   default async event void Counter.overflow()
   {
   }
