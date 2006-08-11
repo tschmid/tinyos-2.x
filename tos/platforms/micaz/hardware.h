@@ -49,6 +49,7 @@
 
 #include <atm128hardware.h>
 #include <Atm128Adc.h>
+#include <MicaTimer.h>
 
 // A/D channels
 enum {
