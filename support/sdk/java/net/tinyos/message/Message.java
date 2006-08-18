@@ -213,7 +213,7 @@ public class Message implements Cloneable {
      * data[0..getData().length - 1] are invalid
      */
     public void dataSet(byte[] data) {
-	dataSet(data, 0, this.base_offset, Math.min(this.data_length, data.length));
+	dataSet(data, 0, 0, Math.min(this.data_length, data.length));
     }
 
     /**
