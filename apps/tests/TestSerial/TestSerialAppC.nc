@@ -57,8 +57,8 @@ implementation {
 
   App.Boot -> MainC.Boot;
   App.Control -> AM;
-  App.Receive -> AM.Receive[AM_TESTSERIALMSG];
-  App.AMSend -> AM.AMSend[AM_TESTSERIALMSG];
+  App.Receive -> AM.Receive[AM_TEST_SERIAL_MSG];
+  App.AMSend -> AM.AMSend[AM_TEST_SERIAL_MSG];
   App.Leds -> LedsC;
   App.MilliTimer -> TimerMilliC;
   App.Packet -> AM;
