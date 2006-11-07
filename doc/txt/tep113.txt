@@ -449,11 +449,11 @@ no snooping capabilities.
 6. Citations
 ====================================================================
 
-.. [TEP2] TEP 2: Hardware Abstraction Architecture. http://cvs.sourceforge.net/viewcvs.py/tinyos/tinyos-1.x/beta/teps/txt/tep2.txt?view=markup
+.. [TEP2] TEP 2: Hardware Abstraction Architecture. tinyos-2.x/doc/txt/tep2.txt
 
-.. [TEP111] TEP 111: message_t. http://cvs.sourceforge.net/viewcvs.py/tinyos/tinyos-1.x/beta/teps/txt/tep111.txt?view=markup
+.. [TEP111] TEP 111: message_t. tinyos-2.x/doc/txt/tep111.txt
 
-.. [TEP116] TEP 116: Packet Protocols. http://cvs.sourceforge.net/viewcvs.py/tinyos/tinyos-1.x/beta/teps/txt/tep116.txt?view=markup
+.. [TEP116] TEP 116: Packet Protocols. tinyos-2.x/doc/txt/tep116.txt
  
 .. [HDLC] International Organization For Standardization, ISO Standard 3309-1979, "Data communication - High-level data link control procedures - Frame structure", 1979.
 
