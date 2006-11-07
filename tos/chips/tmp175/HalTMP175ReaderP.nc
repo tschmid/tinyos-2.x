@@ -78,7 +78,7 @@ implementation {
 
   async event void HplTMP175.measureTemperatureDone(error_t tmp175_error, uint16_t val) {
     call TMP175Resource.release();
-    signal Temperature.readDone(tmp175_error,val);
+    signal Temperature.readDone(tmp175_error,(val >> 4));
     return;
   }
 

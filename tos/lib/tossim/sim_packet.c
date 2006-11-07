@@ -45,11 +45,12 @@ static tossim_header_t* getHeader(message_t* msg) {
 
 void sim_packet_set_destination(sim_packet_t* msg, uint16_t dest)__attribute__ ((C, spontaneous)) {
   tossim_header_t* hdr = getHeader((message_t*)msg);
-  hdr->addr = dest;
+  hdr->dest = dest;
 }__attribute__ ((C, spontaneous))
+
 uint16_t sim_packet_destination(sim_packet_t* msg)__attribute__ ((C, spontaneous)) {
   tossim_header_t* hdr = getHeader((message_t*)msg);
-  return hdr->addr;
+  return hdr->dest;
 }
   
 void sim_packet_set_length(sim_packet_t* msg, uint8_t length)__attribute__ ((C, spontaneous)) {

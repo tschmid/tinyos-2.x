@@ -55,10 +55,6 @@ implementation {
   components SerialActiveMessageC as AM;
   components new TimerMilliC();
 
-  
-  
-  MainC.SoftwareInit -> AM;
-  
   App.Boot -> MainC.Boot;
   App.Control -> AM;
   App.Receive -> AM.Receive[AM_TESTSERIALMSG];

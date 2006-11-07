@@ -49,6 +49,6 @@ implementation {
   ReadStream = AdcReadStreamClientC;
 
   components HamamatsuS1087ParP;
-  AdcReadClientC.Msp430Adc12Config -> HamamatsuS1087ParP;
-  AdcReadStreamClientC.Msp430Adc12Config -> HamamatsuS1087ParP;
+  AdcReadClientC.AdcConfigure -> HamamatsuS1087ParP;
+  AdcReadStreamClientC.AdcConfigure -> HamamatsuS1087ParP;
 }

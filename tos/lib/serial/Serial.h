@@ -110,7 +110,8 @@ typedef struct radio_stats {
 } radio_stats_t;
 
 typedef nx_struct serial_header {
-  nx_am_addr_t addr;
+  nx_am_addr_t dest;
+  nx_am_addr_t src;
   nx_uint8_t length;
   nx_am_group_t group;
   nx_am_id_t type;

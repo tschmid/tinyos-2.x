@@ -23,8 +23,8 @@
 /**
  * MSP430Timer32khzMapC presents as paramaterized interfaces all of
  * the 32khz hardware timers on the MSP430 that are available for
- * compile time allocation by "new Alarm32khzC()", "new
- * AlarmMilliC()", and so on.  
+ * compile time allocation by "new Alarm32khz16C()", "new
+ * AlarmMilli32C()", and so on.  
  *
  * Platforms based on the MSP430 are * encouraged to copy in and
  * override this file, presenting only the * hardware timers that are

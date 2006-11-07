@@ -37,7 +37,7 @@
 
 #include <I2C.h>
 
-configuration HalPXA27xI2CMasterC
+generic configuration HalPXA27xI2CMasterC(bool fast_mode)
 {
   provides interface I2CPacket<TI2CBasicAddr>;
 
@@ -47,7 +47,7 @@ configuration HalPXA27xI2CMasterC
 
 implementation
 {
-  components HalPXA27xI2CMasterP;
+  components new HalPXA27xI2CMasterP(fast_mode);
   components HplPXA27xI2CC;
   components PlatformP;
 

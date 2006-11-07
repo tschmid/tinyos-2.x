@@ -107,13 +107,15 @@ implementation {
     return FAIL;
   }
   
-  async command void ClientResource.release[ uint8_t id ]() {
+  async command error_t ClientResource.release[ uint8_t id ]() {
     if ( m_client == id ) {
       m_state = S_IDLE;
       m_client = NO_CLIENT;
       call SpiResource.release();
       call Stm25pResource.release[ id ]();
+      return SUCCESS;
     }
+    return FAIL;
   }
   
   event void Stm25pResource.granted[ uint8_t id ]() {

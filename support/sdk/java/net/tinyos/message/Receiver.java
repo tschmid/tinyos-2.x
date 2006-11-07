@@ -183,7 +183,7 @@ public class Receiver implements PacketListenerIF {
 		error(temp, "invalid length message received (too short)");
 		continue;
 	    }
-	    temp.listener.messageReceived(msg.get_header_addr(), received);
+	    temp.listener.messageReceived(msg.get_header_dest(), received);
 	}
     }
 }

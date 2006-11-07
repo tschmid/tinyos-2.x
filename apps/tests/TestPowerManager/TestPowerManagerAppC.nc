@@ -42,8 +42,6 @@ implementation {
 
   TestPowerManagerC -> MainC.Boot;
   
-  MainC.SoftwareInit -> MyComponentC;
-  
   TestPowerManagerC.TimerMilli -> TimerMilliC;
   TestPowerManagerC.Resource0 -> MyComponentC.Resource[unique("MyComponent.Resource")];
   TestPowerManagerC.Resource1 -> MyComponentC.Resource[unique("MyComponent.Resource")];

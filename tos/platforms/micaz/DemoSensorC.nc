@@ -22,7 +22,7 @@ generic configuration DemoSensorC()
 }
 implementation
 {
-  components new ConstantSensorC(uint16_t, 0xbeef) as DemoChannel;
+  components new SineSensorC() as DemoChannel;
 
   Read = DemoChannel;
 }

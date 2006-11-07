@@ -29,7 +29,11 @@
  * 94704.  Attention:  Intel License Inquiry.
  */
 
-//@author Cory Sharp <cssharp@eecs.berkeley.edu>
+/**
+ * Configuration for the PowerUp application.
+ *
+ * @author Cory Sharp <cssharp@eecs.berkeley.edu>
+ */
 
 configuration PowerupAppC{}
 implementation {

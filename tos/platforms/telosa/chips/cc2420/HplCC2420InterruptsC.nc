@@ -47,7 +47,6 @@ configuration HplCC2420InterruptsC {
 
 implementation {
 
-  components Counter32khzC;
   components HplMsp430GeneralIOC as GeneralIOC;
   components Msp430TimerC;
   components new GpioCaptureC() as CaptureSFDC;

@@ -13,12 +13,6 @@
  *
  * @author David Gay
  */
-/*
-  address & 3:
-  1: erase, write
-  2: read
-  3: write some more
-*/
 module RandRWC {
   uses {
     interface Boot;
@@ -143,7 +137,7 @@ implementation {
       }
   }
 
-  event void LogWrite.appendDone(void *buf, storage_len_t y, error_t result) {
+  event void LogWrite.appendDone(void *buf, storage_len_t y, bool recordsLost, error_t result) {
     if (scheck(result))
       nextWrite();
   }

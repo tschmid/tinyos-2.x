@@ -117,8 +117,8 @@ implementation {
     return error;
   }
 
-  void releaseSpiResource() {
-    call SpiResource.release();
+  error_t releaseSpiResource() {
+    return call SpiResource.release();
   }
 
   void signalDone( error_t err ) {

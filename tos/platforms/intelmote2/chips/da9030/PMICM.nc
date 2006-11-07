@@ -243,8 +243,9 @@ implementation {
     readPMIC(PMIC_EVENTS, val, 3);
 
     // Set default core voltage to 0.85 V
+#ifdef PXA27X_13M
     call PMIC.setCoreVoltage(B2R1_TRIM_P85_V);
-
+#endif
     startLDOs();
     return SUCCESS;
   }

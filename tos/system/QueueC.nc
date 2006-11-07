@@ -34,6 +34,7 @@
  *  A general FIFO queue component, whose queue has a bounded size.
  *
  *  @author Philip Levis
+ *  @author Geoffrey Mainland
  *  @date   $Date$
  */
 

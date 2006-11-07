@@ -50,6 +50,7 @@ implementation {
   
   ForwardingEngineP.BasicRouting -> TreeRoutingEngineP;
   TreeRoutingEngineP.LinkEstimator -> LinkEstimatorC;
+  ForwardingEngineP.LinkEstimator -> LinkEstimatorC;
   
   components new LinkEstimatorAMSenderC(AM_COLLECTION_DATA) 
     as DataAMSender; 

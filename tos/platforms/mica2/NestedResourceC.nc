@@ -51,9 +51,10 @@ implementation
     return EBUSY;
   }
 
-  async command void Resource.release() {
-    call Resource1.release();
-    call Resource2.release();
+  async command error_t Resource.release() {
+    if(call Resource1.release() == SUCCESS)
+    	return call Resource2.release();
+    return FAIL;
   }
 
   async command uint8_t Resource.isOwner() {

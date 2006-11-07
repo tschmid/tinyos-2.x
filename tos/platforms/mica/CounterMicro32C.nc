@@ -26,7 +26,7 @@ configuration CounterMicro32C
 implementation
 {
   components CounterThree16C as Counter16, 
-    new TransformCounterC(TMicro, uint32_t, TMicro, uint16_t,
+    new TransformCounterC(TMicro, uint32_t, TThree, uint16_t,
 			  MICA_DIVIDE_THREE_FOR_MICRO_LOG2,
 			  counter_three_overflow_t) as Transform32;
 

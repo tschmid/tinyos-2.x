@@ -75,8 +75,15 @@ implementation {
   event void TimerMilli.fired() {
     if(waiting == TRUE) {
       waiting = FALSE;
-      if(whoHasIt == 0)
-        call Resource1.request();
+      if(whoHasIt == 0)  {
+        if(call Resource1.immediateRequest() == SUCCESS) {
+          whoHasIt = 1;
+          call Leds.led2On();
+          call TimerMilli.startOneShot(HOLD_PERIOD);
+          return;
+        }
+        else call Resource1.request();
+      }
       if(whoHasIt == 1)
         call Resource0.request();
     }

@@ -18,6 +18,7 @@ push( @includes, qw(
   %T/chips/at45db
   %T/chips/atm128
   %T/chips/atm128/adc
+  %T/chips/atm128/i2c
   %T/chips/atm128/pins
   %T/chips/atm128/spi
   %T/chips/atm128/timer

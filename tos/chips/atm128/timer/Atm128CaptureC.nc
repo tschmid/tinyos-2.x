@@ -38,7 +38,7 @@
  *  @author Matt Miller, Crossbow <mmiller@xbow.com>
  *  @author Martin Turon, Crossbow <mturon@xbow.com>
  */
-generic module Atm128CaptureP () 
+generic module Atm128CaptureC () 
 {
   provides {
     interface Capture as CapturePin;

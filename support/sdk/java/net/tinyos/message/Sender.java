@@ -85,7 +85,7 @@ public class Sender {
 
 	SerialPacket packet =
 	    new SerialPacket(SerialPacket.offset_data(0) + data.length);
-	packet.set_header_addr(moteId);
+	packet.set_header_dest(moteId);
 	packet.set_header_type((short)amType);
 	packet.set_header_length((short)data.length);
 	packet.dataSet(data, 0, packet.offset_data(0), data.length);

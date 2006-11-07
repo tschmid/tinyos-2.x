@@ -133,10 +133,6 @@ implementation
 						    void *payload,
 						    uint8_t len) {
     message_t *ret = msg;
-#if 0
-    if (!msg->crc || msg->group != TOS_AM_GROUP)
-      return msg;
-#endif
 
     atomic {
       if (!uartFull)

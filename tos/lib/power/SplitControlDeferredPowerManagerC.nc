@@ -29,6 +29,8 @@
  */
  
 /**
+ * Please refer to TEP 115 for more information about this component and its
+ * intended use.<br><br>
  *
  * This component povides a power management policy for managing the power
  * states of non-virtualized devices.  Non-virtualized devices are shared
@@ -53,19 +55,13 @@
  *                        before shutting down the device once it is free.
  * 
  * @author Kevin Klues (klueska@cs.wustl.edu)
- * @see  Please refer to TEP 115 for more information about this component and its
- *          intended use.
  */
  
 generic configuration SplitControlDeferredPowerManagerC(uint32_t delay) {
-  provides {
-    interface Init;
-  }
   uses {
     interface SplitControl;
 
     interface PowerDownCleanup;
-    interface Init as ArbiterInit;
     interface ResourceController;
     interface ArbiterInfo;
   }
@@ -73,14 +69,11 @@ generic configuration SplitControlDeferredPowerManagerC(uint32_t delay) {
 implementation {
   components new TimerMilliC(),
              new DeferredPowerManagerP(delay) as PowerManager;
-
-  Init = PowerManager;
  
   PowerManager.SplitControl = SplitControl;
 
   PowerManager.PowerDownCleanup = PowerDownCleanup;
  
-  PowerManager.ArbiterInit  = ArbiterInit;
   PowerManager.ResourceController = ResourceController;
   PowerManager.ArbiterInfo = ArbiterInfo;
 

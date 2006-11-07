@@ -48,9 +48,6 @@ implementation {
   components new SensirionSht11LogicP();
   SensirionSht11 = SensirionSht11LogicP;
 
-  components MainC;
-  MainC.SoftwareInit -> HplSensirionSht11C;
-
   components HplSensirionSht11C;
   Resource = HplSensirionSht11C.Resource;
   SensirionSht11LogicP.DATA -> HplSensirionSht11C.DATA;

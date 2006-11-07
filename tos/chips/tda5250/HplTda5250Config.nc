@@ -468,7 +468,15 @@ interface HplTda5250Config {
    */
    async command bool IsRSSIGreaterThanThreshold();
 
-  
+   /**
+   * Checks if the Tx Rx and Sleep radiomodes can be set via pin.
+   * This only concerns SetTxMode(), SetRxMode() and SetSleepMode().
+   *
+   * @return TRUE if radiomodes can be set via pin
+   *         FALSE otherwise.
+   */
+   async command bool IsTxRxPinControlled();
+   
    /**
    * Switches the radio to TxMode when in SLAVE_MODE
    */

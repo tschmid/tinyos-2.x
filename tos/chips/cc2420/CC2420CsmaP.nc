@@ -162,12 +162,11 @@ implementation {
     }
 
     header->length = len;
-    header->fcf = ( ( IEEE154_TYPE_DATA << IEEE154_FCF_FRAME_TYPE ) |
-                    ( 1 << IEEE154_FCF_INTRAPAN ) |
-                    ( IEEE154_ADDR_SHORT << IEEE154_FCF_DEST_ADDR_MODE ) |
-                    ( IEEE154_ADDR_SHORT << IEEE154_FCF_SRC_ADDR_MODE ) );
-    if ( header->dest != AM_BROADCAST_ADDR )
-      header->fcf |= 1 << IEEE154_FCF_ACK_REQ;
+    header->fcf &= 1 << IEEE154_FCF_ACK_REQ;
+    header->fcf |= ( ( IEEE154_TYPE_DATA << IEEE154_FCF_FRAME_TYPE ) |
+		     ( 1 << IEEE154_FCF_INTRAPAN ) |
+		     ( IEEE154_ADDR_SHORT << IEEE154_FCF_DEST_ADDR_MODE ) |
+		     ( IEEE154_ADDR_SHORT << IEEE154_FCF_SRC_ADDR_MODE ) );
     header->src = call AMPacket.address();
     metadata->ack = FALSE;
     metadata->rssi = 0;

@@ -58,10 +58,10 @@ implementation
              
   components new AdcReadClientC() as AdcReadClient;
   Read = AdcReadClient;
-  AdcReadClient.Msp430Adc12Config -> Settings.Msp430Adc12Config[RSSI_SENSOR_REF_1_5V];
+  AdcReadClient.AdcConfigure -> Settings.AdcConfigure[RSSI_SENSOR_REF_1_5V];
   
   components new AdcReadNowClientC() as AdcReadNowClient;
   ReadNow = AdcReadNowClient;
   ReadNowResource = AdcReadNowClient;
-  AdcReadNowClient.Msp430Adc12Config -> Settings.Msp430Adc12Config[RSSI_SENSOR_REF_1_5V];
+  AdcReadNowClient.AdcConfigure -> Settings.AdcConfigure[RSSI_SENSOR_REF_1_5V];
 }

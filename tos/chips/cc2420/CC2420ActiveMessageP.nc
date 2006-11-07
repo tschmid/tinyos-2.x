@@ -118,16 +118,21 @@ implementation {
     cc2420_header_t* header = getHeader(amsg);
     return header->dest;
   }
+ 
+  command am_addr_t AMPacket.source(message_t* amsg) {
+    cc2420_header_t* header = getHeader(amsg);
+    return header->src;
+  }
 
   command void AMPacket.setDestination(message_t* amsg, am_addr_t addr) {
     cc2420_header_t* header = getHeader(amsg);
     header->dest = addr;
   }
 
-  //command void AMPacket.setDestination(am_addr_t dest, message_t* amsg){
-  //  cc2420_header_t* header = getHeader(amsg);
-  //  header->dest = dest;
-  //}
+  command void AMPacket.setSource(message_t* amsg, am_addr_t addr) {
+    cc2420_header_t* header = getHeader(amsg);
+    header->src = addr;
+  }
 
   command bool AMPacket.isForMe(message_t* amsg) {
     return (call AMPacket.destination(amsg) == call AMPacket.address() ||

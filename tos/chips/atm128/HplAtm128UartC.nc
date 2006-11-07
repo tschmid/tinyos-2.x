@@ -35,31 +35,32 @@
 configuration HplAtm128UartC
 {
   provides {
-    interface Init as Uart0Init;
     interface StdControl as Uart0TxControl;
     interface StdControl as Uart0RxControl;
-    interface SerialByteComm as Uart0;
+    interface HplAtm128Uart as HplUart0;
     
-    interface Init as Uart1Init;
     interface StdControl as Uart1TxControl;
     interface StdControl as Uart1RxControl;
-    interface SerialByteComm as Uart1;
+    interface HplAtm128Uart as HplUart1;
   }
 }
 implementation
 {
   components HplAtm128UartP, PlatformC, McuSleepC;
-
-  Uart0Init = HplAtm128UartP.Uart0Init;
+  
   Uart0TxControl = HplAtm128UartP.Uart0TxControl;
   Uart0RxControl = HplAtm128UartP.Uart0RxControl;
-  Uart0 = HplAtm128UartP.Uart0;
-    
-  Uart1Init = HplAtm128UartP.Uart1Init;
+  HplUart0 = HplAtm128UartP.HplUart0;
+  
   Uart1TxControl = HplAtm128UartP.Uart1TxControl;
   Uart1RxControl = HplAtm128UartP.Uart1RxControl;
-  Uart1 = HplAtm128UartP.Uart1;
-
+  HplUart1 = HplAtm128UartP.HplUart1;
+  
   HplAtm128UartP.Atm128Calibrate -> PlatformC;
   HplAtm128UartP.McuPowerState -> McuSleepC;
+  
+  components MainC;
+  MainC.SoftwareInit -> HplAtm128UartP.Uart0Init;
+  MainC.SoftwareInit -> HplAtm128UartP.Uart1Init;
+  
 }

@@ -70,7 +70,7 @@
 #define LIS3L01DQ_CTRL_REG1_ST		(1 << 3)
 #define LIS3L01DQ_CTRL_REG1_ZEN		(1 << 2)
 #define LIS3L01DQ_CTRL_REG1_YEN		(1 << 1)
-#define LIS3L01DQ_CTRL_REG1_XEN		(1 << 1)
+#define LIS3L01DQ_CTRL_REG1_XEN		(1 << 0)
 
 #define LIS3L01DQ_CTRL_REG2_RES		(1 << 7)
 #define LIS3L01DQ_CTRL_REG2_BDU		(1 << 6)

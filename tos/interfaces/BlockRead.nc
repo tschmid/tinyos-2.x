@@ -68,27 +68,6 @@ interface BlockRead {
 		      error_t error);
   
   /**
-   * Initiate a verify operation to verify the integrity of the
-   * data. This operation is only valid after a commit operation from
-   * <code>BlockWrite</code> has been completed. On SUCCESS, the
-   * <code>verifyDone</code> event will signal completion of the
-   * operation.
-   *
-   * @return 
-   *   <li>SUCCESS if the request was accepted, 
-   *   <li>EBUSY if a request is already being processed.
-   */
-  command error_t verify();
-  
-  /**
-   * Signals the completion of a verify operation.
-   *
-   * @param error SUCCESS if the operation was successful, FAIL if
-   *   it failed
-   */
-  event void verifyDone(error_t error);
-  
-  /**
    * Initiate a crc computation. On SUCCESS, the
    * <code>computeCrcDone</code> event will signal completion of the
    * operation.

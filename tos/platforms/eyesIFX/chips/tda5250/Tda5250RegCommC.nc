@@ -36,7 +36,7 @@
  * ========================================================================
  */
 
-#include "tda5250BusResourceId.h"
+#include "tda5250BusResourceSettings.h"
 
 /**
  * Configuration file for the registers of TDA5250 Radio on

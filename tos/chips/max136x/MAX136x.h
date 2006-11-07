@@ -51,6 +51,7 @@
 #define MAX136X_SETUP_MONSETUP		(1 << 0)
 
 #define MAX136X_MONITOR_DELAY(_x)       (((_x) & 0x7) << 1)
+#define MAX136X_MONITOR_INTEN           (1 << 0)
 
 typedef uint16_t max136x_data_t;
 

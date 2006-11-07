@@ -83,5 +83,5 @@ implementation {
   }
 
   async event void HplMAX136x.alertThreshold() {}
-
+  async event void HplMAX136x.readStatusDone(error_t error, uint8_t* buf) { }
 }

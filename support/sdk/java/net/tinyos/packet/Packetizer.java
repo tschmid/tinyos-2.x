@@ -159,7 +159,7 @@ public class Packetizer extends AbstractSource implements Runnable {
 		writeFramedPacket(P_UNKNOWN, packetType, ackPacket, 0);
 	    }
 	    catch (IOException e) { }
-	    message(name + ": ignoring unknown packet type " +
+	    message(name + ": ignoring unknown packet type 0x" +
 		    Integer.toHexString(packetType));
 	}
     }

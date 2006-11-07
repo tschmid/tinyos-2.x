@@ -55,12 +55,12 @@ implementation {
   ReadStream = AdcReadStreamClientC;
 
   components Msp430InternalVoltageP;
-  AdcReadClientC.Msp430Adc12Config -> Msp430InternalVoltageP;
-  AdcReadStreamClientC.Msp430Adc12Config -> Msp430InternalVoltageP;
+  AdcReadClientC.AdcConfigure -> Msp430InternalVoltageP;
+  AdcReadStreamClientC.AdcConfigure -> Msp430InternalVoltageP;
 
   components new AdcReadNowClientC();
   Resource = AdcReadNowClientC;
   ReadNow = AdcReadNowClientC;
   
-  AdcReadNowClientC.Msp430Adc12Config -> Msp430InternalVoltageP;
+  AdcReadNowClientC.AdcConfigure -> Msp430InternalVoltageP;
 }

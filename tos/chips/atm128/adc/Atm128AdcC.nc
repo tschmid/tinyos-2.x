@@ -64,8 +64,6 @@ implementation
   Atm128AdcP.HplAtm128Adc -> HplAtm128AdcC;
   Atm128AdcP.Atm128Calibrate -> PlatformC;
 
-  PM.Init <- MainC;
   PM.AsyncStdControl -> Atm128AdcP;
-  PM.ArbiterInit -> AdcArbiter;
   PM.ResourceController -> AdcArbiter;
 }

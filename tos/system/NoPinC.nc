@@ -25,5 +25,7 @@ implementation
   async command void GeneralIO.toggle() { }
   async command void GeneralIO.makeInput() { }
   async command void GeneralIO.makeOutput() { }
+  async command bool GeneralIO.isInput() { }
+  async command bool GeneralIO.isOutput() { }
 }
 

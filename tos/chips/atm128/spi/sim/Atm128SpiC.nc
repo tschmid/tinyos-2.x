@@ -42,11 +42,10 @@ configuration Atm128SpiC {
 }
 implementation {
   components SimAtm128SpiDeviceC as Device;
-  components new FcfsArbiterC("Atm128SpiC.Resource") as Arbiter;
+  components new SimpleFcfsArbiterC("Atm128SpiC.Resource") as Arbiter;
   components McuSleepC;
   
   Init         = Device;
-  Init         = Arbiter;
   
   SPIByte      = Device;
   SPIPacket    = Device;

@@ -39,6 +39,7 @@
  */
 configuration Tda5250RadioIOC
 {
+  provides interface GeneralIO as Tda5250RadioPASKNFSK;
   provides interface GeneralIO as Tda5250RadioBUSM;
   provides interface GeneralIO as Tda5250RadioENTDA;
   provides interface GeneralIO as Tda5250RadioTXRX;
@@ -48,6 +49,7 @@ configuration Tda5250RadioIOC
 implementation {
   components
       HplMsp430GeneralIOC as MspGeneralIO
+    , Tda5250ASKNFSKFakePinP      
     , new Msp430GpioC() as rBUSM
     , new Msp430GpioC() as rENTDA
     , new Msp430GpioC() as rTXRX
@@ -61,6 +63,7 @@ implementation {
   Tda5250RadioDATA = rDATA;
   Tda5250RadioPWDDD = rPWDD;
 
+  Tda5250RadioPASKNFSK = Tda5250ASKNFSKFakePinP;
   rBUSM -> MspGeneralIO.Port15;
   rENTDA -> MspGeneralIO.Port16;
   rTXRX -> MspGeneralIO.Port14;

@@ -31,5 +31,5 @@ interface SpiByte
    * @param tx Byte to transmit
    * @param rx Received byte is stored here.
    */
-  async command void write( uint8_t tx, uint8_t* rx );
+  async command uint8_t write( uint8_t tx );
 }

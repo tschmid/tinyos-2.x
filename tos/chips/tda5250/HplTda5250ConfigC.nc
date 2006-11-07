@@ -76,6 +76,7 @@ implementation {
   HplTda5250ConfigP.STATUS -> Tda5250RegistersC.STATUS;
   HplTda5250ConfigP.ADC -> Tda5250RegistersC.ADC;
 
+  HplTda5250ConfigP.ASKNFSK -> Tda5250RadioIOC.Tda5250RadioPASKNFSK;
   HplTda5250ConfigP.PWDDD -> Tda5250RadioIOC.Tda5250RadioPWDDD;
   HplTda5250ConfigP.TXRX -> Tda5250RadioIOC.Tda5250RadioTXRX;
   HplTda5250ConfigP.PWDDDInterrupt -> Tda5250RadioInterruptC;

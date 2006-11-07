@@ -53,6 +53,6 @@ implementation {
   ReadStream = AdcReadStreamClientC;
 
   components Msp430InternalTemperatureP;
-  AdcReadClientC.Msp430Adc12Config -> Msp430InternalTemperatureP;
-  AdcReadStreamClientC.Msp430Adc12Config -> Msp430InternalTemperatureP;
+  AdcReadClientC.AdcConfigure -> Msp430InternalTemperatureP;
+  AdcReadStreamClientC.AdcConfigure -> Msp430InternalTemperatureP;
 }

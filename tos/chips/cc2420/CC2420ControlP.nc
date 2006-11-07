@@ -110,10 +110,10 @@ implementation {
     return call SpiResource.isOwner();
   }
 
-  async command void Resource.release() {
+  async command error_t Resource.release() {
     atomic {
       call CSN.set();
-      call SpiResource.release();
+      return call SpiResource.release();
     }
   }
 
@@ -270,6 +270,7 @@ implementation {
 		       ( ( (channel - 11)*5+357 ) << CC2420_FSCTRL_FREQ ) );
     call PANID.write( 0, (uint8_t*)id, sizeof( id ) );
     call CSN.set();
+    call SyncResource.release();
     
     post syncDone_task();
     

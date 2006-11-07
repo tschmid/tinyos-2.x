@@ -58,11 +58,11 @@ implementation
              
   components new AdcReadClientC() as AdcReadClient;
   Read = AdcReadClient;
-  AdcReadClient.Msp430Adc12Config -> Settings.Msp430Adc12Config[PHOTO_SENSOR_DEFAULT];
+  AdcReadClient.AdcConfigure -> Settings.AdcConfigure[PHOTO_SENSOR_DEFAULT];
   
   components new AdcReadNowClientC() as AdcReadNowClient;
   ReadNow = AdcReadNowClient;
   ReadNowResource = AdcReadNowClient;
-  AdcReadNowClient.Msp430Adc12Config -> Settings.Msp430Adc12Config[PHOTO_SENSOR_DEFAULT];
+  AdcReadNowClient.AdcConfigure -> Settings.AdcConfigure[PHOTO_SENSOR_DEFAULT];
 }
 

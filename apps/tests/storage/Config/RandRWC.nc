@@ -8,7 +8,7 @@
  * 94704.  Attention:  Intel License Inquiry.
  */
 /**
- * Log storage test application. Does a pattern of random reads and
+ * Config storage test application. Does a pattern of random reads and
  * writes, based on mote id. See README.txt for more details.
  *
  * @author David Gay

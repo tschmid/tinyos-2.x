@@ -32,7 +32,6 @@ enum {
     AM_COLLECTION_DATA = 20,
     AM_COLLECTION_CONTROL = 21,
     AM_COLLECTION_DEBUG = 22,
-    AM_LINKEST = 0,
 };
 
 typedef uint8_t collection_id_t;

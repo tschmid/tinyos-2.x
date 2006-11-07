@@ -3,7 +3,7 @@
 
 PROGRAM = xflash
 
-PROGRAMMER ?= c:/nordheim/xflash/xflash.exe
+PROGRAMMER ?= xflash.exe
 PROGRAMMER_FLAGS = -p imote2
 
 PXA27X_JTAG_DEV ?= "JTAG CPU"

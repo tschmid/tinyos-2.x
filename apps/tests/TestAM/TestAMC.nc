@@ -28,16 +28,20 @@
  * Intel Research Berkeley, 2150 Shattuck Avenue, Suite 1300, Berkeley, CA, 
  * 94704.  Attention:  Intel License Inquiry.
  */
+ 
+#include "Timer.h"
 
 /**
- *  Implementation of the TestAM application.
+ * Implementation of the TestAM application.  TestAM sends active message 
+ * broadcasts at 1Hz and blinks LED 0 whenever it has sucessfully sent a 
+ * broadcast. Whenever it receives one of these broadcasts from another 
+ * node, it blinks LED 1.  It uses the radio HIL component <tt>ActiveMessageC</tt>, 
+ * and its packets are AM type 240.  This application is useful for testing 
+ * AM communication and the ActiveMessageC component.
  *
- *  @author Philip Levis
- *  @date   May 16 2005
- *
- **/
-
-#include "Timer.h"
+ * @author Philip Levis
+ * @date   May 16 2005
+ */
 
 module TestAMC {
   uses {

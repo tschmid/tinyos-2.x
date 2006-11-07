@@ -29,8 +29,11 @@
  * 94704.  Attention:  Intel License Inquiry.
  */
 
-//@author Cory Sharp <cssharp@eecs.berkeley.edu>
-
+/**
+  * This module turns on Led0 when the system boots.
+  *
+  * @author Cory Sharp <cssharp@eecs.berkeley.edu>
+  */
 module PowerupC
 {
   uses interface Boot;

@@ -27,7 +27,8 @@ implementation
     return SUCCESS;
   }
 
-  async command void Resource.release() {
+  async command error_t Resource.release() {
+    return SUCCESS;
   }
 
   async command uint8_t Resource.isOwner() {

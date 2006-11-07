@@ -71,11 +71,10 @@ configuration Atm128SpiC {
 implementation {
   components Atm128SpiP as SpiMaster, HplAtm128SpiC as HplSpi;
   components HplAtm128GeneralIOC as IO;
-  components new FcfsArbiterC("Atm128SpiC.Resource") as Arbiter;
+  components new SimpleFcfsArbiterC("Atm128SpiC.Resource") as Arbiter;
   components McuSleepC;
   
   Init         = SpiMaster;
-  Init         = Arbiter;
   
   SpiByte      = SpiMaster;
   SpiPacket    = SpiMaster;

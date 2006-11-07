@@ -34,6 +34,7 @@
  *  A general dynamic memory pool component.
  *
  *  @author Philip Levis
+ *  @author Geoffrey Mainland
  *  @date   $Date$
  */
 

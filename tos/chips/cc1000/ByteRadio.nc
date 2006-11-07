@@ -20,8 +20,9 @@ interface ByteRadio
 {
   /**
    * SendReceive wants to send a packet.
+   * @param msg Message to be sent.
    */
-  event void rts();
+  event void rts(message_t *msg);
 
   /**
    * Access to the media granted. Start sending. SendReceive must signal

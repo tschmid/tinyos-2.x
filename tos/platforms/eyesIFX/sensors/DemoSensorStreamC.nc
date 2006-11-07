@@ -56,9 +56,7 @@ implementation
 {
   components SensorSettingsC as Settings;
   components new AdcReadStreamClientC() as AdcReadStreamClient;
-  components new ReadStreamShiftC(4) as ReadStreamShift;
     
-  ReadStream = ReadStreamShift;
-  ReadStreamShift.ReadStreamRaw -> AdcReadStreamClient;
-  AdcReadStreamClient.Msp430Adc12Config -> Settings.Msp430Adc12Config[PHOTO_SENSOR_DEFAULT];
+  ReadStream = AdcReadStreamClient;
+  AdcReadStreamClient.AdcConfigure -> Settings.AdcConfigure[PHOTO_SENSOR_DEFAULT];
 }

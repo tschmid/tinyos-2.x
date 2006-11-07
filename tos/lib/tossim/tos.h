@@ -86,7 +86,6 @@ struct @exactlyonce { };
 #include <heap.c>
 #include <sim_event_queue.c>
 #include <sim_tossim.c>
-#include <hashtable.c>
 #include <sim_mac.c>
 #include <sim_packet.c>
 #endif
