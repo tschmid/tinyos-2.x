@@ -137,6 +137,13 @@ If the ``result`` parameter of the ``Read.readDone`` and
 ``ReadWrite.readDone`` events is not SUCCESS, then the memory of the
 ``val`` parameter MUST be filled with zeroes.
 
+If the call to ``Read.read`` has returned SUCCESS, but the
+``Read.readDone`` event has not yet been signalled, then a subsequent
+call to ``Read.read`` MUST not return SUCCESS. This simple locking
+technique, as opposed to a more complex system in which multiple
+read/readDone pairs may be outstanding, is intended to reduce the
+complexity of code that is a client of a SID interface.
+
 Examples of sensors that would be suited to this class of interface
 include many basic sensors, such as photo, temp, voltage, and ADC
 readings.

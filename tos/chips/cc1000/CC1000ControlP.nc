@@ -120,6 +120,8 @@ implementation
     call CC.write(CC1K_PA_POW, 0);
 
     calibrateNow();
+    
+    call CC1000Control.rxMode();
   }
 
   /*

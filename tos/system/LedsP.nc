@@ -109,13 +109,13 @@ implementation {
     uint8_t rval;
     atomic {
       rval = 0;
-      if (call Led0.get()) {
+      if (!call Led0.get()) {
 	rval |= LEDS_LED0;
       }
-      if (call Led1.get()) {
+      if (!call Led1.get()) {
 	rval |= LEDS_LED1;
       }
-      if (call Led2.get()) {
+      if (!call Led2.get()) {
 	rval |= LEDS_LED2;
       }
     }

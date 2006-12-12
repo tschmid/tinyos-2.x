@@ -44,24 +44,27 @@ module HplTda5250DataIOP {
     interface HplTda5250DataControl as UartDataControl;
 		interface Msp430UartConfigure as UartResourceConfigure;
   } 
-  uses {
-    interface  Msp430UartControl;
-  }
 }
 
 implementation {
   
   async command error_t UartDataControl.setToTx() {
-    call Msp430UartControl.setModeTx();
+        atomic {
+      tda5250_uart_config.uartConfig.utxe = 1;
+      tda5250_uart_config.uartConfig.urxe = 0;
+    }
     return SUCCESS;
   }
 
   async command error_t UartDataControl.setToRx() {
-    call Msp430UartControl.setModeRx();
+    atomic {
+      tda5250_uart_config.uartConfig.utxe = 0;
+      tda5250_uart_config.uartConfig.urxe = 1;
+    }
     return SUCCESS;
   }
 	
-	async command msp430_uart_config_t* UartResourceConfigure.getConfig() {
+	async command msp430_uart_union_config_t* UartResourceConfigure.getConfig() {
 		return &tda5250_uart_config;
 	}
 

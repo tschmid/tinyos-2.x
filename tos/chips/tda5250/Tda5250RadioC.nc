@@ -72,6 +72,6 @@ implementation {
   
   Tda5250RadioP.HplTda5250Config -> HplTda5250ConfigC;
   Tda5250RadioP.HplTda5250Data -> HplTda5250DataC;
-	Tda5250RadioP.HplTda5250DataControl -> HplTda5250DataC;
+  Tda5250RadioP.HplTda5250DataControl -> HplTda5250DataC;
 
 }

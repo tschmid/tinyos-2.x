@@ -113,16 +113,14 @@ implementation
     ADC12CTL0 &= ~(ADC12ON); 
   }
   
+  async command void HplAdc12.enableConversion(){ 
+    ADC12CTL0 |= ENC; 
+  }
+    
   async command bool HplAdc12.isBusy(){ return ADC12CTL1 & ADC12BUSY; }
 
   TOSH_SIGNAL(ADC_VECTOR) {
-    uint16_t iv = ADC12IV;
-    switch(iv)
-    {
-      case  2: signal HplAdc12.memOverflow(); return;
-      case  4: signal HplAdc12.conversionTimeOverflow(); return;
-    }
-    signal HplAdc12.conversionDone(iv);
+    signal HplAdc12.conversionDone(ADC12IV);
   }
 }
 

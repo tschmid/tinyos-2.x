@@ -41,7 +41,7 @@ module HilTimerMilliC {
 implementation {
 
   enum {
-    TIMER_COUNT = uniqueCount("UQ_TIMER_MILLI")
+    TIMER_COUNT = uniqueCount(UQ_TIMER_MILLI)
   };
 
   typedef struct tossim_timer {

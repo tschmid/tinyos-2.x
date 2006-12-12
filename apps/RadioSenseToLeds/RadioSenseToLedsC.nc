@@ -101,19 +101,18 @@ implementation {
     else {
       radio_sense_msg_t* rsm = (radio_sense_msg_t*)payload;
       uint16_t val = rsm->data;
-      call Leds.led0Toggle();
-      if (val & 0x8000) {
-	call Leds.led1On();
-      }
-      else {
-	call Leds.led1Off();
-      }
-      if (val & 0x4000) {
-	call Leds.led2On();
-      }
-      else {
-	call Leds.led2Off();
-      }
+      if (val & 0x0004)
+        call Leds.led2On();
+      else
+        call Leds.led2Off();
+      if (val & 0x0002)
+        call Leds.led1On();
+      else
+        call Leds.led1Off();
+      if (val & 0x0001)
+        call Leds.led0On();
+      else
+        call Leds.led0Off();
       return bufPtr;
     }
   }

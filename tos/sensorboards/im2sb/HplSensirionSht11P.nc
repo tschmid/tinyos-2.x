@@ -42,8 +42,8 @@
 module HplSensirionSht11P {
   provides interface SplitControl;
   uses interface Timer<TMilli>;
-  uses interface HPlPXA27xGPIOPin as DATA;
-  uses interface HPLPXA27xGPIOPin as SCK;
+  uses interface HplPXA27xGPIOPin as DATA;
+  uses interface HplPXA27xGPIOPin as SCK;
 }
 implementation {
   task void stopTask();
@@ -71,5 +71,8 @@ implementation {
   task void stopTask() {
     signal SplitControl.stopDone( SUCCESS );
   }
+
+  async event void DATA.interruptGPIOPin() { return; }
+  async event void SCK.interruptGPIOPin() { return; }
 }
 

@@ -106,16 +106,6 @@ interface HplAdc12
   async command void resetIFGs(); 
 
   /** 
-   * Signals an ADC12MEMx overflow.
-   */ 
-  async event void memOverflow();
-
-  /** 
-   * Signals a Conversion time overflow.
-   */ 
-  async event void conversionTimeOverflow();
-
-  /** 
    * Signals a conversion result. 
    * @param iv ADC12 interrupt vector value 0x6, 0x8, ... , 0x24
    */ 
@@ -136,6 +126,11 @@ interface HplAdc12
    * Starts a conversion.
    */
   async command void startConversion();
+
+  /**
+   * Enables conversion (sets the ENC bit).
+   */
+  async command void enableConversion();
 
 }
 

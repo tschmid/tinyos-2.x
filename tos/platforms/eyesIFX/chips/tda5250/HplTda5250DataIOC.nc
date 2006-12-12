@@ -56,6 +56,5 @@ implementation {
   UartStream = Msp430Uart0C.UartStream;
   UartDataControl = HplTda5250DataIOP.UartDataControl;
   
-  HplTda5250DataIOP.Msp430UartControl -> Msp430Uart0C.UartControl;
 	HplTda5250DataIOP.UartResourceConfigure <- Msp430Uart0C.Msp430UartConfigure;  
 }

@@ -326,8 +326,7 @@ implementation {
 	    log_info->write_addr = m_addr;
 	}
 	// move on to next log block
-	if ( (uint16_t)m_addr == 0 &&
-	     ++block < (call Sector.getNumSectors[ id ]()*BLOCKS_PER_SECTOR)) {
+	if (++block < (call Sector.getNumSectors[ id ]()*BLOCKS_PER_SECTOR)) {
 	  addr += BLOCK_SIZE;
 	  call Sector.read[ id ]( addr, (uint8_t*)&m_addr, sizeof( m_addr ) );
 	}

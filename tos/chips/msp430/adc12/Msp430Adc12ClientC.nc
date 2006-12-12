@@ -47,6 +47,8 @@ generic configuration Msp430Adc12ClientC()
   provides {
     interface Resource;
     interface Msp430Adc12SingleChannel;
+    interface Msp430Adc12MultiChannel;
+    interface Msp430Adc12Overflow;
   }
 } implementation {
   components Msp430Adc12P;
@@ -56,4 +58,6 @@ generic configuration Msp430Adc12ClientC()
   };
   Resource = Msp430Adc12P.Resource[ID];
   Msp430Adc12SingleChannel = Msp430Adc12P.SingleChannel[ID];
+  Msp430Adc12MultiChannel = Msp430Adc12P.MultiChannel[ID];
+  Msp430Adc12Overflow = Msp430Adc12P.Overflow[ID];
 }

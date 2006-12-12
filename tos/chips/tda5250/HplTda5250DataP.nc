@@ -123,18 +123,12 @@ implementation {
   async event void Uart.receiveDone( uint8_t* buf, uint16_t len, error_t error ) {}
   
   async command error_t HplTda5250DataControl.setToTx() {
-    if(call UartResource.isOwner() == FALSE)
-      return FAIL;
     call UartDataControl.setToTx();
-    call Uart.disableReceiveInterrupt();
     return SUCCESS;
   }
 
   async command error_t HplTda5250DataControl.setToRx() {
-    if(call UartResource.isOwner() == FALSE)
-      return FAIL;
     call UartDataControl.setToRx();
-    call Uart.enableReceiveInterrupt();
     return SUCCESS;
   }
 	

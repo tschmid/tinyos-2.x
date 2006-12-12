@@ -34,12 +34,23 @@
  * @author Phil Buonadonna
  */
 module MAX136xInternalP {
+  provides interface Init;
   provides interface HplMAX136x[uint8_t id];
+  uses interface Init as SubInit;
   uses interface HplMAX136x as ToHPLC;
+  uses interface GpioInterrupt as InterruptAlert;
 }
 
 implementation {
   uint8_t currentId;
+
+  command error_t Init.init() {
+    call SubInit.init();
+    // The Intel Mote 2 Sensorboard multiplexes the MAX136 interrupt through a NAND
+    // gate.  Need to override the edge trigger from the driver default
+    call InterruptAlert.enableRisingEdge();
+    return SUCCESS;
+  }
 
   command error_t HplMAX136x.measureChannels[uint8_t id](uint8_t *buf, uint8_t len) {
     currentId = id;
@@ -65,6 +76,8 @@ implementation {
   async event void ToHPLC.readStatusDone(error_t error, uint8_t * buf) {
     signal HplMAX136x.readStatusDone[currentId](error, buf);
   }
+
+  async event void InterruptAlert.fired() {}
 
   default async event void HplMAX136x.measureChannelsDone[uint8_t id]( error_t error, uint8_t *buf, uint8_t len ) {}
   default async event void HplMAX136x.setConfigDone[uint8_t id]( error_t error , uint8_t *cfgbuf, uint8_t len) {}

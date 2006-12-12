@@ -119,10 +119,8 @@ implementation {
       return status;
     state = S_SETSCANMODE;
 
-    configByteShadow &= ~MAX136X_CONFIG_SCAN(3);
-    configByteShadow |= MAX136X_CONFIG_SCAN(mode);
-
-    configByteShadow &= ~MAX136X_CONFIG_CS(3);
+    configByteShadow &= ~(MAX136X_CONFIG_SCAN(0x3) | MAX136X_CONFIG_CS(0xF));
+    configByteShadow |= MAX136X_CONFIG_SCAN(0x0);
     configByteShadow |= MAX136X_CONFIG_CS(chanhigh);
 
     mI2CBuffer[0] = configByteShadow;
@@ -142,7 +140,8 @@ implementation {
       return status;
     state = S_SETMONMODE;
 
-    configByteShadow &= ~MAX136X_CONFIG_CS(3);
+    configByteShadow &= ~(MAX136X_CONFIG_SCAN(0x3) | MAX136X_CONFIG_CS(0xF));
+    configByteShadow |= MAX136X_CONFIG_SCAN(0x2);
     configByteShadow |= MAX136X_CONFIG_CS(chanhigh);
 
     monitorByteShadow &= ~MAX136X_MONITOR_DELAY(7);
@@ -236,7 +235,6 @@ implementation {
   }
 
   command error_t HalMAX136xAdvanced.enableAlert(bool bEnable) {
-    uint8_t i;
     error_t status;
     if(state != S_IDLE)
       return FAIL;
@@ -250,8 +248,8 @@ implementation {
     else
       monitorByteShadow &= ~MAX136X_MONITOR_INTEN;
 
-    mI2CBuffer[1] = setupByteShadow;
-    mI2CBuffer[2] = monitorByteShadow;
+    mI2CBuffer[0] = setupByteShadow;
+    mI2CBuffer[1] = (0xF0 | monitorByteShadow);
     
     call HplMAX136x.setConfig(mI2CBuffer, 2);
     return SUCCESS;

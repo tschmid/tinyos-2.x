@@ -271,8 +271,6 @@ module Msp430RefVoltGeneratorP
     }
   }
 
-  async event void HplAdc12.memOverflow(){}
-  async event void HplAdc12.conversionTimeOverflow(){}
   async event void HplAdc12.conversionDone(uint16_t iv){}
 
   default event void RefVolt_1_5V.startDone(error_t error){}

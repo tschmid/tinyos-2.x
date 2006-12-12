@@ -39,6 +39,8 @@ configuration Msp430Adc12P
   provides {
     interface Resource[uint8_t id]; 
     interface Msp430Adc12SingleChannel as SingleChannel[uint8_t id]; 
+    interface Msp430Adc12MultiChannel as MultiChannel[uint8_t id]; 
+    interface Msp430Adc12Overflow as Overflow[uint8_t id]; 
     interface AsyncStdControl as DMAExtension[uint8_t id];
   }
 } implementation { 
@@ -47,6 +49,8 @@ configuration Msp430Adc12P
 
   Resource = Arbiter;
   SingleChannel = Msp430Adc12ImplP.SingleChannel;
+  MultiChannel= Msp430Adc12ImplP.MultiChannel;
+  Overflow = Msp430Adc12ImplP.Overflow;
   DMAExtension = Msp430Adc12ImplP.DMAExtension;
   
   Msp430Adc12ImplP.Init <- MainC;

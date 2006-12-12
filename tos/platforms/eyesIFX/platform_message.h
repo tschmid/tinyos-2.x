@@ -44,6 +44,12 @@
 #include "Serial.h"
 #include "tda5250_message.h"
 
+#ifdef TOSH_DATA_LENGTH
+#undef TOSH_DATA_LENGTH
+#endif
+
+#define TOSH_DATA_LENGTH 48
+
 typedef union message_header_t {
   tda5250_header_t radio;
   serial_header_t serial;

@@ -488,14 +488,9 @@ implementation {
   
   /* << tested >> */
   async command void HplTda5250Config.SetSleepMode() {
-    currentConfig = CONFIG_ALL_PD_POWER_DOWN(currentConfig);
-    if (currentConfig & MASK_CONFIG_CONTROL_TXRX_REGISTER) {
-      call CONFIG.set(currentConfig);
-    }
-    else {
-      call PWDDD.makeOutput();
-      call PWDDD.set();
-    }
+        currentConfig = CONFIG_ALL_PD_POWER_DOWN(currentConfig);
+	call PWDDD.makeOutput();
+        call PWDDD.set();
   }
   
   async command bool HplTda5250Config.IsTxRxPinControlled() {

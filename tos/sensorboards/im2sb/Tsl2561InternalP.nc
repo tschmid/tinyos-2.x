@@ -113,7 +113,7 @@ implementation {
     signal HplTSL256x.alertThreshold[currentId]();
   }
 
-  async event InterruptAlert.fired() {}
+  async event void InterruptAlert.fired() {}
 
   default async event void HplTSL256x.measureCh0Done[uint8_t id]( error_t error, uint16_t val ){ return; }
   default async event void HplTSL256x.measureCh1Done[uint8_t id]( error_t error, uint16_t val ){ return; }

@@ -66,6 +66,7 @@ implementation {
   HplTSL256x = Internal.HplTSL256x;
   Internal.ToHPLC -> Logic.HplTSL256x;
   Internal.SubInit -> Logic.Init;
+  Internal.InterruptAlert -> GeneralIOC.GpioInterrupt[GPIO_TSL2561_LIGHT_INT];
   SplitControl = Logic;
   MainC.SoftwareInit -> Internal;
 

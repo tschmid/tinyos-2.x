@@ -54,11 +54,9 @@ generic configuration RssiSensorVccC()
 implementation
 {
     components SensorSettingsC as Settings;
-    components RssiSensorVccP as RssiSensor;
-    components new Msp430Adc12ClientC() as AdcClient;
+    components new AdcReadNowClientC() as AdcReadNowClient;
     
-    ReadNow = RssiSensor;
-    ReadNowResource = RssiSensor;
-    RssiSensor.SubResource -> AdcClient;
-    RssiSensor.SingleChannel -> AdcClient;
+    ReadNow = AdcReadNowClient;
+    ReadNowResource = AdcReadNowClient;
+    AdcReadNowClient.AdcConfigure -> Settings.AdcConfigure[RSSI_SENSOR_VCC];
 }
