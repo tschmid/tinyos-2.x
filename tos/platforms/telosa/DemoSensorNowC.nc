@@ -30,13 +30,14 @@
  */
 
 /** 
- * DemoSensorC is a generic sensor device that provides a 16-bit
- * value. The platform author chooses which sensor actually sits
- * behind DemoSensorC, and though it's probably Voltage, Light, or
- * Temperature, there are no guarantees.
+ * DemoSensorNowC is a generic sensor device that provides a 16-bit
+ * value that can be read from async context. The platform author
+ * chooses which sensor actually sits behind DemoSensorNowC, and
+ * though it's probably Voltage, Light, or Temperature, there are no
+ * guarantees.
  *
- * This particular DemoSensorC on the telosb platform provides a
- * voltage reading, using VoltageC. 
+ * This particular DemoSensorNowC on the telosb platform provides a
+ * voltage reading, using VoltageC.
  *
  * To convert from ADC counts to actual voltage, divide this reading
  * by 4096 and multiply by 3.
@@ -46,12 +47,15 @@
  * 
  */
 
-generic configuration DemoSensorC()
+generic configuration DemoSensorNowC()
 {
-  provides interface Read<uint16_t>;
+  provides interface Resource;
+  provides interface ReadNow<uint16_t>;
 }
 implementation
 {
-  components new VoltageC() as DemoSensor;
-  Read = DemoSensor;
+  components new Msp430InternalVoltageC() as DemoSensorNow;
+
+  Resource = DemoSensorNow;
+  ReadNow = DemoSensorNow;
 }
