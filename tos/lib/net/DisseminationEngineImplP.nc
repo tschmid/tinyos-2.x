@@ -87,7 +87,6 @@ implementation {
 
   event void TrickleTimer.fired[ uint16_t key ]() {
 
-    call Leds.led2Toggle();
 
     if ( m_bufBusy ) { return; }
 
