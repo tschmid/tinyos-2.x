@@ -78,7 +78,6 @@ implementation {
   
   components new SplitControlPowerManagerC();
   SplitControlPowerManagerC.SplitControl -> HplSensirionSht11P;
-  SplitControlPowerManagerC.ArbiterInit -> Arbiter.Init;
   SplitControlPowerManagerC.ArbiterInfo -> Arbiter.ArbiterInfo;
   SplitControlPowerManagerC.ResourceController -> Arbiter.ResourceController;
 }
