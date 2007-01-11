@@ -53,14 +53,26 @@ generic configuration TempExtSensorC()
 }
 implementation
 {
-  components SensorSettingsC as Settings;
-             
+  components SensorSettingsC as Settings;  
+  
   components new AdcReadClientC() as AdcReadClient;
-  Read = AdcReadClient;
+  //Read = AdcReadClient;
   AdcReadClient.AdcConfigure -> Settings.AdcConfigure[TEMP_SENSOR_DEFAULT];
+  
   
   components new AdcReadNowClientC() as AdcReadNowClient;
   ReadNow = AdcReadNowClient;
-  ReadNowResource = AdcReadNowClient;
+  //ReadNowResource = AdcReadNowClient;
   AdcReadNowClient.AdcConfigure -> Settings.AdcConfigure[TEMP_SENSOR_DEFAULT];
+  
+  components HplMsp430GeneralIOC as MspGeneralIO;
+  components new Msp430GpioC() as TEMP;
+  TEMP -> MspGeneralIO.Port60;
+  
+  components TempExtSensorP;
+  Read = TempExtSensorP.Read;
+  TempExtSensorP.AdcRead -> AdcReadClient;
+  ReadNowResource = TempExtSensorP.ReadNowResource;
+  TempExtSensorP.AdcResource -> AdcReadNowClient;
+  TempExtSensorP.TEMP -> TEMP;
 }
