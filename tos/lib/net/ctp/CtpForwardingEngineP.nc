@@ -181,6 +181,9 @@ implementation {
   /* Tracks our parent's congestion state. */
   bool parentCongested = FALSE;
 
+  /* Threshold for congestion */
+  uint8_t congestionThreshold;
+
   /* Keeps track of whether the routing layer is running; if not,
    * it will not send packets. */
   bool running = FALSE;
@@ -234,6 +237,7 @@ implementation {
       clientPtrs[i] = clientEntries + i;
       dbg("Forwarder", "clientPtrs[%hhu] = %p\n", i, clientPtrs[i]);
     }
+    congestionThreshold = (call SendQueue.maxSize()) >> 1;
     loopbackMsgPtr = &loopbackMsg;
     lastParent = call AMPacket.address();
     seqno = 0;
@@ -835,7 +839,7 @@ implementation {
   command bool CtpCongestion.isCongested() {
     // A simple predicate for now to determine congestion state of
     // this node.
-    bool congested = (call SendQueue.size() + 2 >= call SendQueue.maxSize()) ? 
+    bool congested = (call SendQueue.size() > congestionThreshold) ? 
       TRUE : FALSE;
     return ((congested || clientCongested)?TRUE:FALSE);
   }
