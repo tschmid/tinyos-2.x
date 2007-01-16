@@ -34,6 +34,8 @@
  * @version $Revision$ $Date$
  */
 
+#include "IEEE802154.h"
+
 module CC2420PacketC {
 
   provides interface CC2420Packet;
