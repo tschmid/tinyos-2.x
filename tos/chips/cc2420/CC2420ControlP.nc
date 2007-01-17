@@ -266,9 +266,13 @@ implementation {
     }
 
     call CSN.clr();
+    call SRFOFF.strobe();
     call FSCTRL.write( ( 1 << CC2420_FSCTRL_LOCK_THR ) |
 		       ( ( (channel - 11)*5+357 ) << CC2420_FSCTRL_FREQ ) );
     call PANID.write( 0, (uint8_t*)id, sizeof( id ) );
+    call CSN.set();
+    call CSN.clr();
+    call SRXON.strobe();
     call CSN.set();
     call SyncResource.release();
     
