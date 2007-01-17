@@ -81,6 +81,7 @@ implementation {
   CC2420ControlP.IOCFG1 -> Spi.IOCFG1;
   CC2420ControlP.MDMCTRL0 -> Spi.MDMCTRL0;
   CC2420ControlP.MDMCTRL1 -> Spi.MDMCTRL1;
+  CC2420ControlP.RXCTRL1 -> Spi.RXCTRL1;
   CC2420ControlP.PANID -> Spi.PANID;
 
   components new CC2420SpiC() as SyncSpiC;

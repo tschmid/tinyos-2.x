@@ -57,6 +57,7 @@ generic configuration CC2420SpiC() {
   provides interface CC2420Register as IOCFG1;
   provides interface CC2420Register as MDMCTRL0;
   provides interface CC2420Register as MDMCTRL1;
+  provides interface CC2420Register as RXCTRL1;
   provides interface CC2420Register as TXCTRL;
 
   // ram
@@ -99,6 +100,7 @@ implementation {
   IOCFG1 = Spi.Reg[ CC2420_IOCFG1 ];
   MDMCTRL0 = Spi.Reg[ CC2420_MDMCTRL0 ];
   MDMCTRL1 = Spi.Reg[ CC2420_MDMCTRL1 ];
+  RXCTRL1 = Spi.Reg[ CC2420_RXCTRL1 ];
   TXCTRL = Spi.Reg[ CC2420_TXCTRL ];
 
   // ram

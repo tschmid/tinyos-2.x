@@ -56,6 +56,7 @@ module CC2420ControlP {
   uses interface CC2420Register as IOCFG1;
   uses interface CC2420Register as MDMCTRL0;
   uses interface CC2420Register as MDMCTRL1;
+  uses interface CC2420Register as RXCTRL1;
   uses interface CC2420Strobe as SRXON;
   uses interface CC2420Strobe as SRFOFF;
   uses interface CC2420Strobe as SXOSCOFF;
@@ -172,6 +173,13 @@ implementation {
 			   ( 1 << CC2420_MDMCTRL0_AUTOCRC ) |
 			   ( 1 << CC2420_MDMCTRL0_AUTOACK ) |
 			   ( 2 << CC2420_MDMCTRL0_PREAMBLE_LENGTH ) );
+      call RXCTRL1.write( ( 1 << CC2420_RXCTRL1_RXBPF_LOCUR ) |
+                          ( 1 << CC2420_RXCTRL1_LOW_LOWGAIN ) |
+                          ( 1 << CC2420_RXCTRL1_HIGH_HGM ) |
+                          ( 1 << CC2420_RXCTRL1_LNA_CAP_ARRAY ) |
+                          ( 1 << CC2420_RXCTRL1_RXMIX_TAIL ) |
+                          ( 1 << CC2420_RXCTRL1_RXMIX_VCM ) |
+                          ( 2 << CC2420_RXCTRL1_RXMIX_CURRENT ) );
     }
     return SUCCESS;
   }
