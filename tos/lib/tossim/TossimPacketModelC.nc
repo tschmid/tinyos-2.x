@@ -292,7 +292,7 @@ implementation {
   }
 
   event bool GainRadioModel.shouldAck(message_t* msg) {
-    if (running) {
+    if (running && !transmitting) {
       return signal Packet.shouldAck(msg);
     }
     else {
