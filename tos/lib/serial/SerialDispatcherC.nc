@@ -65,7 +65,8 @@ implementation {
 
   SerialP.SerialFrameComm -> HdlcTranslateC;
   SerialP.SerialControl -> PlatformSerialC;
-
+  //  SerialP.SerialFlush -> PlatformSerialC;
   HdlcTranslateC.UartStream -> PlatformSerialC;
+  
 
 }
