@@ -143,6 +143,25 @@ interface to the underlying serial communication. It provides the
     async event void putDone();
   }
 
+Alternatively, ``UartC`` may provide the UartStream multi-byte level
+interface. See the Low-Level I/O TEP [TEP117_] for details.
+
+Additionally, UartC provides a split-phase interface to signal when
+the UART is idle. There are situations (such as when powering down the
+usart, when switching from TX to RX on a radio with a UART data line,
+etc.) when we need explicit information that the data sent over the
+UART has actually been transmitted in full. The problem is that on
+MCUs that double-buffer UART communication (such as the msp430), a
+putDone event signifies that the UART is ready to accept another byte,
+but NOT that the UART is idle.
+
+::
+
+  interface SerialFlush {
+    async command void flush();
+    async event void flushDone();
+  }
+
 It also provides interfaces for configuring the serial port. *NOTE:
 These are not codified yet, and so working out the UART HIL seems like
 a good idea.*
@@ -439,12 +458,12 @@ no snooping capabilities.
 |
 |
 | Ben Greenstein
-| Center for Embedded Networked Sensing
-| UCLA 3563 Boelter Hall
-| Los Angeles, CA 90095-1596
+| Intel Research Seattle
+| 1100 NE 45th Street, 6th Floor
+| Seattle, WA 98105
 |
-| phone -  +1 310 206 3925
-| email - ben@cs.ucla.edu
+| phone -  +1 206 206 545 2501
+| email - benjamin.m.greenstein@intel.com
 
 6. Citations
 ====================================================================
