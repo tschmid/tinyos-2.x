@@ -125,8 +125,10 @@ implementation {
     }
     call McuPowerState.update();
   }
-  
+
   async command uint8_t SpiByte.write( uint8_t tx ) {
+    call Spi.enableSpi(TRUE);
+    call McuPowerState.update();
     call Spi.write( tx );
     while ( !( SPSR & 0x80 ) );
     return call Spi.read();
