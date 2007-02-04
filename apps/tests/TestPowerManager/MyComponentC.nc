@@ -56,7 +56,7 @@ implementation {
   PowerManager.AsyncStdControl -> MyComponentP.AsyncStdControl;
 //   PowerManager.StdControl -> MyComponentP.StdControl;
 //   PowerManager.SplitControl -> MyComponentP.SplitControl;
-  PowerManager.ResourceController -> Arbiter.ResourceController;
+  PowerManager.ResourceDefaultOwner -> Arbiter.ResourceDefaultOwner;
   PowerManager.ArbiterInfo -> Arbiter.ArbiterInfo;
 
   MyComponentP.Leds -> LedsC;

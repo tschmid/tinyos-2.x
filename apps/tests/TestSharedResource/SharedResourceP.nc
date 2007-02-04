@@ -47,7 +47,7 @@ implementation {
   ResourceRequested = Arbiter;
   ResourceConfigure = Arbiter;
   SharedResourceImplP.ArbiterInfo -> Arbiter;
-  PowerManager.ResourceController -> Arbiter;
+  PowerManager.ResourceDefaultOwner -> Arbiter;
   
   PowerManager.SplitControl -> ResourceP;
   SharedResourceImplP.ResourceOperations -> ResourceP;

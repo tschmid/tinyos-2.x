@@ -65,5 +65,5 @@ implementation
   Atm128AdcP.Atm128Calibrate -> PlatformC;
 
   PM.AsyncStdControl -> Atm128AdcP;
-  PM.ResourceController -> AdcArbiter;
+  PM.ResourceDefaultOwner -> AdcArbiter;
 }

@@ -62,7 +62,7 @@
  *
  * This component provides the Resource, ArbiterInfo, and Resource
  * Controller interfaces and uses the ResourceConfigure interface as
- * described in TEP 108.  An additional ResourceController interface is
+ * described in TEP 108.  An additional ResourceDefaultOwner interface is
  * provided to allow clients of differing Priorities to control the
  * Resource according to some policy implemented in an external
  * component. This component provides arbitration to a shared resource in
@@ -85,8 +85,8 @@ generic module FcfsPriorityArbiterC(char resourceName[]) {
   provides {
     interface Init;
     interface Resource[uint8_t id];
-    interface ResourceController as HighPriorityClient;
-    interface ResourceController as LowPriorityClient;
+    interface ResourceDefaultOwner as HighPriorityClient;
+    interface ResourceDefaultOwner as LowPriorityClient;
     interface ArbiterInfo;
   }
   uses {

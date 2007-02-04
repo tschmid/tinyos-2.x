@@ -50,23 +50,23 @@ generic module AsyncPowerManagerP() {
     interface AsyncStdControl;
 
     interface PowerDownCleanup;
-    interface ResourceController;
+    interface ResourceDefaultOwner;
     interface ArbiterInfo;
   }
 }
 implementation {
 
-  async event void ResourceController.requested() {
+  async event void ResourceDefaultOwner.requested() {
     call AsyncStdControl.start();
-    call ResourceController.release(); 
+    call ResourceDefaultOwner.release(); 
   }
 
-  async event void ResourceController.immediateRequested() {
+  async event void ResourceDefaultOwner.immediateRequested() {
     call AsyncStdControl.start();
-    call ResourceController.release();
+    call ResourceDefaultOwner.release();
   } 
 
-  async event void ResourceController.granted() {
+  async event void ResourceDefaultOwner.granted() {
     call PowerDownCleanup.cleanup();
     call AsyncStdControl.stop();
   }

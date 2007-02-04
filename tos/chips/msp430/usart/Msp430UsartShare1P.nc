@@ -57,7 +57,7 @@ implementation {
   UsartShareP.ArbiterInfo -> ArbiterC;
 
   components new AsyncStdControlPowerManagerC() as PowerManagerC;
-  PowerManagerC.ResourceController -> ArbiterC;
+  PowerManagerC.ResourceDefaultOwner -> ArbiterC;
 	
   components HplMsp430Usart1C as UsartC;
   PowerManagerC.AsyncStdControl -> UsartC;

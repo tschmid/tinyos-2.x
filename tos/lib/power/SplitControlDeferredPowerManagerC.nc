@@ -62,7 +62,7 @@ generic configuration SplitControlDeferredPowerManagerC(uint32_t delay) {
     interface SplitControl;
 
     interface PowerDownCleanup;
-    interface ResourceController;
+    interface ResourceDefaultOwner;
     interface ArbiterInfo;
   }
 }
@@ -74,7 +74,7 @@ implementation {
 
   PowerManager.PowerDownCleanup = PowerDownCleanup;
  
-  PowerManager.ResourceController = ResourceController;
+  PowerManager.ResourceDefaultOwner = ResourceDefaultOwner;
   PowerManager.ArbiterInfo = ArbiterInfo;
 
   PowerManager.TimerMilli -> TimerMilliC;

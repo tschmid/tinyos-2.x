@@ -80,7 +80,7 @@ generic configuration FcfsArbiterC(char resourceName[]) {
   provides {
     interface Resource[uint8_t id];
     interface ResourceRequested[uint8_t id];
-    interface ResourceController;
+    interface ResourceDefaultOwner;
     interface ArbiterInfo;
   }
   uses interface ResourceConfigure[uint8_t id];
@@ -94,7 +94,7 @@ implementation {
 
   Resource = Arbiter;
   ResourceRequested = Arbiter;
-  ResourceController = Arbiter;
+  ResourceDefaultOwner = Arbiter;
   ArbiterInfo = Arbiter;
   ResourceConfigure = Arbiter;
 

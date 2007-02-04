@@ -59,7 +59,7 @@ implementation {
 
   components new SplitControlDeferredPowerManagerC( 1024 ) as PowerManagerC;
   PowerManagerC.SplitControl -> SectorP;
-  PowerManagerC.ResourceController -> ArbiterC;
+  PowerManagerC.ResourceDefaultOwner -> ArbiterC;
   PowerManagerC.ArbiterInfo -> ArbiterC;
 
   components Stm25pSpiC as SpiC;
