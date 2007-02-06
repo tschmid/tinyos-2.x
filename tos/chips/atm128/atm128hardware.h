@@ -42,8 +42,12 @@
 #define _H_atmega128hardware_H
 
 #include <avr/io.h>
-#include <avr/signal.h>
+#if __AVR_LIBC_VERSION__ >= 10400UL
 #include <avr/interrupt.h>
+#else
+#include <avr/interrupt.h>
+#include <avr/signal.h>
+#endif
 #include <avr/wdt.h>
 #include <avr/pgmspace.h>
 #include "atm128const.h"
