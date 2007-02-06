@@ -467,6 +467,8 @@ no snooping capabilities.
 
 .. [TEP116] TEP 116: Packet Protocols. tinyos-2.x/doc/txt/tep116.txt
  
+.. [TEP117] TEP 117: Low-Level I/O. tinyos-2.x/doc/txt/tep117.txt
+
 .. [HDLC] International Organization For Standardization, ISO Standard 3309-1979, "Data communication - High-level data link control procedures - Frame structure", 1979.
 
 .. [RFC1662] PPP in HDLC-like Framing, Internet Engineering Task Force (IETF), 1994
