@@ -36,9 +36,12 @@ generic module RoundRobinResourceQueueC(uint8_t size) {
   }
 }
 implementation {
-  enum {NO_ENTRY = 0xFF};
+  enum {
+    NO_ENTRY = 0xFF,
+    SIZE = size ? (size - 1) / 8 + 1 : 0
+  };
 
-  uint8_t resQ[(size-1)/8 + 1];
+  uint8_t resQ[SIZE];
   uint8_t last = 0;
 
   void clearEntry(uint8_t id) {
