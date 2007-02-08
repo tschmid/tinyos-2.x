@@ -100,7 +100,7 @@ implementation {
   }
 
   void sample() {
-    call Atm128AdcSingle.getData(channel(), refVoltage(), TRUE, prescaler());
+    call Atm128AdcSingle.getData(channel(), refVoltage(), FALSE, prescaler());
   }
 
   command error_t ReadStream.postBuffer[uint8_t c](uint16_t *buf, uint16_t n) {
@@ -122,6 +122,12 @@ implementation {
   task void readStreamDone() {
     uint8_t c = client;
     uint32_t actualPeriod = call Atm128Calibrate.actualMicro(period);
+
+    atomic
+      {
+	bufferQueue[c] = NULL;
+	bufferQueueEnd[c] = &bufferQueue[c];
+      }
 
     client = NSTREAM;
     signal ReadStream.readDone[c](SUCCESS, actualPeriod);

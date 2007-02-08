@@ -80,7 +80,7 @@ implementation {
   }
 
   void sample() {
-    call Atm128AdcSingle.getData(channel(), refVoltage(), TRUE, prescaler());
+    call Atm128AdcSingle.getData(channel(), refVoltage(), FALSE, prescaler());
   }
 
   error_t startGet(uint8_t newState, uint8_t newClient) {
