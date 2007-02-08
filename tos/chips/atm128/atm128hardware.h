@@ -134,3 +134,5 @@ mcu_power_t mcombine(mcu_power_t m1, mcu_power_t m2) {
 }
 
 #endif //_H_atmega128hardware_H
+
+
