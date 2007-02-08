@@ -9,9 +9,9 @@
  * 94704.  Attention:  Intel License Inquiry.
  */
 /**
- * A simplistic beginning to providing a standard interface to the mica-family
- * 51-pin bus. Just provides the PW0-PW7 digital I/O pins and returns the
- * ADC channel number for the ADC pins.
+ * A simplistic beginning to providing a standard interface to the
+ * mica-family 51-pin bus. Just provides the PW0-PW7 and Int0-3 digital
+ * I/O pins and returns the ADC channel number for the ADC pins.
  * @author David Gay
  */
 
@@ -25,6 +25,10 @@ configuration MicaBusC {
     interface GeneralIO as PW5;
     interface GeneralIO as PW6;
     interface GeneralIO as PW7;
+    interface GeneralIO as Int0;
+    interface GeneralIO as Int1;
+    interface GeneralIO as Int2;
+    interface GeneralIO as Int3;
 
     /* Separate interfaces to allow inlining to occur */
     interface MicaBusAdc as Adc0;
@@ -48,6 +52,10 @@ implementation {
   PW5 = Pins.PortC5;
   PW6 = Pins.PortC6;
   PW7 = Pins.PortC7;
+  Int0 = Pins.PortE4;
+  Int1 = Pins.PortE5;
+  Int2 = Pins.PortE6;
+  Int3 = Pins.PortE7;
 
   Adc0 = MicaBusP.Adc0;
   Adc1 = MicaBusP.Adc1;
