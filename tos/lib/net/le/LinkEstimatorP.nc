@@ -39,7 +39,6 @@ module LinkEstimatorP {
     interface LinkEstimator;
     interface Init;
     interface Packet;
-    interface LinkSrcPacket;
   }
 
   uses {
@@ -558,11 +557,6 @@ implementation {
     return SUCCESS;
   }
 
-
-  // get the link layer source address for the incoming packet
-  command am_addr_t LinkSrcPacket.getSrc(message_t* msg) {
-    return call SubAMPacket.source(msg);
-  }
 
   // user of link estimator calls send here
   // slap the header and footer before sending the message
