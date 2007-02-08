@@ -107,7 +107,6 @@ generic module CtpRoutingEngineP(uint8_t routingTableSize, uint16_t minInterval,
         interface Receive as BeaconReceive;
         interface LinkEstimator;
         interface AMPacket;
-        interface LinkSrcPacket;
         interface SplitControl as RadioControl;
         interface Timer<TMilli> as BeaconTimer;
         interface Timer<TMilli> as RouteTimer;
@@ -477,7 +476,7 @@ implementation {
         }
         
         //need to get the am_addr_t of the source
-        from = call LinkSrcPacket.getSrc(msg);
+        from = call AMPacket.source(msg);
         rcvBeacon = (ctp_routing_header_t*)payload;
 
         congested = call CtpRoutingPacket.getOption(msg, CTP_OPT_ECN);
