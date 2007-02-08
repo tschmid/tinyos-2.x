@@ -82,6 +82,7 @@ implementation {
   
   BaseStationP.RadioSend -> Radio;
   BaseStationP.RadioReceive -> Radio.Receive;
+  BaseStationP.RadioReceive -> Radio.Snoop;
   BaseStationP.RadioPacket -> Radio;
   BaseStationP.RadioAMPacket -> Radio;
   
