@@ -11,5 +11,4 @@
 #
 push( @includes, qw(
   %T/sensorboards/mts300
-#  %T/chips/atm128/adc
 ) );
