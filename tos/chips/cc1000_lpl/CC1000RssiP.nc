@@ -100,9 +100,8 @@ implementation
   async event void ActualRssi.readDone(error_t result, uint16_t data) {
     atomic
       {
-	/* The code assumes that RSSI measurements are 10-bits 
-	   (legacy effect) */
-	signal Rssi.readDone[currentOp](result, data >> 6);
+	/* The RSSI measurements are assumed to be 10-bits */
+	signal Rssi.readDone[currentOp](result, data);
 	startNextOp();
       }
   }
