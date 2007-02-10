@@ -237,9 +237,7 @@ hardware, the sequence is platform-specific. A port of TinyOS to a
 new plaform MUST include a component PlatformC which provides
 one and only one instance of the Init interface.
 
-Generally, component intialization occurs through SoftwareInit.
-PlatformInit is for a small subset of initializations whose properties
-requires that they be performed separately. Initializations invoked
+Initializations invoked
 through PlatformC meet some or all of the following criteria:
 
 1. The initialization requires configuring hardware resources. This implies that the code is platform-specific. 
