@@ -83,7 +83,6 @@ typedef nx_struct beacon_msg {
   nx_uint16_t parent;
   nx_uint16_t cost;
   nx_uint16_t hopcount;
-  nx_uint32_t timestamp;
 } beacon_msg_t;
 
 typedef struct DBGEstEntry {
