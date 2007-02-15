@@ -10,5 +10,7 @@
 # $Id$
 #
 push( @includes, qw(
-  %T/sensorboards/mts300
+  %T/sensorboards/mts300_me
+  %T/chips/atm128/i2c
+#  %T/chips/atm128/adc
 ) );
