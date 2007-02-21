@@ -83,7 +83,7 @@ The rest of this TEP specifies:
 The HAA is the architectural basis for many TinyOS 2.0 documentary
 TEPs, e.g. [TEP101]_, [TEP102]_, [TEP103]_ and so forth. Those TEPs
 focus on the hardware abstraction for a particular hardware module,
-while [TEP117]_ and [TEP115]_ explain how power management is
+and [TEP112]_ and [TEP115]_ explain how power management is
 realized.
 
 
