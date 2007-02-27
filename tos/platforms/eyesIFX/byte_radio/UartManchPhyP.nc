@@ -75,7 +75,7 @@ implementation
     } phyState_t;
 
 #define PREAMBLE_LENGTH   4
-#define BYTE_TIME         18
+#define BYTE_TIME         9
 #define PREAMBLE_BYTE     0x55
 #define SYNC_BYTE         0xFF
 #define SFD_BYTE          0x50
