@@ -57,7 +57,8 @@ implementation {
 	   as CPU settings, counters, etc. After the hardware is ready,
 	   initialize the requisite software components and start
 	   execution.*/
-    
+	platform_bootstrap();
+	
 	call Scheduler.init(); 
     
 	/* Initialize the platform. Then spin on the Scheduler, passing

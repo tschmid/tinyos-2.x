@@ -162,6 +162,7 @@ Layer (TEP 2) SHOULD wire to MainC and not RealMainP::
   implementation {
     int main() __attribute__ ((C, spontaneous)) {
       atomic {
+        platform_bootstrap();
         call Scheduler.init();
         call PlatformInit.init();
         while (call Scheduler.runNextTask());
