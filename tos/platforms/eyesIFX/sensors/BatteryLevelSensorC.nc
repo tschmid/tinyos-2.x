@@ -48,10 +48,10 @@ implementation
              
     components new AdcReadClientC() as AdcReadClient;
     Read = AdcReadClient;
-    AdcReadClient.AdcConfigure -> Settings.AdcConfigure[INTERNAL_VOLTAGE_REF_2_5V];
+    AdcReadClient.AdcConfigure -> Settings.AdcConfigure[INTERNAL_VOLTAGE_REF_2_5V_LOW_FREQ];
   
     components new AdcReadNowClientC() as AdcReadNowClient;
     ReadNow = AdcReadNowClient;
     ReadNowResource = AdcReadNowClient;
-    AdcReadNowClient.AdcConfigure -> Settings.AdcConfigure[INTERNAL_VOLTAGE_REF_2_5V];
+    AdcReadNowClient.AdcConfigure -> Settings.AdcConfigure[INTERNAL_VOLTAGE_REF_2_5V_LOW_FREQ];
 }
