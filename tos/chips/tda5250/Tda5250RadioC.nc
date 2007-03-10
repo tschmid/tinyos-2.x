@@ -46,6 +46,7 @@ configuration Tda5250RadioC {
     interface Tda5250Control;
     interface ResourceRequested;
     interface RadioByteComm;
+    interface ClkDiv;
   }
 }
 implementation {
@@ -63,6 +64,7 @@ implementation {
   ResourceRequested = Tda5250RadioP;
   RadioByteComm = Tda5250RadioP;
   SplitControl = Tda5250RadioP;
+  ClkDiv = Tda5250RadioP;
 
   Tda5250RadioP.DelayTimer -> DelayTimer;
   
