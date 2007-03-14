@@ -31,31 +31,32 @@
 #include "I2C.h"
 configuration MicDeviceP {
   provides {
-    interface Init;
-    interface StdControl;
-    interface Mic;
-    interface MicInterrupt;
-    interface ResourceConfigure;
+    interface Resource[uint8_t client];
     interface Atm128AdcConfig;
+    interface MicSetting;
   }
 }
 implementation {
   components MicP, MicaBusC, HplAtm128GeneralIOC as Pins,
-      HplAtm128InterruptC as IntPins, LedsC, NoLedsC,
-  		new Atm128I2CMasterC() as I2CPot;
+    HplAtm128InterruptC as IntPins,
+		new Atm128I2CMasterC() as I2CPot,
+		new TimerMilliC() as WarmupTimer,
+    new RoundRobinArbiterC(UQ_MIC_RESOURCE) as Arbiter,
+    new SplitControlPowerManagerC() as PowerManager;
 
-	Init = MicP;
-	StdControl = MicP;
-	ResourceConfigure = MicP;
+  Resource = Arbiter;
 	Atm128AdcConfig = MicP;
-	Mic = MicP;
-	MicInterrupt = MicP;
+	MicSetting = MicP;
+	
+  PowerManager.ResourceDefaultOwner -> Arbiter;
+  PowerManager.ArbiterInfo -> Arbiter;
+  PowerManager.SplitControl -> MicP;
 
+  MicP.Timer -> WarmupTimer;
   MicP.MicPower  -> MicaBusC.PW3;
   MicP.MicMuxSel -> MicaBusC.PW6;
   MicP.MicAdc -> MicaBusC.Adc2;
   MicP.I2CPacket -> I2CPot;
-  MicP.Resource -> I2CPot;
+  MicP.I2CResource -> I2CPot;
   MicP.AlertInterrupt -> IntPins.Int7;
-  MicP.DebugLeds -> NoLedsC;
 }

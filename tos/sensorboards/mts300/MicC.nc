@@ -31,20 +31,17 @@
 #include "mts300.h"
 
 generic configuration MicC() {
-  provides interface Init;
-  provides interface StdControl;
   provides interface Read<uint16_t>;
-  provides interface Mic;
-  provides interface MicInterrupt;
+  provides interface MicSetting;
 }
 implementation {
-  components new AdcReadClientC(), MicDeviceP;
+  enum {
+    ID = unique(UQ_MIC_RESOURCE)
+  };
+  components MicReadP, MicDeviceP, new AdcReadClientC();
 
-  Init = MicDeviceP;
-	StdControl = MicDeviceP;
-  Read = AdcReadClientC;
-  Mic = MicDeviceP;
-  MicInterrupt = MicDeviceP;
-  AdcReadClientC.Atm128AdcConfig -> MicDeviceP;
-  AdcReadClientC.ResourceConfigure -> MicDeviceP;
+  Read = MicReadP.Read[ID];
+  MicReadP.ActualRead[ID] -> AdcReadClientC;
+  AdcReadClientC.Atm128AdcConfig -> MicDeviceP.Atm128AdcConfig;
+  MicSetting = MicDeviceP;
 }

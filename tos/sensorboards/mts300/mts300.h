@@ -35,8 +35,12 @@
 #define SOUNDER 1
 #endif
 
-#define MTS3X0_PHOTO_TEMP "mts300.photo.temp"
-#define MTS3X0_MAG_RESOURCE "mts300.mag"
+#define UQ_ACCEL_RESOURCE "mts300.accel"
+#define UQ_PHOTO_RESOURCE "mts300.photo"
+#define UQ_TEMP_RESOURCE "mts300.temp"
+#define UQ_PHOTOTEMP_RESOURCE "mts300.phototemp"
+#define UQ_MIC_RESOURCE "mts300.microphone"
+#define UQ_MAG_RESOURCE "mts300.mag"
 
 enum
 {
