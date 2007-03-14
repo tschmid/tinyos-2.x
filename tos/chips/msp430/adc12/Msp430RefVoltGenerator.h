@@ -42,6 +42,6 @@
 // Delay before generator is switched off after it has been stopped (in ms). 
 // This avoids having to wait the 17ms in case the generator is needed again
 // shortly after it has been stopped (value may be modified).
-#define SWITCHOFF_INTERVAL 100
+#define SWITCHOFF_INTERVAL 20
 
 #endif
