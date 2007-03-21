@@ -296,6 +296,14 @@ use a QueueC (found in tos/system) to store pending packet pointers
 and serialize them onto sending interface, or they can introduce
 a new sending interface that supports multiple pending transmissions.
 
+The cancel command allows a sender to cancel the current transmission.
+A call to cancel when there is no pending sendDone event MUST return FAIL.
+If there is a pending sendDone event and the cancel returns SUCCESS, then
+the packet layer MUST NOT transmit the packet and MUST signal sendDone
+with ECANCEL as its error code. If there is a pending sendDone event
+and cancel returns FAIL, then sendDone SHOULD occur as if the cancel
+was not called. 
+
 2.3 Receive interface
 --------------------------------------------------------------------
 
