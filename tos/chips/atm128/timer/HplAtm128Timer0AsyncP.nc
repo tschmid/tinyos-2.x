@@ -199,15 +199,15 @@ implementation
     ASSR |= 1 << AS0;
   }
 
-  async command bool TimerAsync.controlBusy() {
+  async command int TimerAsync.controlBusy() {
     return (ASSR & (1 << TCR0UB)) != 0;
   }
 
-  async command bool TimerAsync.compareBusy() {
+  async command int TimerAsync.compareBusy() {
     return (ASSR & (1 << OCR0UB)) != 0;
   }
 
-  async command bool TimerAsync.countBusy() {
+  async command int TimerAsync.countBusy() {
     return (ASSR & (1 << TCN0UB)) != 0;
   }
 }

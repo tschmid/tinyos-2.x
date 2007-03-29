@@ -35,18 +35,18 @@ interface HplAtm128TimerAsync
    * Check if control register TCCR0 is busy (should not be updated if true)
    * @return TRUE if TCCR0 is busy, FALSE otherwise (can be updated)
    */
-  async command bool controlBusy();
+  async command int controlBusy();
 
   /**
    * Check if compare register OCR0 is busy (should not be updated if true)
    * @return TRUE if OCR0 is busy, FALSE otherwise (can be updated)
    */
-  async command bool compareBusy();
+  async command int compareBusy();
 
   /**
    * Check if current timer value (TCNT0) is busy (should not be updated if true)
    * @return TRUE if TCNT0 is busy, FALSE otherwise (can be updated)
    */
-  async command bool countBusy();
+  async command int countBusy();
 
 }
