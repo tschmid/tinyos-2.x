@@ -118,7 +118,7 @@ typedef union
     uint8_t as0    : 1;  //!< Asynchronous Timer/Counter (off=CPU,on=32KHz osc)
     uint8_t rsvd   : 4;  //!< Reserved
   } bits;
-} Atm128_ASSR_t;
+} Atm128Assr_t;
 
 /* Timer/Counter Interrupt Mask Register */
 typedef union
