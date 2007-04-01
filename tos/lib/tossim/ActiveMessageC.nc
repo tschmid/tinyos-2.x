@@ -47,7 +47,9 @@ configuration ActiveMessageC {
 implementation {
   components TossimActiveMessageP as AM;
   components TossimPacketModelC as Network;
-  components UscGainInterferenceModelC as Model;
+
+  components CpmModelC as Model;
+
   components ActiveMessageAddressC as Address;
   components MainC;
   

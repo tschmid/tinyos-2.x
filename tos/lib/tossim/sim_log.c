@@ -298,10 +298,10 @@ void sim_log_error_clear(uint16_t id, char* string, const char* format, ...) {
 static unsigned int sim_log_hash(void* key) {
   char* str = (char*)key;
   unsigned int hashVal = 0;
-  int c;
+  int hashChar;
   
-  while ((c = *str++))
-    hashVal = c + (hashVal << 6) + (hashVal << 16) - hashVal;
+  while ((hashChar = *str++))
+    hashVal = hashChar + (hashVal << 6) + (hashVal << 16) - hashVal;
   
   return hashVal;
 }

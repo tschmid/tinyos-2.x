@@ -38,6 +38,8 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
+#include <sim_noise.h> //added by HyungJune Lee
+
 static sim_time_t sim_ticks;
 static unsigned long current_node;
 static int sim_seed;
@@ -48,6 +50,7 @@ void sim_init() __attribute__ ((C, spontaneous)) {
   sim_queue_init();
   sim_log_init();
   sim_log_commit_change();
+  sim_noise_init(); //added by HyungJune Lee
 
   {
     struct timeval tv;

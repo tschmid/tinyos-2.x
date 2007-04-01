@@ -92,6 +92,10 @@ class Mote {
   void turnOn();
   void setID(unsigned long id);  
 
+  void addNoiseTraceReading(int val);
+  void createNoiseModel();
+  int generateNoise(int when);
+  
   Variable* getVariable(char* name);
   
  private:
