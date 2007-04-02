@@ -35,6 +35,7 @@
  * @author Jonathan Hui <jhui@archrock.com>
  * @version $Revision$ $Date$
  */
+#include "Stm25p.h"
 
 interface StorageMap {
 
