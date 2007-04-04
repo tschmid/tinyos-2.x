@@ -48,7 +48,7 @@ implementation
 
   /* Finally, instantiate and wire a collector (to receive theft alerts) and
      a serial sender (to send the alerts to the PC) */
-  components CollectionC, new SerialAMSenderC(AM_ALERTS) as AlertsForwarder;
+  components CollectionC, new SerialAMSenderC(AM_ALERT) as AlertsForwarder;
 
   AntiTheftRootC.CollectionControl -> CollectionC;
   AntiTheftRootC.RootControl -> CollectionC;
