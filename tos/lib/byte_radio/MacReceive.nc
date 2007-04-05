@@ -62,5 +62,5 @@ interface MacReceive {
    *                  received packet.
    */
   async event message_t* receiveDone(message_t* msg);
-  
+
 }

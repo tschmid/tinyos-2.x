@@ -137,9 +137,8 @@ implementation {
         switch(mode) {
             case RADIO_MODE_ON_TRANSITION:
                 call HplTda5250Config.reset();
-                // call HplTda5250Config.SetRFPower(240);
+                call HplTda5250Config.SetRFPower(INITIAL_RF_POWER);
                 // call HplTda5250Config.SetClockOnDuringPowerDown();
-                call HplTda5250Config.SetRFPower(255);
                 call ConfigResource.release();
                 atomic radioMode = RADIO_MODE_ON;
                 post startDoneTask();

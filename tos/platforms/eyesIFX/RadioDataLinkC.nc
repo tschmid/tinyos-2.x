@@ -87,4 +87,6 @@ implementation
     PacketSerializer.PhyPacketRx -> UartPhy.PhyPacketRx;
     
     UartPhy.RadioByteComm -> Radio.RadioByteComm;
+
+    components SmclkManagerC;
 }
