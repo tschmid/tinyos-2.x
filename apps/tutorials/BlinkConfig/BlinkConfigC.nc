@@ -52,26 +52,42 @@ implementation {
   enum {
     CONFIG_ADDR = 0,
     CONFIG_VERSION = 1,
-    DEFAULT_PERIOD = 1024
+    DEFAULT_PERIOD = 1024,
+    MIN_PERIOD     = 128,
+    MAX_PERIOD     = 1024
   };
 
   uint8_t state;
   config_t conf;
 
   event void Boot.booted() {
+    conf.period = DEFAULT_PERIOD;
+
     if (call Mount.mount() != SUCCESS) {
       // Handle failure
     }
   }
 
   event void Mount.mountDone(error_t error) {
-    if (error != SUCCESS) {
-      // Handle failure
+    if (error == SUCCESS) {
+      if (call Config.valid() == TRUE) {
+        if (call Config.read(CONFIG_ADDR, &conf, sizeof(conf)) != SUCCESS) {
+          // Handle failure
+	}
+      }
+      else {
+	// Invalid volume.  Commit to make valid.
+	call Leds.led1On();
+	if (call Config.commit() == SUCCESS) {
+	  call Leds.led0On();
+	}
+	else {
+	  // Handle failure
+	}
+      }
     }
     else{
-      if (call Config.read(CONFIG_ADDR, &conf, sizeof(conf)) != SUCCESS) {
-	// Handle failure
-      }
+      // Handle failure
     }
   }
 
@@ -81,7 +97,9 @@ implementation {
     if (err == SUCCESS) {
       memcpy(&conf, buf, len);
       if (conf.version == CONFIG_VERSION) {
-        conf.period = conf.period > 128 ? conf.period/2 : DEFAULT_PERIOD;
+        conf.period = conf.period/2;
+	conf.period = conf.period > MAX_PERIOD ? MAX_PERIOD : conf.period;
+        conf.period = conf.period < MIN_PERIOD ? MAX_PERIOD : conf.period;
       }
       else {
         // Version mismatch. Restore default.
