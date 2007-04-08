@@ -74,14 +74,15 @@ implementation {
       return ATM128_POWER_IDLE;
     }
     // SPI (Radio stack on mica/micaZ
-    else if (bit_is_set(SPCR, SPIE)) { 
+    else if (bit_is_set(SPCR, SPE)) { 
       return ATM128_POWER_IDLE;
     }
-    // UARTs are active
-    else if (UCSR0B & (1 << TXCIE | 1 << RXCIE)) { // UART
+    // A UART is active
+    else if ((UCSR0B | UCSR1B) & (1 << TXCIE | 1 << RXCIE)) { // UART
       return ATM128_POWER_IDLE;
     }
-    else if (UCSR1B & (1 << TXCIE | 1 << RXCIE)) { // UART
+    // I2C (Two-wire) is active
+    else if (bit_is_set(TWCR, TWEN)){
       return ATM128_POWER_IDLE;
     }
     // ADC is enabled
