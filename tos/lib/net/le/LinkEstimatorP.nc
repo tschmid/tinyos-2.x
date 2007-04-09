@@ -246,14 +246,15 @@ implementation {
 
     if (ne->data_success == 0) {
       // if there were no successful packet transmission in the
-      // last window, assign a large EETX estimate
-      estETX = LARGE_EETX_VALUE;
+      // last window, our current estimate is the number of failed
+      // transmissions
+      estETX = (ne->data_total - 1)* 10;
     } else {
       estETX = (10 * ne->data_total) / ne->data_success - 10;
+      ne->data_success = 0;
+      ne->data_total = 0;
     }
     updateEETX(ne, estETX);
-    ne->data_success = 0;
-    ne->data_total = 0;
   }
 
 
