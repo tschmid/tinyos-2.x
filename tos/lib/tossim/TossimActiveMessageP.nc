@@ -62,6 +62,7 @@ implementation {
 					  uint8_t len) {
     error_t err;
     tossim_header_t* header = getHeader(amsg);
+    dbg("AM", "AM: Sending packet (id=%hhu, len=%hhu) to %hu\n", id, len, addr);
     header->type = id;
     header->dest = addr;
     header->src = call AMPacket.address();
