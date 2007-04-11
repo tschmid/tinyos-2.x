@@ -133,6 +133,8 @@ endef
 -include $(TINYOS_MAKELOCAL)
 -include $(TINYOS_MAKEDEFAULTS)
 
+PLATFORMDIR ?= $(TOSDIR)/platforms/$(PLATFORM)
+
 #  Mark TOSMAKE_PATH with a + so that they're not searched for by TOSMake_find.
 $(foreach incdir,$(addprefix +,$(TOSMAKE_PATH)),$(call TOSMake_include_dir,$(incdir)))
 

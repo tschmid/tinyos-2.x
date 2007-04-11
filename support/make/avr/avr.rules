@@ -63,7 +63,7 @@ ifneq ($(wildcard $(VOLUMEFILE)), )
 exe0: $(BUILDDIR)/StorageVolumes.h
 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
-	tos-storage-at45db <$(VOLUMEFILE) >$@
+	tos-storage-at45db $(PLATFORMDIR) <$(VOLUMEFILE) >$@ || rm -f $@
 
 PFLAGS += -I$(BUILDDIR)
 endif
