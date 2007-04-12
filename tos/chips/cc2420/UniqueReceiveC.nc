@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2006 Arch Rock Corporation
+ * Copyright (c) 2005-2006 Rincon Research Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the
  *   distribution.
- * - Neither the name of the Arch Rock Corporation nor the names of
+ * - Neither the name of the Rincon Research Corporation nor the names of
  *   its contributors may be used to endorse or promote products derived
  *   from this software without specific prior written permission.
  *
@@ -19,7 +19,7 @@
  * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
  * FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE
- * ARCHED ROCK OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * RINCON RESEARCH OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -28,50 +28,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE
  */
-
+ 
 /**
- * Implementation of the receive path for the ChipCon CC2420 radio.
- *
- * @author Jonathan Hui <jhui@archrock.com>
- * @version $Revision$ $Date$
+ * This layer keeps a history of the past RECEIVE_HISTORY_SIZE received messages
+ * If the source address and dsn number of a newly received message matches
+ * our recent history, we drop the message because we've already seen it.
+ * This should sit at the bottom of the stack
+ * @author David Moss
  */
-
-configuration CC2420ReceiveC {
-
-  provides interface StdControl;
-  provides interface CC2420Receive;
-  provides interface Receive;
-
+ 
+configuration UniqueReceiveC {
+  provides {
+    interface Receive;
+    interface Receive as DuplicateReceive;
+  }
+  
+  uses {
+    interface Receive as SubReceive;
+  }
 }
 
 implementation {
-  components MainC;
-  components CC2420ReceiveP;
-  components CC2420PacketC;
-  components ActiveMessageAddressC;
-  components new CC2420SpiC() as Spi;
-
-  components HplCC2420PinsC as Pins;
-  components HplCC2420InterruptsC as InterruptsC;
-
-  components LedsC as Leds;
-  CC2420ReceiveP.Leds -> Leds;
-
-  StdControl = CC2420ReceiveP;
-  CC2420Receive = CC2420ReceiveP;
-  Receive = CC2420ReceiveP;
-
-  MainC.SoftwareInit -> CC2420ReceiveP;
+  components UniqueReceiveP,
+      CC2420PacketC,
+      MainC;
   
-  CC2420ReceiveP.CSN -> Pins.CSN;
-  CC2420ReceiveP.FIFO -> Pins.FIFO;
-  CC2420ReceiveP.FIFOP -> Pins.FIFOP;
-  CC2420ReceiveP.InterruptFIFOP -> InterruptsC.InterruptFIFOP;
-  CC2420ReceiveP.SpiResource -> Spi;
-  CC2420ReceiveP.RXFIFO -> Spi.RXFIFO;
-  CC2420ReceiveP.SFLUSHRX -> Spi.SFLUSHRX;
-  CC2420ReceiveP.SACK -> Spi.SACK;
-  CC2420ReceiveP.CC2420Packet -> CC2420PacketC;
-  CC2420ReceiveP.amAddress -> ActiveMessageAddressC;
-
+  Receive = UniqueReceiveP.Receive;
+  DuplicateReceive = UniqueReceiveP.DuplicateReceive;
+  SubReceive = UniqueReceiveP.SubReceive;
+      
+  MainC.SoftwareInit -> UniqueReceiveP;
+  
+  UniqueReceiveP.CC2420Packet -> CC2420PacketC;
+  
 }
+

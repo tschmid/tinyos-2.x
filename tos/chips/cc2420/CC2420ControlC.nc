@@ -41,24 +41,27 @@
 
 configuration CC2420ControlC {
 
-  provides interface Init;
   provides interface Resource;
   provides interface CC2420Config;
   provides interface CC2420Power;
-
-  uses interface AMPacket;
-
+  provides interface Read<uint16_t> as ReadRssi;
+  
 }
 
 implementation {
   
   components CC2420ControlP;
-  Init = CC2420ControlP;
   Resource = CC2420ControlP;
   CC2420Config = CC2420ControlP;
   CC2420Power = CC2420ControlP;
-  AMPacket = CC2420ControlP;
+  ReadRssi = CC2420ControlP;
 
+  components MainC;
+  MainC.SoftwareInit -> CC2420ControlP;
+  
+  components CC2420ActiveMessageC;
+  CC2420ControlP.AMPacket -> CC2420ActiveMessageC;
+  
   components AlarmMultiplexC as Alarm;
   CC2420ControlP.StartupTimer -> Alarm;
 
@@ -81,14 +84,15 @@ implementation {
   CC2420ControlP.IOCFG1 -> Spi.IOCFG1;
   CC2420ControlP.MDMCTRL0 -> Spi.MDMCTRL0;
   CC2420ControlP.MDMCTRL1 -> Spi.MDMCTRL1;
-  CC2420ControlP.RXCTRL1 -> Spi.RXCTRL1;
   CC2420ControlP.PANID -> Spi.PANID;
+  CC2420ControlP.RXCTRL1 -> Spi.RXCTRL1;
+  CC2420ControlP.RSSI  -> Spi.RSSI;
 
   components new CC2420SpiC() as SyncSpiC;
   CC2420ControlP.SyncResource -> SyncSpiC;
 
-  components LedsC as Leds;
-  CC2420ControlP.Leds -> Leds;
+  components new CC2420SpiC() as RssiResource;
+  CC2420ControlP.RssiResource -> RssiResource;
 
 }
 

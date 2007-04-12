@@ -42,46 +42,45 @@
 configuration CC2420CsmaC {
 
   provides interface SplitControl;
-
   provides interface Send;
   provides interface Receive;
-
-  uses interface AMPacket;
+  provides interface RadioBackoff[am_id_t amId];
 
 }
 
 implementation {
 
   components CC2420CsmaP as CsmaP;
-
+  RadioBackoff = CsmaP;
   SplitControl = CsmaP;
   Send = CsmaP;
-  AMPacket = CsmaP;
 
+  components MainC;
+  MainC.SoftwareInit -> CsmaP;
+  
+  components CC2420ActiveMessageC;
+  CsmaP.AMPacket -> CC2420ActiveMessageC;
+  
   components CC2420ControlC;
-  AMPacket = CC2420ControlC;
   CsmaP.Resource -> CC2420ControlC;
   CsmaP.CC2420Power -> CC2420ControlC;
 
   components CC2420TransmitC;
-
   CsmaP.SubControl -> CC2420TransmitC;
   CsmaP.CC2420Transmit -> CC2420TransmitC;
-  CsmaP.CsmaBackoff -> CC2420TransmitC;
+  CsmaP.SubBackoff -> CC2420TransmitC;
 
   components CC2420ReceiveC;
   Receive = CC2420ReceiveC;
   CsmaP.SubControl -> CC2420ReceiveC;
 
+  components CC2420PacketC;
+  CsmaP.CC2420Packet -> CC2420PacketC;
+  
   components RandomC;
   CsmaP.Random -> RandomC;
 
   components LedsC as Leds;
   CsmaP.Leds -> Leds;
-
-  components MainC;
-  MainC.SoftwareInit -> CsmaP;
-  MainC.SoftwareInit -> CC2420ControlC;
-  MainC.SoftwareInit -> CC2420TransmitC;
-  MainC.SoftwareInit -> CC2420ReceiveC;
+  
 }
