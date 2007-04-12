@@ -35,6 +35,7 @@
  */
 
 #include "CC2420.h"
+#include "AM.h"
 
 configuration CC2420ActiveMessageC {
   provides {
