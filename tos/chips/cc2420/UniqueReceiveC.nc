@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005-2006 Arch Rock Corporation
+ * Copyright (c) 2005-2006 Rincon Research Corporation
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  *   notice, this list of conditions and the following disclaimer in the
  *   documentation and/or other materials provided with the
  *   distribution.
- * - Neither the name of the Arch Rock Corporation nor the names of
+ * - Neither the name of the Rincon Research Corporation nor the names of
  *   its contributors may be used to endorse or promote products derived
  *   from this software without specific prior written permission.
  *
@@ -19,7 +19,7 @@
  * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
  * FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE
- * ARCHED ROCK OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * RINCON RESEARCH OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -28,38 +28,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE
  */
-
+ 
 /**
- * HAL abstraction for accessing theRAM of a ChipCon CC2420 radio.
- *
- * @author Jonathan Hui <jhui@archrock.com>
- * @version $Revision: 1.5 $ $Date: 2007/04/12 17:11:12 $
+ * This layer keeps a history of the past RECEIVE_HISTORY_SIZE received messages
+ * If the source address and dsn number of a newly received message matches
+ * our recent history, we drop the message because we've already seen it.
+ * This should sit at the bottom of the stack
+ * @author David Moss
  */
-
-#include "CC2420.h"
-
-interface CC2420Ram {
-
-  /**
-   * Read data from a RAM. This operation is sychronous.
-   *
-   * @param offset within the field.
-   * @param data a pointer to the receive buffer.
-   * @param length number of bytes to read.
-   * @return status byte returned when sending the last byte
-   * of the SPI transaction.
-   */
-  async command cc2420_status_t read( uint8_t offset, uint8_t* data, uint8_t length );
-
-  /**
-   * Write data to RAM. This operation is sychronous.
-   *
-   * @param offset within the field.
-   * @param data a pointer to the send buffer.
-   * @param length number of bytes to write.
-   * @return status byte returned when sending the last address byte
-   * of the SPI transaction.
-   */
-  async command cc2420_status_t write( uint8_t offset, uint8_t* data, uint8_t length );
-
+ 
+configuration UniqueReceiveC {
+  provides {
+    interface Receive;
+    interface Receive as DuplicateReceive;
+  }
+  
+  uses {
+    interface Receive as SubReceive;
+  }
 }
+
+implementation {
+  components UniqueReceiveP,
+      CC2420PacketC,
+      MainC;
+  
+  Receive = UniqueReceiveP.Receive;
+  DuplicateReceive = UniqueReceiveP.DuplicateReceive;
+  SubReceive = UniqueReceiveP.SubReceive;
+      
+  MainC.SoftwareInit -> UniqueReceiveP;
+  
+  UniqueReceiveP.CC2420Packet -> CC2420PacketC;
+  
+}
+
