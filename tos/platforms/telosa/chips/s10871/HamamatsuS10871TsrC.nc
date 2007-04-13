@@ -38,6 +38,7 @@
  */
 
 generic configuration HamamatsuS10871TsrC() {
+  provides interface DeviceMetadata;
   provides interface Read<uint16_t>;
   provides interface ReadStream<uint16_t>;
 }
@@ -49,6 +50,7 @@ implementation {
   ReadStream = AdcReadStreamClientC;
 
   components HamamatsuS10871TsrP;
+  DeviceMetadata = HamamatsuS10871TsrP;
   AdcReadClientC.AdcConfigure -> HamamatsuS10871TsrP;
   AdcReadStreamClientC.AdcConfigure -> HamamatsuS10871TsrP;
 }

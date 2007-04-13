@@ -38,6 +38,7 @@
  */
 
 generic configuration HamamatsuS1087ParC() {
+  provides interface DeviceMetadata;
   provides interface Read<uint16_t>;
   provides interface ReadStream<uint16_t>;
 }
@@ -49,6 +50,7 @@ implementation {
   ReadStream = AdcReadStreamClientC;
 
   components HamamatsuS1087ParP;
+  DeviceMetadata = HamamatsuS1087ParP;
   AdcReadClientC.AdcConfigure -> HamamatsuS1087ParP;
   AdcReadStreamClientC.AdcConfigure -> HamamatsuS1087ParP;
 }

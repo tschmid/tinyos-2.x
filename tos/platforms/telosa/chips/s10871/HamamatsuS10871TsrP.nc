@@ -40,6 +40,7 @@
  */
 
 module HamamatsuS10871TsrP {
+  provides interface DeviceMetadata;
   provides interface AdcConfigure<const msp430adc12_channel_config_t*>;
 }
 implementation {
@@ -54,6 +55,8 @@ implementation {
     sampcon_ssel: SAMPCON_SOURCE_SMCLK,
     sampcon_id: SAMPCON_CLOCK_DIV_1
   };
+
+  command uint8_t DeviceMetadata.getSignificantBits() { return 12; }
   
   async command const msp430adc12_channel_config_t* AdcConfigure.getConfiguration() {
     return &config;

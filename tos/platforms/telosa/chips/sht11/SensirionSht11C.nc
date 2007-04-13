@@ -44,13 +44,17 @@
 
 generic configuration SensirionSht11C() {
   provides interface Read<uint16_t> as Temperature;
+  provides interface DeviceMetadata as TemperatureMetadata;
   provides interface Read<uint16_t> as Humidity;
+  provides interface DeviceMetadata as HumidityMetadata;
 }
 implementation {
   components new SensirionSht11ReaderP();
 
   Temperature = SensirionSht11ReaderP.Temperature;
+  TemperatureMetadata = SensirionSht11ReaderP.TemperatureMetadata;
   Humidity = SensirionSht11ReaderP.Humidity;
+  HumidityMetadata = SensirionSht11ReaderP.HumidityMetadata;
 
   components HalSensirionSht11C;
 
