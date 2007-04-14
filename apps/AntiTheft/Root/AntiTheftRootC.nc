@@ -29,6 +29,7 @@ module AntiTheftRootC
     interface Receive as SettingsReceive;
 
     interface StdControl as CollectionControl;
+    interface StdControl as DisseminationControl;
     interface RootControl;
     interface Receive as AlertsReceive;
     interface AMSend as AlertsForward;
@@ -55,6 +56,7 @@ implementation
     if (error == SUCCESS)
       {
 	call LowPowerListening.setLocalDutyCycle(200);
+	call DisseminationControl.start();
 	call CollectionControl.start();
 	call RootControl.setRoot();
       }

@@ -38,6 +38,8 @@ implementation
   AntiTheftRootC.LowPowerListening -> Radio;
   AntiTheftRootC.Leds -> LedsC;
 
+  components DisseminationC;
+  AntiTheftRootC.DisseminationControl -> DisseminationC;
   /* Next, instantiate and wire a disseminator (to send settings) and a
      serial receiver (to receive settings from the PC) */
   components new DisseminatorC(settings_t, DIS_SETTINGS),

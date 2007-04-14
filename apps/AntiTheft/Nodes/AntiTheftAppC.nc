@@ -46,9 +46,11 @@ implementation
   AntiTheftC.ReadStream -> AccelXStreamC;
   AntiTheftC.Mts300Sounder -> SounderC;
 
-  /* Instantiate and wire our settings dissemination service */
-  components new DisseminatorC(settings_t, DIS_SETTINGS),
+  components DisseminationC;
+  AntiTheftC.DisseminationControl -> DisseminationC;
 
+  /* Instantiate and wire our settings dissemination service */
+  components new DisseminatorC(settings_t, DIS_SETTINGS);
   AntiTheftC.SettingsValue -> DisseminatorC;
 
   /* Instantiate and wire our collection service for theft alerts */
