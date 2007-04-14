@@ -33,40 +33,20 @@
  */
 
 /**
- * The DisseminatorC component holds and synchronizes a single value
- * of a chosen type, and identifies that value by a chosen 16-bit key.
- * Different nodes should use the same key for the same value.
+ * The DisseminationC component is the top-level interface to the
+ * dissemination protocol. StdControl controls all of the trickle
+ * timers used for all of the keys. 
  *
  * See TEP118 - Dissemination for details.
  * 
- * @param t the type of the object that will be disseminated
- * @param key the 16-bit identifier of the disseminated object
- *
  * @author Gilman Tolle <gtolle@archrock.com>
- * @version $Revision: 1.5 $ $Date: 2007/04/14 00:31:29 $
+ * @version $Revision: 1.1 $
  */
 
-generic configuration DisseminatorC(typedef t, uint16_t key) {
-  provides interface DisseminationValue<t>;
-  provides interface DisseminationUpdate<t>;
+configuration DisseminationC {
+  provides interface StdControl;
 }
 implementation {
-  enum {
-    TIMER_ID = unique("DisseminationTimerC.TrickleTimer")
-  };
-
-  components new DisseminatorP(t);
-  DisseminationValue = DisseminatorP;
-  DisseminationUpdate = DisseminatorP;
-
   components DisseminationEngineP;
-  DisseminationEngineP.DisseminationCache[key] -> DisseminatorP;
-  DisseminationEngineP.DisseminatorControl[TIMER_ID] -> DisseminatorP;
-
-  components DisseminationTimerP;
-  DisseminationEngineP.TrickleTimer[key] -> 
-    DisseminationTimerP.TrickleTimer[TIMER_ID];
-
-  components LedsC;
-  DisseminatorP.Leds -> LedsC;
+  StdControl = DisseminationEngineP;
 }
