@@ -19,6 +19,7 @@ module TestNetworkC {
   uses interface SplitControl as RadioControl;
   uses interface SplitControl as SerialControl;
   uses interface StdControl as RoutingControl;
+  uses interface StdControl as DisseminationControl;
   uses interface DisseminationValue<uint16_t> as DisseminationPeriod;
   uses interface Send;
   uses interface Leds;
@@ -63,6 +64,7 @@ implementation {
       call RadioControl.start();
     }
     else {
+      call DisseminationControl.start();
       call RoutingControl.start();
       if (TOS_NODE_ID % 500 == 0) {
 	call RootControl.setRoot();

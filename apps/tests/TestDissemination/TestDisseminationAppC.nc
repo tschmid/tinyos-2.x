@@ -52,6 +52,16 @@ implementation {
   components MainC;
   TestDisseminationC.Boot -> MainC;
 
+  components ActiveMessageC;
+  TestDisseminationC.RadioControl -> ActiveMessageC;
+
+  components DisseminationC;
+  TestDisseminationC.DisseminationControl -> DisseminationC;
+
+  components UserButtonC;
+  TestDisseminationC.Get -> UserButtonC;
+  TestDisseminationC.Notify -> UserButtonC;
+
   components new DisseminatorC(uint32_t, 0x1234) as Object32C;
   TestDisseminationC.Value32 -> Object32C;
   TestDisseminationC.Update32 -> Object32C;
