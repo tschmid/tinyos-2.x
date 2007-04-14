@@ -59,11 +59,9 @@ implementation {
   DisseminationValue = DisseminatorP;
   DisseminationUpdate = DisseminatorP;
 
-  components MainC;
-  DisseminatorP.Boot -> MainC;
-
   components DisseminationEngineP;
   DisseminationEngineP.DisseminationCache[key] -> DisseminatorP;
+  DisseminationEngineP.DisseminatorControl[TIMER_ID] -> DisseminatorP;
 
   components DisseminationTimerP;
   DisseminationEngineP.TrickleTimer[key] -> 

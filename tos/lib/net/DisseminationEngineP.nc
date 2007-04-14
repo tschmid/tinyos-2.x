@@ -45,21 +45,20 @@
  */
 
 configuration DisseminationEngineP {
+  provides interface StdControl;
+
   uses {
     interface DisseminationCache[uint16_t key];
     interface TrickleTimer[uint16_t key];
+    interface StdControl as DisseminatorControl[uint16_t id];
   }
 }
 implementation {
   components DisseminationEngineImplP;
+  StdControl = DisseminationEngineImplP;
   DisseminationCache = DisseminationEngineImplP;
   TrickleTimer = DisseminationEngineImplP;
-
-  components MainC;  
-  DisseminationEngineImplP.Boot -> MainC;
-
-  components ActiveMessageC;
-  DisseminationEngineImplP.RadioControl -> ActiveMessageC;
+  DisseminatorControl = DisseminationEngineImplP;
 
   components new AMSenderC(AM_DISSEMINATION_MESSAGE) as DisseminationSendC;
   DisseminationEngineImplP.AMSend -> DisseminationSendC.AMSend;

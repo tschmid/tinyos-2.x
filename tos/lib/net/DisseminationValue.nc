@@ -47,6 +47,15 @@ interface DisseminationValue<t> {
   command const t* get();
 
   /**
+   * Set the variable to a new value. The provider of this interface
+   * will copy the value from the pointer. NOTE: This command does
+   * not cause the new value to begin disseminating. It is intended to
+   * be used for setting default values.
+   */
+
+  command void set( const t* );
+
+  /**
    * Signalled whenever variable may have changed.
    */
   event void changed();

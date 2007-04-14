@@ -1,3 +1,4 @@
+#include <DisseminationEngine.h>
 
 /*
  * Copyright (c) 2006 Arch Rock Corporation
@@ -32,20 +33,20 @@
  */
 
 /**
- * The DisseminationCache interface connects each DisseminatorC
- * component to the DisseminationEngineC component.
+ * The DisseminationC component is the top-level interface to the
+ * dissemination protocol. StdControl controls all of the trickle
+ * timers used for all of the keys. 
  *
  * See TEP118 - Dissemination for details.
  * 
  * @author Gilman Tolle <gtolle@archrock.com>
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 
-interface DisseminationCache {
-  event error_t start();
-  event error_t stop();
-  command void* requestData( uint8_t* size );
-  command void storeData( void* data, uint8_t size, uint32_t seqno );
-  command uint32_t requestSeqno();
-  event void newData();
+configuration DisseminationC {
+  provides interface StdControl;
+}
+implementation {
+  components DisseminationEngineP;
+  StdControl = DisseminationEngineP;
 }
