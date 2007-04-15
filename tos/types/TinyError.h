@@ -41,6 +41,7 @@ enum {
   EINVAL         = 6,           // An invalid parameter was passed
   ERETRY         = 7,           // A rare and transient failure: can retry
   ERESERVE       = 8,           // Reservation required before usage
+  EALREADY       = 9,           // The device state you are requesting is already set
 };
 
 typedef uint8_t error_t __attribute__((combine(ecombine)));
