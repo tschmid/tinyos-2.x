@@ -267,10 +267,12 @@ implementation {
 				     call CollectionPacket.getSequenceNumber(msg), 
 				     call CollectionPacket.getOrigin(msg), 
 				     call AMPacket.destination(msg));
-
     if (call RootControl.isRoot()) {
       dbg("LQI,LQIDeliver", "LQI Root is receiving packet from node %hu @%s\n", getHeader(msg)->originaddr, sim_time_string());
       return signal Receive.receive[id](msg, payload, len);
+    }
+    else if (call AMPacket.destination(msg) != AMPacket.address()) {
+      return msg;
     }
     else if (signal Intercept.forward[id](msg, payload, len)) {
       dbg("LQI,LQIDeliver", "LQI fwd is forwarding packet from node %hu @%s\n", getHeader(msg)->originaddr, sim_time_string());
