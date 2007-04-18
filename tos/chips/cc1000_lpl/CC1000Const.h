@@ -243,7 +243,7 @@ enum {
 #endif
 
 #ifndef CC1K_DEF_PRESET
-#define CC1K_DEF_PRESET	(CC1K_914_077_MHZ)
+#define CC1K_DEF_PRESET	(CC1K_434_845_MHZ)
 #endif 
 
 static const_uint8_t CC1K_Params[6][20] = {
