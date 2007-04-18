@@ -290,7 +290,7 @@ implementation {
 	read_addr &= ~BLOCK_MASK;
       }
       else {
-	buf = m_log_state[ client ].buf;
+	buf = m_log_state[ client ].buf + m_log_state[ client ].len - m_len;
 	// truncate if record is shorter than requested length
 	if ( m_log_info[ client ].remaining < m_len )
 	  len = m_log_info[ client ].remaining;
