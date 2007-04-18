@@ -1,5 +1,4 @@
 #include <Timer.h>
-#include <UserButton.h>
 
 /*
  * Copyright (c) 2006 Arched Rock Corporation
@@ -54,9 +53,6 @@ module TestDisseminationC {
   uses interface SplitControl as RadioControl;
 
   uses interface StdControl as DisseminationControl;
-
-  uses interface Get<button_state_t>;
-  uses interface Notify<button_state_t>;
 
   uses interface DisseminationValue<uint32_t> as Value32;
   uses interface DisseminationUpdate<uint32_t> as Update32;
