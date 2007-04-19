@@ -55,6 +55,4 @@ Tools:
 Known bugs/limitations:
 
   Only works on motes with the CC2420 radio.  Tested and verified with
-  TelosB and Tmote nodes.  Also works with MicaZ (as the BlinkToRadio
-  node) and TelosB/Tmote as the parrot node.  Currently, using a MicaZ
-  as the parrot does not work and needs to be debugged.
+  TelosB, Tmote, and MicaZ nodes.
