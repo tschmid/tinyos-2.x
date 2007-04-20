@@ -19,6 +19,8 @@
  * @author Martin Turon <mturon@xbow.com>
  */
 
+#include <Atm128Timer.h>
+
 configuration AlarmCounterMilliP
 {
   provides interface Init;
