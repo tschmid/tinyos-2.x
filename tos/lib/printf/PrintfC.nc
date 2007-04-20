@@ -49,7 +49,7 @@ configuration PrintfC {
 }
 implementation {
   components SerialActiveMessageC;
-  components new SerialAMSenderC(AM_PRINTFMSG);
+  components new SerialAMSenderC(AM_PRINTF_MSG);
   components PrintfP;
   components LedsC;
 

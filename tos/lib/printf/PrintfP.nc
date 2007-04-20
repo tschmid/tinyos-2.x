@@ -79,16 +79,16 @@ implementation {
   uint8_t length_to_send;
   
   task void retrySend() {
-    if(call AMSend.send(AM_BROADCAST_ADDR, &printfMsg, sizeof(printf_msg)) != SUCCESS)
+    if(call AMSend.send(AM_BROADCAST_ADDR, &printfMsg, sizeof(printf_msg_t)) != SUCCESS)
       post retrySend();
   }
   
   void sendNext() {
-  	printf_msg* m = (printf_msg*)call Packet.getPayload(&printfMsg, NULL);
-  	length_to_send = (bytes_left_to_flush < sizeof(printf_msg)) ? bytes_left_to_flush : sizeof(printf_msg);
+  	printf_msg_t* m = (printf_msg_t*)call Packet.getPayload(&printfMsg, NULL);
+  	length_to_send = (bytes_left_to_flush < sizeof(printf_msg_t)) ? bytes_left_to_flush : sizeof(printf_msg_t);
   	memset(m->buffer, 0, sizeof(printfMsg));
   	memcpy(m->buffer, (uint8_t*)next_byte, length_to_send);
-    if(call AMSend.send(AM_BROADCAST_ADDR, &printfMsg, sizeof(printf_msg)) != SUCCESS)
+    if(call AMSend.send(AM_BROADCAST_ADDR, &printfMsg, sizeof(printf_msg_t)) != SUCCESS)
       post retrySend();  
     else {
       bytes_left_to_flush -= length_to_send;

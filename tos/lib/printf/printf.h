@@ -37,10 +37,10 @@
 
 typedef nx_struct printf_msg {
   nx_uint8_t buffer[TOSH_DATA_LENGTH];
-} printf_msg;
+} printf_msg_t;
 
 enum {
-  AM_PRINTFMSG = 100,
+  AM_PRINTF_MSG = 100,
 };
 
 #endif //PRINTF_H
