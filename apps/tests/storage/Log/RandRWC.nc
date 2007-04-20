@@ -99,6 +99,8 @@ implementation {
     return b;
   }
 
+  volatile int x;
+
   void setParameters() {
     len = rand() >> 8;
     offset = rand() >> 9;
@@ -138,7 +140,9 @@ implementation {
   }
 
   event void LogWrite.appendDone(void *buf, storage_len_t y, bool recordsLost, error_t result) {
-    if (scheck(result))
+    if (result == ESIZE)
+      scheck(call LogWrite.sync());
+    else if (scheck(result))
       nextWrite();
   }
 
