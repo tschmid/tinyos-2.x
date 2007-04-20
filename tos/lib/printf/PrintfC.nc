@@ -21,6 +21,18 @@
  */
 
 /**
+ * This is the PrintfC component.  It provides the printf service for printing
+ * data over the serial interface using the standard c-style printf command.  
+ * It must be started via the SplitControl interface it provides.  Data
+ * printed using printf are buffered and only sent over the serial line after
+ * making a call to PrintfFlush.flush().  This buffer has a maximum size of 
+ * 250 bytes at present.  After calling start on this component, printf
+ * statements can be made anywhere throughout your code, so long as you include
+ * the "printf.h" header file in every file you wish to use it.  Standard
+ * practice is to start the printf service in the main application, and set up 
+ * a timer to periodically flush the printf buffer (500ms should do).  In future
+ * versions, user defined buffer sizes as well as well as automatic flushing at 
+ * user defined intervals will be supported.  
  *
  * @author Kevin Klues (klueska@cs.wustl.edu)
  * @version $Revision$
