@@ -555,23 +555,23 @@ implementation {
 
     command void CtpInfo.triggerRouteUpdate() {
       // Random time in interval 64-127ms
-      uint16_t time = call Random.rand16();
-      time &= 0x3f; 
-      time += 64;
+      uint16_t beaconDelay = call Random.rand16();
+      beaconDelay &= 0x3f; 
+      beaconDelay += 64;
       if (call BeaconTimer.gett0() + call BeaconTimer.getdt() -
-                                     call BeaconTimer.getNow() >= time) {
+                                     call BeaconTimer.getNow() >= beaconDelay) {
          call BeaconTimer.stop();
-         call BeaconTimer.startOneShot(time);
+         call BeaconTimer.startOneShot(beaconDelay);
         }
      }
 
     command void CtpInfo.triggerImmediateRouteUpdate() {
       // Random time in interval 4-11ms
-      uint16_t time = call Random.rand16();
-      time &= 0x7; 
-      time += 4;
+      uint16_t beaconDelay = call Random.rand16();
+      beaconDelay &= 0x7; 
+      beaconDelay += 4;
       call BeaconTimer.stop();
-      call BeaconTimer.startOneShot(time);
+      call BeaconTimer.startOneShot(beaconDelay);
     }
 
     command void CtpInfo.setNeighborCongested(am_addr_t n, bool congested) {
