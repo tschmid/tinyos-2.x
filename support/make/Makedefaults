@@ -4,7 +4,7 @@
 DEFAULT_LOCAL_GROUP ?= 0x7d
 OPTFLAGS ?= -Os
 NESC_FLAGS ?= -Wnesc-all
-GOALS += tos-ident-flags tos_image
+GOALS += ident_flags tos_image
 
 define DEFAULT_HELP
 
