@@ -187,18 +187,16 @@ implementation {
   sim_event_t* compare;
 
   void timer0_compare_handle(sim_event_t* evt) {
-    dbg("HplAtm128CompareC", "Beginning compare at 0x%p\n", evt);
+    dbg("HplAtm128CompareC", "%s Beginning compare at 0x%p\n", __FUNCTION__, evt);
     if (evt->cancelled) {
       return;
     }
     else {
-      char timeStr[128];
-      sim_print_now(timeStr, 128);
-      dbg("HplAtm128CompareC", "Handling compare at 0x%p @ %s\n", evt, sim_time_string());
+      dbg("HplAtm128CompareC", "%s Handling compare at 0x%p @ %s\n",__FUNCTION__,  evt, sim_time_string());
 	    
       if (READ_BIT(interruptRegister, interruptBit)) {
 	CLR_BIT(flagRegister, flagBit);
-	dbg("HplAtm128CompareC", "Compare interrupt @ %s\n", timeStr);
+	dbg("HplAtm128CompareC", "%s Compare interrupt @ %s\n", __FUNCTION__, sim_time_string());
 	SIG_OUTPUT_COMPARE0();
       }
       else {

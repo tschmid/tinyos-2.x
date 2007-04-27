@@ -55,8 +55,8 @@ uint8_t atm128RegFile[TOSSIM_MAX_NODES][0xa0];
 
 /* Macro to create union casting functions. */
 #define DEFINE_UNION_CAST(func_name, from_type, to_type) \
-  to_type func_name(from_type x) { \
-  union {from_type f; to_type t;} c = {f:x}; return c.t; }
+  to_type func_name(from_type x_type) { \
+    union {from_type f_type; to_type t_type;} c_type = {f_type:x_type}; return c_type.t_type; }
 
 // Bit operators using bit number
 #define SET_BIT(port, bit)    ((REG_ACCESS(port)) |= _BV(bit))
