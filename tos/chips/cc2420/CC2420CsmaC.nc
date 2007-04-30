@@ -58,6 +58,9 @@ implementation {
   components MainC;
   MainC.SoftwareInit -> CsmaP;
   
+  components CC2420SpiP;
+  CsmaP.SpiSplitControl -> CC2420SpiP;
+  
   components CC2420ActiveMessageC;
   CsmaP.AMPacket -> CC2420ActiveMessageC;
   

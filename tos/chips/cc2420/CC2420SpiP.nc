@@ -35,7 +35,8 @@
  */
 
 configuration CC2420SpiP {
-
+  
+  provides interface SplitControl;
   provides interface Resource[ uint8_t id ];
   provides interface CC2420Fifo as Fifo[ uint8_t id ];
   provides interface CC2420Ram as Ram[ uint16_t id ];
@@ -47,6 +48,7 @@ configuration CC2420SpiP {
 implementation {
 
   components CC2420SpiImplP as SpiP;
+  SplitControl = SpiP;
   Resource = SpiP;
   Fifo = SpiP;
   Ram = SpiP;

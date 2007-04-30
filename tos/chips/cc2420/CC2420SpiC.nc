@@ -38,6 +38,7 @@
 
 generic configuration CC2420SpiC() {
 
+  provides interface SplitControl;
   provides interface Resource;
 
   // commands
@@ -85,7 +86,8 @@ implementation {
   components CC2420SpiP as Spi;
   
   Resource = Spi.Resource[ CLIENT_ID ];
-
+  SplitControl = Spi.SplitControl;
+  
   // commands
   SFLUSHRX = Spi.Strobe[ CC2420_SFLUSHRX ];
   SFLUSHTX = Spi.Strobe[ CC2420_SFLUSHTX ];
