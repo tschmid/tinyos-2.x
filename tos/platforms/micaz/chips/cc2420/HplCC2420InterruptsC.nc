@@ -54,9 +54,9 @@ implementation {
   InterruptFIFOP = InterruptFIFOPC;
   InterruptFIFOPC.Atm128Interrupt -> Interrupts.Int6;
 
-  components HplCC2420InterruptsP, HplCC2420PinsC, new TimerMilliC();
+  components HplCC2420InterruptsP;
+  components HplCC2420PinsC;
   InterruptCCA   = HplCC2420InterruptsP.CCA;
-  HplCC2420InterruptsP.CCATimer -> TimerMilliC;
   HplCC2420InterruptsP.CC_CCA -> HplCC2420PinsC.CCA;
   
 }
