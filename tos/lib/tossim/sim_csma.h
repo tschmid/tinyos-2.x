@@ -35,7 +35,7 @@
 #define SIM_CSMA_H_INCLUDED
 
 #ifndef SIM_CSMA_INIT_HIGH
-#define SIM_CSMA_INIT_HIGH 400
+#define SIM_CSMA_INIT_HIGH 640
 #endif 
 
 #ifndef SIM_CSMA_INIT_LOW
@@ -71,12 +71,12 @@
 #endif
 
 #ifndef SIM_CSMA_MIN_FREE_SAMPLES
-#define SIM_CSMA_MIN_FREE_SAMPLES 2
+#define SIM_CSMA_MIN_FREE_SAMPLES 1
 #endif
 
 // 500 us ~= 32 symbols
 #ifndef SIM_CSMA_RXTX_DELAY 
-#define SIM_CSMA_RXTX_DELAY 32
+#define SIM_CSMA_RXTX_DELAY 11
 #endif
 
 // 12 symbol delay + 11 bytes length * (2 bytes/symbol) = 34 symbols

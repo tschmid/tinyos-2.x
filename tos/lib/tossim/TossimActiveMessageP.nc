@@ -125,7 +125,7 @@ implementation {
   event bool Model.shouldAck(message_t* msg) {
     tossim_header_t* header = getHeader(msg);
     if (header->dest == call amAddress()) {
-      dbg("Acks", "addressed to me so ack it,");
+      dbg("Acks", "Received packet addressed to me so ack it\n");
       return TRUE;
     }
     return FALSE;
