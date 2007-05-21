@@ -41,7 +41,8 @@ interface GainRadioModel {
 			  message_t* msg,
 			  bool ack,
 			  sim_time_t endTime,
-			  double gain);
+			  double gain,
+			  double reverseGain);
 
   command void setClearValue(double value);
   command bool clearChannel();
