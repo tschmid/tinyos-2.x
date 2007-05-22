@@ -22,8 +22,7 @@ generic configuration DemoSensorStreamC()
 }
 implementation
 {
-  components new AdcReadStreamClientC();
+  components new VoltageStreamC() as Sensor;
 
-  // An unconfigure atm128 ReadStream sensor reads the "ground" channel.
-  ReadStream = AdcReadStreamClientC;
+  ReadStream = Sensor;
 }

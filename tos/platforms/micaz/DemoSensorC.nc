@@ -22,7 +22,7 @@ generic configuration DemoSensorC()
 }
 implementation
 {
-  components new SineSensorC() as DemoChannel;
+  components new VoltageC() as DemoChannel;
 
   Read = DemoChannel;
 }

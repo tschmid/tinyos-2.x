@@ -8,25 +8,21 @@
  * 94704.  Attention:  Intel License Inquiry.
  */
 /**
- * Internal component for voltage sensor. Arbitrates access to the voltage
- * sensor and automatically turns it on or off based on user requests.
+ * Voltage sensor.
  * 
  * @author David Gay
  */
 
 #include "hardware.h"
 
-configuration VoltageDeviceP {
-  provides {
-    interface Atm128AdcConfig;
-    interface ResourceConfigure;
-  }
+generic configuration VoltageNowC() {
+  provides interface Resource;
+  provides interface ReadNow<uint16_t>;
 }
 implementation {
-  components VoltageP, HplAtm128GeneralIOC as Pins;
+  components new AdcReadNowClientC(), VoltageP;
 
-  Atm128AdcConfig = VoltageP;
-  ResourceConfigure = VoltageP;
-
-  VoltageP.BatMon -> Pins.PortA5;
+  ReadNow = AdcReadNowClientC;
+  Resource = AdcReadNowClientC;
+  AdcReadNowClientC.Atm128AdcConfig -> VoltageP;
 }

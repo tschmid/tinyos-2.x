@@ -19,9 +19,8 @@ generic configuration VoltageStreamC() {
   provides interface ReadStream<uint16_t>;
 }
 implementation {
-  components VoltageDeviceP, new AdcReadStreamClientC();
+  components VoltageP, new AdcReadStreamClientC();
 
   ReadStream = AdcReadStreamClientC;
-  AdcReadStreamClientC.Atm128AdcConfig -> VoltageDeviceP;
-  AdcReadStreamClientC.ResourceConfigure -> VoltageDeviceP;
+  AdcReadStreamClientC.Atm128AdcConfig -> VoltageP;
 }
