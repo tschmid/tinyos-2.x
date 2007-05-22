@@ -1,4 +1,4 @@
-/* $Id: VoltageC.nc,v 1.4 2006/12/12 18:23:43 vlahan Exp $
+/* $Id: VoltageNowC.nc,v 1.1 2007/05/22 20:59:01 idgay Exp $
  * Copyright (c) 2006 Intel Corporation
  * All rights reserved.
  *
@@ -15,13 +15,14 @@
 
 #include "hardware.h"
 
-generic configuration VoltageC() {
-  provides interface Read<uint16_t>;
+generic configuration VoltageNowC() {
+  provides interface Resource;
+  provides interface ReadNow<uint16_t>;
 }
 implementation {
-  components new AdcReadClientC(), VoltageDeviceP;
+  components new AdcReadNowClientC(), VoltageP;
 
-  Read = AdcReadClientC;
-  AdcReadClientC.Atm128AdcConfig -> VoltageDeviceP;
-  AdcReadClientC.ResourceConfigure -> VoltageDeviceP;
+  ReadNow = AdcReadNowClientC;
+  Resource = AdcReadNowClientC;
+  AdcReadNowClientC.Atm128AdcConfig -> VoltageP;
 }
