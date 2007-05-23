@@ -104,6 +104,7 @@ __nesc_atomic_start(void) @spontaneous()
 {
     __nesc_atomic_t result = SREG;
     __nesc_disable_interrupt();
+    asm volatile("" : : : "memory"); /* ensure atomic section effect visibility */
     return result;
 }
 
@@ -111,6 +112,7 @@ __nesc_atomic_start(void) @spontaneous()
 inline void 
 __nesc_atomic_end(__nesc_atomic_t original_SREG) @spontaneous()
 {
+  asm volatile("" : : : "memory"); /* ensure atomic section effect visibility */
   SREG = original_SREG;
 }
 #endif
