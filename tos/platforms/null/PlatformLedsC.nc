@@ -81,4 +81,29 @@ implementation
   async command void Led2.makeOutput() {
     call Init.init();
   }
+
+  async command bool Led0.isInput() { 
+    return FALSE;
+  }
+
+  async command bool Led0.isOutput() { 
+    return FALSE;
+  }
+
+  async command bool Led1.isInput() { 
+    return FALSE;
+  }
+
+  async command bool Led1.isOutput() { 
+    return FALSE;
+  }
+
+  async command bool Led2.isInput() { 
+    return FALSE;
+  }
+
+  async command bool Led2.isOutput() { 
+    return FALSE;
+  }
+
 }

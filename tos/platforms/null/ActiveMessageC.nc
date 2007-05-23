@@ -92,6 +92,12 @@ implementation {
   command void AMPacket.setType(message_t* amsg, am_id_t t) {
   }
 
+  command am_addr_t AMPacket.source(message_t* amsg) {
+    return 0;
+  }
+
+  command void AMPacket.setSource(message_t* amsg, am_addr_t addr) { }
+
   command void* Receive.getPayload[uint8_t id](message_t* msg, uint8_t* len) {
     return NULL;
   }
