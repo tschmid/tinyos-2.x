@@ -51,27 +51,27 @@ public class SerialByteSource extends StreamByteSource implements
   }
 
   public void openStreams() throws IOException {
-    //if (serialPort == null) {
-      try {
-        serialPort = new TOSSerial(portName);
-      } catch (Exception e) {
-        throw new IOException("Could not open " + portName + ": "
-            + e.getMessage());
-      }
-      /*
-    } else {
-      if (!serialPort.open()) {
-        throw new IOException("Could not re-open " + portName);
-      }
+    // if (serialPort == null) {
+    try {
+      serialPort = new TOSSerial(portName);
+    } catch (Exception e) {
+      throw new IOException("Could not open " + portName + ": "
+          + e.getMessage());
     }
-    */
+    /*
+     * } else { if (!serialPort.open()) { throw new IOException("Could not
+     * re-open " + portName); } }
+     */
 
     try {
       // serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
       serialPort.setSerialPortParams(baudRate, 8, SerialPort.STOPBITS_1, false);
-
       serialPort.addListener(this);
+      
       serialPort.notifyOn(SerialPortEvent.DATA_AVAILABLE, true);
+      serialPort.notifyOn(SerialPortEvent.OUTPUT_EMPTY, true);
+
+      
     } catch (Exception e) {
       serialPort.close();
       throw new IOException("Could not configure " + portName + ": "
@@ -122,8 +122,10 @@ public class SerialByteSource extends StreamByteSource implements
   }
 
   public void serialEvent(SerialPortEvent ev) {
-    synchronized (sync) {
-      sync.notify();
+    if (ev.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+      synchronized (sync) {
+        sync.notify();
+      }
     }
   }
 
