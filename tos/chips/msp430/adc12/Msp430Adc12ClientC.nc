@@ -41,7 +41,7 @@
  * @see  Please refer to the README.txt and TEP 101 for more information about
  * this component and its intended use.
  */
-
+#include <Msp430Adc12.h>
 generic configuration Msp430Adc12ClientC()
 {
   provides {
