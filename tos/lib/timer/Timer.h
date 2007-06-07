@@ -26,9 +26,9 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-typedef struct { } TMilli;
-typedef struct { } T32khz;
-typedef struct { } TMicro;
+typedef struct { int notUsed; } TMilli;
+typedef struct { int notUsed; } T32khz;
+typedef struct { int notUsed; } TMicro;
 
 #define UQ_TIMER_MILLI "HilTimerMilliC.Timer"
 #define UQ_TIMER_32KHZ "HilTimer32khzC.Timer"
