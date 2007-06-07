@@ -15,7 +15,7 @@ push( @includes, qw(
   %T/platforms/mica
   %T/platforms/mica2dot/chips/cc1000
   %T/platforms/mica2/chips/cc1000
-  %T/chips/cc1000
+  %T/chips/cc1000_lpl
   %T/platforms/mica2dot/chips/at45db
   %T/platforms/mica2/chips/at45db
   %T/platforms/mica/chips/at45db
