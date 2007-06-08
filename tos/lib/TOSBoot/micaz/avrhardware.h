@@ -52,8 +52,12 @@
 
 #ifdef TOSH_NEW_AVRLIBC
 #include <avr/io.h>
-#include <avr/signal.h>
+#if __AVR_LIBC_VERSION__ >= 10400UL
 #include <avr/interrupt.h>
+#else
+#include <avr/interrupt.h>
+#include <avr/signal.h>
+#endif
 #include <avr/wdt.h>
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
