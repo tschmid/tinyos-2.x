@@ -44,11 +44,9 @@
 #include "Serial.h"
 #include "tda5250_message.h"
 
-#ifdef TOSH_DATA_LENGTH
-#undef TOSH_DATA_LENGTH
-#endif
-
+#ifndef TOSH_DATA_LENGTH
 #define TOSH_DATA_LENGTH 48
+#endif
 
 typedef union message_header_t {
   tda5250_header_t radio;
@@ -66,5 +64,9 @@ typedef union message_metadata_t {
 typedef tda5250_header_t message_radio_header_t;
 typedef tda5250_footer_t message_radio_footer_t;
 typedef tda5250_metadata_t message_radio_metadata_t;
+
+#if TOSH_DATA_LENGTH < 33
+#error "TOSH_DATA_LENGH must be larger than 33 bytes for this platform."
+#endif
 
 #endif
