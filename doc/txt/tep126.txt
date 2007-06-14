@@ -210,13 +210,11 @@ The layers found within this radio stack are in the following order:
   |     Carrier Sense Multiple Access (CSMA)       |
   +----------------------+-------------------------+
                          
-            +------------+------------+
                                     
  +----------+----------+   +----------+----------+
  |      ReceiveP       |   |      TransmitP      |
  +----------+----------+   +----------+----------+
                                      
-            +------------+------------+
                          
  +-----------------------+-------------------------+
  |    SPI bus, GPIO, Interrupts, Timer Capture     |
