@@ -67,6 +67,7 @@ implementation {
   bool transmitting = FALSE;
   uint8_t sendingLength = 0;
   int destNode;
+  sim_event_t sendEvent;
   
   message_t receiveBuffer;
   
@@ -77,6 +78,10 @@ implementation {
   command error_t Init.init() {
     dbg("TossimPacketModelC", "TossimPacketModelC: Init.init() called\n");
     initialized = TRUE;
+    // We need to cancel in case an event is still lying around in the queue from
+    // before a reboot. Otherwise, the event will be executed normally (node is on),
+    // but its memory has been zeroed out.
+    sendEvent.cancelled = 1;
     return SUCCESS;
   }
 
@@ -167,7 +172,6 @@ implementation {
     return SUCCESS;
   }
 
-  sim_event_t sendEvent;
   void send_backoff(sim_event_t* evt);
   void send_transmit(sim_event_t* evt);
   void send_transmit_done(sim_event_t* evt);

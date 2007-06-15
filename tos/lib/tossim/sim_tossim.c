@@ -111,8 +111,11 @@ bool sim_run_next_event() __attribute__ ((C, spontaneous)) {
     sim_set_time(event->time);
     sim_set_node(event->mote);
 
-    dbg("Tossim", "CORE: popping event for %i at %llu... ", sim_node(), sim_time());
-    if (sim_mote_is_on(event->mote) || event->force) {
+    // Need to test whether function pointers are for statically
+    // allocted events that are zeroed out on reboot
+    dbg("Tossim", "CORE: popping event 0x%p for %i at %llu with handler %p... ", event, sim_node(), sim_time(), event->handle);
+    if ((sim_mote_is_on(event->mote) || event->force) &&
+	event->handle != NULL) {
       result = TRUE;
       dbg_clear("Tossim", " mote is on (or forced event), run it.\n");
       event->handle(event);
@@ -120,7 +123,9 @@ bool sim_run_next_event() __attribute__ ((C, spontaneous)) {
     else {
       dbg_clear("Tossim", "\n");
     }
-    event->cleanup(event);
+    if (event->cleanup != NULL) {
+      event->cleanup(event);
+    }
   }
 
   return result;
