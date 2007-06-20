@@ -147,11 +147,21 @@ implementation {
     cc1000_header_t* header = getHeader(amsg);
     header->type = type;
   }
-  
-  //command am_group_t AMPacket.group(message_t* amsg) {
-  //  return amsg->header.group;
-  //}
-  
+
+  command void AMPacket.setGroup(message_t* msg, am_group_t group) {
+    cc1000_header_t* header = getHeader(msg);
+    header->group = group;
+  }
+
+  command am_group_t AMPacket.group(message_t* msg) {
+    cc1000_header_t* header = getHeader(msg);
+    return header->group;
+  }
+
+  command am_group_t AMPacket.localGroup() {
+    return TOS_AM_GROUP;
+  }
+
  default event message_t* Receive.receive[am_id_t id](message_t* msg, void* payload, uint8_t len) {
     return msg;
   }

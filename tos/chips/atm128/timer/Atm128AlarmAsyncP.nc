@@ -97,17 +97,27 @@ implementation
 	   3, the interrupt will happen whjen TCNT0 is 4) */
 	uint8_t interrupt_in = 1 + call Compare.get() - call Timer.get();
 	uint8_t newOcr0;
-
-	if (interrupt_in < MINDT || (call TimerCtrl.getInterruptFlag()).bits.ocf0)
+	uint8_t tifr = (uint8_t)((call TimerCtrl.getInterruptFlag()).flat);
+	dbg("Atm128AlarmAsyncP", "Atm128AlarmAsyncP: TIFR is %hhx\n", tifr);
+	if ((interrupt_in != 0 && interrupt_in < MINDT) || (tifr & (1 << OCF0))) {
+	  if (interrupt_in < MINDT) {
+	    dbg("Atm128AlarmAsyncP", "Atm128AlarmAsyncP: under min: %hhu.\n", interrupt_in);
+	  }
+	  else {
+	    dbg("Atm128AlarmAsyncP", "Atm128AlarmAsyncP: OCF set.\n");
+	  }
 	  return; // wait for next interrupt
+	}
 
 	/* When no alarm is set, we just ask for an interrupt every MAXT */
-	if (!set)
+	if (!set) {
 	  newOcr0 = MAXT;
+	  dbg("Atm128AlarmAsyncP", "Atm128AlarmAsyncP: no alarm set, set at max.\n");
+	}
 	else
 	  {
 	    uint32_t now = call Counter.get();
-
+	    dbg("Atm128AlarmAsyncP", "Atm128AlarmAsyncP: now-t0 = %llu, dt = %llu\n", (now-t0), dt);
 	    /* Check if alarm expired */
 	    if ((uint32_t)(now - t0) >= dt)
 	      {
