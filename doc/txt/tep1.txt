@@ -233,8 +233,9 @@ The last numbered section of a TEP (but before citations, if there are any),
 entitled "Author's Address" or "Author's Addresses" MUST contain
 detailed author contact information.
 
-A TEP MAY have appendices after its Author section. Unlike regular sections,
-appendices are lettered. Please refer to Appendix A for details.
+A TEP MAY have appendices after its numbered sections. Unlike 
+numbered sections, appendices are lettered. Please refer to Appendix 
+A for details.
 
 4. Reference
 ====================================================================
