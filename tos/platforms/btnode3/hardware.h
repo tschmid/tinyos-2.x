@@ -4,7 +4,7 @@
  *  this license.  If you do not agree to this license, do not download,
  *  install, copy or use the software.
  *
- *  Copyright (c) 2006 ETH Zurich.
+ *  Copyright (c) 2006-2007 ETH Zurich.
  *  Copyright (c) 2004-2005 Crossbow Technology, Inc.
  *  Copyright (c) 2002-2003 Intel Corporation.
  *  Copyright (c) 2000-2003 The Regents of the University  of California.    
@@ -43,6 +43,12 @@
 #ifndef HARDWARE_H
 #define HARDWARE_H
 
+#ifndef MHZ
+/* Clock rate is ~8MHz except if specified by user 
+   (this value must be a power of 2, see MicaTimer.h and MeasureClockC.nc) */
+#define MHZ 8
+#endif
+
 #include <atm128hardware.h>
 #include <Atm128Adc.h>
 
@@ -54,7 +60,7 @@ enum {
 };
 
 enum {
-  PLATFORM_MHZ = 8 // Approximate clock frequency (closest power of 2)
+  PLATFORM_BAUDRATE = 57600L
 };
 
 #endif //HARDWARE_H

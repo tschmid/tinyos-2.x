@@ -9,6 +9,7 @@
 #
 # $Id$
 #
+
 push( @includes, qw(
 
   %T/platforms/btnode3
@@ -16,20 +17,21 @@ push( @includes, qw(
   %T/platforms/mica
   %T/platforms/mica2
   %T/platforms/mica2/chips/cc1000
-  %T/chips/cc1000
+  %T/chips/cc1000_lpl
   %T/chips/atm128
   %T/chips/atm128/adc
+  %T/chips/atm128/i2c
   %T/chips/atm128/pins
   %T/chips/atm128/spi
   %T/chips/atm128/timer
+  %T/lib/timer
   %T/lib/serial
   %T/lib/power
-  %T/lib/timer
-  
+
 #  %T/platforms/mica2/chips/at45db not existent on btnode3
 #  %T/platforms/mica/chips/at45db  not existent on btnode3
 #  %T/chips/at45db
-  
+
 ) );
 
 @opts = qw(
