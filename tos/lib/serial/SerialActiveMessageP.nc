@@ -171,7 +171,22 @@ implementation {
   async command error_t PacketAcknowledgements.noAck( message_t* msg ) {
     return SUCCESS;
   }
-   
+  
+  command void AMPacket.setGroup(message_t* msg, am_group_t group) {
+    serial_header_t* header = getHeader(msg);
+    header->group = group;
+  }
+
+  command am_group_t AMPacket.group(message_t* msg) {
+    serial_header_t* header = getHeader(msg);
+    return header->group;
+  }
+
+  command am_group_t AMPacket.localGroup() {
+    return TOS_AM_GROUP;
+  }
+
+ 
   async command bool PacketAcknowledgements.wasAcked(message_t* msg) {
     return FALSE;
   }
