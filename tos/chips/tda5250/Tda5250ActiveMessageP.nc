@@ -154,14 +154,13 @@ implementation {
   }
 
   command void AMPacket.setGroup(message_t* msg, am_group_t group) {
-    //tda5250_header_t* header = getHeader(msg);
-    //header->group = group;
+    tda5250_header_t* header = getHeader(msg);
+    header->group = group;
   }
 
   command am_group_t AMPacket.group(message_t* msg) {
-    //tda5250_header_t* header = getHeader(msg);
-    //return header->group;
-    return TOS_AM_GROUP;
+    tda5250_header_t* header = getHeader(msg);
+    return header->group;
   }
 
   command am_group_t AMPacket.localGroup() {
