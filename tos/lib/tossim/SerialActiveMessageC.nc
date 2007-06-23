@@ -72,14 +72,7 @@ implementation {
   command error_t AMSend.send[am_id_t id](am_addr_t addr,
 					  message_t* amsg,
 					  uint8_t len) {
-    int i;
-    char* payload = call Packet.getPayload(amsg, NULL);
     dbg("Serial", "Serial: sending a packet of size %d\n", len);
-    for (i = 0; i < len; i++)
-      printf("%02x ", payload[i]);
-
-    printf("\n");
-
     return FAIL;
   }
 
