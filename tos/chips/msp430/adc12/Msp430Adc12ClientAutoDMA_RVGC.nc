@@ -58,7 +58,10 @@ generic configuration Msp430Adc12ClientAutoDMA_RVGC()
   Resource = Msp430RefVoltArbiterP.ClientResource[ID];
   
   Msp430RefVoltArbiterP.AdcResource[ID] -> Msp430Adc12P.Resource[ID];
-  AdcConfigure = Msp430RefVoltArbiterP.Config[ID]; 
+
+  components new Msp430Adc12ConfAlertC();
+  AdcConfigure = Msp430Adc12ConfAlertC.ConfUp;
+  Msp430RefVoltArbiterP.Config[ID] -> Msp430Adc12ConfAlertC.ConfSub;   
 
   components Msp430DmaC, Msp430Adc12DMAP;
   
