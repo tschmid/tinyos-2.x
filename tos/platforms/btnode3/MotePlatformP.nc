@@ -23,9 +23,11 @@ module MotePlatformP
 implementation {
 
   command error_t PlatformInit.init() {
-    // Pull C I/O port pins high to initialize LED's and radio and IO power 
+    // Pull C I/O port pins low to initialize LED's to off
+    // Turn in cc1000 and IO power 
+    // Turn off bluetooth power
     // Set port C as output only
-    PORTC = 0xff;
+    PORTC = 0xb0;
     DDRC = 0xff;
     
     // TODO: release Bluetooth reset pin
@@ -33,6 +35,7 @@ implementation {
     //btnode3: set latch_select PB5 for now
     PORTB = 0x20;
     DDRB = 0x20;
+    
 
     // Prevent sourcing current
 //    call SerialIdPin.makeI0xffnput(); 
