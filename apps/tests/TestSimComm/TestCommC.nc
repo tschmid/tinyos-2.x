@@ -55,6 +55,7 @@ implementation {
   uint8_t busy;
   
   event void Boot.booted() {
+    dbg("TestComm", "Booted @ %s.\n", sim_time_string());
     call SplitControl.start();
   }
 
