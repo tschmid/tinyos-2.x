@@ -18,6 +18,7 @@
  * @author David Gay <dgay@intel-research.net>
  * @author Martin Turon <mturon@xbow.com>
  */
+#include <Atm128Timer.h>
 
 #include <Atm128Timer.h>
 
