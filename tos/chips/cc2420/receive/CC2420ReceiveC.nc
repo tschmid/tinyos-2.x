@@ -49,7 +49,6 @@ implementation {
   components MainC;
   components CC2420ReceiveP;
   components CC2420PacketC;
-  components ActiveMessageAddressC;
   components new CC2420SpiC() as Spi;
   components CC2420ControlC;
   

@@ -61,15 +61,25 @@ interface CC2420Config {
   /**
    * Change the short address of the radio.
    */
-  command uint16_t getShortAddr();
+  async command uint16_t getShortAddr();
   command void setShortAddr( uint16_t address );
 
   /**
    * Change the PAN address of the radio.
    */
-  command uint16_t getPanAddr();
+  async command uint16_t getPanAddr();
   command void setPanAddr( uint16_t address );
 
+  
+  /**
+   * @param on TRUE to turn address recognition on, FALSE to turn it off
+   */
+  command void setAddressRecognition(bool on);
+  
+  /**
+   * @return TRUE if address recognition is enabled
+   */
+  async command bool isAddressRecognitionEnabled();
   
   /**
    * Sync must be called for acknowledgement changes to take effect
