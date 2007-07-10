@@ -32,10 +32,10 @@ configuration PlatformC
 }
 implementation
 {
-  components PlatformP, MotePlatformC, Msp430ClockC;
+  components PlatformP, MotePlatformC, MoteClockC;
 
   Init = PlatformP;
-  PlatformP.Msp430ClockInit -> Msp430ClockC.Init;
+  PlatformP.MoteClockInit -> MoteClockC;
   PlatformP.MoteInit -> MotePlatformC;
 }
 
