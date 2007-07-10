@@ -1,4 +1,4 @@
-README for RadioCountToLeds
+
 Author/Contact: tinyos-help@millennium.berkeley.edu
 
 Description:
