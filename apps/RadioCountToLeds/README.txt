@@ -11,7 +11,8 @@ timers work.
 
 Tools:
 
-RadioCountMsg.java is a Java class representing the message that
+After compiling, RadioCountMsg.java and RadioCountMsg.py files will be
+created.  RadioCountMsg.java is a Java class representing the message that
 this application sends.  RadioCountMsg.py is a Python class representing
 the message that this application sends.
 

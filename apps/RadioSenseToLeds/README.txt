@@ -11,7 +11,8 @@ sensor work.
 
 Tools:
 
-RadioSenseMsg.java is a Java class representing the message that
+After compiling, RadioSenseMsg.java and RadioSenseMsg.py files will be
+created.  RadioSenseMsg.java is a Java class representing the message that
 this application sends.  RadioSenseMsg.py is a Python class representing
 the message that this application sends.
 
