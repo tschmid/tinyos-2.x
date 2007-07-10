@@ -157,10 +157,13 @@ implementation {
     }
   }
   
-  async command error_t UartByte.send( uint8_t data ) {
-    call Usart.tx( data );
-    while( !call Usart.isTxIntrPending() );
-    call Usart.clrTxIntr();
+    async command error_t UartByte.send( uint8_t data ) {
+      call Usart.clrTxIntr();
+      call Usart.disableTxIntr ();
+      call Usart.tx( data );
+      while( !call Usart.isTxIntrPending() );
+      call Usart.clrTxIntr();
+      call Usart.enableTxIntr();
     return SUCCESS;
   }
   
