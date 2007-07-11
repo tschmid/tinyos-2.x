@@ -3,7 +3,7 @@
 
 DELUGE_DIR ?= $(TOSDIR)/lib/net/Deluge
 DELUGE_EXTRA ?= $(DELUGE_DIR)/extra
-TOSBOOT_DIR ?= $(TOSDIR)/lib/TOSBoot/build
+TOSBOOT_DIR ?= $(TOSDIR)/lib/tosboot/build
 
 ifeq ($(TINYOS_NP),BNP)
 
