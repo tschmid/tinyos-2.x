@@ -1,4 +1,4 @@
-README for Log
+README for SyncLog
 Author/Contact: tinyos-help@millennium.berkeley.edu
 
 Description:
