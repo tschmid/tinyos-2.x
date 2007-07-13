@@ -21,34 +21,58 @@
  */
  
 /**
- * SharedResourceC is used to provide a generic configuration around 
- * the SharedResourceP component so that new instantiations of 
- * it provide a single set of interfaces that are all properly associated 
- * with one another rather than requiring the user to deal with the complexity
- * of doing this themselves.
+ * This is an example implementation of a dedicated resource.  
+ * It provides the SplitControl interface for power management
+ * of the resource and an EXAMPLE ResourceOperations interface
+ * for performing operations on it.
  *
  * @author Kevin Klues (klueska@cs.wustl.edu)
- * @version $Revision: 1.4 $
- * @date $Date: 2006/12/12 18:22:51 $
+ * @version $Revision: 1.1 $
+ * @date $Date: 2007/07/13 23:43:17 $
  */
- 
-#define TEST_SHARED_RESOURCE   "Test.Shared.Resource"
-generic configuration SharedResourceC() {
-	provides interface Resource;
-	provides interface ResourceRequested;
-	provides interface ResourceOperations;
-    uses interface ResourceConfigure;
+
+module ResourceP {
+  provides {
+    interface SplitControl;
+    interface ResourceOperations;
+  }
 }
 implementation {
-  components SharedResourceP;
+	
+  bool lock;
+	
+  task void startDone() {
+  	lock = FALSE;
+  	signal SplitControl.startDone(SUCCESS);
+  }
   
-  enum {
-    RESOURCE_ID = unique(TEST_SHARED_RESOURCE)
-  };
-
-  Resource = SharedResourceP.Resource[RESOURCE_ID];
-  ResourceRequested = SharedResourceP.ResourceRequested[RESOURCE_ID];
-  ResourceOperations = SharedResourceP.ResourceOperations[RESOURCE_ID];
-  ResourceConfigure = SharedResourceP.ResourceConfigure[RESOURCE_ID];
+  task void stopDone() {
+  	signal SplitControl.stopDone(SUCCESS);
+  }
+  
+  task void operationDone() {
+  	lock = FALSE;
+  	signal ResourceOperations.operationDone(SUCCESS);
+  }
+	
+  command error_t SplitControl.start() {
+  	post startDone();
+  	return  SUCCESS;
+  }
+  
+  command error_t SplitControl.stop() {
+  	lock = TRUE;
+  	post stopDone();
+  	return  SUCCESS;
+  }
+  
+  command error_t ResourceOperations.operation() {
+  	if(lock == FALSE) {
+      lock = TRUE;
+  	  post operationDone();
+  	  return SUCCESS;
+  	}
+  	return FAIL;
+  }
 }
 

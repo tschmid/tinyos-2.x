@@ -21,35 +21,34 @@
  */
  
 /**
- * The SharedResourceP component is used to create a shared resource
- * out of a dedicated one.
+ * SharedResourceC is used to provide a generic configuration around 
+ * the SharedResourceP component so that new instantiations of 
+ * it provide a single set of interfaces that are all properly associated 
+ * with one another rather than requiring the user to deal with the complexity
+ * of doing this themselves.
  *
  * @author Kevin Klues (klueska@cs.wustl.edu)
- * @version $Revision: 1.5 $
- * @date $Date: 2007/02/04 19:54:32 $
+ * @version $Revision: 1.1 $
+ * @date $Date: 2007/07/13 23:43:17 $
  */
  
-#define TEST_SHARED_RESOURCE   "Test.Shared.Resource"
-configuration SharedResourceP {
-	provides interface Resource[uint8_t id];
-	provides interface ResourceRequested[uint8_t id];
-	provides interface ResourceOperations[uint8_t id];
-	uses interface ResourceConfigure[uint8_t id];
+#define UQ_SHARED_RESOURCE   "Shared.Resource"
+generic configuration SharedResourceC() {
+	provides interface Resource;
+	provides interface ResourceRequested;
+	provides interface ResourceOperations;
+    uses interface ResourceConfigure;
 }
 implementation {
-  components new RoundRobinArbiterC(TEST_SHARED_RESOURCE) as Arbiter;
-  components new SplitControlPowerManagerC() as PowerManager;
-  components ResourceP;
-  components SharedResourceImplP;
-
-  ResourceOperations = SharedResourceImplP;
-  Resource = Arbiter;
-  ResourceRequested = Arbiter;
-  ResourceConfigure = Arbiter;
-  SharedResourceImplP.ArbiterInfo -> Arbiter;
-  PowerManager.ResourceDefaultOwner -> Arbiter;
+  components SharedResourceP;
   
-  PowerManager.SplitControl -> ResourceP;
-  SharedResourceImplP.ResourceOperations -> ResourceP;
+  enum {
+    RESOURCE_ID = unique(UQ_SHARED_RESOURCE)
+  };
+
+  Resource = SharedResourceP.Resource[RESOURCE_ID];
+  ResourceRequested = SharedResourceP.ResourceRequested[RESOURCE_ID];
+  ResourceOperations = SharedResourceP.ResourceOperations[RESOURCE_ID];
+  ResourceConfigure = SharedResourceP.ResourceConfigure[RESOURCE_ID];
 }
 

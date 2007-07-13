@@ -21,58 +21,35 @@
  */
  
 /**
- * This is an example implementation of a dedicated resource.  
- * It provides the SplitControl interface for power management
- * of the resource and an EXAMPLE ResourceOperations interface
- * for performing operations on it.
+ * The SharedResourceP component is used to create a shared resource
+ * out of a dedicated one.
  *
  * @author Kevin Klues (klueska@cs.wustl.edu)
- * @version $Revision: 1.4 $
- * @date $Date: 2006/12/12 18:22:51 $
+ * @version $Revision: 1.1 $
+ * @date $Date: 2007/07/13 23:43:17 $
  */
-
-module ResourceP {
-  provides {
-    interface SplitControl;
-    interface ResourceOperations;
-  }
+ 
+#define UQ_SHARED_RESOURCE   "Shared.Resource"
+configuration SharedResourceP {
+	provides interface Resource[uint8_t id];
+	provides interface ResourceRequested[uint8_t id];
+	provides interface ResourceOperations[uint8_t id];
+	uses interface ResourceConfigure[uint8_t id];
 }
 implementation {
-	
-  bool lock;
-	
-  task void startDone() {
-  	lock = FALSE;
-  	signal SplitControl.startDone(SUCCESS);
-  }
+  components new RoundRobinArbiterC(UQ_SHARED_RESOURCE) as Arbiter;
+  components new SplitControlPowerManagerC() as PowerManager;
+  components ResourceP;
+  components SharedResourceImplP;
+
+  ResourceOperations = SharedResourceImplP;
+  Resource = Arbiter;
+  ResourceRequested = Arbiter;
+  ResourceConfigure = Arbiter;
+  SharedResourceImplP.ArbiterInfo -> Arbiter;
+  PowerManager.ResourceDefaultOwner -> Arbiter;
   
-  task void stopDone() {
-  	signal SplitControl.stopDone(SUCCESS);
-  }
-  
-  task void operationDone() {
-  	lock = FALSE;
-  	signal ResourceOperations.operationDone(SUCCESS);
-  }
-	
-  command error_t SplitControl.start() {
-  	post startDone();
-  	return  SUCCESS;
-  }
-  
-  command error_t SplitControl.stop() {
-  	lock = TRUE;
-  	post stopDone();
-  	return  SUCCESS;
-  }
-  
-  command error_t ResourceOperations.operation() {
-  	if(lock == FALSE) {
-      lock = TRUE;
-  	  post operationDone();
-  	  return SUCCESS;
-  	}
-  	return FAIL;
-  }
+  PowerManager.SplitControl -> ResourceP;
+  SharedResourceImplP.ResourceOperations -> ResourceP;
 }
 
