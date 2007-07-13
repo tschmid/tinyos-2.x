@@ -32,7 +32,7 @@
  * @date $Date$
  */
  
-#define TEST_SHARED_RESOURCE   "Test.Shared.Resource"
+#define UQ_SHARED_RESOURCE   "Shared.Resource"
 generic configuration SharedResourceC() {
 	provides interface Resource;
 	provides interface ResourceRequested;
@@ -43,7 +43,7 @@ implementation {
   components SharedResourceP;
   
   enum {
-    RESOURCE_ID = unique(TEST_SHARED_RESOURCE)
+    RESOURCE_ID = unique(UQ_SHARED_RESOURCE)
   };
 
   Resource = SharedResourceP.Resource[RESOURCE_ID];

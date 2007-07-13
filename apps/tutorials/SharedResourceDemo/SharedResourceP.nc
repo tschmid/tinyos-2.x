@@ -29,7 +29,7 @@
  * @date $Date$
  */
  
-#define TEST_SHARED_RESOURCE   "Test.Shared.Resource"
+#define UQ_SHARED_RESOURCE   "Shared.Resource"
 configuration SharedResourceP {
 	provides interface Resource[uint8_t id];
 	provides interface ResourceRequested[uint8_t id];
@@ -37,7 +37,7 @@ configuration SharedResourceP {
 	uses interface ResourceConfigure[uint8_t id];
 }
 implementation {
-  components new RoundRobinArbiterC(TEST_SHARED_RESOURCE) as Arbiter;
+  components new RoundRobinArbiterC(UQ_SHARED_RESOURCE) as Arbiter;
   components new SplitControlPowerManagerC() as PowerManager;
   components ResourceP;
   components SharedResourceImplP;
