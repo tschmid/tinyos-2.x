@@ -43,9 +43,10 @@ public class PrintfClient implements MessageListener {
 
   public void messageReceived(int to, Message message) {
     PrintfMsg msg = (PrintfMsg)message;
-    for(int i=0; i<msg.dataLength(); i++) {
+    for(int i=0; i<msg.totalSize_buffer(); i++) {
       char nextChar = (char)(msg.getElement_buffer(i));
-      System.out.print(nextChar);
+      if(nextChar != 0)
+        System.out.print(nextChar);
     }
   }
   
