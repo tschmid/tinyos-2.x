@@ -1,6 +1,5 @@
-// $Id$
-
-/*                                                                      tab:4
+// -*- mode:c++; indent-tabs-mode: nil -*- $Id$
+/* 
  * "Copyright (c) 2004-2005 The Regents of the University  of California.
  * All rights reserved.
  *
@@ -47,6 +46,7 @@ module Tda5250ActiveMessageP {
     interface Receive[am_id_t id];
     interface Receive as Snoop[am_id_t id];
     interface AMPacket;
+    interface Tda5250Packet;
   }
   uses {
     interface Send as SubSend;
@@ -57,10 +57,14 @@ module Tda5250ActiveMessageP {
 }
 implementation {
 
-  tda5250_header_t* getHeader( message_t* msg ) {
-                return (tda5250_header_t*)( msg->data - sizeof(tda5250_header_t) );
-  }
+    tda5250_header_t* getHeader( message_t* msg ) {
+        return (tda5250_header_t*)( msg->data - sizeof(tda5250_header_t) );
+    }
 
+    tda5250_metadata_t* getMetadata(message_t* amsg) {
+        return (tda5250_metadata_t*)((uint8_t*)amsg->footer + sizeof(message_radio_footer_t));
+    }
+    
   command error_t AMSend.send[am_id_t id](am_addr_t addr,
                                           message_t* msg,
                                           uint8_t len) {
@@ -163,6 +167,10 @@ implementation {
 
   command am_group_t AMPacket.localGroup() {
     return TOS_AM_GROUP;
+  }
+
+  async command uint8_t Tda5250Packet.getSnr(message_t* msg) {
+      return getMetadata(msg)->strength;
   }
   
  default event message_t* Receive.receive[am_id_t id](message_t* msg, void* payload, uint8_t len) {

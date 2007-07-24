@@ -58,6 +58,7 @@ configuration Tda5250ActiveMessageC {
     interface AMPacket;
     interface Packet;
     interface PacketAcknowledgements;
+    interface Tda5250Packet;	
   }
 }
 implementation {
@@ -69,6 +70,7 @@ implementation {
 
   Packet       = Radio;
   PacketAcknowledgements = Radio;
+  Tda5250Packet = AM;		
 
   AMSend   = AM;
   Receive  = AM.Receive;
