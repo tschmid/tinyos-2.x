@@ -17,7 +17,7 @@ push( @includes, qw(
   %T/platforms/mica
   %T/platforms/mica2
   %T/platforms/mica2/chips/cc1000
-  %T/chips/cc1000_lpl
+  %T/chips/cc1000
   %T/chips/atm128
   %T/chips/atm128/adc
   %T/chips/atm128/i2c
