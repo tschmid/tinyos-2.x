@@ -45,6 +45,6 @@ enum {
     UBR_1MHZ_23405=0x002A,  UMCTL_1MHZ_23405=0xDD, // 23405 bit/s
 };
 
-msp430_uart_union_config_t tda5250_uart_config = { {ubr: UBR_1MHZ_23405, umctl: UMCTL_1MHZ_23405, ssel: 0x02, pena: 0, pev: 0, spb: 0, clen: 1, listen: 0, mm: 0, ckpl: 0, urxse: 0, urxeie: 1, urxwie: 0, urxe: 1, utxe: 0} };
+msp430_uart_union_config_t tda5250_uart_config = { {ubr: UBR_1MHZ_23405, umctl: UMCTL_1MHZ_23405, ssel: 0x02, pena: 0, pev: 0, spb: 0, clen: 1, listen: 0, mm: 0, ckpl: 0, urxse: 0, urxeie:0, urxwie: 0, urxe: 1, utxe: 0} };
 
 #endif
