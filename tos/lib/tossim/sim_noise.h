@@ -40,12 +40,14 @@
 extern "C" {
 #endif
 
+// BIN_SIZE (the number of bins) has a + 1 in case the range is not
+// evenly divisible by INTERVAL -pal 5.aug.07
 enum {
   NOISE_MIN = -115,
   NOISE_MAX = -5,
   NOISE_MIN_QUANTIZE = -115,
   NOISE_QUANTIZE_INTERVAL = 5,
-  NOISE_BIN_SIZE = (NOISE_MAX - NOISE_MIN)/NOISE_QUANTIZE_INTERVAL,
+  NOISE_BIN_SIZE = ((NOISE_MAX - NOISE_MIN) / NOISE_QUANTIZE_INTERVAL) + 1,
   NOISE_HISTORY = 20,
   NOISE_DEFAULT_ELEMENT_SIZE = 8,
   NOISE_HASHTABLE_SIZE = 128,
