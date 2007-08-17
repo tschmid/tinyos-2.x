@@ -1,0 +1,9 @@
+#-*-Makefile-*- vim:syntax=make
+#$Id$
+
+TOS_BUILDINFO_PL ?= tos-write-buildinfo
+IDENT_PROGRAM_NAME ?= $(COMPONENT)
+
+build_buildinfo: FORCE
+	@echo "    writing TOS buildinfo"
+	@$(TOS_BUILDINFO_PL) $(IDENT_FLAGS) --exe="$(MAIN_EXE)" --size="$(SIZE)" --platform="$(PLATFORM)" > $(BUILDDIR)/tos_buildinfo.xml

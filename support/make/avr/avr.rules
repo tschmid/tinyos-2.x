@@ -48,7 +48,7 @@ ifndef DEFAULT_PROGRAM
 DEFAULT_PROGRAM = dapa
 endif
 
-BUILDLESS_DEPS += bytes
+BUILDLESS_DEPS += bytes 
 
 ifndef NOWIRING
 include $(TINYOS_MAKE_PATH)/wiring.extra
@@ -83,6 +83,9 @@ delsetid: FORCE
 srec: exe FORCE
 	$(OBJCOPY) --output-target=srec $(MAIN_EXE) $(MAIN_SREC)
 
+tos_buildinfo: ihex build_buildinfo FORCE
+  @:
+  
 tosimage: ihex build_tosimage FORCE
 	@:
 
