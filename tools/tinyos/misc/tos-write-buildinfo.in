@@ -43,7 +43,7 @@ for my $arg (@ARGV) {
 my @text;
 my $rc2 = qx"$size $exe |grep main ";
 #print $rc2;
-print $size;
+#print $size;
 @text =  split(' ', $rc2);
 
 print "<metrics>\n";
