@@ -30,7 +30,12 @@
 #ifndef PRINTF_H
 #define PRINTF_H
 
-#include <stdio.h>
+#ifdef _H_msp430hardware_h
+  #include <stdio.h>
+#endif
+#ifdef _H_atmega128hardware_H
+  #include "avr_stdio.h"
+#endif
 #include "message.h"
 
 #define PRINTF_BUFFER_SIZE 250
