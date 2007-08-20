@@ -51,12 +51,10 @@ implementation {
   components SerialActiveMessageC;
   components new SerialAMSenderC(AM_PRINTF_MSG);
   components PrintfP;
-  components LedsC;
 
   PrintfControl = PrintfP;
   PrintfFlush = PrintfP;
   
-  PrintfP.Leds -> LedsC;
   PrintfP.SerialControl -> SerialActiveMessageC;
   PrintfP.AMSend -> SerialAMSenderC;
   PrintfP.Packet -> SerialAMSenderC;
