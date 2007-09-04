@@ -40,8 +40,6 @@
 extern "C" {
 #endif
 
-// BIN_SIZE (the number of bins) has a + 1 in case the range is not
-// evenly divisible by INTERVAL -pal 5.aug.07
 enum {
   NOISE_MIN = -115,
   NOISE_MAX = -5,
@@ -52,6 +50,7 @@ enum {
   NOISE_DEFAULT_ELEMENT_SIZE = 8,
   NOISE_HASHTABLE_SIZE = 128,
   NOISE_MIN_TRACE = 128, 
+  NOISE_NUM_VALUES = NOISE_MAX - NOISE_MIN + 1,    //TODO check the + 1, also in NOISE_BIN_SIZE above in the inner parens
 };
   
 typedef struct sim_noise_hash_t {
@@ -60,7 +59,7 @@ typedef struct sim_noise_hash_t {
   int size;
   char *elements;
   char flag;
-  float dist[NOISE_BIN_SIZE];
+  float dist[NOISE_NUM_VALUES];
 } sim_noise_hash_t;
 
 typedef struct sim_noise_node_t {
@@ -86,4 +85,3 @@ void sim_noise_create_model(uint16_t node_id);
 #endif
   
 #endif // _SIM_NOISE_HASH_H_
-

@@ -33,7 +33,7 @@
 
 #include <AM.h>
 
-module TossimActiveMessageP {
+module TossimActiveMessageC {
   provides {
     
     interface AMSend[am_id_t id];
@@ -42,6 +42,7 @@ module TossimActiveMessageP {
 
     interface Packet;
     interface AMPacket;
+    interface TossimPacket;
   }
   uses {
     interface TossimPacketModel as Model;
@@ -55,6 +56,10 @@ implementation {
   
   tossim_header_t* getHeader(message_t* amsg) {
     return (tossim_header_t*)(amsg->data - sizeof(tossim_header_t));
+  }
+
+  tossim_metadata_t* getMetadata(message_t* amsg) {
+    return (tossim_metadata_t*)(&amsg->metadata);
   }
   
   command error_t AMSend.send[am_id_t id](am_addr_t addr,
@@ -97,6 +102,10 @@ implementation {
 
   command uint8_t Snoop.payloadLength[am_id_t id](message_t* m) {
     return call Packet.payloadLength(m);
+  }
+  
+  command int8_t TossimPacket.strength(message_t* msg) {
+    return getMetadata(msg)->strength;
   }
   
   event void Model.sendDone(message_t* msg, error_t result) {

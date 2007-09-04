@@ -45,7 +45,7 @@ configuration ActiveMessageC {
   }
 }
 implementation {
-  components TossimActiveMessageP as AM;
+  components TossimActiveMessageC as AM;
   components TossimPacketModelC as Network;
 
   components CpmModelC as Model;

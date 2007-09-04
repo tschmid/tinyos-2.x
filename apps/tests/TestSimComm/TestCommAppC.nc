@@ -52,7 +52,7 @@ implementation {
     AM_TEST  = 5
   };
   
-  components MainC, TestCommC as App, RandomC, ActiveMessageC;
+  components MainC, TestCommC as App, RandomC, ActiveMessageC, TossimActiveMessageC;
   components new TimerMilliC(), new AMSenderC(AM_TEST), new AMReceiverC(AM_TEST);
   
   App.Boot -> MainC.Boot;
@@ -63,6 +63,7 @@ implementation {
   App.Random -> RandomC;
   App.AMPacket -> AMSenderC;
   App.PacketAcknowledgements -> AMSenderC;
+  App.TossimPacket -> TossimActiveMessageC;
 }
 
 
