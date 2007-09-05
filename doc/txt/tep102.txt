@@ -5,14 +5,9 @@ Timers
 :TEP: 102
 :Group: Core Working Group 
 :Type: Documentary
-:Status: Draft
+:Status: Final
 :TinyOS-Version: 2.x
 :Author: Cory Sharp, Martin Turon, David Gay
-
-:Draft-Created: 22-Sep-2004
-:Draft-Version: $Revision$
-:Draft-Modified: $Date$
-:Draft-Discuss: TinyOS Developer List <tinyos-devel at mail.millennium.berkeley.edu>
 
 .. Note::
 
