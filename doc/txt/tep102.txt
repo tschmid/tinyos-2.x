@@ -400,9 +400,16 @@ together.
 4. HIL requirements
 ====================================================================
 
-The following component MUST be provided on all platforms::
+The following component MUST be provided on all platforms
+::
+
   HilTimerMilliC
   BusyWaitMicroC
+
+Both of these components use "binary" units, i.e., 1/1024s for
+HilTimerMilliC and 1/1048576s for BusyWaitMicroC. Components using
+other precisions (e.g., regular, non-binary milliseconds) MAY also be
+provided.
 
 HilTimerMilliC
 --------------------------------------------------------------------
