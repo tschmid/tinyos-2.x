@@ -116,14 +116,15 @@ implementation {
 
   void sendProbe( uint16_t key ) {
     dissemination_probe_message_t* dpMsg = 
-      (dissemination_probe_message_t*) call ProbeAMSend.getPayload( &m_buf );
-    
-    m_bufBusy = TRUE;
-    
-    dpMsg->key = key;
-    
-    call ProbeAMSend.send( AM_BROADCAST_ADDR, &m_buf,
-			   sizeof( dissemination_probe_message_t ) );
+      (dissemination_probe_message_t*) call ProbeAMSend.getPayload( &m_buf, sizeof(dissemination_probe_message_t));
+    if (dpMsg != NULL) {
+      m_bufBusy = TRUE;
+      
+      dpMsg->key = key;
+      
+      call ProbeAMSend.send( AM_BROADCAST_ADDR, &m_buf,
+			     sizeof( dissemination_probe_message_t ) );
+    }
   }
 
   void sendObject( uint16_t key ) {
@@ -131,23 +132,24 @@ implementation {
     uint8_t objectSize = 0;
     
     dissemination_message_t* dMsg = 
-      (dissemination_message_t*) call AMSend.getPayload( &m_buf );
-    
-    m_bufBusy = TRUE;
-    
-    dMsg->key = key;
-    dMsg->seqno = call DisseminationCache.requestSeqno[ key ]();
-
-    if ( dMsg->seqno != DISSEMINATION_SEQNO_UNKNOWN ) {
-      object = call DisseminationCache.requestData[ key ]( &objectSize );
-      if ((objectSize + sizeof(dissemination_message_t)) > 
-           call AMSend.maxPayloadLength()) {
-        objectSize = call AMSend.maxPayloadLength() - sizeof(dissemination_message_t);
-      }
-      memcpy( dMsg->data, object, objectSize );
-    }      
-    call AMSend.send( AM_BROADCAST_ADDR,
-		      &m_buf, sizeof( dissemination_message_t ) + objectSize );
+      (dissemination_message_t*) call AMSend.getPayload( &m_buf, sizeof(dissemination_message_t) );
+    if (dMsg != NULL) {
+      m_bufBusy = TRUE;
+      
+      dMsg->key = key;
+      dMsg->seqno = call DisseminationCache.requestSeqno[ key ]();
+      
+      if ( dMsg->seqno != DISSEMINATION_SEQNO_UNKNOWN ) {
+	object = call DisseminationCache.requestData[ key ]( &objectSize );
+	if ((objectSize + sizeof(dissemination_message_t)) > 
+	    call AMSend.maxPayloadLength()) {
+	  objectSize = call AMSend.maxPayloadLength() - sizeof(dissemination_message_t);
+	}
+	memcpy( dMsg->data, object, objectSize );
+      }      
+      call AMSend.send( AM_BROADCAST_ADDR,
+			&m_buf, sizeof( dissemination_message_t ) + objectSize );
+    }
   }
 
   event void ProbeAMSend.sendDone( message_t* msg, error_t error ) {

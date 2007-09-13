@@ -85,8 +85,8 @@ implementation {
       return;
     }
     else {
-      radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, NULL);
-      if (call Packet.maxPayloadLength() < sizeof(radio_count_msg_t)) {
+      radio_count_msg_t* rcm = (radio_count_msg_t*)call Packet.getPayload(&packet, sizeof(radio_count_msg_t));
+      if (rcm == NULL) {
 	return;
       }
 

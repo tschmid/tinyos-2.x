@@ -83,8 +83,8 @@ implementation {
       return;
     }
     else {
-      TestSerialMsg* rcm = (TestSerialMsg*)call Packet.getPayload(&packet, NULL);
-      if (call Packet.maxPayloadLength() < sizeof(TestSerialMsg)) {
+      TestSerialMsg* rcm = (TestSerialMsg*)call Packet.getPayload(&packet, sizeof(TestSerialMsg));
+      if (rcm == NULL || call Packet.maxPayloadLength() < sizeof(TestSerialMsg)) {
 	return;
       }
 
@@ -128,7 +128,10 @@ implementation {
       locked = FALSE;
       // as fast as possible
       if (afap){
-        TestSerialMsg* rcm = (TestSerialMsg*)call Packet.getPayload(&packet,NULL);
+        TestSerialMsg* rcm = (TestSerialMsg*)call Packet.getPayload(&packet, sizeof(TestSerialMsg));
+	if (rcm == NULL || call Packet.payloadLength(&packet) != sizeof(TestSerialMsg)) {
+	  return;
+	}
         counter++;
         rcm->counter = counter;
         call Leds.led0Toggle();

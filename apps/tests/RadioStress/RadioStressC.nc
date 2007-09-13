@@ -75,7 +75,7 @@ implementation {
   task void sendTask();
 
   void sendPacket() {
-    RadioCountMsg* rcm = (RadioCountMsg*)call Packet.getPayload(&packet, NULL);
+    RadioCountMsg* rcm = (RadioCountMsg*)call Packet.getPayload(&packet, sizeof(RadioCountMsg));
     if (locked) {return;}
     rcm->counter = txCounter;
     if (call AMSend.send(AM_BROADCAST_ADDR, &packet, 2) == SUCCESS) {

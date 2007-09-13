@@ -200,8 +200,8 @@ implementation {
         return call AMSend.maxPayloadLength[0]();
     }
 
-    command void* Send.getPayload[uint8_t id](message_t* m) {
-        return call AMSend.getPayload[0](m);
+    command void* Send.getPayload[uint8_t id](message_t* m, uint8_t len) {
+      return call AMSend.getPayload[0](m, len);
     }
 
     default event void Send.sendDone[uint8_t id](message_t* msg, error_t err) {

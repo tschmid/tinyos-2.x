@@ -203,11 +203,13 @@ implementation {
     return TOSH_DATA_LENGTH;
   }
 
-  command void* Packet.getPayload(message_t* msg, uint8_t* len) {
-    if (len != NULL) {
-      *len = (getHeader(msg))->length;
+  command void* Packet.getPayload(message_t* msg, uint8_t len) {
+    if (len <= TOSH_DATA_LENGTH) {
+      return (void*)msg->data;
     }
-    return (void*)msg->data;
+    else {
+      return NULL;
+    }
   }
   
   // Default events for radio send/receive coordinators do nothing.

@@ -65,7 +65,7 @@ implementation {
   message_t reportmsg;
 
   void report(error_t e) {
-    uint8_t *msg = call AMSend.getPayload(&reportmsg);
+    uint8_t *msg = call AMSend.getPayload(&reportmsg, 1);
 
     msg[0] = e;
     if (call AMSend.send(AM_BROADCAST_ADDR, &reportmsg, 1) != SUCCESS)

@@ -93,11 +93,12 @@ implementation
       {
 	/* Copy payload (newAlert) from collection system to our serial
 	   message buffer (fwdAlert), then send our serial message */
-	alert_t *fwdAlert = call AlertsForward.getPayload(&fwdMsg);
-
-	*fwdAlert = *newAlert;
-	if (call AlertsForward.send(AM_BROADCAST_ADDR, &fwdMsg, sizeof *fwdAlert) == SUCCESS)
-	  fwdBusy = TRUE;
+	alert_t *fwdAlert = call AlertsForward.getPayload(&fwdMsg, sizeof(alert_t));
+	if (fwdAlert != NULL) {
+	  *fwdAlert = *newAlert;
+	  if (call AlertsForward.send(AM_BROADCAST_ADDR, &fwdMsg, sizeof *fwdAlert) == SUCCESS)
+	    fwdBusy = TRUE;
+	}
       }
     return msg;
   }

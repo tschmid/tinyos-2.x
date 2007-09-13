@@ -103,11 +103,12 @@ implementation
 	/* Report the identity of this node, using the collection protocol */
 
 	/* Get the payload part of alertMsg and fill in our data */
-	alert_t *newAlert = call AlertRoot.getPayload(&alertMsg);
-	newAlert->stolenId = TOS_NODE_ID;
-
-	/* and send it... */
-	check(call AlertRoot.send(&alertMsg, sizeof *newAlert));
+	alert_t *newAlert = call AlertRoot.getPayload(&alertMsg, sizeof(alert_t));
+	if (newAlert != NULL) {
+	  newAlert->stolenId = TOS_NODE_ID;
+	  /* and send it... */
+	  check(call AlertRoot.send(&alertMsg, sizeof *newAlert));
+	}
       }
   }
 

@@ -84,7 +84,7 @@ implementation {
 
    
   void sendMessage() {
-    TestNetworkMsg* msg = (TestNetworkMsg*)call Send.getPayload(&packet);
+    TestNetworkMsg* msg = (TestNetworkMsg*)call Send.getPayload(&packet, sizeof(TestNetworkMsg));
     uint16_t metric;
     am_addr_t parent;
 
@@ -162,7 +162,7 @@ implementation {
    else if (!uartbusy) {
      message_t* msg = call Queue.dequeue();
      dbg("Traffic", "Sending packet to UART.\n");
-     if (call UARTSend.send(0xffff, msg, call Receive.payloadLength(msg)) == SUCCESS) {
+     if (call UARTSend.send(0xffff, msg, call Packet.payloadLength(msg)) == SUCCESS) {
        uartbusy = TRUE;
      }
      else {

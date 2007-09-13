@@ -90,7 +90,10 @@ implementation {
     counter++;
     if (!busy) {
       BlinkToRadioMsg* btrpkt = 
-       (BlinkToRadioMsg*)(call Packet.getPayload(&pkt, NULL));
+	(BlinkToRadioMsg*)(call Packet.getPayload(&pkt, sizeof(BlinkToRadioMsg)));
+      if (btrpkt == NULL) {
+	return;
+      }
       btrpkt->nodeid = TOS_NODE_ID;
       btrpkt->counter = counter;
       if (call AMSend.send(AM_BROADCAST_ADDR, 

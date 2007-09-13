@@ -182,8 +182,8 @@ implementation {
         return call SubSend.maxPayloadLength();
     }
 
-    command void* Send.getPayload[uint8_t id](message_t* m) {
-        return call SubSend.getPayload(m);
+    command void* Send.getPayload[uint8_t id](message_t* m, uint8_t len) {
+      return call SubSend.getPayload(m, len);
     }
 
     default event void Send.sendDone[uint8_t id](message_t* msg, error_t err) {

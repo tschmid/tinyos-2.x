@@ -62,8 +62,8 @@ implementation {
     return call Send.maxPayloadLength();
   }
 
-  command void* AMSend.getPayload(message_t* m) {
-    return call Send.getPayload(m);
+  command void* AMSend.getPayload(message_t* m, uint8_t len) {
+    return call Send.getPayload(m, len);
   }
   
 }

@@ -135,20 +135,6 @@ implementation {
     return SUCCESS;
   }
 
-  /***************** Receive Commands ****************/
-  command void* Receive.getPayload(message_t* m, uint8_t* len) {
-    if (len != NULL) {
-      *len = ((uint8_t*) (call CC2420PacketBody.getHeader( m_p_rx_buf )))[0];
-    }
-    return m->data;
-  }
-
-  command uint8_t Receive.payloadLength(message_t* m) {
-    uint8_t* buf = (uint8_t*)(call CC2420PacketBody.getHeader( m_p_rx_buf ));
-    return buf[0];
-  }
-  
-  
   /***************** CC2420Receive Commands ****************/
   /**
    * Start frame delimiter signifies the beginning/end of a packet

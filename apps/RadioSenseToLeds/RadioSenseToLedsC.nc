@@ -82,8 +82,8 @@ implementation {
     else {
       radio_sense_msg_t* rsm;
 
-      rsm = (radio_sense_msg_t*)call Packet.getPayload(&packet, NULL);
-      if (call Packet.maxPayloadLength() < sizeof(radio_sense_msg_t)) {
+      rsm = (radio_sense_msg_t*)call Packet.getPayload(&packet, sizeof(radio_sense_msg_t));
+      if (rsm == NULL) {
 	return;
       }
       rsm->error = result;

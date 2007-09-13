@@ -102,15 +102,15 @@ interface Send {
 
 
    /**
-    * Return a pointer to a protocol's payload region in a packet.
-    * The length of this region is maxPayloadLength(). This command
-    * behaves similarly to <tt>Packet.getPayload</tt> (minus the
-    * length parameter) and is included in this interface
-    * as a convenience.
+    * Return a pointer to a protocol's payload region in a packet which
+    * at least a certain length.  If the payload region is smaller than
+    * the len parameter, then getPayload returns NULL. This command
+    * behaves identicallt to <tt>Packet.getPayload</tt> and is
+    * included in this interface as a convenience.
     *
     * @param   msg    the packet
     * @return         a pointer to the packet's payload
     */
-  command void* getPayload(message_t* msg);
+  command void* getPayload(message_t* msg, uint8_t len);
 
 }

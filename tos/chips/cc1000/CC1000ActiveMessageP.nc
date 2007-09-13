@@ -78,8 +78,8 @@ implementation {
     return call Packet.maxPayloadLength();
   }
 
-  command void* AMSend.getPayload[am_id_t id](message_t* m) {
-    return call Packet.getPayload(m, NULL);
+  command void* AMSend.getPayload[am_id_t id](message_t* m, uint8_t len) {
+    return call Packet.getPayload(m, len);
   }
 
   /* Receiving a packet */
@@ -93,22 +93,6 @@ implementation {
     }
   }
   
-  command void* Receive.getPayload[am_id_t id](message_t* m, uint8_t* len) {
-    return call Packet.getPayload(m, len);
-  }
-
-  command uint8_t Receive.payloadLength[am_id_t id](message_t* m) {
-    return call Packet.payloadLength(m);
-  }
-  
-  command void* Snoop.getPayload[am_id_t id](message_t* m, uint8_t* len) {
-    return call Packet.getPayload(m, len);
-  }
-
-  command uint8_t Snoop.payloadLength[am_id_t id](message_t* m) {
-    return call Packet.payloadLength(m);
-  }
-
   command am_addr_t AMPacket.address() {
     return call amAddress();
   }

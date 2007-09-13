@@ -155,8 +155,13 @@ implementation {
 
   }
 
-  command void* Send.getPayload(message_t* m) {
-    return m->data;
+  command void* Send.getPayload(message_t* m, uint8_t len) {
+    if (len <= call Send.maxPayloadLength()) {
+      return m->data;
+    }
+    else {
+      return NULL;
+    }
   }
 
   command uint8_t Send.maxPayloadLength() {

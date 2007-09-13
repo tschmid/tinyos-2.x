@@ -83,7 +83,7 @@ implementation {
   }
   
   void sendNext() {
-    printf_msg_t* m = (printf_msg_t*)call Packet.getPayload(&printfMsg, NULL);
+    printf_msg_t* m = (printf_msg_t*)call Packet.getPayload(&printfMsg, sizeof(printf_msg_t));
     length_to_send = (bytes_left_to_flush < sizeof(printf_msg_t)) ? bytes_left_to_flush : sizeof(printf_msg_t);
     memset(m->buffer, 0, sizeof(printf_msg_t));
     memcpy(m->buffer, (nx_uint8_t*)next_byte, length_to_send);

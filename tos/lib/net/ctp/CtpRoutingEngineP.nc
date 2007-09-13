@@ -207,7 +207,7 @@ implementation {
         routeInfoInit(&routeInfo);
         routingTableInit();
         my_ll_addr = call AMPacket.address();
-        beaconMsg = call BeaconSend.getPayload(&beaconMsgBuffer);
+        beaconMsg = call BeaconSend.getPayload(&beaconMsgBuffer, call BeaconSend.maxPayloadLength());
         maxLength = call BeaconSend.maxPayloadLength();
         dbg("TreeRoutingCtl","TreeRouting initialized. (used payload:%d max payload:%d!\n", 
               sizeof(beaconMsg), maxLength);
@@ -454,7 +454,7 @@ implementation {
 
 
     ctp_routing_header_t* getHeader(message_t* m) {
-      return (ctp_routing_header_t*)call BeaconReceive.getPayload(m, NULL);
+      return (ctp_routing_header_t*)call BeaconSend.getPayload(m, call BeaconSend.maxPayloadLength());
     }
     
     

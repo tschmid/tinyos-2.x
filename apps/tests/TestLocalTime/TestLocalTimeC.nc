@@ -73,7 +73,7 @@ implementation {
   event void MilliTimer.fired() {
     if (!locked)
       {
-	test_localtime_msg_t* rcm = (test_localtime_msg_t*)call AMSend.getPayload(&packet);
+	test_localtime_msg_t* rcm = (test_localtime_msg_t*)call AMSend.getPayload(&packet, sizeof(test_localtime_msg_t));
 	if (call AMSend.maxPayloadLength() < sizeof(test_localtime_msg_t))
 	  return;
 
