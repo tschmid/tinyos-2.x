@@ -51,7 +51,8 @@ implementation {
   TestNetworkC.Random -> RandomC;
   TestNetworkC.Pool -> PoolC;
   TestNetworkC.Queue -> QueueC;
-
+  TestNetworkC.RadioPacket -> ActiveMessageC;
+  
 #ifndef NO_DEBUG
   components new PoolC(message_t, 10) as DebugMessagePool;
   components new QueueC(message_t*, 10) as DebugSendQueue;

@@ -36,6 +36,7 @@ module TestNetworkC {
   uses interface Pool<message_t>;
   uses interface CollectionDebug;
   uses interface AMPacket;
+  uses interface Packet as RadioPacket;
 }
 implementation {
   task void uartEchoTask();
@@ -162,7 +163,7 @@ implementation {
    else if (!uartbusy) {
      message_t* msg = call Queue.dequeue();
      dbg("Traffic", "Sending packet to UART.\n");
-     if (call UARTSend.send(0xffff, msg, call Packet.payloadLength(msg)) == SUCCESS) {
+     if (call UARTSend.send(0xffff, msg, call RadioPacket.payloadLength(msg)) == SUCCESS) {
        uartbusy = TRUE;
      }
      else {
