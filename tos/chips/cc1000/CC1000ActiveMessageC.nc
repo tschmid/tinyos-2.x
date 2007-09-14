@@ -50,6 +50,7 @@ configuration CC1000ActiveMessageC {
     interface AMPacket;
     interface Packet;
     interface PacketAcknowledgements;
+    interface LinkPacketMetadata;
   }
 }
 implementation {
@@ -60,7 +61,8 @@ implementation {
   SplitControl = Radio;
   Packet       = Radio;
   PacketAcknowledgements = Radio;
-
+  LinkPacketMetadata = Radio;
+  
   AMSend   = AM;
   Receive  = AM.Receive;
   Snoop    = AM.Snoop;
@@ -70,4 +72,5 @@ implementation {
   AM.SubReceive -> Radio.Receive;
   AM.amAddress -> Address;
   AM.Packet     -> Radio;
+  
 }

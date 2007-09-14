@@ -47,6 +47,7 @@ configuration CC2420ActiveMessageC {
     interface Packet;
     interface CC2420Packet;
     interface PacketAcknowledgements;
+    interface LinkPacketMetadata;
     interface RadioBackoff[am_id_t amId];
     interface LowPowerListening;
     interface PacketLink;
@@ -86,7 +87,7 @@ implementation {
   LowPowerListening = LplC;
   CC2420Packet = CC2420PacketC;
   PacketAcknowledgements = CC2420PacketC;
-  
+  LinkPacketMetadata = CC2420PacketC;
   
   // SplitControl Layers
   SplitControl = LplC;

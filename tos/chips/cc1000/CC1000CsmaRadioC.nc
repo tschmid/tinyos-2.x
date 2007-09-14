@@ -60,7 +60,8 @@ configuration CC1000CsmaRadioC {
     interface CsmaBackoff;
     interface RadioTimeStamping;
     interface PacketAcknowledgements;
-
+    interface LinkPacketMetadata;
+    
     interface LowPowerListening;
   }
 }
@@ -87,7 +88,8 @@ implementation {
   LowPowerListening = Csma;
   RadioTimeStamping = SendReceive;
   PacketAcknowledgements = SendReceive;
-
+  LinkPacketMetadata = SendReceive;
+  
   Csma.CC1000Control -> Control;
   Csma.Random -> RandomC;
   Csma.CC1000Squelch -> Squelch;
@@ -100,6 +102,7 @@ implementation {
   SendReceive.HplCC1000Spi -> Hpl;
   SendReceive.amAddress -> ActiveMessageAddressC;
   SendReceive.RssiRx -> Rssi.Rssi[unique(UQ_CC1000_RSSI)];
+  SendReceive.CC1000Squelch -> Squelch;
   
   Csma.RssiNoiseFloor -> Rssi.Rssi[unique(UQ_CC1000_RSSI)];
   Csma.RssiCheckChannel -> Rssi.Rssi[unique(UQ_CC1000_RSSI)];
