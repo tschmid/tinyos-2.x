@@ -657,7 +657,8 @@ implementation {
 	
 	footer = (linkest_footer_t*) (payloadEnd - (num_entries*sizeof(linkest_footer_t)));
 	{
-	  uint8_t i, my_ll_addr;
+	  uint8_t i;
+	  am_addr_t my_ll_addr;
 	  my_ll_addr = call SubAMPacket.address();
 	  for (i = 0; i < num_entries; i++) {
 	    dbg("LI", "%d %d %d\n", i, footer->neighborList[i].ll_addr,
