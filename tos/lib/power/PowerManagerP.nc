@@ -90,7 +90,8 @@ implementation {
   }
 
   event void SplitControl.startDone(error_t error) {
-    call ResourceDefaultOwner.release();
+    if(call ResourceDefaultOwner.isOwner())
+      call ResourceDefaultOwner.release();
   }
   
   async event void ResourceDefaultOwner.granted() {
