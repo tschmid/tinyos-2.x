@@ -40,7 +40,7 @@
  */
 
    
-interface Queue<t> {
+interface BigQueue<t> {
 
   /**
    * Returns if the queue is empty.
