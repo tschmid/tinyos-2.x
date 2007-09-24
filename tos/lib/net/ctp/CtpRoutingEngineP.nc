@@ -468,7 +468,6 @@ implementation {
         am_addr_t from;
         ctp_routing_header_t* rcvBeacon;
         bool congested;
-        uint8_t lqi = call CC2420Packet.getLqi(msg);
 
         // Received a beacon, but it's not from us.
         if (len != sizeof(ctp_routing_header_t)) {
@@ -489,7 +488,6 @@ implementation {
         dbg("TreeRouting","%s from: %d  [ parent: %d etx: %d]\n",
             __FUNCTION__, from, 
             rcvBeacon->parent, rcvBeacon->etx);
-        call CollectionDebug.logEventRoute(NET_C_TREE_RCV_BEACON, from, lqi, rcvBeacon->etx);
 
         //update neighbor table
         if (rcvBeacon->parent != INVALID_ADDR) {
@@ -513,11 +511,6 @@ implementation {
         //post updateRouteTask();
         return msg;
     }
-
-
-  //event void LinkEstimator.newNeighbor(am_addr_t neighbor, uint8_t lqi) {
-  //  call CollectionDebug.logEventRoute(NET_C_TREE_RCV_BEACON, neighbor, lqi, 0);
-  //}
 
 
     /* Signals that a neighbor is no longer reachable. need special care if
