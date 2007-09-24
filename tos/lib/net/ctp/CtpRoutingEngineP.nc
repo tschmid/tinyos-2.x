@@ -115,7 +115,6 @@ generic module CtpRoutingEngineP(uint8_t routingTableSize, uint16_t minInterval,
         interface CtpCongestion;
 
 	interface CompareBit;
-	interface CC2420Packet;
 
     }
 }
