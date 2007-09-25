@@ -103,6 +103,7 @@ implementation {
     void* payload;
 
     memcpy(bufferPointer, msg, sizeof(message_t));
+    len = call Packet.getPayloadLength(bufferPtr);
     payload = call Packet.getPayload(bufferPointer, call Packet.maxPayloadLength());
 
     if (call AMPacket.isForMe(msg)) {
