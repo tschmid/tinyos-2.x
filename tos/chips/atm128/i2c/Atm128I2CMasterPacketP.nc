@@ -322,10 +322,10 @@ implementation {
       }
       if (state == I2C_ADDR) {
 	if (reading == TRUE) {
-	  call I2C.write((packetAddr & 0xff) | ATM128_I2C_SLA_READ);
+	  call I2C.write(((packetAddr & 0x7f) << 1)) | ATM128_I2C_SLA_READ);
 	}
 	else
-	  call I2C.write((packetAddr & 0xff) | ATM128_I2C_SLA_WRITE);
+	  call I2C.write(((packetAddr & 0x7f) << 1)) | ATM128_I2C_SLA_WRITE);
 	state = I2C_DATA;
 	call I2C.sendCommand();
       }
