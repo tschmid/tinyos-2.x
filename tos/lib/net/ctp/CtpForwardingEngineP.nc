@@ -440,6 +440,10 @@ implementation {
       if (call SentCache.lookup(qe->msg)) {
         call CollectionDebug.logEvent(NET_C_FE_DUPLICATE_CACHE_AT_SEND);
         call SendQueue.dequeue();
+	if (call MessagePool.put(qe->msg) != SUCCESS)
+	  call CollectionDebug.logEvent(NET_C_FE_PUT_MSGPOOL_ERR);
+	if (call QEntryPool.put(qe) != SUCCESS)
+	  call CollectionDebug.logEvent(NET_C_FE_PUT_QEPOOL_ERR);
         post sendTask();
         return;
       }
