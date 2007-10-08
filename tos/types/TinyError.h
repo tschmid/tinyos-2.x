@@ -44,7 +44,7 @@ enum {
   EALREADY       = 9,           // The device state you are requesting is already set
 };
 
-typedef uint8_t error_t __attribute__((combine(ecombine)));
+typedef uint8_t error_t @combine("ecombine");
 
 error_t ecombine(error_t r1, error_t r2)
 /* Returns: r1 if r1 == r2, FAIL otherwise. This is the standard error

@@ -49,7 +49,7 @@ module RealMainP {
   uses interface Init as SoftwareInit;
 }
 implementation {
-  int main() __attribute__ ((C, spontaneous)) {
+  int main() @C() @spontaneous() {
     atomic
       {
 	/* First, initialize the Scheduler so components can post

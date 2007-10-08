@@ -79,7 +79,7 @@ implementation {
   }
 
   
-  long long int sim_mote_euid(int mote) __attribute__ ((C, spontaneous)) {
+  long long int sim_mote_euid(int mote) @C() @spontaneous() {
     long long int result;
     int tmp = sim_node();
     sim_set_node(mote);
@@ -88,14 +88,14 @@ implementation {
     return result;
   }
 
-  void sim_mote_set_euid(int mote, long long int id)  __attribute__ ((C, spontaneous)) {
+  void sim_mote_set_euid(int mote, long long int id)  @C() @spontaneous() {
     int tmp = sim_node();
     sim_set_node(mote);
     call SimMote.setEuid(id);
     sim_set_node(tmp);
   }
   
-  long long int sim_mote_start_time(int mote) __attribute__ ((C, spontaneous)) {
+  long long int sim_mote_start_time(int mote) @C() @spontaneous() {
     long long int result;
     int tmp = sim_node();
     sim_set_node(mote);
@@ -104,7 +104,7 @@ implementation {
     return result;
   }
 
-  int sim_mote_get_variable_info(int mote, char* name, void** ptr, size_t* len) __attribute__ ((C, spontaneous)) {
+  int sim_mote_get_variable_info(int mote, char* name, void** ptr, size_t* len) @C() @spontaneous() {
     int result;
     int tmpID = sim_node();
     sim_set_node(mote);
@@ -114,7 +114,7 @@ implementation {
     return result;
   }
   
-  void sim_mote_set_start_time(int mote, long long int t) __attribute__ ((C, spontaneous)) {
+  void sim_mote_set_start_time(int mote, long long int t) @C() @spontaneous() {
     int tmpID = sim_node();
     sim_set_node(mote);
     startTime = t;
@@ -123,7 +123,7 @@ implementation {
     return;
   }
   
-  bool sim_mote_is_on(int mote) __attribute__ ((C, spontaneous)) {
+  bool sim_mote_is_on(int mote) @C() @spontaneous() {
     bool result;
     int tmp = sim_node();
     sim_set_node(mote);
@@ -132,14 +132,14 @@ implementation {
     return result;
   }
   
-  void sim_mote_turn_on(int mote) __attribute__ ((C, spontaneous)) {
+  void sim_mote_turn_on(int mote) @C() @spontaneous() {
     int tmp = sim_node();
     sim_set_node(mote);
     call SimMote.turnOn();
     sim_set_node(tmp);
   }
   
-  void sim_mote_turn_off(int mote) __attribute__ ((C, spontaneous)) {
+  void sim_mote_turn_off(int mote) @C() @spontaneous() {
     int tmp = sim_node();
     sim_set_node(mote);
     call SimMote.turnOff();
@@ -155,7 +155,7 @@ implementation {
     call SimMote.turnOn();
   }
   
-  void sim_mote_enqueue_boot_event(int mote) __attribute__ ((C, spontaneous)) {
+  void sim_mote_enqueue_boot_event(int mote) @C() @spontaneous() {
     int tmp = sim_node();
     sim_set_node(mote);
 

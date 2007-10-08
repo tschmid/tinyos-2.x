@@ -92,7 +92,7 @@ inline uint32_t _pxa27x_clzui(uint32_t i) {
 typedef uint32_t __nesc_atomic_t;
 
 //NOTE...at the moment, these functions will ONLY disable the IRQ...FIQ is left alone
-inline __nesc_atomic_t __nesc_atomic_start(void) __attribute__((spontaneous))
+inline __nesc_atomic_t __nesc_atomic_start(void) @spontaneous()
 {
   uint32_t result = 0;
   uint32_t temp = 0;
@@ -108,7 +108,7 @@ inline __nesc_atomic_t __nesc_atomic_start(void) __attribute__((spontaneous))
   return result;
 }
 
-inline void __nesc_atomic_end(__nesc_atomic_t oldState) __attribute__((spontaneous))
+inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous()
 {
   uint32_t  statusReg = 0;
   //make sure that we only mess with the INT bit
