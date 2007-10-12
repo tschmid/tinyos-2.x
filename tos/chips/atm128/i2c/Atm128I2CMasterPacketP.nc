@@ -114,6 +114,7 @@ implementation {
 	call I2C.enable(FALSE);
 	call I2C.enableInterrupt(FALSE);
 	call I2C.setInterruptPending(FALSE);
+	call I2C.sendCommand();
 	call I2C.off();
 	state = I2C_OFF;
 	return SUCCESS;
