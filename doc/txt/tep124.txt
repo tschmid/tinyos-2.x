@@ -128,10 +128,10 @@ Information entry.
 The following diagram shows the LEEP header format::
 
                            1
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      |nentry | rsrvd |      seqno      |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |nentry | rsrvd |     seqno     |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
 
 Field definitions:
@@ -147,10 +147,10 @@ Field definitions:
 The following diagram shows the Link Information Entry format::
 
                            1
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-      |             node id             |
-      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+      |            node id            |
+      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
       | link quality  |
       +-+-+-+-+-+-+-+-+
 
