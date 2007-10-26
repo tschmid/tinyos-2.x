@@ -55,7 +55,17 @@ void sim_init() __attribute__ ((C, spontaneous)) {
   {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    sim_seed = tv.tv_usec;
+    // Need to make sure we don't pass zero to seed simulation.
+    // But in case some weird timing factor causes usec to always
+    // be zero, default to tv_sec. Note that the explicit
+    // seeding call also has a check for zero. Thanks to Konrad
+    // Iwanicki for finding this. -pal
+    if (tv.tv_usec != 0) {
+      sim_random_seed(tv.tv_usec);
+    }
+    else {
+      sim_random_seed(tv.tv_sec);
+    }
   } 
 }
 
@@ -82,6 +92,10 @@ int sim_random() __attribute__ ((C, spontaneous)) {
 }
 
 void sim_random_seed(int seed) __attribute__ ((C, spontaneous)) {
+  // A seed of zero wedges on zero, so use 1 instead.
+  if (seed == 0) {
+    seed = 1;
+  }
   sim_seed = seed;
 }
 
