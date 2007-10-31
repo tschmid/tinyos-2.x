@@ -45,7 +45,7 @@ interface CtpInfo {
    * through the current parent.  The pointer is allocated by the
    * caller.  If the parent is invalid, return FAIL (no info).  The
    * caller MUST NOT use the value in parent if the return is not
-   * SUCCESS.
+   * SUCCESS. Calling getEtx at the root will set the etx argument to 0.
    */
   
   command error_t getEtx(uint16_t* etx);

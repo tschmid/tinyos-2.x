@@ -548,7 +548,12 @@ implementation {
             return FAIL;
         if (routeInfo.parent == INVALID_ADDR)    
             return FAIL;
-        *etx = routeInfo.etx;
+	if (state_is_root == 1) {
+	  *etx = 0;
+	} else {
+	  // path etx = etx(parent) + etx(link to the parent)
+	  *etx = routeInfo.etx + evaluateEtx(call LinkEstimator.getLinkQuality(routeInfo.parent));
+	}
         return SUCCESS;
     }
 
