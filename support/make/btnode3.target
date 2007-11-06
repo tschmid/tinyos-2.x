@@ -3,8 +3,14 @@
 
 PLATFORM ?= btnode3
 SENSORBOARD ?= micasb
-PROGRAMMER_PART ?= -dpart=ATmega128 --wr_fuse_e=ff
-PFLAGS += -finline-limit=100000
+PROGRAMMER ?= uisp
+ifeq ($(PROGRAMMER),avrdude)
+  PROGRAMMER_PART ?= -pm128  -U efuse:w:0xff:m
+endif
+
+ifeq ($(PROGRAMMER),uisp)
+  PROGRAMMER_PART ?= -dpart=ATmega128  --wr_fuse_e=ff
+endif
 
 ifdef TINYOS_NP
   ifeq ($(TINYOS_NP),BNP)

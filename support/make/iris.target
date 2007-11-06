@@ -1,21 +1,20 @@
 #-*-Makefile-*- vim:syntax=make
 #$Id$
 
-PLATFORM = mica2
+PLATFORM = iris
 SENSORBOARD ?= micasb
-PROGRAMMER ?= uisp
+PROGRAMMER ?= avrdude
 ifeq ($(PROGRAMMER),avrdude)
-  PROGRAMMER_PART ?= -pm128  -U efuse:w:0xff:m
+  PROGRAMMER_PART ?= -pm1281 -U efuse:w:0xff:m
 endif
 
 ifeq ($(PROGRAMMER),uisp)
-  PROGRAMMER_PART ?= -dpart=ATmega128  --wr_fuse_e=ff
+  PROGRAMMER_PART ?= -dpart=ATmega1281 --wr_fuse_e=ff
 endif
 
 AVR_FUSE_H ?= 0xd9
-
+AVR_FUSE_L ?= 0xff
 $(call TOSMake_include_platform,avr)
 
-mica2: $(BUILD_DEPS)
+iris: $(BUILD_DEPS)
 	@:
-
