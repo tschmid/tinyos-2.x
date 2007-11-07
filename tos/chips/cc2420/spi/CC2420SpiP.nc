@@ -33,6 +33,8 @@
  * @author Jonathan Hui <jhui@archrock.com>
  * @author David Moss
  * @author Roman Lim
+ * @author Razvan Musaloie-E.
+ * @author Jeonggil Ko
  * @version $Revision$ $Date$
  */
 
@@ -244,8 +246,8 @@ implementation {
     
     addr += offset;
 
-    call SpiByte.write( addr | 0x80 );
-    status = call SpiByte.write( ( ( addr >> 1 ) & 0xc0 ) | 0x20 );
+    status = call SpiByte.write( addr | 0x80 );
+    call SpiByte.write( ( ( addr >> 1 ) & 0xC0 ) | 0x20 );
     for ( ; len; len-- ) {
       *data++ = call SpiByte.write( 0 );
     }
@@ -269,10 +271,10 @@ implementation {
     
     addr += offset;
 
-    call SpiByte.write( addr | 0x80 );
+    status = call SpiByte.write( addr | 0x80 );
     call SpiByte.write( ( addr >> 1 ) & 0xc0 );
     for ( ; len; len-- ) {
-      status = call SpiByte.write( *data++ );
+      call SpiByte.write( *data++ );
     }
 
     return status;
