@@ -31,6 +31,7 @@
 
 /**
  * @author Jonathan Hui <jhui@archedrock.com>
+ * @author Mark Hays
  * @version $Revision$ $Date$
  */
 
@@ -49,7 +50,15 @@ configuration Msp430SpiDma0P {
 
 implementation {
 
-  components new Msp430SpiDmaP() as SpiP;
+#include "Msp430Dma.h"
+
+  components new Msp430SpiDmaP(IFG1_,
+			       U0TXBUF_,
+			       UTXIFG0,
+			       (uint16_t) DMA_TRIGGER_UTXIFG0,
+			       U0RXBUF_,
+			       URXIFG0,
+			       (uint16_t) DMA_TRIGGER_URXIFG0) as SpiP;
   Resource = SpiP.Resource;
   ResourceConfigure = SpiP.ResourceConfigure;
   Msp430SpiConfigure = SpiP.Msp430SpiConfigure;

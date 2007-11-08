@@ -36,6 +36,7 @@
  * place of Msp430SpiNoDma0P.
  *
  * @author Jonathan Hui <jhui@archedrock.com>
+ * @author Mark Hays
  * @version $Revision$ $Date$
  */
 
@@ -56,7 +57,13 @@ implementation {
     CLIENT_ID = unique( MSP430_SPIO_BUS ),
   };
 
+#ifdef ENABLE_SPI0_DMA
+#warning "Enabling SPI DMA on USART0"
+  components Msp430SpiDma0P as SpiP;
+#else
   components Msp430SpiNoDma0P as SpiP;
+#endif
+
   Resource = SpiP.Resource[ CLIENT_ID ];
   SpiByte = SpiP.SpiByte;
   SpiPacket = SpiP.SpiPacket[ CLIENT_ID ];

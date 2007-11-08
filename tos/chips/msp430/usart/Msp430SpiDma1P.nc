@@ -31,13 +31,14 @@
 
 /**
  * @author Jonathan Hui <jhui@archedrock.com>
+ * @author Mark Hays
  * @version $Revision$ $Date$
  */
 
 configuration Msp430SpiDma1P {
 
   provides interface Resource[ uint8_t id ];
-  provides interface ResourceControl [uint8_t id];
+  provides interface ResourceConfigure[uint8_t id];
   provides interface SpiByte;
   provides interface SpiPacket[ uint8_t id ];
 
@@ -49,9 +50,17 @@ configuration Msp430SpiDma1P {
 
 implementation {
 
-  components new Msp430SpiDmaP() as SpiP;
+#include "Msp430Dma.h"
+
+  components new Msp430SpiDmaP(IFG2_,
+			       U1TXBUF_,
+			       UTXIFG1,
+			       (uint16_t) DMA_TRIGGER_UTXIFG1,
+			       U1RXBUF_,
+			       URXIFG1,
+			       (uint16_t) DMA_TRIGGER_URXIFG1) as SpiP;
   Resource = SpiP.Resource;
-  ResourceControl = SpiP.ResourceControl;
+  ResourceConfigure = SpiP.ResourceConfigure;
   Msp430SpiConfigure = SpiP.Msp430SpiConfigure;
   SpiByte = SpiP.SpiByte;
   SpiPacket = SpiP.SpiPacket;
