@@ -649,6 +649,20 @@ implementation {
 	}
       }
 
+
+      /* Graphical explanation of how we get to the head of the
+       * footer in the following code 
+       * <---------------------- payloadLen ------------------->
+       * -------------------------------------------------------
+       * linkest_header_t  | payload  | linkest_footer_t* ...|
+       * -------------------------------------------------------
+       * ^                              ^                      ^
+       * |                              |                      |
+       * subpayload                     |                      payloadEnd
+       *                                |
+       *                                payloadEnd - footersize*num footers
+      */
+
       if ((nidx != INVALID_RVAL) && (num_entries > 0)) {
 	uint8_t payloadLen = call SubPacket.payloadLength(msg);
 	void* subPayload = call SubPacket.getPayload(msg, payloadLen);
