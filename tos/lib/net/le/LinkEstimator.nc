@@ -35,13 +35,13 @@
 interface LinkEstimator {
   
   /* get bi-directional link quality for link to the neighbor */
-  command uint8_t getLinkQuality(uint16_t neighbor);
+  command uint16_t getLinkQuality(uint16_t neighbor);
 
   /* get quality of the link from neighbor to this node */
-  command uint8_t getReverseQuality(uint16_t neighbor);
+  command uint16_t getReverseQuality(uint16_t neighbor);
 
   /* get quality of the link from this node to the neighbor */
-  command uint8_t getForwardQuality(uint16_t neighbor);
+  command uint16_t getForwardQuality(uint16_t neighbor);
 
   /* insert this neighbor into the neighbor table */
   command error_t insertNeighbor(am_addr_t neighbor);

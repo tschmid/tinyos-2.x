@@ -437,7 +437,7 @@ implementation {
   }
 
   // return bi-directional link quality to the neighbor
-  command uint8_t LinkEstimator.getLinkQuality(am_addr_t neighbor) {
+  command uint16_t LinkEstimator.getLinkQuality(am_addr_t neighbor) {
     uint8_t idx;
     idx = findIdx(neighbor);
     if (idx == INVALID_RVAL) {

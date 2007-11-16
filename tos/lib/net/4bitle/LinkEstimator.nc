@@ -35,7 +35,7 @@
 interface LinkEstimator {
   
   /* get link quality for link to the neighbor */
-  command uint8_t getLinkQuality(uint16_t neighbor);
+  command uint16_t getLinkQuality(uint16_t neighbor);
 
   /* insert this neighbor into the neighbor table */
   command error_t insertNeighbor(am_addr_t neighbor);
