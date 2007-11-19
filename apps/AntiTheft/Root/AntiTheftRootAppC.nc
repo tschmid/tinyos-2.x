@@ -28,8 +28,10 @@ implementation
   components CC1000CsmaRadioC as Radio;
 #elif defined(PLATFORM_MICAZ)
   components CC2420ActiveMessageC as Radio;
+#elif defined(PLATFORM_IRIS)
+  components DummyLPLMacC as Radio;
 #else
-#error "The AntiTheft application is only supported for mica2 and micaz nodes"
+#error "The AntiTheft application is only supported for mica2, micaz and iris nodes"
 #endif
 
   AntiTheftRootC.Boot -> MainC;
