@@ -320,8 +320,8 @@ implementation {
    *     default to software auto acknowledgements
    */
   command void CC2420Config.setAutoAck(bool enableAutoAck, bool hwAutoAck) {
-    autoAckEnabled = enableAutoAck;
-    hwAutoAckDefault = hwAutoAck;
+    atomic autoAckEnabled = enableAutoAck;
+    atomic hwAutoAckDefault = hwAutoAck;
   }
   
   /**
