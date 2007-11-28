@@ -28,6 +28,7 @@
  *  @see Net2-WG
  */
 
+#include "AM.h"
 
 interface CtpInfo {
 
