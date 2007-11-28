@@ -39,6 +39,7 @@
  */
 
 #include <AM.h>
+#include "Ctp.h"
    
 interface CtpPacket {
   // Sets the given options bit.
