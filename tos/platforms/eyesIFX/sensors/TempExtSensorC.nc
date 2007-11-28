@@ -67,7 +67,7 @@ implementation
   
   components HplMsp430GeneralIOC as MspGeneralIO;
   components new Msp430GpioC() as TEMP;
-  TEMP -> MspGeneralIO.Port60;
+  TEMP -> MspGeneralIO.Port54;
   
   components TempExtSensorP;
   Read = TempExtSensorP.Read;
