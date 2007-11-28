@@ -243,9 +243,11 @@ implementation {
 	  m_log_info[ id ].read_addr = m_log_state[ id ].cookie & ~BLOCK_MASK;
 	  m_log_info[ id ].remaining = 0;
 	  m_rw_state = S_SEARCH_SEEK;
-	  if ( m_log_info[ id ].read_addr != m_log_state[ id ].cookie )
+	  if ( m_log_info[ id ].read_addr != m_log_state[ id ].cookie ) {
+	    m_log_info[ id ].read_addr += sizeof( m_addr );
 	    call Sector.read[ id ]( calcAddr( id, m_log_info[ id ].read_addr ),
 				    &m_header, sizeof( m_header ) );
+	  }
 	  else
 	    signalDone( id, SUCCESS );
 	}
