@@ -72,4 +72,6 @@ implementation {
       signal Notify.notify( BUTTON_PRESSED );
     }
   }
+  
+  default event void Notify.notify( button_state_t val ) { }
 }
