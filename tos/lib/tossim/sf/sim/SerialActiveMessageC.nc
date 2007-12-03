@@ -282,7 +282,7 @@ implementation {
         return evt;
     }
 
-    void serial_active_message_deliver(int node, message_t* msg, sim_time_t t) __attribute__ ((C, spontaneous)) {
+    void serial_active_message_deliver(int node, message_t* msg, sim_time_t t) @C() @spontaneous() {
         sim_event_t* evt = allocate_serial_deliver_event(node, msg, t);
         sim_queue_insert(evt);
     }
