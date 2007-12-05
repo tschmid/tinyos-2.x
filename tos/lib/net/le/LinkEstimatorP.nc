@@ -39,6 +39,7 @@ module LinkEstimatorP {
     interface LinkEstimator;
     interface Init;
     interface Packet;
+    interface CompareBit;
   }
 
   uses {
@@ -46,6 +47,8 @@ module LinkEstimatorP {
     interface AMPacket as SubAMPacket;
     interface Packet as SubPacket;
     interface Receive as SubReceive;
+    interface LinkPacketMetadata;
+    interface Random;
   }
 }
 
