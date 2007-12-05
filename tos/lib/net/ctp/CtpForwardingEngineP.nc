@@ -748,7 +748,7 @@ implementation {
     call CollectionDebug.logEventMsg(NET_C_FE_RCV_MSG,
 					 call CollectionPacket.getSequenceNumber(msg), 
 					 call CollectionPacket.getOrigin(msg), 
-                                         call AMPacket.destination(msg));
+				     thl--);
     if (len > call SubSend.maxPayloadLength()) {
       return msg;
     }
