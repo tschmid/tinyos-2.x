@@ -259,7 +259,7 @@ implementation {
 
     /* Converts the output of the link estimator to path metric
      * units, that can be *added* to form path metric measures */
-    uint16_t evaluateEtx(uint8_t quality) {
+    uint16_t evaluateEtx(uint16_t quality) {
         //dbg("TreeRouting","%s %d -> %d\n",__FUNCTION__,quality, quality+10);
         return (quality + 10);
     }
