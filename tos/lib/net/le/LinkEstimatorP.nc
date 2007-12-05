@@ -737,7 +737,6 @@ implementation {
 
   // application payload pointer is just past the link estimation header
   command void* Packet.getPayload(message_t* msg, uint8_t len) {
-    linkest_header_t *hdr = getHeader(msg);
     void* payload = call SubPacket.getPayload(msg, len +  sizeof(linkest_header_t));
     if (payload != NULL) {
       payload += sizeof(linkest_header_t);
