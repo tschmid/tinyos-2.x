@@ -82,15 +82,15 @@ implementation {
     return call Packet.maxPayloadLength();
   }
 
-  command void* AMSend.getPayload[am_id_t id](message_t* m) {
-    return call Packet.getPayload(m, NULL);
+  command void* AMSend.getPayload[am_id_t id](message_t* m, uint8_t len) {
+    return call Packet.getPayload(m, len);
   }
 
   /* Receiving a packet */
 
   event message_t* SubReceive.receive(message_t* msg, void* payload, uint8_t len) {
     cc1000_footer_t* msg_footer = getFooter(msg);
-    if(msg_footer->crc == 1) {      
+    if(msg_footer->crc == 1) {
       if (call AMPacket.isForMe(msg)) {
         return signal Receive.receive[call AMPacket.type(msg)](msg, payload, len);
       }
@@ -100,22 +100,6 @@ implementation {
     }
   }
   
-  command void* Receive.getPayload[am_id_t id](message_t* m, uint8_t* len) {
-    return call Packet.getPayload(m, len);
-  }
-
-  command uint8_t Receive.payloadLength[am_id_t id](message_t* m) {
-    return call Packet.payloadLength(m);
-  }
-  
-  command void* Snoop.getPayload[am_id_t id](message_t* m, uint8_t* len) {
-    return call Packet.getPayload(m, len);
-  }
-
-  command uint8_t Snoop.payloadLength[am_id_t id](message_t* m) {
-    return call Packet.payloadLength(m);
-  }
-
   command am_addr_t AMPacket.address() {
     return call amAddress();
   }
