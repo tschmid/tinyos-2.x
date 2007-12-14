@@ -98,6 +98,7 @@ implementation {
         return signal Snoop.receive[call AMPacket.type(msg)](msg, payload, len);
       }
     }
+    return msg;
   }
   
   command am_addr_t AMPacket.address() {

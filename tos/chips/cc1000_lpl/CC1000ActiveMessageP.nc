@@ -98,6 +98,7 @@ implementation {
         return signal Snoop.receive[call AMPacket.type(msg)](msg, payload, len);
       }
     }
+    return msg;
   }
   
   command void* Receive.getPayload[am_id_t id](message_t* m, uint8_t* len) {
