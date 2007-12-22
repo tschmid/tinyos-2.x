@@ -239,7 +239,7 @@ implementation {
     m_addr = addr;
     m_len = len;
     
-    return call Spi.computeCrc( crc, m_addr, m_len );
+    return call Spi.computeCrc( crc, physicalAddr( id, addr ), m_len );
     
   }
   
