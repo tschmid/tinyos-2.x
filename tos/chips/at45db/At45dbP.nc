@@ -399,7 +399,7 @@ implementation
 					uint16_t baseCrc) {
     /* This is a hack (store crc in reqBuf), but it saves 2 bytes of RAM */
     reqBuf = (uint8_t *)baseCrc;
-    newRequest(R_READCRC, page, offset, NULL, n);
+    newRequest(R_READCRC, page, offset, reqBuf, n);
   }
 
   command void At45db.write(at45page_t page, at45pageoffset_t offset,
