@@ -1,4 +1,4 @@
-#include <DIP.h>
+#include <Dip.h>
 
 /*
  * Copyright (c) 2006 Arch Rock Corporation
@@ -62,16 +62,16 @@ implementation {
   components LedsC;
   DisseminatorP.Leds -> LedsC;
 
-  components DIPLogicC;
-  DisseminatorP.DIPDisseminationUpdate -> DIPLogicC.DisseminationUpdate[key];
+  components DipLogicC;
+  DisseminatorP.DipDisseminationUpdate -> DipLogicC.DisseminationUpdate[key];
 
-  components DIPVersionC;
-  DisseminatorP.DIPHelp -> DIPVersionC;
+  components DipVersionC;
+  DisseminatorP.DipHelp -> DipVersionC;
 
   components MainC;
   MainC.SoftwareInit -> DisseminatorP;
 
-  components DIPDataC;
-  DIPDataC.DisseminationUpdate[key] -> DisseminatorP.DataDisseminationUpdate;
-  DIPDataC.DisseminationValue[key] -> DisseminatorP.DataDisseminationValue;
+  components DipDataC;
+  DipDataC.DisseminationUpdate[key] -> DisseminatorP.DataDisseminationUpdate;
+  DipDataC.DisseminationValue[key] -> DisseminatorP.DataDisseminationValue;
 }

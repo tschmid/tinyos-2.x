@@ -40,11 +40,11 @@
  */ 
 
 
-configuration DIPTrickleMilliC {
-  provides interface DIPTrickleTimer as TrickleTimer;
+configuration DipTrickleMilliC {
+  provides interface DipTrickleTimer as TrickleTimer;
 }
 implementation {
-  components DIPTrickleMilliP as TrickleP;
+  components DipTrickleMilliP as TrickleP;
   components MainC, RandomC;
   components new TimerMilliC() as PeriodicIntervalTimer;
   components new TimerMilliC() as SingleEventTimer;

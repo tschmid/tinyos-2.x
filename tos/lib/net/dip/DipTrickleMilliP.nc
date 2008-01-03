@@ -39,12 +39,12 @@
  */ 
 
 #include <Timer.h>
-#include <DIP.h>
+#include <Dip.h>
 
-module DIPTrickleMilliP {
+module DipTrickleMilliP {
   provides {
     interface Init;
-    interface DIPTrickleTimer as TrickleTimer;
+    interface DipTrickleTimer as TrickleTimer;
   }
   uses {
     interface Timer<TMilli> as PeriodicIntervalTimer;
@@ -67,7 +67,7 @@ implementation {
    */
   command error_t TrickleTimer.start() {
     call PeriodicIntervalTimer.startOneShot(period);
-    dbg("DIPTrickleMilliP",
+    dbg("DipTrickleMilliP",
 	"Starting trickle timer @ %s\n", sim_time_string());
     return SUCCESS;
   }
@@ -77,7 +77,7 @@ implementation {
    */
   command void TrickleTimer.stop() {
     call PeriodicIntervalTimer.stop();
-    dbg("DIPTrickleMilliP",
+    dbg("DipTrickleMilliP",
 	"Stopping trickle timer @ %s\n", sim_time_string());
   }
 
@@ -89,7 +89,7 @@ implementation {
     period = DIP_TAU_LOW;
     call PeriodicIntervalTimer.stop();
     call PeriodicIntervalTimer.startOneShot(period);
-    dbg("DIPTrickleMilliP",
+    dbg("DipTrickleMilliP",
 	"Resetting trickle timer @ %s\n", sim_time_string());
   }
 
@@ -104,7 +104,7 @@ implementation {
     uint32_t dtfire;
 
     dtfire = (call Random.rand16() % (period / 2)) + (period / 2);
-    dbg("DIPTrickleMilliP", "Scheduling Trickle event with %u\n", dtfire);
+    dbg("DipTrickleMilliP", "Scheduling Trickle event with %u\n", dtfire);
     call SingleEventTimer.startOneShot(dtfire);
     period = signal TrickleTimer.requestWindowSize();
     call PeriodicIntervalTimer.startOneShot(period);

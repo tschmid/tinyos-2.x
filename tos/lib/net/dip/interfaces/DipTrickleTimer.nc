@@ -46,7 +46,7 @@
  */ 
 
 
-interface DIPTrickleTimer {
+interface DipTrickleTimer {
 
   /**
    * Start the trickle timer. At boot, the timer period is its maximum
@@ -77,7 +77,7 @@ interface DIPTrickleTimer {
   event void fired();
 
   /**
-   * Compute the window size based on DIP's estimates
+   * Compute the window size based on Dip's estimates
    */
   event uint32_t requestWindowSize();
 
