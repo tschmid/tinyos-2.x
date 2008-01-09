@@ -164,6 +164,11 @@ implementation {
   
   /***************** SubReceive Events ****************/
   event message_t* SubReceive.receive(message_t* msg, void* payload, uint8_t len) {
+    
+    if(!(call CC2420PacketBody.getMetadata(msg))->crc) {
+      return msg;
+    }
+    
     if (call AMPacket.isForMe(msg)) {
       return signal Receive.receive[call AMPacket.type(msg)](msg, payload, len - CC2420_SIZE);
     }
