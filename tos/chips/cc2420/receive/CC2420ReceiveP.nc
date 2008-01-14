@@ -36,6 +36,8 @@
  * @version $Revision$ $Date$
  */
 
+#include "IEEE802154.h"
+
 module CC2420ReceiveP {
 
   provides interface Init;
