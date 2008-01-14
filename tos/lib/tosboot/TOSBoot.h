@@ -30,10 +30,4 @@
 
 #include "TOSBoot_platform.h"
 
-typedef struct tosboot_args_t {
-  uint32_t imageAddr;
-  uint8_t  gestureCount;
-  bool     noReprogram;
-} tosboot_args_t;
-
 #endif

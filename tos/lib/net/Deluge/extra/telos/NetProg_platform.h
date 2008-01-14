@@ -31,11 +31,6 @@
 #ifndef __NETPROG_PLATFORM_H__
 #define __NETPROG_PLATFORM_H__
 
-enum {
-  IFLASH_TOS_INFO_ADDR = 0x60,  // 6 bytes
-  IFLASH_NODE_DESC_ADDR = 0x66, // 10 bytes
-};
-
 void netprog_reboot() {
   WDTCTL = WDT_ARST_1_9; 
   while(1);

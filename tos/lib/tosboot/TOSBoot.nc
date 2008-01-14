@@ -29,6 +29,7 @@
  */
 
 includes Deluge;
+includes DelugePageTransfer;
 includes TOSBoot;
 
 configuration TOSBoot {

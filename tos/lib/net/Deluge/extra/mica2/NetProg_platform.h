@@ -31,11 +31,6 @@
 #ifndef __NETPROG_PLATFORM_H__
 #define __NETPROG_PLATFORM_H__
 
-enum {
-  IFLASH_TOS_INFO_ADDR = 0xfe0,  // 6 bytes
-  IFLASH_NODE_DESC_ADDR = 0xfe6, // 10 bytes
-};
-
 void netprog_reboot() {
   wdt_enable(1);
   while(1);

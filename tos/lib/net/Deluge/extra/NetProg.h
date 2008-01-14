@@ -38,11 +38,11 @@
 #endif
 
 static const uint32_t DELUGE_IMAGE_UID = IDENT_UID_HASH;
-
+/*
 typedef struct NetProg_TOSInfo {
   uint16_t addr;
   uint8_t  groupId;
   uint16_t crc;
 } NetProg_TOSInfo;
-
+*/
 #endif
