@@ -27,13 +27,13 @@ if( defined $name && $name !~ /^\s*$/ ) {
   ($qname = $name) =~ s/['"]//g;
   substr( $qname, $MaxNameLength-1 ) = "" if length $qname >= $MaxNameLength;
   my @bytes = unpack( "C*", $qname );
-  push( @defs, "-DIDENT_PROGRAM_NAME=\\\"$qname\\\"" );
+  push( @defs, "-DIDENT_APPNAME=\\\"$qname\\\"" );
 }
 if( defined $whoami && $whoami !~ /^\s*$/ ) {
   ($qname = $whoami) =~ s/['"]//g;
   substr( $qname, $MaxNameLength-1 ) = "" if length $qname >= $MaxNameLength;
   my @bytes = unpack( "C*", $qname );
-  push( @defs, "-DIDENT_USER_ID=\\\"$qname\\\"" );
+  push( @defs, "-DIDENT_USERNAME=\\\"$qname\\\"" );
 }
 if( defined $hostname && $hostname !~ /^\s*$/ ) {
   ($qname = $hostname) =~ s/['"]//g;
@@ -41,8 +41,8 @@ if( defined $hostname && $hostname !~ /^\s*$/ ) {
   my @bytes = unpack( "C*", $qname );
   push( @defs, "-DIDENT_HOSTNAME=\\\"$qname\\\"" );
 }
-push( @defs, "-DIDENT_USER_HASH=${id}L" );
-push( @defs, "-DIDENT_UNIX_TIME=${time}L" );
-push( @defs, "-DIDENT_UID_HASH=${uid}L" );
+push( @defs, "-DIDENT_USERHASH=${id}L" );
+push( @defs, "-DIDENT_TIMESTAMP=${time}L" );
+push( @defs, "-DIDENT_UIDHASH=${uid}L" );
 
 print join(" ",@defs) . "\n";
