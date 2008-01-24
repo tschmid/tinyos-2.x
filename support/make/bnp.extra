@@ -27,4 +27,11 @@ ifeq ($(TINYOS_NP),BNP)
     AVR_FUSE_H ?= 0xda
   endif
 
+  ifeq ($(TARGETS),iris)
+    CFLAGS += -I$(DELUGE_EXTRA)/iris -I$(DELUGE_EXTRA)/micaz -I$(DELUGE_EXTRA)/mica2 -I$(DELUGE_EXTRA)/avr -I$(DELUGE_EXTRA)
+    BOOTLOADER ?= $(TOSBOOT_DIR)/iris/main.ihex
+    AVR_FUSE_H ?= 0xda
+  endif
+
+
 endif
