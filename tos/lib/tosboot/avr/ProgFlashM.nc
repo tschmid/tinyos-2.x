@@ -36,7 +36,7 @@ module ProgFlashM {
 
 implementation {
 
-#include <boot.h>
+#include <avr/boot.h>
 
   command error_t ProgFlash.write(in_flash_addr_t addr, uint8_t* buf, in_flash_addr_t len) {
 
