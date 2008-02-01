@@ -48,6 +48,9 @@ PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c -board=$(SENSORBOAR
 ifdef MSG_SIZE
 PFLAGS += -DTOSH_DATA_LENGTH=$(MSG_SIZE)
 endif
+ifdef DEFAULT_LOCAL_GROUP
+PFLAGS += -DDEFINED_TOS_AM_GROUP=$(DEFAULT_LOCAL_GROUP)
+endif
 
 AVRGCCMAJOR = $(shell avr-gcc -v 2>&1 | grep "gcc version" | sed -n 's/gcc version \([2-5]\)\.\([0-9]\)\.\([0-9]\).*/\1/p')
 ifeq ($(AVRGCCMAJOR),4)
