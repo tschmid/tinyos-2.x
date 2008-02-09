@@ -28,5 +28,5 @@ interface Intercept {
    * indicates that it should not be forwarded.
    *
    */
-  event bool forward(message_t* msg, void* payload, uint16_t len);
+  event bool forward(message_t* msg, void* payload, uint8_t len);
 }
