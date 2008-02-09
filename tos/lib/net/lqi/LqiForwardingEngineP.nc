@@ -502,7 +502,7 @@ implementation {
  default event message_t* Receive.receive[collection_id_t id](message_t* pMsg, void* payload, uint8_t len) {
    return pMsg;
  }
- default event bool Intercept.forward[collection_id_t id](message_t* pMsg, void* payload, uint16_t len) {
+ default event bool Intercept.forward[collection_id_t id](message_t* pMsg, void* payload, uint8_t len) {
    return 1;
  }
 
