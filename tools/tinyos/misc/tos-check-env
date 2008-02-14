@@ -158,7 +158,7 @@ sub chk_nesc {
 	while (<NESC>) {
 	    if (/nescc:/) {
 		print $_;
-		$versionok = 1 if /1\.2/;
+		$versionok = 1 if (/1\.2/ || /1\.3/);
 	    } elsif (/Unknown target /) {
 		$warning = "--> WARNING: nescc (nesc) was found, but the version could " .
 		    "not be verified. Verify that the ncc version that you have is $nescversion " .
