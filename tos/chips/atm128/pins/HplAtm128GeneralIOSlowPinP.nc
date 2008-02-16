@@ -39,9 +39,9 @@ generic module HplAtm128GeneralIOSlowPinP (uint8_t port_addr,
 }
 implementation
 {
-#define pin (*(volatile uint8_t *)pin_addr)
-#define port (*(volatile uint8_t *)port_addr)
-#define ddr (*(volatile uint8_t *)ddr_addr)
+#define pin (*TCAST(volatile uint8_t * SINGLE NONNULL, pin_addr))
+#define port (*TCAST(volatile uint8_t * SINGLE NONNULL, port_addr))
+#define ddr (*TCAST(volatile uint8_t * SINGLE NONNULL, ddr_addr))
 
   inline async command bool IO.get()        { return READ_BIT (pin, bit); }
   inline async command void IO.set()        { atomic SET_BIT  (port, bit); }
