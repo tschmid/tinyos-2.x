@@ -80,7 +80,9 @@ implementation {
   }
 
   command void DisseminationValue.set( const t* val ) {
-    valueCache = *val;
+    if (seqno == DISSEMINATION_SEQNO_UNKNOWN) {
+      valueCache = *val;
+    }
   }
 
   command void DisseminationUpdate.change( t* newVal ) {
@@ -105,7 +107,11 @@ implementation {
 					     uint32_t newSeqno ) {
     memcpy( &valueCache, data, size < sizeof(t) ? size : sizeof(t) );
     seqno = newSeqno;
-    post changedTask();
+    // We need to signal here and can't go through a task to
+    // ensure that the update and changed event are atomic.
+    // Otherwise, it is possible that storeData is called,
+    // but before the task runs, the client calls set(). -pal
+    signal DisseminationValue.changed();
   }
 
   command uint32_t DisseminationCache.requestSeqno() {
