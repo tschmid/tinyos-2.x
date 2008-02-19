@@ -95,6 +95,7 @@ implementation {
   }
 
   command void Packet.clear(message_t* msg) {
+    memset(getHeader(msg), 0, sizeof(serial_header_t));
     return;
   }
 
