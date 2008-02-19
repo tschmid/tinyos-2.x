@@ -49,6 +49,10 @@ implementation {
   serial_header_t* getHeader(message_t* msg) {
     return (serial_header_t*)(msg->data - sizeof(serial_header_t));
   }
+
+  serial_metadata_t* getMetadata(message_t* msg) {
+    return (serial_metadata_t*)(msg->metadata);
+  }
   
   command error_t AMSend.send[am_id_t id](am_addr_t dest,
 					  message_t* msg,

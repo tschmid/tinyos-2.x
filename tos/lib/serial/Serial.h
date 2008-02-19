@@ -122,4 +122,8 @@ typedef nx_struct serial_packet {
   nx_uint8_t data[];
 } serial_packet_t;
 
+typedef nx_struct serial_metadata {
+  bool acked;
+} serial_metadata_t;
+    
 #endif
