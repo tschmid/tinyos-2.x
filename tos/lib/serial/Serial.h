@@ -123,7 +123,7 @@ typedef nx_struct serial_packet {
 } serial_packet_t;
 
 typedef nx_struct serial_metadata {
-  bool acked;
+  nx_bool acked;
 } serial_metadata_t;
     
 #endif
