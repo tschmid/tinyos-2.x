@@ -191,7 +191,7 @@ implementation
     id = call RadioAMPacket.type(msg);
     addr = call RadioAMPacket.destination(msg);
     src = call RadioAMPacket.source(msg);
-    call RadioAMPacket.clear(msg);
+    call UartPacket.clear(msg);
     call UartAMPacket.setSource(msg, src);
 
     if (call UartSend.send[id](addr, uartQueue[uartOut], len) == SUCCESS)
@@ -270,7 +270,7 @@ implementation
     source = call UartAMPacket.source(msg);
     id = call UartAMPacket.type(msg);
 
-    call RadioAMPacket.clear(msg);
+    call RadioPacket.clear(msg);
     call RadioAMPacket.setSource(msg, source);
     
     if (call RadioSend.send[id](addr, msg, len) == SUCCESS)
