@@ -57,6 +57,14 @@
 typedef uint8_t bool;
 #endif
 
+/* 
+ * TEMPORARY: include the Safe TinyOS macros so that annotations get
+ * defined away for non-safe users -- this will no longer be necessary
+ * after we require users to use the ncc that has Safe TinyOS
+ * support 
+ */
+#include "../../lib/safe/include/annots_stage1.h"
+
 enum { FALSE = 0, TRUE = 1 };
 
 extern uint16_t TOS_NODE_ID;
