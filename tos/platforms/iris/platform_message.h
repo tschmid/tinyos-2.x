@@ -75,6 +75,7 @@ typedef union message_footer {
 
 typedef union message_metadata {
   defaultmac_metadata_t rf230;
+  serial_metadata_t serial;
 } message_metadata_t;
 
 #endif
