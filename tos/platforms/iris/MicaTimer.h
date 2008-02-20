@@ -144,7 +144,7 @@ enum {
 
 // get a 1MHz (1 microsecond resolution) timer for debugging purposes
 
-typedef TMilli TOne;
+typedef TMicro TOne;
 typedef TMicro TThree;
 typedef uint32_t counter_one_overflow_t;
 typedef uint16_t counter_three_overflow_t;

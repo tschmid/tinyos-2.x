@@ -62,20 +62,20 @@
 #ifndef PLATFORM_MESSAGE_H
 #define PLATFORM_MESSAGE_H
 
-#include <DefaultMac.h>
+#include <DefaultPacket.h>
 #include <Serial.h>
 
 typedef union message_header {
-  defaultmac_header_t rf230;
-  serial_header_t serial;
+	defpacket_header_t rf230;
+	serial_header_t serial;
 } message_header_t;
 
 typedef union message_footer {
+	defpacket_footer_t rf230;
 } message_footer_t;
 
 typedef union message_metadata {
-  defaultmac_metadata_t rf230;
-  serial_metadata_t serial;
+	defpacket_metadata_t rf230;
 } message_metadata_t;
 
 #endif
