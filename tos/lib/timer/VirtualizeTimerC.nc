@@ -79,6 +79,7 @@ implementation
 		  timer->t0 += timer->dt;
 
 		signal Timer.fired[num]();
+    break;
 	      }
 	  }
       }
