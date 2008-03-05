@@ -75,7 +75,7 @@ implementation
     } phyState_t;
 
 #define PREAMBLE_LENGTH   2
-#define BYTE_TIME         TDA5250_32KHZ_BYTE_TIME
+#define BYTE_TIME         TDA5250_32KHZ_BYTE_TIME+3
 #define PREAMBLE_BYTE     0x55
 #define SYNC_BYTE         0xFF
 #define SFD_BYTE          0x50
