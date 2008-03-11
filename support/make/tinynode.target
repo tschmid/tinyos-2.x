@@ -11,7 +11,7 @@ MSP_BSL ?= tos-bsl
 
 #Flash Config
 VOLUME_FILE = volumes-at45db.xml
-VOLUME_ALLOCATOR = tos-storage-at45db
+VOLUME_ALLOCATOR ?= tos-storage-at45db
 
 OPTFLAGS += -Os
 #OPTFLAGS = 

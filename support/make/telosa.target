@@ -16,7 +16,7 @@ PFLAGS += -DCC2420_DEF_CHANNEL=$(CC2420_CHANNEL)
 endif
 
 VOLUME_FILE = volumes-at45db.xml
-VOLUME_ALLOCATOR = tos-storage-at45db
+VOLUME_ALLOCATOR ?= tos-storage-at45db
 
 $(call TOSMake_include_platform,msp)
 

@@ -13,7 +13,7 @@ MSP_BSL ?= tos-bsl
 MSP_BSL_FLAGS = --telosb
 
 VOLUME_FILE = volumes-stm25p.xml
-VOLUME_ALLOCATOR = tos-storage-stm25p
+VOLUME_ALLOCATOR ?= tos-storage-stm25p
 
 ifdef CC2420_CHANNEL
 PFLAGS += -DCC2420_DEF_CHANNEL=$(CC2420_CHANNEL)

@@ -21,6 +21,7 @@ MAIN_SREC = $(BUILDDIR)/main.srec
 MAIN_IHEX = $(BUILDDIR)/main.ihex
 INSTALL_SREC = $(MAIN_SREC).out$(if $(NODEID),-$(NODEID),)
 VOLUMEFILE = volumes-at45db.xml
+VOLUME_ALLOCATOR ?= tos-storage-at45db
 
 PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
 PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c
@@ -39,7 +40,7 @@ ifneq ($(wildcard $(VOLUMEFILE)), )
 exe0: $(BUILDDIR)/StorageVolumes.h
 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
-	tos-storage-at45db <$(VOLUMEFILE) >$@
+	$(VOLUME_ALLOCATOR) $(VOLUME_ALLOCATOR_FLAGS) <$(VOLUMEFILE) >$@
 
 PFLAGS += -I$(BUILDDIR)
 endif
