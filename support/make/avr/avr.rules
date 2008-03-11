@@ -97,7 +97,7 @@ ifneq ($(wildcard $(VOLUMEFILE)), )
 exe0: $(BUILDDIR)/StorageVolumes.h
 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
-	$(VOLUME_ALLOCATOR) $(PLATFORMDIR) $(VOLUME_ALLOCATOR_FLAGS) <$(VOLUMEFILE) >$@ || rm -f $@
+	$(VOLUME_ALLOCATOR) $(VOLUME_ALLOCATOR_FLAGS) $(PLATFORMDIR) <$(VOLUMEFILE) >$@ || rm -f $@
 
 PFLAGS += -I$(BUILDDIR)
 endif
