@@ -45,13 +45,13 @@
 
 /** regulate distance by switching the amplifiers */
 // longest distance
-#define FULL_RANGE                                   0x84F9
+#define FULL_RANGE                                   0x04F9
 // shorter distance; low gain, high tx energy consumption (30m)
-#define MED_RANGE_HP                                 0x84E9
+#define MED_RANGE_HP                                 0x04E9
 // shorter distance; high gain, low tx energy consumption (25m)
-#define MED_RANGE_LP                                 0x84F8
+#define MED_RANGE_LP                                 0x04F8
 // shortest: low gain; low tx energy consumption (1m to 3m range)
-#define TABLE_TOP                                    0x84E8
+#define TABLE_TOP                                    0x04E8
 
 /** regulate distance using variable resistor, values for high tx power */
 #define RF_HITX_DAMPING_0dB  255
