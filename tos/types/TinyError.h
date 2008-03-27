@@ -31,6 +31,12 @@
 #ifndef TINY_ERROR_H_INCLUDED
 #define TINY_ERROR_H_INCLUDED
 
+#ifdef NESC
+#define NESC_COMBINE(x) @combine(x)
+#else
+#define NESC_COMBINE(x)
+#endif
+
 enum {
   SUCCESS        = 0,          
   FAIL           = 1,           // Generic condition: backwards compatible
@@ -44,7 +50,7 @@ enum {
   EALREADY       = 9,           // The device state you are requesting is already set
 };
 
-typedef uint8_t error_t @combine("ecombine");
+typedef uint8_t error_t NESC_COMBINE("ecombine");
 
 error_t ecombine(error_t r1, error_t r2)
 /* Returns: r1 if r1 == r2, FAIL otherwise. This is the standard error
