@@ -104,6 +104,8 @@ implementation {
   }
 
   command error_t ReadStream.postBuffer[uint8_t c](uint16_t *buf, uint16_t n) {
+    if (n < sizeof(struct list_entry_t))
+      return ESIZE;
     atomic
       {
 	struct list_entry_t *newEntry = (struct list_entry_t *)buf;
