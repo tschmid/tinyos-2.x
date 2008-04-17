@@ -44,6 +44,7 @@
 
 module HplAdc12P {
   provides interface HplAdc12;
+  uses interface HplMsp430InterruptSig as SIGNAL_ADC_VECTOR;
 }
 implementation
 {
@@ -118,7 +119,7 @@ implementation
     
   async command bool HplAdc12.isBusy(){ return ADC12CTL1 & ADC12BUSY; }
 
-  TOSH_SIGNAL(ADC_VECTOR) {
+  inline async event void SIGNAL_ADC_VECTOR.fired() {
     signal HplAdc12.conversionDone(ADC12IV);
   }
 }
