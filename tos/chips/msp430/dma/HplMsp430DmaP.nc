@@ -69,7 +69,7 @@ implementation {
   MSP430REG_NORACE( DMACTL0 );
   MSP430REG_NORACE( DMACTL1 );
 
-  inline async event void SIGNAL_DACDMA_VECTOR.fired {
+  inline async event void SIGNAL_DACDMA_VECTOR.fired() {
     signal Interrupt.fired();
   }
 
