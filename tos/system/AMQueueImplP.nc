@@ -207,4 +207,7 @@ implementation {
     default event void Send.sendDone[uint8_t id](message_t* msg, error_t err) {
         // Do nothing
     }
+    default command error_t AMSend.send[uint8_t id](am_addr_t am_id, message_t* msg, uint8_t len) {
+        return FAIL;
+    }
 }
