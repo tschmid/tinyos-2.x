@@ -101,7 +101,6 @@ implementation {
   command error_t Init.init() {
     return SUCCESS;
   }
-  bool started;
   
   void startSpi() {
     call Spi.enableSpi(FALSE);
@@ -119,7 +118,6 @@ implementation {
 
   void stopSpi() {
     call Spi.enableSpi(FALSE);
-    started = FALSE;
     atomic {
       call Spi.sleep();
     }

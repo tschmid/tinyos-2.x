@@ -80,10 +80,9 @@ implementation {
     call MOSI.makeOutput();
     call MISO.makeInput();
     call SCK.makeOutput();
-    call SS.makeOutput();
     call SPI.setMasterBit(TRUE);
-    call SS.clr();
   }
+
   async command void SPI.initSlave() {
     call MISO.makeOutput();
     call MOSI.makeInput();
@@ -93,7 +92,7 @@ implementation {
   }
   
   async command void SPI.sleep() {
-    call SS.set();
+//    call SS.set();	// why was this needed?
   }
   
   async command uint8_t SPI.read()        { return SPDR; }

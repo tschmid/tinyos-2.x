@@ -70,7 +70,6 @@ configuration Atm128SpiC {
 }
 implementation {
   components Atm128SpiP as SpiMaster, HplAtm128SpiC as HplSpi;
-  components HplAtm128GeneralIOC as IO;
   components new SimpleFcfsArbiterC("Atm128SpiC.Resource") as Arbiter;
   components McuSleepC;
   
@@ -81,7 +80,7 @@ implementation {
   Resource     = SpiMaster;
 
   SpiMaster.ResourceArbiter -> Arbiter;
-  SpiMaster.ArbiterInfo    -> Arbiter;
+  SpiMaster.ArbiterInfo     -> Arbiter;
   SpiMaster.Spi             -> HplSpi;
   SpiMaster.McuPowerState   -> McuSleepC;
 }
