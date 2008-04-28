@@ -142,7 +142,7 @@ implementation {
     dbg("TestNetworkC", "Received packet at %s from node %hhu.\n", sim_time_string(), call CollectionPacket.getOrigin(msg));
     call Leds.led1Toggle();    
     if (!call Pool.size() <= (TEST_NETWORK_QUEUE_SIZE < 4)? 1:3)  {
-      call CtpCongestion.setClientCongested(TRUE);
+      //      call CtpCongestion.setClientCongested(TRUE);
     }
     if (!call Pool.empty() && call Queue.size() < call Queue.maxSize()) {
       message_t* tmp = call Pool.get();
@@ -183,7 +183,7 @@ implementation {
       post uartEchoTask();
     } 
     else {
-        call CtpCongestion.setClientCongested(FALSE);
+      //        call CtpCongestion.setClientCongested(FALSE);
     }
   }
 
