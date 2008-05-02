@@ -39,14 +39,14 @@ configuration MicDeviceP {
 implementation {
   components MicP, MicaBusC, HplAtm128GeneralIOC as Pins,
     HplAtm128InterruptC as IntPins,
-		new Atm128I2CMasterC() as I2CPot,
-		new TimerMilliC() as WarmupTimer,
+    new Atm128I2CMasterC() as I2CPot,
+    new TimerMilliC() as WarmupTimer,
     new RoundRobinArbiterC(UQ_MIC_RESOURCE) as Arbiter,
     new SplitControlPowerManagerC() as PowerManager;
 
   Resource = Arbiter;
-	Atm128AdcConfig = MicP;
-	MicSetting = MicP;
+  Atm128AdcConfig = MicP;
+  MicSetting = MicP;
 	
   PowerManager.ResourceDefaultOwner -> Arbiter;
   PowerManager.ArbiterInfo -> Arbiter;
