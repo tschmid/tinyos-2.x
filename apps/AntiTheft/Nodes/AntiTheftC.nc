@@ -13,6 +13,8 @@
  *
  * @author David Gay
  */
+#include "antitheft.h"
+
 module AntiTheftC
 {
   uses {
