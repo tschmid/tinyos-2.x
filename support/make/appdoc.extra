@@ -9,9 +9,13 @@ endif
 
 BUILD_DEPS = appdoc_
 
+ifeq ($(filter quiet,$(APPDOC)),quiet)
+QUIET = -quiet
+endif
+
 appdoc_: FORCE
 	@echo "    Making application documentation for $(COMPONENT) on $(PLATFORM)"
         # first generate the xml files
-	nesdoc -o build $(NESDOC_FLAGS) $(PFLAGS) $(CFLAGS) $(COMPONENT).nc -app
+	nesdoc -o build $(NESDOC_FLAGS) $(PFLAGS) $(CFLAGS) $(COMPONENT).nc -app $(QUIET)
         # generate html from the xml files
-	nesdoc -o build -html -target=$(PLATFORM)
+	nesdoc -o build -html -target=$(PLATFORM) $(QUIET)
