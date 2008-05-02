@@ -20,7 +20,7 @@ PYFILE     = $(TOSDIR)/lib/tossim/tossim_wrap.cxx
 PYOBJFILE  = $(BUILDDIR)/pytossim.o
 PYDIR      =/usr/include/python$(PYTHON_VERSION)
 SIMDIR     =$(TOSDIR)/lib/tossim
-XML        = build/app.xml
+XML        = app.xml
 DUMPTYPES = -fnesc-dump=components -fnesc-dump=variables -fnesc-dump=constants -fnesc-dump=typedefs -fnesc-dump=interfacedefs -fnesc-dump=tags
 
 ifeq ($(findstring cygwin, $(OSTYPE)),cygwin)
