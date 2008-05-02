@@ -43,6 +43,8 @@
  * Revision:  $Revision$
  */
 
+#include <I2C.h>
+
 interface I2CPacket<addr_size> {
   /**
    * Perform an I2C read operation
