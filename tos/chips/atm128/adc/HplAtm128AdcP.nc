@@ -66,7 +66,6 @@ implementation {
   }
 
   // Individual bit manipulation. These all clear any pending A/D interrupt.
-  // It's not clear these are that useful...
   async command void HplAtm128Adc.enableAdc() {
     SET_BIT(ADCSRA, ADEN); 
     call McuPowerState.update();
