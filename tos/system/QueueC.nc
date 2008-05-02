@@ -87,7 +87,7 @@ implementation {
     dbg("QueueC", "%s: size is %hhu\n", __FUNCTION__, size);
     if (!call Queue.empty()) {
       head++;
-      head %= QUEUE_SIZE;
+      if (head == QUEUE_SIZE) head = 0;
       size--;
       printQueue();
     }
@@ -99,7 +99,7 @@ implementation {
       dbg("QueueC", "%s: size is %hhu\n", __FUNCTION__, size);
       queue[tail] = newVal;
       tail++;
-      tail %= QUEUE_SIZE;
+      if (tail == QUEUE_SIZE) tail = 0;
       size++;
       printQueue();
       return SUCCESS;
