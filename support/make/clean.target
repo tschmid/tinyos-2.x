@@ -2,5 +2,5 @@
 #$Id$
 
 clean: FORCE
-	rm -rf build $(CLEAN_EXTRA)
+	rm -rf build $(CLEAN_EXTRA) pp
 	rm -rf _TOSSIMmodule.so TOSSIM.pyc TOSSIM.py
