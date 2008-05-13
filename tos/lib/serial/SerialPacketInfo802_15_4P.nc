@@ -30,18 +30,17 @@
  *
  */
 
-#include "802_15_4.h"
 module SerialPacketInfo802_15_4P {
   provides interface SerialPacketInfo as Info;
 }
 implementation {
   async command uint8_t Info.offset() {
-    return sizeof(TOSRadioHeader) - sizeof(TOS802Header);
+    return sizeof(message_header_t)-sizeof(cc2420_header_t);
   }
   async command uint8_t Info.dataLinkLength(message_t* msg, uint8_t upperLen) {
-    return upperLen + sizeof(TOS802Header) + sizeof(TOS802Footer);
+    return upperLen + sizeof(cc2420_header_t) + sizeof(cc2420_footer_t);
   }
   async command uint8_t Info.upperLength(message_t* msg, uint8_t dataLinkLen) {
-    return dataLinkLen - (sizeof(TOS802Header) + sizeof(TOS802Footer));
+    return dataLinkLen - (sizeof(cc2420_header_t) + sizeof(cc2420_footer_t));
   }
 }

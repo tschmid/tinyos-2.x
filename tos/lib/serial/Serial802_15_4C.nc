@@ -39,11 +39,11 @@ configuration Serial802_15_4C {
   uses interface Leds;
 }
 implementation { 
-  components SerialPacketInfo802_15_4P as Info, SerialDispatcherC;
+  components MainC, SerialPacketInfo802_15_4P, SerialDispatcherC;
 
-  Init = SerialDispatcherC;
+  MainC.SoftwareInit -> SerialDispatcherC;
   Leds = SerialDispatcherC;
   Send = SerialDispatcherC.Send[TOS_SERIAL_802_15_4_ID];
   Receive = SerialDispatcherC.Receive[TOS_SERIAL_802_15_4_ID];
-  SerialDispatcherC.SerialPacketInfo[TOS_SERIAL_802_15_4_ID] -> Info;
+  SerialDispatcherC.SerialPacketInfo[TOS_SERIAL_802_15_4_ID] -> SerialPacketInfo802_15_4P.Info;
 }
