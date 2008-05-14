@@ -55,7 +55,10 @@ typedef nx_struct cc2420_header_t {
   nxle_uint8_t network;
 #endif
 
+#ifndef TINYOS_IP
   nxle_uint8_t type;
+#endif
+
 } cc2420_header_t;
   
 /**

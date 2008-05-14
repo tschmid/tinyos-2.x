@@ -78,7 +78,7 @@ implementation {
 #endif
 
   
-  RadioBackoff = CsmaC;
+  RadioBackoff = AM;
   Packet = AM;
   AMSend = AM;
   SendNotifier = AM;
@@ -112,5 +112,7 @@ implementation {
   AM.CC2420Packet -> CC2420PacketC;
   AM.CC2420PacketBody -> CC2420PacketC;
   AM.CC2420Config -> CC2420ControlC;
+  
+  AM.SubBackoff -> CsmaC;
   
 }
