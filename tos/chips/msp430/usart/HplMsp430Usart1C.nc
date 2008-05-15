@@ -85,8 +85,5 @@ implementation {
   HplUsartP.UCLK -> GIO.UCLK1;
   HplUsartP.URXD -> GIO.URXD1;
   HplUsartP.UTXD -> GIO.UTXD1;
-  
-  components HplMsp430InterruptSigP;
-  HplUsartP.SIGNAL_UART1RX_VECTOR -> HplMsp430InterruptSigP.SIGNAL_UART1RX_VECTOR;
-  HplUsartP.SIGNAL_UART1TX_VECTOR -> HplMsp430InterruptSigP.SIGNAL_UART1TX_VECTOR;
+
 }

@@ -85,9 +85,6 @@ implementation {
   Dma0.Interrupt -> HplMsp430DmaP;
   Dma1.Interrupt -> HplMsp430DmaP;
   Dma2.Interrupt -> HplMsp430DmaP;
-  
-  components HplMsp430InterruptSigP;
-  HplMsp430DmaP.SIGNAL_DACDMA_VECTOR -> HplMsp430InterruptSigP.SIGNAL_DACDMA_VECTOR;
 
 }
 

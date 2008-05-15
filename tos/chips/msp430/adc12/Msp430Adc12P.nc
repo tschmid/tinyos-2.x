@@ -77,8 +77,5 @@ configuration Msp430Adc12P
   Msp430Adc12ImplP.CompareA0 -> Msp430TimerC.CompareA0;
   Msp430Adc12ImplP.CompareA1 -> Msp430TimerC.CompareA1;
 #endif
-
-  components HplMsp430InterruptSigP;
-  HplAdc12P.SIGNAL_ADC_VECTOR -> HplMsp430InterruptSigP.SIGNAL_ADC_VECTOR;
 }
 

@@ -61,7 +61,7 @@ module HplMsp430DmaP {
 
   provides interface HplMsp430DmaControl as DmaControl;
   provides interface HplMsp430DmaInterrupt as Interrupt;
-  uses interface HplMsp430InterruptSig as SIGNAL_DACDMA_VECTOR;
+
 }
 
 implementation {
@@ -69,7 +69,7 @@ implementation {
   MSP430REG_NORACE( DMACTL0 );
   MSP430REG_NORACE( DMACTL1 );
 
-  inline async event void SIGNAL_DACDMA_VECTOR.fired() {
+  TOSH_SIGNAL( DACDMA_VECTOR ) {
     signal Interrupt.fired();
   }
 
