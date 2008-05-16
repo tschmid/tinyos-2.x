@@ -62,20 +62,20 @@
 #ifndef PLATFORM_MESSAGE_H
 #define PLATFORM_MESSAGE_H
 
-#include <DefaultPacket.h>
+#include <RF230Packet.h>
 #include <Serial.h>
 
 typedef union message_header {
-	defpacket_header_t rf230;
+	rf230packet_header_t rf230;
 	serial_header_t serial;
 } message_header_t;
 
 typedef union message_footer {
-	defpacket_footer_t rf230;
+	rf230packet_footer_t rf230;
 } message_footer_t;
 
 typedef union message_metadata {
-	defpacket_metadata_t rf230;
+	rf230packet_metadata_t rf230;
 } message_metadata_t;
 
 #endif
