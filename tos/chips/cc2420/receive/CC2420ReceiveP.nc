@@ -446,8 +446,9 @@ implementation {
     
     if(!(call CC2420Config.isAddressRecognitionEnabled())) {
       return TRUE;
-    } 
+    }
     
-    return (header->dest == call CC2420Config.getShortAddr());
+    return (header->dest == call CC2420Config.getShortAddr()
+        || header->dest == AM_BROADCAST_ADDR);
   }
 }
