@@ -40,7 +40,7 @@ NCC = ncc
 LIBS = -lm
 
 AMADDR = ActiveMessageAddressC\$$addr
-BUILDDIR = build/$(PLATFORM)
+BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_IHEX = $(BUILDDIR)/main.ihex
 INSTALL_IHEX = $(MAIN_IHEX).out$(if $(NODEID),-$(NODEID),)

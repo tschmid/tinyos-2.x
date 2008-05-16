@@ -25,7 +25,7 @@ NCC = ncc
 LIBS = -lm
 
 AMADDR = ActiveMessageAddressC\$$addr
-BUILDDIR = build/$(PLATFORM)
+BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_BIN = $(BUILDDIR)/main.bin
 INSTALL_BIN = $(MAIN_BIN).out$(if $(NODEID),-$(NODEID),)
