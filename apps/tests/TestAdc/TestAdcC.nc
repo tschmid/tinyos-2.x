@@ -34,11 +34,11 @@
  */
 
 /**
- * Tests the AdcC subsystem and switches on leds 0, 1 and 2
+ * Tests the AdcC subsystem and switches on leds 0, 1 and 2.
  * if the test is successful:
- * LED0 denotes a successful Read operation,
- * LED1 denotes a successful ReadNow operation,
- * LED2 denotes a successful ReadStream operation.
+ *   LED0 denotes a successful Read operation,
+ *   LED1 denotes a successful ReadNow operation,
+ *   LED2 denotes a successful ReadStream operation.
  *
  * @author Jan Hauer 
  */
