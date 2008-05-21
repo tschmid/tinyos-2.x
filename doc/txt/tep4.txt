@@ -38,9 +38,9 @@ unreserved pool.
 ====================================================================
 
 The unreserved pool is in the range 128-255 (0x80-0xFF). The reserved
-pool is in the range 128-255 (0x00-0x7F).
+pool is in the range 0-127 (0x00-0x7F).
 
-2.1 Unreserved pool (0x80 - 0x7F)
+2.1 Unreserved pool (0x80 - 0xFF)
 ---------------------------------
 
 When an application uses the AM ID in the range 128-255, it is
