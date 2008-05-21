@@ -40,6 +40,7 @@
 generic configuration Msp430I2CC() {
   
   provides interface Resource;
+  provides interface ResourceRequested;
   provides interface I2CPacket<TI2CBasicAddr> as I2CBasicAddr;
   
   uses interface Msp430I2CConfigure;
@@ -58,6 +59,7 @@ implementation {
   Msp430I2CConfigure = I2CP.Msp430I2CConfigure[ CLIENT_ID ];
   
   components new Msp430Usart0C() as UsartC;
+  ResourceRequested = UsartC;
   I2CP.ResourceConfigure[ CLIENT_ID ] <- UsartC.ResourceConfigure;
   I2CP.UsartResource[ CLIENT_ID ] -> UsartC.Resource;
   I2CP.I2CInterrupts -> UsartC.HplMsp430I2CInterrupts;
