@@ -71,7 +71,7 @@ implementation {
   Msp430SpiConfigure = SpiP.Msp430SpiConfigure[ CLIENT_ID ];
 
   components new Msp430Usart1C() as UsartC;
-  ResourceReqeusted = UsartC;
+  ResourceRequested = UsartC;
   SpiP.ResourceConfigure[ CLIENT_ID ] <- UsartC.ResourceConfigure;
   SpiP.UsartResource[ CLIENT_ID ] -> UsartC.Resource;
   SpiP.UsartInterrupts -> UsartC.HplMsp430UsartInterrupts;
