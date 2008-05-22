@@ -3,4 +3,5 @@
 
 clean: FORCE
 	rm -rf build $(CLEAN_EXTRA) pp
-	rm -rf _TOSSIMmodule.so TOSSIM.pyc TOSSIM.py
+	rm -rf _TOSSIMmodule.so TOSSIM.pyc TOSSIM.py app.xml simbuild
+	rm -rf VolumeMapC.nc

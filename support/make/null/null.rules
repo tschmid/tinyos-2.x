@@ -37,12 +37,18 @@ BUILDLESS_DEPS += bytes
 # Build storage file if volumes.xml present
 # We "steal" the at45db storage spec
 ifneq ($(wildcard $(VOLUMEFILE)), )
-exe0: $(BUILDDIR)/StorageVolumes.h
+build_storage: $(BUILDDIR)/StorageVolumes.h
+
+exe0: build_storage
 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
 	$(VOLUME_ALLOCATOR) $(VOLUME_ALLOCATOR_FLAGS) <$(VOLUMEFILE) >$@
 
 PFLAGS += -I$(BUILDDIR)
+else
+
+build_storage: 
+
 endif
 
 ifndef BUILD_DEPS

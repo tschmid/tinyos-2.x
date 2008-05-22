@@ -54,12 +54,19 @@ $(if $(PROGRAM),,$(call TOSMake_include,pxa27x/$(DEFAULT_PROGRAM).extra))
 
 # Build storage file if volumes.xml present
 ifneq ($(wildcard $(VOLUME_FILE)), )
-exe0: $(BUILDDIR)/StorageVolumes.h
+build_storage: $(BUILDDIR)/StorageVolumes.h
 
-$(BUILDDIR)/StorageVolumes.h: $(VOLUME_FILE)
-	$(VOLUME_ALLOCATOR) <$(VOLUME_FILE) >$@
+exe0: build_storage
+
+VOLUME_ALLOCATOR_FLAGS ?= 
+$(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
+	$(VOLUME_ALLOCATOR) $(VOLUME_ALLOCATOR_FLAGS) $(PLATFORMDIR) <$(VOLUMEFILE) >$@ || rm -f $@
 
 PFLAGS += -I$(BUILDDIR)
+else
+
+build_storage: 
+
 endif
 
 ifndef BUILD_DEPS
