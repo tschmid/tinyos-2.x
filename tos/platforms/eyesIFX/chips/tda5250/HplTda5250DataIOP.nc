@@ -42,8 +42,8 @@
 module HplTda5250DataIOP {
   provides {
     interface HplTda5250DataControl as UartDataControl;
-		interface Msp430UartConfigure as UartResourceConfigure;
-  } 
+    interface Msp430UartConfigure as UartResourceConfigure;
+  }
 }
 
 implementation {
@@ -64,8 +64,8 @@ implementation {
     return SUCCESS;
   }
 	
-	async command msp430_uart_union_config_t* UartResourceConfigure.getConfig() {
-		return &tda5250_uart_config;
-	}
+  async command msp430_uart_union_config_t* UartResourceConfigure.getConfig() {
+    return &tda5250_uart_config;
+  }
 
 }

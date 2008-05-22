@@ -39,22 +39,20 @@
  */
 configuration HplTda5250DataIOC {
   provides {
-		interface Resource;
+    interface Resource;
     interface ResourceRequested;
-		interface UartStream;
+    interface UartStream;
     interface HplTda5250DataControl as UartDataControl;
   }
 }
 implementation {
 
-  components 
-      new Msp430Uart0C(),
-			HplTda5250DataIOP;
-
-	Resource = Msp430Uart0C.Resource;
+  components new Msp430Uart0C(), HplTda5250DataIOP;
+  
+  Resource = Msp430Uart0C.Resource;
   ResourceRequested = Msp430Uart0C.ResourceRequested;
   UartStream = Msp430Uart0C.UartStream;
   UartDataControl = HplTda5250DataIOP.UartDataControl;
+  HplTda5250DataIOP.UartResourceConfigure <- Msp430Uart0C.Msp430UartConfigure;
   
-	HplTda5250DataIOP.UartResourceConfigure <- Msp430Uart0C.Msp430UartConfigure;  
 }
