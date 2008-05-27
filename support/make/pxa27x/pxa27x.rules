@@ -44,7 +44,8 @@ ifdef DEFAULT_LOCAL_GROUP
 PFLAGS += -DDEFINED_TOS_AM_GROUP=$(DEFAULT_LOCAL_GROUP)
 endif
 
-DEFAULT_PROGRAM ?= xflash
+DEFAULT_PROGRAM ?= jflashmm
+
 
 BUILDLESS_DEPS += bytes
 
@@ -80,7 +81,7 @@ setid: FORCE
 
 
 bin: exe FORCE
-	$(XDB_SYMBOL_EXTRACT) $(MAIN_EXE)
+	@cmd () { echo "$$@"; $$@; }; if [ "${DEFAULT_PROGRAM}" = "xflash" ]; then $(XDB_SYMBOL_EXTRACT) $(MAIN_EXE); fi
 
 exe: exe0 bytes FORCE
 	@:
