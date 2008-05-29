@@ -81,7 +81,7 @@ setid: FORCE
 
 
 bin: exe FORCE
-	@cmd () { echo "$$@"; $$@; }; if [ "${DEFAULT_PROGRAM}" = "xflash" ]; then $(XDB_SYMBOL_EXTRACT) $(MAIN_EXE); fi
+	@cmd () { echo "$$@"; $$@; }; if [ "${PROGRAM}" = "xflash" ]; then $(XDB_SYMBOL_EXTRACT) $(MAIN_EXE); fi
 
 exe: exe0 bytes FORCE
 	@:
