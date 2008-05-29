@@ -12,6 +12,7 @@ define PXA27X_HELP
 
    jflashmm : (default) use the Intel JFLASHMM tool to install
    xflash   : Use the Intel XFLASH tool to install
+   openocd  : Use openocd to install
 
 endef
 HELP += $(PXA27X_HELP)

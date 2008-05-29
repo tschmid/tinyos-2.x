@@ -9,7 +9,7 @@ PROGRAMMER_FLAGS = -p imote2
 PXA27X_JTAG_DEV ?= "JTAG CPU"
 
 program: FORCE
-	@echo "    installing $(PLATFORM) binary using $(PROGRAM) with the $(PXA27X_JTAG_DEV)"
+	@echo "    installing $(PLATFORM) binary using $(PROGRAM)"
 	$(PROGRAMMER) $(PROGRAMMER_FLAGS) -tt $(PXA27X_JTAG_DEV) $(INSTALL_BIN)
 
 program_input: bin
