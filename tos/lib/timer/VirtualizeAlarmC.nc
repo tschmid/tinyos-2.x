@@ -132,7 +132,10 @@ implementation
 
     for( id=0; id<NUM_ALARMS; id++ ) {
       if( m.isset[id] ) {
-        size_type elapsed = call AlarmFrom.getNow() - m.alarm[id].t0;
+        //size_type elapsed = call AlarmFrom.getNow() - m.alarm[id].t0;
+        //if( m.alarm[id].dt <= elapsed ) {
+        size_type t0 = m.alarm[id].t0;
+        size_type elapsed = call AlarmFrom.getNow() - t0;
         if( m.alarm[id].dt <= elapsed ) {
           m.isset[id] = FALSE;
           signal Alarm.fired[id]();
