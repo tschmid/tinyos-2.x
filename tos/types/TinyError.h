@@ -49,7 +49,8 @@ enum {
   ERESERVE       =  8,           // Reservation required before usage
   EALREADY       =  9,           // The device state you are requesting is already set
   ENOMEM         = 10,           // Memory required not available
-  ELAST          = 10            // Last enum value
+  ENOACK         = 11,           // A packet was not acknowledged
+  ELAST          = 11            // Last enum value
 };
 
 typedef uint8_t error_t NESC_COMBINE("ecombine");
