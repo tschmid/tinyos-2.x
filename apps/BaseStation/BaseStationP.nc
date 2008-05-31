@@ -75,12 +75,12 @@ implementation
   };
 
   message_t  uartQueueBufs[UART_QUEUE_LEN];
-  message_t  *uartQueue[UART_QUEUE_LEN];
+  message_t  * ONE_NOK uartQueue[UART_QUEUE_LEN];
   uint8_t    uartIn, uartOut;
   bool       uartBusy, uartFull;
 
   message_t  radioQueueBufs[RADIO_QUEUE_LEN];
-  message_t  *radioQueue[RADIO_QUEUE_LEN];
+  message_t  * ONE_NOK radioQueue[RADIO_QUEUE_LEN];
   uint8_t    radioIn, radioOut;
   bool       radioBusy, radioFull;
 
@@ -131,7 +131,7 @@ implementation
 
   uint8_t count = 0;
 
-  message_t* receive(message_t* msg, void* payload, uint8_t len);
+  message_t* ONE receive(message_t* ONE msg, void* payload, uint8_t len);
   
   event message_t *RadioSnoop.receive[am_id_t id](message_t *msg,
 						    void *payload,

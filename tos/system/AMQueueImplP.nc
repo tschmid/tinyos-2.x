@@ -45,7 +45,7 @@ generic module AMQueueImplP(int numClients) {
 
 implementation {
     typedef struct {
-        message_t* msg;
+        message_t* ONE_NOK msg;
     } queue_entry_t;
   
     uint8_t current = numClients; // mark as empty
@@ -152,7 +152,7 @@ implementation {
         }
     }
 
-    void sendDone(uint8_t last, message_t *msg, error_t err) {
+    void sendDone(uint8_t last, message_t * ONE msg, error_t err) {
         queue[last].msg = NULL;
         tryToSend();
         signal Send.sendDone[last](msg, err);

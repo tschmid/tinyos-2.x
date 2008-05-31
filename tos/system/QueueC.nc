@@ -45,7 +45,7 @@ generic module QueueC(typedef queue_t, uint8_t QUEUE_SIZE) {
 
 implementation {
 
-  queue_t queue[QUEUE_SIZE];
+  queue_t ONE_NOK queue[QUEUE_SIZE];
   uint8_t head = 0;
   uint8_t tail = 0;
   uint8_t size = 0;

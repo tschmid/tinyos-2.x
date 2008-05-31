@@ -59,7 +59,7 @@ generic module PoolP(typedef pool_t, uint8_t size) {
 implementation {
   uint8_t free;
   uint8_t index;
-  pool_t* queue[size];
+  pool_t* ONE_NOK queue[size];
   pool_t pool[size];
 
   command error_t Init.init() {
