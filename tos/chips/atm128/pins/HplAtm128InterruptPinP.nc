@@ -42,7 +42,7 @@ implementation
   inline async command void Irq.enable()   { EIMSK |= 1 << bit; }
   inline async command void Irq.disable()  { EIMSK &= ~(1 << bit); }
 
-#define ctrl  (*(volatile uint8_t *)ctrl_addr)
+#define ctrl  (*TCAST(volatile uint8_t * ONE, ctrl_addr))
 
   inline async command void Irq.edge(bool low_to_high) {
     ctrl |= 1 << edge1bit; // use edge mode

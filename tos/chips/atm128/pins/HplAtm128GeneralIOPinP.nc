@@ -38,9 +38,9 @@ generic module HplAtm128GeneralIOPinP (uint8_t port_addr,
 }
 implementation
 {
-#define pin (*TCAST(volatile uint8_t * SINGLE NONNULL, pin_addr))
-#define port (*TCAST(volatile uint8_t * SINGLE NONNULL, port_addr))
-#define ddr (*TCAST(volatile uint8_t * SINGLE NONNULL, ddr_addr))
+#define pin (*TCAST(volatile uint8_t * ONE, pin_addr))
+#define port (*TCAST(volatile uint8_t * ONE, port_addr))
+#define ddr (*TCAST(volatile uint8_t * ONE, ddr_addr))
 
   inline async command bool IO.get()        { return READ_BIT (pin, bit); }
   inline async command void IO.set()        { SET_BIT  (port, bit); }
