@@ -80,8 +80,8 @@ implementation
     BROKEN // Write failed. Fail all subsequent requests.
   };
   uint8_t request;
-  uint8_t *reqBuf;
   at45pageoffset_t reqOffset, reqBytes;
+  uint8_t * COUNT_NOK(reqBytes) reqBuf;
   at45page_t reqPage;
 
   enum {
@@ -364,7 +364,7 @@ implementation
   }
 
   void newRequest(uint8_t req, at45page_t page, at45pageoffset_t offset,
-		  void *reqdata, at45pageoffset_t n) {
+		  void * COUNT_NOK(n) reqdata, at45pageoffset_t n) {
     request = req;
 
     reqBuf = reqdata;
@@ -398,7 +398,7 @@ implementation
 					at45pageoffset_t n,
 					uint16_t baseCrc) {
     /* This is a hack (store crc in reqBuf), but it saves 2 bytes of RAM */
-    reqBuf = (uint8_t *)baseCrc;
+    reqBuf = TCAST(uint8_t * COUNT(baseCrc), baseCrc);
     newRequest(R_READCRC, page, offset, reqBuf, n);
   }
 

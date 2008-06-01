@@ -60,7 +60,7 @@ interface At45db {
    *   AT45_PAGE_SIZE
    */
   command void write(at45page_t page, at45pageoffset_t offset,
-		     void *PASS data, at45pageoffset_t n);
+		     void *PASS COUNT(n) data, at45pageoffset_t n);
   /**
    * Signal completion of a write operation. The buffer passed to write
    * is implictly returned.
@@ -153,7 +153,7 @@ interface At45db {
    *   AT45_PAGE_SIZE
    */
   command void read(at45page_t page, at45pageoffset_t offset,
-		    void *PASS data, at45pageoffset_t n);
+		    void *PASS COUNT(n) data, at45pageoffset_t n);
   /**
    * Signal completion of a read operation. The buffer passed to read
    * is implictly returned.
