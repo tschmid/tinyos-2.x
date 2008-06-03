@@ -51,8 +51,8 @@ module CC1000ActiveMessageP {
 }
 implementation {
 
-  cc1000_header_t* getHeader(message_t* amsg) {
-    return (cc1000_header_t*)(amsg->data - sizeof(cc1000_header_t));
+  cc1000_header_t* ONE getHeader(message_t* ONE amsg) {
+    return TCAST(cc1000_header_t* ONE, (uint8_t*)amsg + offsetof(message_t, data) - sizeof(cc1000_header_t));
   }
 
   cc1000_footer_t *getFooter(message_t *amsg) {
