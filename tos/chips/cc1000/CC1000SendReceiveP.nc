@@ -568,22 +568,16 @@ implementation
   }
 
   void packetReceiveDone() {
-    message_t* pBuf;
     uint16_t snr;
-    atomic {
-      if (radioState != RECEIVED_STATE) {
-	return;
-      }
-      pBuf = rxBufPtr;
-    }
-    snr = (uint16_t) getMetadata(pBuf)->strength_or_preamble;
+
+    snr = (uint16_t) getMetadata(rxBufPtr)->strength_or_preamble;
     /* Higher signal strengths have lower voltages. So see if we're
        CC1000_WHITE_BIT_THRESH *below* the noise floor. */
     if ((snr + CC1000_WHITE_BIT_THRESH) < ((call CC1000Squelch.get()))) {
-      getMetadata(pBuf)->metadataBits |= CC1000_WHITE_BIT;
+      getMetadata(rxBufPtr)->metadataBits |= CC1000_WHITE_BIT;
     }
     else {
-      getMetadata(pBuf)->metadataBits &= ~CC1000_WHITE_BIT;
+      getMetadata(rxBufPtr)->metadataBits &= ~CC1000_WHITE_BIT;
     }
     
     post signalPacketReceived();
