@@ -63,7 +63,7 @@ implementation {
     S_TRANSMITTING,
   };
 
-  message_t* m_msg;
+  message_t* ONE_NOK m_msg;
   
   error_t sendErr = SUCCESS;
   
@@ -156,7 +156,7 @@ implementation {
 
   command void* Send.getPayload(message_t* m, uint8_t len) {
     if (len <= call Send.maxPayloadLength()) {
-      return m->data;
+      return (void* COUNT_NOK(len))m->data;
     }
     else {
       return NULL;

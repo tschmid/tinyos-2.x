@@ -199,18 +199,18 @@ implementation {
   /***************** RadioBackoff ***********************/
 
   async event void SubBackoff.requestInitialBackoff(message_t *msg) {
-    signal RadioBackoff.requestInitialBackoff[((cc2420_header_t*)(msg->data - 
-                                        sizeof(cc2420_header_t)))->type](msg);
+    signal RadioBackoff.requestInitialBackoff[(TCAST(cc2420_header_t* ONE,
+        (uint8_t*)msg + offsetof(message_t, data) - sizeof(cc2420_header_t)))->type](msg);
   }
 
   async event void SubBackoff.requestCongestionBackoff(message_t *msg) {
-    signal RadioBackoff.requestCongestionBackoff[((cc2420_header_t*)(msg->data - 
-        sizeof(cc2420_header_t)))->type](msg);
+    signal RadioBackoff.requestCongestionBackoff[(TCAST(cc2420_header_t* ONE,
+        (uint8_t*)msg + offsetof(message_t, data) - sizeof(cc2420_header_t)))->type](msg);
   }
   async event void SubBackoff.requestCca(message_t *msg) {
     // Lower layers than this do not configure the CCA settings
-    signal RadioBackoff.requestCca[((cc2420_header_t*)(msg->data - 
-        sizeof(cc2420_header_t)))->type](msg);
+    signal RadioBackoff.requestCca[(TCAST(cc2420_header_t* ONE,
+        (uint8_t*)msg + offsetof(message_t, data) - sizeof(cc2420_header_t)))->type](msg);
   }
 
   async command void RadioBackoff.setInitialBackoff[am_id_t amId](uint16_t backoffTime) {

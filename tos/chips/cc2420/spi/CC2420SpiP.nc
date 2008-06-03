@@ -262,6 +262,8 @@ implementation {
                                                             uint8_t len ) {
 
     cc2420_status_t status = 0;
+    uint8_t tmpLen = len;
+    uint8_t * COUNT(tmpLen) tmpData = (uint8_t * COUNT(tmpLen))data;
 
     atomic {
       if(call WorkingState.isIdle()) {
@@ -274,7 +276,7 @@ implementation {
     status = call SpiByte.write( addr | 0x80 );
     call SpiByte.write( ( addr >> 1 ) & 0xc0 );
     for ( ; len; len-- ) {
-      call SpiByte.write( *data++ );
+      call SpiByte.write( tmpData[tmpLen-len] );
     }
 
     return status;

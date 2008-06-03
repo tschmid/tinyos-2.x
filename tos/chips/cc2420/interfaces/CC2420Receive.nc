@@ -60,7 +60,7 @@ interface CC2420Receive {
    * @param type of the message received.
    * @param message pointer to message received.
    */
-  async event void receive( uint8_t type, message_t* message );
+  async event void receive( uint8_t type, message_t* ONE_NOK message );
 
 }
 
