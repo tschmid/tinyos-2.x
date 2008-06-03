@@ -66,13 +66,13 @@ implementation
 
   //=== Read the control registers. =====================================
   async command Atm128TimerCtrlCompare_t TimerCtrl.getCtrlCompare() { 
-    return *(Atm128TimerCtrlCompare_t*)&TCCR1A; 
+    return *(Atm128TimerCtrlCompare_t*ONE)&TCCR1A; 
   }
   async command Atm128TimerCtrlCapture_t TimerCtrl.getCtrlCapture() { 
-    return *(Atm128TimerCtrlCapture_t*)&TCCR1B; 
+    return *(Atm128TimerCtrlCapture_t*ONE)&TCCR1B; 
   }
   async command Atm128TimerCtrlClock_t TimerCtrl.getCtrlClock() { 
-    return *(Atm128TimerCtrlClock_t*)&TCCR1C; 
+    return *(Atm128TimerCtrlClock_t*ONE)&TCCR1C; 
   }
 
 
@@ -107,7 +107,7 @@ implementation
 
   //=== Read the interrupt flags. =====================================
   async command Atm128_ETIFR_t TimerCtrl.getInterruptFlag() { 
-    return *(Atm128_ETIFR_t*)&ETIFR; 
+    return *(Atm128_ETIFR_t*ONE)&ETIFR; 
   }
 
   //=== Write the interrupt flags. ====================================
