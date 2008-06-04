@@ -144,7 +144,7 @@ implementation {
 
     atomic entry = bufferQueue[c];
     for (; entry; entry = entry->next){
-      uint16_t tmp_count = entry->count;
+      uint16_t tmp_count __DEPUTY_UNUSED__ = entry->count;
       signal ReadStream.bufferDone[c](FAIL, TCAST(uint16_t * COUNT_NOK(tmp_count),entry), entry->count);
     }
 
