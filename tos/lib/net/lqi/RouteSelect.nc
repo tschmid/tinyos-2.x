@@ -98,7 +98,7 @@ interface RouteSelect {
    *
    */
   
-  command error_t selectRoute(message_t* msg, uint8_t resend);
+  command error_t selectRoute(message_t* ONE msg, uint8_t resend);
 
 
   /**

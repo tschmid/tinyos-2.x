@@ -284,7 +284,7 @@ implementation {
     }
   }
 
-  event message_t* SubReceive.receive(message_t* msg, void* payload, uint8_t len) {
+  event message_t* SubReceive.receive(message_t* ONE msg, void* COUNT_NOK(len) payload, uint8_t len) {
     collection_id_t id = call CollectionPacket.getType(msg);
     payload += sizeof(lqi_header_t);
     len -= sizeof(lqi_header_t);
