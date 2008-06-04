@@ -81,7 +81,7 @@ implementation
   
   uint16_t resultBufferLength;    /* length of buffer */
   uint16_t *COUNT_NOK(resultBufferLength) resultBufferStart;
-  uint16_t *FAT_NOK(resultBufferStart, resultBufferStart+resultBufferLength) resultBuffer;         /* conversion results */
+  uint16_t *BND_NOK(resultBufferStart, resultBufferStart+resultBufferLength) resultBuffer;         /* conversion results */
   uint16_t resultBufferIndex;     /* offset into buffer */
   uint8_t numChannels;            /* number of channels (multi-channel conversion) */
   uint8_t clientID;               /* ID of client that called getData() */

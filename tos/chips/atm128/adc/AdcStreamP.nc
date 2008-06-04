@@ -76,7 +76,7 @@ implementation {
 
   norace uint16_t count;
   norace uint16_t * COUNT_NOK(count) buffer; 
-  norace uint16_t * FAT_NOK(buffer, buffer+count) pos;
+  norace uint16_t * BND_NOK(buffer, buffer+count) pos;
   norace uint32_t now, period;
 
 
