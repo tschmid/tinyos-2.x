@@ -65,7 +65,7 @@ implementation
   error_t configure(uint8_t client)
   {
     error_t result = EINVAL;
-    const msp430adc12_channel_config_t *config;
+    const msp430adc12_channel_config_t * ONE config;
     config = call Config.getConfiguration[client]();
     if (config->inch != INPUT_CHANNEL_NONE)
       result = call SingleChannel.configureSingle[client](config);
@@ -159,7 +159,7 @@ implementation
   }
 
   async event uint16_t* SingleChannel.multipleDataReady[uint8_t client](
-      uint16_t *buf, uint16_t length)
+      uint16_t * COUNT_NOK(length) buf, uint16_t length)
   {
     // error !
     return 0;

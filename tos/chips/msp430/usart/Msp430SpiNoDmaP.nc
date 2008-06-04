@@ -56,9 +56,9 @@ implementation {
     SPI_ATOMIC_SIZE = 2,
   };
 
-  norace uint8_t* m_tx_buf;
-  norace uint8_t* m_rx_buf;
   norace uint16_t m_len;
+  norace uint8_t* COUNT_NOK(m_len) m_tx_buf;
+  norace uint8_t* COUNT_NOK(m_len) m_rx_buf;
   norace uint16_t m_pos;
   norace uint8_t m_client;
 
