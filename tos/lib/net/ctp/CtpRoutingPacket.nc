@@ -43,16 +43,16 @@
 interface CtpRoutingPacket {
 
   /* Allow individual options to be read, set, and reset independently */
-  command bool          getOption(message_t* msg, ctp_options_t opt);
-  command void          setOption(message_t* msg, ctp_options_t opt);
-  command void          clearOption(message_t* msg, ctp_options_t opt);
+  command bool          getOption(message_t* ONE msg, ctp_options_t opt);
+  command void          setOption(message_t* ONE msg, ctp_options_t opt);
+  command void          clearOption(message_t* ONE msg, ctp_options_t opt);
   
   /* Clear all options */
-  command void          clearOptions(message_t* msg);
+  command void          clearOptions(message_t* ONE msg);
 
-  command am_addr_t     getParent(message_t* msg);
-  command void          setParent(message_t* msg, am_addr_t addr);
+  command am_addr_t     getParent(message_t* ONE msg);
+  command void          setParent(message_t* ONE msg, am_addr_t addr);
 
-  command uint16_t      getEtx(message_t* msg);
-  command void          setEtx(message_t* msg, uint8_t etx);
+  command uint16_t      getEtx(message_t* ONE msg);
+  command void          setEtx(message_t* ONE msg, uint8_t etx);
 }

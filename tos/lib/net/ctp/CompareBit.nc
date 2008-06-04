@@ -38,5 +38,5 @@
 interface CompareBit {
 
   /* should the source of this message be inserted into the neighbor table? */
-   event bool shouldInsert(message_t *msg, void* payload, uint8_t len, bool white_bit);
+   event bool shouldInsert(message_t * ONE msg, void* COUNT_NOK(len) payload, uint8_t len, bool white_bit);
 }

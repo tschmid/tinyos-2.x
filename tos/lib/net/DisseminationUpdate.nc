@@ -49,5 +49,5 @@ interface DisseminationUpdate<t> {
    * by newVal is copied out, so newVal can be reclaimed when
    * <tt>change</tt> returns.
    */
-  command void change(t* newVal);
+  command void change(t* ONE newVal);
 }

@@ -453,7 +453,7 @@ implementation {
     }
 
 
-    ctp_routing_header_t* getHeader(message_t* m) {
+    ctp_routing_header_t* getHeader(message_t* ONE m) {
       return (ctp_routing_header_t*)call BeaconSend.getPayload(m, call BeaconSend.maxPayloadLength());
     }
     
