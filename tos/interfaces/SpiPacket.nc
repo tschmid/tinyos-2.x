@@ -45,9 +45,9 @@ interface SpiPacket {
   /**
    * Send a message over the SPI bus.
    *
-   * @param txBuf A pointer to the buffer to send over the bus. If this
+   * @param 'uint8_t* COUNT_NOK(len) txBuf' A pointer to the buffer to send over the bus. If this
    *              parameter is NULL, then the SPI will send zeroes.
-   * @param rxBuf A pointer to the buffer where received data should
+   * @param 'uint8_t* COUNT_NOK(len) rxBuf' A pointer to the buffer where received data should
    *              be stored. If this parameter is NULL, then the SPI will
    *              discard incoming bytes.
    * @param len   Length of the message.  Note that non-NULL rxBuf and txBuf
@@ -61,8 +61,8 @@ interface SpiPacket {
   /**
    * Notification that the send command has completed.
    *
-   * @param txBuf The buffer used for transmission
-   * @param rxBuf The buffer used for reception
+   * @param 'uint8_t* COUNT(len) txBuf' The buffer used for transmission
+   * @param 'uint8_t* COUNT(len) rxBuf' The buffer used for reception
    * @param len    The request length of the transfer, but not necessarily
    *               the number of bytes that were actually transferred
    * @param error  SUCCESS if the operation completed successfully, FAIL

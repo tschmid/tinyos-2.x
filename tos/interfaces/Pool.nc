@@ -82,6 +82,7 @@ interface Pool<t> {
   /**
     * Deallocate an object, putting it back into the pool.
     *
+    * @param 't* ONE newVal'
     * @return SUCCESS if the entry was put in successfully, FAIL
     * if the pool is full.
     */
@@ -90,7 +91,7 @@ interface Pool<t> {
   /**
     * Allocate an element from the pool.
     *
-    * @return A pointer if the pool is not empty, NULL if
+    * @return 't* ONE_NOK' A pointer if the pool is not empty, NULL if
     * the pool is empty.
     */
   command t* get();

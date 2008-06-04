@@ -68,7 +68,7 @@ interface Queue<t> {
    * Get the head of the queue without removing it. If the queue
    * is empty, the return value is undefined.
    *
-   * @return The head of the queue.
+   * @return 't ONE' The head of the queue.
    */
   command t head();
   
@@ -76,14 +76,14 @@ interface Queue<t> {
    * Remove the head of the queue. If the queue is empty, the return
    * value is undefined.
    *
-   * @return The head of the queue.
+   * @return 't ONE' The head of the queue.
    */
   command t dequeue();
 
   /**
    * Enqueue an element to the tail of the queue.
    *
-   * @param newVal - the element to enqueue
+   * @param 't ONE newVal' - the element to enqueue
    * @return SUCCESS if the element was enqueued successfully, FAIL
    *                 if it was not enqueued.
    */
@@ -96,7 +96,7 @@ interface Queue<t> {
    * the return value is undefined.
    *
    * @param index - the index of the element to return
-   * @return the requested element in the queue.
+   * @return 't ONE' the requested element in the queue.
    */
   command t element(uint8_t idx);
 }

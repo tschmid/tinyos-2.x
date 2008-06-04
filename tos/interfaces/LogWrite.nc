@@ -44,7 +44,7 @@ interface LogWrite {
    * Append data to a given volume. On SUCCESS, the <code>appendDone</code> 
    * event will signal completion of the operation.
    * 
-   * @param buf buffer to write data from.
+   * @param 'void* COUNT(len) buf' buffer to write data from.
    * @param len number of bytes to write.
    * @return 
    *   <li>SUCCESS if the request was accepted, 
@@ -58,7 +58,7 @@ interface LogWrite {
    * guaranteed to survive a power-cycle unless a commit operation has
    * been completed.
    *
-   * @param buf buffer that written data was read from.
+   * @param 'void* COUNT(len) buf' buffer that written data was read from.
    * @param len number of bytes actually written (valid even in case of error)
    * @param records_lost TRUE if this append destroyed some old records from
    *   the beginning of the log (only possible for circular logs).

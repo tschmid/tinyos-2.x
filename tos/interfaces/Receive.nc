@@ -57,10 +57,10 @@ interface Receive {
    * the component's data. This would cause the mote to possibly
    * instead send a packet it most recently received.
    *
-   * @param  msg      the receied packet
-   * @param  payload  a pointer to the packet's payload
+   * @param  'message_t* ONE msg'        the receied packet
+   * @param  'void* COUNT(len) payload'  a pointer to the packet's payload
    * @param  len      the length of the data region pointed to by payload
-   * @return          a packet buffer for the stack to use for the next
+   * @return 'message_t* ONE'              a packet buffer for the stack to use for the next
    *                  received packet.
    */
   

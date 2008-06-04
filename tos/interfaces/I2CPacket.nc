@@ -58,7 +58,7 @@ interface I2CPacket<addr_size> {
    *                   flag cannot be used with the I2C_STOP flag.
    * @param addr The slave device address. Only used if I2C_START is set.
    * @param length Length, in bytes, to be read
-   * @param data A point to a data buffer to read into
+   * @param 'uint8_t* COUNT(length) data' A point to a data buffer to read into
    *
    * @return SUCCESS if bus available and request accepted. 
    */
@@ -74,7 +74,7 @@ interface I2CPacket<addr_size> {
    *                   packet if set.
    * @param addr The slave device address. Only used if I2C_START is set.
    * @param length Length, in bytes, to be read
-   * @param data A point to a data buffer to read into
+   * @param 'uint8_t* COUNT(length) data' A point to a data buffer to read into
    *
    * @return SUCCESS if bus available and request accepted. 
    */
@@ -85,7 +85,7 @@ interface I2CPacket<addr_size> {
    *
    * @param addr The slave device address
    * @param length Length, in bytes, read
-   * @param data Pointer to the received data buffer
+   * @param 'uint8_t* COUNT(length) data' Pointer to the received data buffer
    * @param success SUCCESS if transfer completed without error.
    */
   async event void readDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data);
@@ -95,7 +95,7 @@ interface I2CPacket<addr_size> {
    *
    * @param addr The slave device address
    * @param length Length, in bytes, written
-   * @param data Pointer to the data buffer written
+   * @param 'uint8_t* COUNT(length) data' Pointer to the data buffer written
    * @param success SUCCESS if transfer completed without error.
    */
   async event void writeDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data);

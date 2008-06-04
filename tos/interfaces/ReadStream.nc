@@ -60,7 +60,7 @@ interface ReadStream<val_t> {
    * should be placed into the buffer. Make sure your count doesn't
    * overrun the buffer.
    *
-   * @param buf a pointer to the buffer
+   * @param 'val_t* COUNT(count) buf' a pointer to the buffer
    * @param count the number of values the buffer should hold
    *
    * @return SUCCESS if the post was successful
@@ -83,7 +83,7 @@ interface ReadStream<val_t> {
    * SUCCESS, and the buffer will be filled with zeroes.
    *
    * @param result SUCCESS if the buffer was filled without errors
-   * @param buf a pointer to the buffer that has been filled
+   * @param 'val_t* COUNT(count) buf' a pointer to the buffer that has been filled
    * @param count the number of values actually read
    */
   event void bufferDone(error_t result, 

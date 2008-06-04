@@ -53,7 +53,7 @@ interface Send {
     * cannot satisfy; in this case, it will signal sendDone with an
     * appropriate error code.
     *
-    * @param   msg     the packet to send
+    * @param   'message_t* ONE msg'     the packet to send
     * @param   len     the length of the packet payload
     * @return          SUCCESS if the request was accepted and will issue
     *                  a sendDone event, EBUSY if the component cannot accept
@@ -71,7 +71,7 @@ interface Send {
     * handling much of the logic; in this case, a component
     * should be conservative and return an appropriate error code.
     *
-    * @param   msg    the packet whose transmission should be cancelled
+    * @param   'message_t* ONE msg'    the packet whose transmission should be cancelled
     * @return         SUCCESS if the packet was successfully cancelled, FAIL
     *                 otherwise
     */
@@ -82,7 +82,7 @@ interface Send {
     * is the sent buffer, and <tt>error</tt> indicates whether the
     * send was succesful, and if not, the cause of the failure.
     * 
-    * @param msg   the message which was requested to send
+    * @param 'message_t* ONE msg'   the message which was requested to send
     * @param error SUCCESS if it was transmitted successfully, FAIL if
     *              it was not, ECANCEL if it was cancelled via <tt>cancel</tt>
     */ 
@@ -108,8 +108,8 @@ interface Send {
     * behaves identicallt to <tt>Packet.getPayload</tt> and is
     * included in this interface as a convenience.
     *
-    * @param   msg    the packet
-    * @return         a pointer to the packet's payload
+    * @param   'message_t* ONE msg'    the packet
+    * @return  'void* COUNT_NOK(len)'  a pointer to the packet's payload
     */
   command void* getPayload(message_t* msg, uint8_t len);
 

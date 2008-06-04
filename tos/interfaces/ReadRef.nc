@@ -51,7 +51,7 @@ interface ReadRef<val_t> {
   /**
    * Initiates a read of the value.
    * 
-   * @param val a pointer to space that will be filled by the value
+   * @param 'val_t* ONE val' a pointer to space that will be filled by the value
    *
    * @return SUCCESS if a readDone() event will eventually come back.
    */
@@ -62,7 +62,7 @@ interface ReadRef<val_t> {
    * be the same as the original pointer passed to read().
    *
    * @param result SUCCESS if the read() was successful
-   * @param val a pointer to the value that has been read
+   * @param 'val_t* ONE val' a pointer to the value that has been read
    */
   event void readDone( error_t result, val_t* val );
 }

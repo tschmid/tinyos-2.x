@@ -49,7 +49,7 @@ interface UartByte {
    * Receive a single uart byte. The call blocks until a byte is
    * received.
    *
-   * @param byte Where to place received byte.
+   * @param 'uint8_t* ONE byte' Where to place received byte.
    * @param timeout How long in byte times to wait.
    * @return SUCCESS if a byte was received, FAIL if timed out.
    */

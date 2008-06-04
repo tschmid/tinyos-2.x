@@ -46,7 +46,7 @@ interface BlockRead {
    * operation.
    * 
    * @param addr starting address to begin reading.
-   * @param buf buffer to place read data.
+   * @param 'void* COUNT(len) buf' buffer to place read data.
    * @param len number of bytes to read.
    * @return 
    *   <li>SUCCESS if the request was accepted, 
@@ -59,7 +59,7 @@ interface BlockRead {
    * Signals the completion of a read operation.
    *
    * @param addr starting address of read.
-   * @param buf buffer where read data was placed.
+   * @param 'void* COUNT(len) buf' buffer where read data was placed.
    * @param len number of bytes read.
    * @param error SUCCESS if the operation was successful, FAIL if
    *   it failed
