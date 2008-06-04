@@ -655,7 +655,7 @@ implementation {
     m_tx_power = tx_power;
     
     {
-      uint8_t tmpLen = header->length - 1;
+      uint8_t tmpLen __DEPUTY_UNUSED__ = header->length - 1;
       call TXFIFO.write(TCAST(uint8_t * COUNT(tmpLen), header), header->length - 1);
     }
   }
