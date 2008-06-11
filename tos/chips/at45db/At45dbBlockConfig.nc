@@ -1,6 +1,6 @@
 // $Id$
 
-/*									tab:4
+/*
  * Copyright (c) 2002-2006 Intel Corporation
  * All rights reserved.
  *

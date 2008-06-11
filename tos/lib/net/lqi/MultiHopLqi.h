@@ -31,7 +31,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*									tab:4
+/*
  * "Copyright (c) 2000-2003 The Regents of the University  of California.  
  * All rights reserved.
  *

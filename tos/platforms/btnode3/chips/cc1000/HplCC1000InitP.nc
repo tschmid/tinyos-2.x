@@ -1,5 +1,5 @@
 // $Id$
-/*									tab:4
+/*
  * Copyright (c) 2006 ETH Zurich.  
  * Copyright (c) 2004-2005 The Regents of the University  of California.  
  *

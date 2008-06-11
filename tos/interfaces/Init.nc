@@ -1,5 +1,5 @@
 // $Id$
-/*									tab:4
+/*
  * "Copyright (c) 2004-5 The Regents of the University  of California.  
  * All rights reserved.
  *
