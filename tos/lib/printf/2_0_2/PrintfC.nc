@@ -38,29 +38,25 @@
  * @version $Revision$
  * @date $Date$
  */
+
 #include "printf.h"
 
 configuration PrintfC {
   provides {
-    interface Boot;
+  	interface SplitControl as PrintfControl;
+  	interface PrintfFlush;
   }
-  uses interface Boot as MainBoot @exactlyonce();
 }
 implementation {
   components SerialActiveMessageC;
   components new SerialAMSenderC(AM_PRINTF_MSG);
-  components new PrintfQueueC(uint8_t, PRINTF_BUFFER_SIZE) as QueueC;
-
   components PrintfP;
-  components LedsC;
-  
-  MainBoot = PrintfP.MainBoot;
-  Boot = PrintfP.Boot;
+
+  PrintfControl = PrintfP;
+  PrintfFlush = PrintfP;
   
   PrintfP.SerialControl -> SerialActiveMessageC;
-  PrintfP.Queue -> QueueC;
   PrintfP.AMSend -> SerialAMSenderC;
   PrintfP.Packet -> SerialAMSenderC;
-  PrintfP.Leds -> LedsC;
 }
 

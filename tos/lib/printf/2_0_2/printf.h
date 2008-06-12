@@ -31,15 +31,7 @@
 #define PRINTF_H
 
 #ifndef PRINTF_BUFFER_SIZE
-#define PRINTF_BUFFER_SIZE 250 
-#endif
-
-#if PRINTF_BUFFER_SIZE > 255
-  #define PrintfQueueC	BigQueueC
-  #define PrintfQueue	BigQueue
-#else
-  #define PrintfQueueC	QueueC
-  #define PrintfQueue	Queue
+#define PRINTF_BUFFER_SIZE  250
 #endif
 
 #ifdef _H_msp430hardware_h
