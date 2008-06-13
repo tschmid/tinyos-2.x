@@ -80,9 +80,9 @@ implementation {
   /****************************************************************
   Global Variables Declared
   *****************************************************************/
-  norace uint16_t currentConfig;
+  norace uint16_t currentConfig = TDA5250_REG_DEFAULT_SETTING_CONFIG;
   uint8_t currentClockDiv;
-  norace uint8_t currentLpf;
+  norace uint8_t currentLpf = TDA5250_REG_DEFAULT_SETTING_LPF;
 
 
   /****************************************************************

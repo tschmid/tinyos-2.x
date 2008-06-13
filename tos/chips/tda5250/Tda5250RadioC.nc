@@ -47,6 +47,9 @@ configuration Tda5250RadioC {
     interface ResourceRequested;
     interface RadioByteComm;
     interface ClkDiv;
+#ifdef LNDW
+    interface RfPower;
+#endif
   }
 }
 implementation {
@@ -65,7 +68,9 @@ implementation {
   RadioByteComm = Tda5250RadioP;
   SplitControl = Tda5250RadioP;
   ClkDiv = Tda5250RadioP;
-
+#ifdef LNDW
+  RfPower = Tda5250RadioP;
+#endif
   Tda5250RadioP.DelayTimer -> DelayTimer;
   
   Tda5250RadioP.ConfigResource -> HplTda5250ConfigC;
