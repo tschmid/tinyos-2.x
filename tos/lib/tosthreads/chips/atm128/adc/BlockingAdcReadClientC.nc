@@ -36,6 +36,6 @@ implementation {
 
   BlockingRead = BlockingAdcP.BlockingRead[ID];
   Atm128AdcConfig = BlockingAdcP.Config[ID];
-  BlockingAdcP.ReadResource[ID] -> Atm128AdcC.Resource[HAL_ID];
+  BlockingAdcP.ResourceRead[ID] -> Atm128AdcC.Resource[HAL_ID];
   ResourceConfigure = Atm128AdcC.ResourceConfigure[HAL_ID];
 }
