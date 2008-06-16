@@ -40,7 +40,8 @@
  * low-latency requirement may be impossible to meet.
  *
  * <p>
- * See TEP114 - SIDs: Source and Sink Independent Drivers for details.
+ * This interface has the same calling semantics as the Read interface
+ * described in TEP 114, except that it is async.
  * 
  * @param val_t the type of the object that will be returned
  *
