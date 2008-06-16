@@ -31,6 +31,7 @@
 
 /**
  * @author Jonathan Hui <jhui@archedrock.com>
+ * @author Jan Hauer <hauer@tkn.tu-berlin.de> (bugfix in continueOp())
  * @version $Revision$ $Date$
  */
 
@@ -119,27 +120,24 @@ implementation {
 
   void continueOp() {
 
-    uint8_t end;
-    uint8_t tmp;
+   uint8_t end;
+   uint8_t tmp;
 
-    atomic {
-      call Usart.tx( m_tx_buf ? m_tx_buf[ m_pos ] : 0 );
+   atomic {
+     call Usart.tx( m_tx_buf ? m_tx_buf[ m_pos ] : 0 );
 
-      end = m_pos + SPI_ATOMIC_SIZE;
-      if ( end > m_len )
-        end = m_len;
+     end = m_pos + SPI_ATOMIC_SIZE;
+     if ( end > m_len )
+       end = m_len;
 
-      while ( ++m_pos < end ) {
-        while( !call Usart.isTxIntrPending() );
-        call Usart.clrTxIntr();
-        call Usart.tx( m_tx_buf ? m_tx_buf[ m_pos ] : 0 );
-        while( !call Usart.isRxIntrPending() );
-        call Usart.clrRxIntr();
-        tmp = call Usart.rx();
-        if ( m_rx_buf )
-          m_rx_buf[ m_pos - 1 ] = tmp;
-      }
-    }
+     while ( ++m_pos < end ) {
+       while( !call Usart.isRxIntrPending() );
+       tmp = call Usart.rx();
+       if ( m_rx_buf )
+         m_rx_buf[ m_pos - 1 ] = tmp;
+       call Usart.tx( m_tx_buf ? m_tx_buf[ m_pos ] : 0 );
+     }
+   }
 
   }
 
