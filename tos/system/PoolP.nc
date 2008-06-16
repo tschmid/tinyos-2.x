@@ -73,9 +73,11 @@ implementation {
   }
   
   command bool Pool.empty() {
+    dbg("PoolP", "%s size is %i\n", __FUNCTION__, (int)free);
     return free == 0;
   }
   command uint8_t Pool.size() {
+    dbg("PoolP", "%s size is %i\n", __FUNCTION__, (int)free);
     return free;
   }
     
@@ -92,6 +94,7 @@ implementation {
       if (index == size) {
         index = 0;
       }
+      dbg("PoolP", "%s size is %i\n", __FUNCTION__, (int)free);
       return rval;
     }
     return NULL;
@@ -108,6 +111,7 @@ implementation {
       }
       queue[emptyIndex] = newVal;
       free++;
+      dbg("PoolP", "%s size is %i\n", __FUNCTION__, (int)free);
       return SUCCESS;
     }
   }
