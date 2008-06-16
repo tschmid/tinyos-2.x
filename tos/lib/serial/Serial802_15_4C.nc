@@ -33,6 +33,7 @@
 #include "Serial.h"
 configuration Serial802_15_4C {
   provides {
+    interface SplitControl;
     interface Send;
     interface Receive;
   }
@@ -42,6 +43,8 @@ implementation {
   components MainC, SerialPacketInfo802_15_4P, SerialDispatcherC;
 
   MainC.SoftwareInit -> SerialDispatcherC;
+
+  SplitControl = SerialDispatcherC;
   Leds = SerialDispatcherC;
   Send = SerialDispatcherC.Send[TOS_SERIAL_802_15_4_ID];
   Receive = SerialDispatcherC.Receive[TOS_SERIAL_802_15_4_ID];
