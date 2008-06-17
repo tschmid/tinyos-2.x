@@ -43,6 +43,7 @@
  * @author Philip Levis
  * @date June 19 2005
  */
+#include "Timer.h"
 
 configuration ActiveMessageC {
   provides {

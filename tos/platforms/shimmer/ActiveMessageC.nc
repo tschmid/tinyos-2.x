@@ -40,6 +40,7 @@
  *
  * @author Konrad Lorincz
  */
+#include "Timer.h"
 
 configuration ActiveMessageC {
   provides {

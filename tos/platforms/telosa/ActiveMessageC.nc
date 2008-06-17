@@ -43,6 +43,7 @@
  * @author Philip Levis
  * @version $Revision$ $Date$
  */
+#include "Timer.h"
 
 configuration ActiveMessageC {
   provides {
