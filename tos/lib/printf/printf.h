@@ -49,6 +49,7 @@
   #include "avr_stdio.h"
 #endif
 #include "message.h"
+int printfflush();
 
 typedef nx_struct printf_msg {
   nx_uint8_t buffer[TOSH_DATA_LENGTH];
