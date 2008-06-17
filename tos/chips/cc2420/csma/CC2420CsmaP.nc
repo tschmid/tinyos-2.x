@@ -144,8 +144,9 @@ implementation {
     metadata->ack = FALSE;
     metadata->rssi = 0;
     metadata->lqi = 0;
-    metadata->time = 0;
-    
+    metadata->timesync = FALSE;
+    metadata->timestamp = CC2420_INVALID_TIMESTAMP;
+
     ccaOn = TRUE;
     signal RadioBackoff.requestCca(m_msg);
 
