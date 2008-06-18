@@ -62,7 +62,6 @@ module AssociateP
 
     interface DataRequest;
     interface Timer<TSymbolIEEE802154> as ResponseTimeout;
-    interface Get<bool> as IsTrackingBeacons;
     interface Pool<ieee154_txframe_t> as TxFramePool;
     interface Pool<ieee154_txcontrol_t> as TxControlPool;
     interface MLME_GET;

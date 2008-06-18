@@ -139,9 +139,5 @@ implementation {
   
   components CC2420ReceiveC;
   CC2420TransmitP.CC2420Receive -> CC2420ReceiveC;
-  
-  components CC2420PacketC;
-  CC2420TransmitP.CC2420Packet -> CC2420PacketC;
-  CC2420TransmitP.CC2420PacketBody -> CC2420PacketC;
 }
 

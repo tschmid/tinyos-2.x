@@ -175,13 +175,8 @@ implementation
       return IEEE154_INVALID_PARAMETER;
     if (call PromiscuousModeGet.get())
       return IEEE154_TRANSACTION_OVERFLOW; // must first cancel promiscuous mode!
-
-    // nonbeacon-enabled mode is not yet implemented!
-    if (PANType != BEACON_ENABLED_PAN)
-      return IEEE154_INVALID_PARAMETER;
-
     m_setDefaultPIB = SetDefaultPIB;
-    m_panType = PANType; // TODO: set this later?
+    m_panType = PANType; 
     if (!call Token.isOwner())
       call Token.request();
     return IEEE154_SUCCESS;

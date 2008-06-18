@@ -106,7 +106,7 @@ implementation
       return (m_realignmentFrame != NULL || m_queueHead != NULL);
   }
 
-  async event void TokenTransferred.transferred()
+  event void TokenTransferred.transferred()
   {
     // CAP has started - are there any broadcast frames to be transmitted?
     if (call BeaconFramePendingBit.getNow()){

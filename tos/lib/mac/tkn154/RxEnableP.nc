@@ -57,7 +57,7 @@ module RxEnableP
     interface Timer<TSymbolIEEE802154> as RxEnableTimer;
     interface Get<bool> as IsBeaconEnabledPAN;
     interface Get<ieee154_macPanCoordinator_t> as IsMacPanCoordinator;
-    interface Get<bool> as IsTrackingBeacons;
+    interface GetNow<bool> as IsTrackingBeacons;
     interface GetNow<uint32_t> as IncomingSfStart; 
     interface GetNow<uint32_t> as IncomingBeaconInterval; 
     interface Get<bool> as IsSendingBeacons;
@@ -116,7 +116,7 @@ implementation
         // for OUTGOING SUPERFRAME
         lastBeaconTime = call OutgoingSfStart.getNow();
         beaconInterval = call OutgoingBeaconInterval.getNow();
-      } else if (call IsTrackingBeacons.get()){
+      } else if (call IsTrackingBeacons.getNow()){
         // for INCOMING SUPERFRAME 
         lastBeaconTime = call IncomingSfStart.getNow();
         beaconInterval = call IncomingBeaconInterval.getNow();
