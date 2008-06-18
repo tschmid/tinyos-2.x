@@ -42,18 +42,5 @@ interface ResourceTransferred
    *
    * @see ResourceTransfer interface
    */
-  async event void transferred();
-
-  /** 
-   *
-   * Release control of a resource - this command is equivalent to calling
-   * Resource.release() and included for convenience. 
-   *
-   * @return SUCCESS The resource has been released <br> FAIL You tried to
-   * release but you are not the owner of the resource
-   *
-   * @see ResourceTransfer interface
-   */
-
-  async command error_t release();
+  event void transferred();
 }
