@@ -63,7 +63,7 @@ module Msp430Adc12ImplP
 }
 implementation
 { 
-#warning Accessing TimerA for ADC12 
+//#warning Accessing TimerA for ADC12 
   enum {
     SINGLE_DATA = 1,
     SINGLE_DATA_REPEAT = 2,
