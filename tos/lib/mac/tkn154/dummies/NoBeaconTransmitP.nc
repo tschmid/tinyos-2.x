@@ -77,7 +77,7 @@ module NoBeaconTransmitP
     interface WriteBeaconField as GtsInfoWrite;
     interface WriteBeaconField as PendingAddrWrite;
     interface FrameUtility;
-    interface Get<bool> as IsTrackingBeacons;
+    interface GetNow<bool> as IsTrackingBeacons;
     interface GetNow<uint32_t> as LastBeaconRxTime;
     interface GetNow<ieee154_reftime_t*> as LastBeaconRxRefTime; 
     interface Ieee802154Debug as Debug;

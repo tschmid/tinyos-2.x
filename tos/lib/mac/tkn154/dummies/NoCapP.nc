@@ -46,6 +46,7 @@ generic module NoCapP()
     interface FrameExtracted as FrameExtracted[uint8_t frameType];
     interface FrameTxNow as BroadcastTx;
     interface Notify<bool> as WasRxEnabled;
+    interface Notify<bool> as FindBeacon;
   }
   uses
   {
@@ -67,6 +68,7 @@ generic module NoCapP()
     interface GetNow<bool> as IsRxEnableActive; 
     interface GetNow<bool> as IsRxBroadcastPending; 
     interface Notify<bool> as RxEnableStateChange;
+    interface GetNow<bool> as IsTrackingBeacons;
     interface FrameUtility;
     interface RadioTx;
     interface RadioRx;
@@ -88,7 +90,7 @@ implementation
     return SUCCESS;
   }
 
-  async event void TokenTransferred.transferred()
+  event void TokenTransferred.transferred()
   {
     call TokenToCfp.transfer();
   }
@@ -120,4 +122,6 @@ implementation
   event void Token.granted(){}
   command error_t WasRxEnabled.enable(){return FAIL;}
   command error_t WasRxEnabled.disable(){return FAIL;}
+  command error_t FindBeacon.enable(){return FAIL;}
+  command error_t FindBeacon.disable(){return FAIL;}
 }

@@ -89,7 +89,7 @@ implementation
     return IEEE154_INVALID_HANDLE; 
   } 
 
-  async event void TokenTransferred.transferred()
+  event void TokenTransferred.transferred()
   {
     // the CFP has started, this component now owns the token -  
     // because GTS is not implemented we release the token
