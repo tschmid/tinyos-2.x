@@ -17,7 +17,7 @@ program_no_e: FORCE
 
 program_bl: FORCE
 	@echo "    installing $(PLATFORM) bootloader using jtag"
-	$(MSP_JTAG) $(MSP_JTAG_FLAGS) -r -e -I -p $(BOOTLOADER)
+	$(MSP_JTAG) $(MSP_JTAG_FLAGS) -r -e -I -p $(BOOTLOADER_IMG)
 
 program_input: ihex
 	@:

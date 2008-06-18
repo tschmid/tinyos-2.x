@@ -4,8 +4,8 @@
 NODEID = $(INSTALL)
 BUILD_DEPS = srec tosimage bytes $(POST_BUILD_EXTRA_DEPS) setid program delsetid
 
-ifdef TINYOS_NP
-  ifeq ($(TINYOS_NP),BNP)
+ifdef BOOTLOADER
+  ifeq ($(BOOTLOADER),tosboot)
     BUILD_DEPS += program_bl
   endif
 endif

@@ -4,8 +4,8 @@
 NODEID = $(REINSTALL)
 BUILD_DEPS = setid program delsetid
 
-ifdef TINYOS_NP
-  ifeq ($(TINYOS_NP),BNP)
+ifdef BOOTLOADER
+  ifeq ($(BOOTLOADER),tosboot)
     BUILD_DEPS += program_bl
   endif
 endif
