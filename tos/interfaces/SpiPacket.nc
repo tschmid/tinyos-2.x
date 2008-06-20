@@ -61,8 +61,8 @@ interface SpiPacket {
   /**
    * Notification that the send command has completed.
    *
-   * @param 'uint8_t* COUNT(len) txBuf' The buffer used for transmission
-   * @param 'uint8_t* COUNT(len) rxBuf' The buffer used for reception
+   * @param 'uint8_t* COUNT_NOK(len) txBuf' The buffer used for transmission
+   * @param 'uint8_t* COUNT_NOK(len) rxBuf' The buffer used for reception
    * @param len    The request length of the transfer, but not necessarily
    *               the number of bytes that were actually transferred
    * @param error  SUCCESS if the operation completed successfully, FAIL
