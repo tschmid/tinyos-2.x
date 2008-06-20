@@ -90,9 +90,9 @@
 #define UQ_LQI_CLIENT "LqiForwardingEngineP.Send"
 
 enum {
-  AM_LQI_BEACON_MSG = 250,
-  AM_LQI_DATA_MSG = 251,
-  AM_LQI_DEBUG = 22,
+  AM_LQI_BEACON_MSG = 0x73,
+  AM_LQI_DATA_MSG = 0x74,
+  AM_LQI_DEBUG = 0x75,
   AM_LQI_DEBUG_PACKET = 3,
   NUM_LQI_CLIENTS = uniqueCount(UQ_LQI_CLIENT),
 };

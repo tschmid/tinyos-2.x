@@ -50,9 +50,9 @@
 
 enum {
     // AM types:
-    AM_CTP_DATA    = 23,
-    AM_CTP_ROUTING = 24,
-    AM_CTP_DEBUG   = 25,
+    AM_CTP_ROUTING = 0x70,
+    AM_CTP_DATA    = 0x71,
+    AM_CTP_DEBUG   = 0x72,
 
     // CTP Options:
     CTP_OPT_PULL      = 0x80, // TEP 123: P field
