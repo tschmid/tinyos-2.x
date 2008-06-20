@@ -76,9 +76,9 @@ The TinyOS 802.15.4 I-frame format is as follows::
   | 802.15.4 Header   | 6lowpan | AM type |        data        | 802.15.4 CRC |
   +-------------------+---------+------------------------------+--------------+
 
-AM type is the same as in a T-frame. 6lowpan is the NALP code to identify 
-this as a TinyOS packet. NALP codes must be in the range of 0-63.
-TinyOS uses code 63.
+AM type is the same as in a T-frame. 6lowpan is the NALP code to
+identify this as a TinyOS packet. NALP codes must be in the range of
+0-63.  TinyOS uses code 63 (0x3F).
 
 The AM type 63 is reserved for both T-Frames and I-Frames. A TinyOS 
 program MUST NOT use it.
