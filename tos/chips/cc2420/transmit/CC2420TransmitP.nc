@@ -327,7 +327,8 @@ implementation {
         m_receiving = FALSE;
         if ( time - m_prev_time < 10 ) {
           call CC2420Receive.sfd_dropped();
-          call PacketTimeStamp.clear(m_msg);
+	  if (m_msg)
+	    call PacketTimeStamp.clear(m_msg);
         }
         break;
       
@@ -355,7 +356,7 @@ implementation {
     uint8_t* ack_buf;
     uint8_t length;
 
-    if ( type == IEEE154_TYPE_ACK ) {
+    if ( type == IEEE154_TYPE_ACK && m_msg) {
       ack_header = call CC2420PacketBody.getHeader( ack_msg );
       msg_header = call CC2420PacketBody.getHeader( m_msg );
 
