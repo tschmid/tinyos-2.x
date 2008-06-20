@@ -107,9 +107,11 @@ implementation
   
   async command void HplAdc12.stopConversion(){
     // stop conversion mode immediately, conversion data is unreliable
+    uint16_t ctl1 = ADC12CTL1;
     ADC12CTL1 &= ~(CONSEQ0 | CONSEQ1);
     ADC12CTL0 &= ~(ADC12SC + ENC); 
-    ADC12CTL0 &= ~(ADC12ON); 
+    ADC12CTL0 &= ~(ADC12ON);
+    ADC12CTL1 |= (ctl1 & (CONSEQ0 | CONSEQ1));
   }
   
   async command void HplAdc12.enableConversion(){ 
