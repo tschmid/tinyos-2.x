@@ -24,7 +24,7 @@ endef
 HELP += $(AVR_HELP)
 
 ifdef MAKE_DEPUTY_FLAG
-        NCC_SAFE_TINYOS_FLAGS = -DSAFE_TINYOS -fnesc-deputy -fnesc-default-safe -fnesc-deputy-args='-I$(TOSDIR)/lib/safe/include --FLIDs --envmachine -DSAFE_TINYOS --nolib ' $(TOSDIR)/lib/safe/avr/fail.c 
+        NCC_SAFE_TINYOS_FLAGS = -DSAFE_TINYOS -fnesc-deputy -fnesc-deputy-args='-I$(TOSDIR)/lib/safe/include --FLIDs --envmachine -DSAFE_TINYOS --nolib ' $(TOSDIR)/lib/safe/avr/fail.c 
 else
         NCC_SAFE_TINYOS_FLAGS =
 endif
