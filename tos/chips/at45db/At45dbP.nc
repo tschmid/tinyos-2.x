@@ -367,8 +367,9 @@ implementation
 		  void * COUNT_NOK(n) reqdata, at45pageoffset_t n) {
     request = req;
 
-    reqBuf = reqdata;
+    reqBuf = NULL;
     reqBytes = n;
+    reqBuf = reqdata;
     reqPage = page;
     reqOffset = offset;
 
