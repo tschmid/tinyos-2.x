@@ -183,6 +183,7 @@ implementation {
   {
     /* The first reading may be imprecise. So we just do a dummy read
        to get things rolling - this is indicated by setting count to 0 */
+    buffer = pos = NULL;
     count = 0;
     period = call Atm128Calibrate.calibrateMicro(usPeriod);
     client = c;
