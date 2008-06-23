@@ -40,7 +40,7 @@
 #include "message.h"
 #include "AM.h"
 
-module CC2420ReceiveP {
+module CC2420ReceiveP @safe() {
 
   provides interface Init;
   provides interface StdControl;

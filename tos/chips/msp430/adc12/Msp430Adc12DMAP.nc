@@ -35,7 +35,7 @@
 
 #include <Msp430Adc12.h>
 #include <Msp430Dma.h>
-module Msp430Adc12DMAP 
+module Msp430Adc12DMAP @safe()
 {
   provides {
     interface Msp430Adc12SingleChannel as SingleChannel[uint8_t id];

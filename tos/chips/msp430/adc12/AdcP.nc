@@ -33,7 +33,7 @@
  * ========================================================================
  */
 
-module AdcP {
+module AdcP @safe() {
   provides {
     interface Read<uint16_t> as Read[uint8_t client];
     interface ReadNow<uint16_t> as ReadNow[uint8_t client];

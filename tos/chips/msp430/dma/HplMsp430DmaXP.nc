@@ -63,7 +63,7 @@ generic module HplMsp430DmaXP( uint16_t DMAxCTL_addr,
 			       uint16_t DMAxDA_addr,
 			       uint16_t DMAxSZ_addr,
 			       uint16_t DMAxTSEL_mask,
-			       uint16_t DMAxTSEL_shift ) {
+			       uint16_t DMAxTSEL_shift ) @safe() {
   
   provides interface HplMsp430DmaChannel as DMA;
   uses interface HplMsp430DmaInterrupt as Interrupt;

@@ -39,7 +39,7 @@
  * @author David Gay
  */
 
-module At45dbP {
+module At45dbP @safe() {
   provides {
     interface Init;
     interface At45db;

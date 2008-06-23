@@ -13,7 +13,7 @@
  *
  * @author David Gay
  */
-module RandRWC {
+module RandRWC @safe() {
   uses {
     interface Boot;
     interface Leds;

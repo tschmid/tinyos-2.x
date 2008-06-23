@@ -30,7 +30,7 @@
 generic module HplAtm128InterruptPinP (uint8_t ctrl_addr, 
 				 uint8_t edge0bit, 
 				 uint8_t edge1bit, 
-				 uint8_t bit)
+				 uint8_t bit) @safe()
 {
   provides interface HplAtm128Interrupt as Irq;
   uses interface HplAtm128InterruptSig as IrqSignal;

@@ -43,7 +43,7 @@
  */
 #include "Timer.h"
 
-module AdcStreamP {
+module AdcStreamP @safe() {
   provides {
     interface Init @atleastonce();
     interface ReadStream<uint16_t>[uint8_t client];

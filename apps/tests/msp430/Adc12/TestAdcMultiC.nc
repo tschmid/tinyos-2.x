@@ -50,7 +50,7 @@ generic module TestAdcMultiC(
 
                           uint8_t inch2,           // second input channel 
                           uint8_t sref2            // second reference voltage 
-)
+) @safe()
 {
   uses {
     interface Boot;

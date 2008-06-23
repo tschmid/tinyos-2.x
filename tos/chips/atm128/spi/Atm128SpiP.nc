@@ -72,7 +72,7 @@
  *
  */
 
-module Atm128SpiP {
+module Atm128SpiP @safe() {
   provides {
     interface Init;
     interface SpiByte;

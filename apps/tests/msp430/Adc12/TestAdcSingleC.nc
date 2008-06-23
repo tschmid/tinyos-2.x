@@ -47,7 +47,7 @@ generic module TestAdcSingleC(
                           uint8_t sht,             // sample-hold-time
                           uint8_t sampcon_ssel,    // clock source sampcon signal 
                           uint8_t sampcon_id       // clock divider sampcon 
-)
+) @safe()
 {
   uses {
     interface Boot;

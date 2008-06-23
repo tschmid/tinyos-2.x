@@ -38,7 +38,7 @@
  * @version $Revision$ $Date$
  */
 
-module CC2420SpiP {
+module CC2420SpiP @safe() {
 
   provides {
     interface ChipSpiResource;

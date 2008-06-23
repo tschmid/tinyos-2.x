@@ -52,7 +52,7 @@
  * @author David Gay
  */
   
-module CC1000SendReceiveP {
+module CC1000SendReceiveP @safe() {
   provides {
     interface Init;
     interface StdControl;

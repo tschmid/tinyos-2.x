@@ -50,7 +50,7 @@
  * @author David Gay
  */
   
-module CC1000CsmaP {
+module CC1000CsmaP @safe() {
   provides {
     interface Init;
     interface SplitControl;

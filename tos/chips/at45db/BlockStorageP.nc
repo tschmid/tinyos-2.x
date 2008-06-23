@@ -39,7 +39,7 @@
 
 #include "Storage.h"
 
-module BlockStorageP {
+module BlockStorageP @safe() {
   provides {
     interface BlockWrite[uint8_t blockId];
     interface BlockRead[uint8_t blockId];

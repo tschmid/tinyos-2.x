@@ -32,7 +32,7 @@
 generic module HplAtm128GeneralIOPinP (uint8_t port_addr, 
 				 uint8_t ddr_addr, 
 				 uint8_t pin_addr,
-				 uint8_t bit)
+				 uint8_t bit) @safe()
 {
   provides interface GeneralIO as IO;
 }

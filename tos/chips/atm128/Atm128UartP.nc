@@ -43,7 +43,7 @@
 
 #include <Timer.h>
 
-generic module Atm128UartP(){
+generic module Atm128UartP() @safe() {
   
   provides interface Init;
   provides interface StdControl;

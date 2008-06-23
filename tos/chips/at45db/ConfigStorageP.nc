@@ -20,7 +20,7 @@
 #include "Storage.h"
 #include "crc.h"
 
-module ConfigStorageP {
+module ConfigStorageP @safe() {
   provides {
     interface Mount[uint8_t id];
     interface ConfigStorage[uint8_t id];

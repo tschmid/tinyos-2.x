@@ -30,7 +30,7 @@
 
 #include <Atm128Timer.h>
 
-module HplAtm128Timer1P
+module HplAtm128Timer1P @safe()
 {
   provides {
     // 16-bit Timers

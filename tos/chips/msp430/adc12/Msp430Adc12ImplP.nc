@@ -34,7 +34,7 @@
  */
 
 #include <Msp430Adc12.h>
-module Msp430Adc12ImplP 
+module Msp430Adc12ImplP @safe()
 {
   provides {
     interface Init;
