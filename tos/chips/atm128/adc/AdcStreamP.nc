@@ -72,7 +72,7 @@ implementation {
   };
   struct list_entry_t *bufferQueue[NSTREAM];
   struct list_entry_t * ONE_NOK * bufferQueueEnd[NSTREAM];
-  uint16_t * ONE_NOK lastBuffer, lastCount;
+  uint16_t * COUNT_NOK(lastCount) lastBuffer, lastCount;
 
   norace uint16_t count;
   norace uint16_t * COUNT_NOK(count) buffer; 
@@ -208,6 +208,7 @@ implementation {
 	    bufferQueue[client] = entry->next;
 	    if (!bufferQueue[client])
 	      bufferQueueEnd[client] = &bufferQueue[client];
+	    pos = buffer = NULL;
 	    count = entry->count;
             tmp_count = count;
 	    pos = buffer = TCAST(uint16_t * COUNT_NOK(tmp_count), entry);
@@ -228,7 +229,7 @@ implementation {
     else
       {
 	*pos++ = data;
-	if (!--count)
+	if (pos == buffer + count)
 	  {
 	    atomic
 	      {
@@ -241,8 +242,8 @@ implementation {
 		  }
 		else
 		  {
+		    lastCount = count;
 		    lastBuffer = buffer;
-		    lastCount = pos - buffer;
 		  }
 	      }
 	    post bufferDone();
