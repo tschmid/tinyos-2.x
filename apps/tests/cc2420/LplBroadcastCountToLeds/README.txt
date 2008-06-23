@@ -12,7 +12,7 @@ Each node is performing 1 second receive checks, but there is a
 1.5 second delay between each transmission.
 
 Verification:
- * Install the application to at two motes
+ * Install the application on two motes
  * Both motes should count up their LED's just like RadioCountToLeds
    - This indicates they are communicating with each other.
  * LED's will not toggle in rhythm.
