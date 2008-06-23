@@ -52,7 +52,7 @@ implementation {
   
   components TinyTaskSchedulerC;
   components TinyThreadSchedulerC;
-  components ThreadP;
+  components StaticThreadC;
     
   // Export the SoftwareInit and Boot for applications
   SoftwareInit = TinyOSMainP.SoftwareInit;
@@ -66,7 +66,7 @@ implementation {
   TinyTaskSchedulerC.ThreadScheduler -> TinyThreadSchedulerC;
   
   //Wire up the TinyOS code to its thread
-  ThreadP.StaticThreadInfo[TOSTHREAD_TOS_THREAD_ID] -> TinyOSMainP;
+  StaticThreadC.ThreadInfo[TOSTHREAD_TOS_THREAD_ID] -> TinyOSMainP;
   TinyOSMainP.TinyOSBoot -> TinyThreadSchedulerC;
   
   //Wire up the thread scheduler to start running
