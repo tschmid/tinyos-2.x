@@ -38,7 +38,7 @@ implementation
 {
   enum {
     /* Threshold for considering mote in a dark place */
-    DARK_THRESHOLD = 200, 
+    DARK_THRESHOLD = 600, 
 
     /* Amount of time warning leds should stay on (in checkInterval counts) */
     WARNING_TIME = 3,
