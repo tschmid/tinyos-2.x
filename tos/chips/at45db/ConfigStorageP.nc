@@ -190,7 +190,7 @@ implementation
     return call BlockRead.read[id](addr + sizeof low[0], buf, len);
   }
 
-  void readReadDone(uint8_t id, storage_addr_t addr, void* buf, storage_len_t len, error_t error) {
+  void readReadDone(uint8_t id, storage_addr_t addr, void* COUNT(len) buf, storage_len_t len, error_t error) {
     signal ConfigStorage.readDone[id](addr - sizeof low[0], buf, len, error);
   }
 
@@ -257,7 +257,7 @@ implementation
     signal BConfig.writeContinue[id](error);
   }
 
-  void writeWriteDone(uint8_t id, storage_addr_t addr, void* buf, storage_len_t len, error_t error) {
+  void writeWriteDone(uint8_t id, storage_addr_t addr, void* COUNT(len) buf, storage_len_t len, error_t error) {
     flip(id); // flip back to current half
     signal ConfigStorage.writeDone[id](addr - sizeof low[0], buf, len, error);
   }

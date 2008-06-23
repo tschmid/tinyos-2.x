@@ -236,7 +236,7 @@ implementation
     storage_addr_t remaining = s[client].len - currentOffset, addr;
     at45page_t page;
     at45pageoffset_t pageOffset, count;
-    uint8_t *buf = s[client].buf + currentOffset;
+    uint8_t *buf = s[client].buf;
 
     if (remaining == 0)
       {
@@ -254,10 +254,10 @@ implementation
     switch (s[client].request)
       {
       case R_WRITE:
-	call At45db.write(page, pageOffset, buf, count);
+	call At45db.write(page, pageOffset, buf + currentOffset, count);
 	break;
       case R_READ:
-	call At45db.read(page, pageOffset, buf, count);
+	call At45db.read(page, pageOffset, buf + currentOffset, count);
 	break;
       case R_CRC:
 	call At45db.computeCrc(page, pageOffset, count, crc);
