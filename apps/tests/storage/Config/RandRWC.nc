@@ -37,7 +37,7 @@ implementation {
   int count, testCount, writeCount, countAtCommit;
   struct {
     uint32_t addr;
-    void *data;
+    void *COUNT_NOK(len) data;
     uint16_t len;
   } ops[NWRITES];
 
@@ -118,6 +118,7 @@ implementation {
 	if (addr + len > SIZE)
 	  addr = SIZE - len;
 	ops[i].addr = addr;
+	ops[i].data = NULL;
 	ops[i].len = len;
 	offset = rand() >> 8;
 	if (offset + ops[i].len > sizeof data)
