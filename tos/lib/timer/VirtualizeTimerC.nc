@@ -32,7 +32,7 @@
  * @author Cory Sharp <cssharp@eecs.berkeley.edu>
  */
 
-generic module VirtualizeTimerC(typedef precision_tag, int max_timers)
+generic module VirtualizeTimerC(typedef precision_tag, int max_timers) @safe()
 {
   provides interface Timer<precision_tag> as Timer[uint8_t num];
   uses interface Timer<precision_tag> as TimerFrom;

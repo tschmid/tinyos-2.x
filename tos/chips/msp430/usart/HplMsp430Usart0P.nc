@@ -71,7 +71,7 @@
  * @version $Revision$ $Date$
  */
 
-module HplMsp430Usart0P {
+module HplMsp430Usart0P @safe() {
   provides interface HplMsp430Usart as Usart;
   provides interface HplMsp430UsartInterrupts as Interrupts;
   provides interface HplMsp430I2CInterrupts as I2CInterrupts;

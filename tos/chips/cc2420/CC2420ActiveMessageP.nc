@@ -34,7 +34,7 @@
  
 #include "CC2420.h"
 
-module CC2420ActiveMessageP {
+module CC2420ActiveMessageP @safe() {
   provides {
     interface AMSend[am_id_t id];
     interface Receive[am_id_t id];

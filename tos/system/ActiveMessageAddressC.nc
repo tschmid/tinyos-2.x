@@ -38,7 +38,7 @@
  * @author David Moss
  */
 
-module ActiveMessageAddressC  {
+module ActiveMessageAddressC @safe() {
   provides {
     interface ActiveMessageAddress;
     async command am_addr_t amAddress();

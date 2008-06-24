@@ -34,7 +34,7 @@
 
 #include "AM.h"
 
-generic module AMQueueImplP(int numClients) {
+generic module AMQueueImplP(int numClients) @safe() {
     provides interface Send[uint8_t client];
     uses{
         interface AMSend[am_id_t id];

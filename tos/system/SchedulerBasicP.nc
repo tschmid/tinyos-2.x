@@ -40,7 +40,7 @@
 
 #include "hardware.h"
 
-module SchedulerBasicP {
+module SchedulerBasicP @safe() {
   provides interface Scheduler;
   provides interface TaskBasic[uint8_t id];
   uses interface McuSleep;

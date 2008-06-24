@@ -32,7 +32,7 @@
 
 #include "AM.h"
 
-generic module AMQueueEntryP(am_id_t amId) {
+generic module AMQueueEntryP(am_id_t amId) @safe() {
   provides interface AMSend;
   uses{
     interface Send;

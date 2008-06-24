@@ -32,7 +32,7 @@
  * @author Cory Sharp <cssharp@eecs.berkeley.edu>
  */
 
-generic module AlarmToTimerC(typedef precision_tag)
+generic module AlarmToTimerC(typedef precision_tag) @safe()
 {
   provides interface Timer<precision_tag>;
   uses interface Alarm<precision_tag,uint32_t>;

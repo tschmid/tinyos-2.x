@@ -29,7 +29,7 @@
 
 #include "Msp430Timer.h"
 
-module Msp430ClockP
+module Msp430ClockP @safe()
 {
   provides interface Init;
   provides interface Msp430ClockInit;

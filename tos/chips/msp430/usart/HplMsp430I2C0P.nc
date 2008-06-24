@@ -34,7 +34,7 @@
  * @version $Revision$ $Date$
  */
 
-module HplMsp430I2C0P {
+module HplMsp430I2C0P @safe() {
   
   provides interface HplMsp430I2C as HplI2C;
   

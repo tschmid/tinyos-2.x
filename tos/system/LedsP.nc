@@ -30,7 +30,7 @@
  * @date   March 21, 2005
  */
 
-module LedsP {
+module LedsP @safe() {
   provides {
     interface Init;
     interface Leds;

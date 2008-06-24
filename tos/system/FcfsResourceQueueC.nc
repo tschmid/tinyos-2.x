@@ -29,7 +29,7 @@
  
 #include "Resource.h"
  
-generic module FcfsResourceQueueC(uint8_t size) {
+generic module FcfsResourceQueueC(uint8_t size) @safe() {
   provides {
     interface Init;
     interface ResourceQueue as FcfsQueue;
