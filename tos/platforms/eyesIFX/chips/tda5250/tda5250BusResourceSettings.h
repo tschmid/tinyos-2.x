@@ -44,7 +44,7 @@ enum {
    divide by 18 -> 1004976 Hz */
 
 #ifndef TDA5250_UART_BAUDRATE
-#define TDA5250_UART_BAUDRATE 23405U
+#define TDA5250_UART_BAUDRATE 32768U
 #endif
 
 enum {
