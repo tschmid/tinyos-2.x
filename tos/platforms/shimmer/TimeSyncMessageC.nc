@@ -77,3 +77,4 @@ implementation {
   PacketTimeStamp32khz = CC2420PacketC;
   PacketTimeStampMilli = CC2420PacketC;
 }
+
