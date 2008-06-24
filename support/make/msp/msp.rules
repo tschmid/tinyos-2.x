@@ -23,7 +23,7 @@ endef
 HELP += $(MSP_HELP)
 
 ifdef MAKE_DEPUTY_FLAG
-        NCC_SAFE_TINYOS_FLAGS = -DSAFE_TINYOS -fnesc-deputy -fnesc-deputy-args='-I$(TOSDIR)/lib/safe/include --FLIDs --envmachine -DSAFE_TINYOS --nolib ' $(TOSDIR)/lib/safe/msp430/fail.c 
+        NCC_SAFE_TINYOS_FLAGS = -DSAFE_TINYOS -fnesc-deputy -fnesc-deputy-args='-I$(TOSDIR)/lib/safe/include --FLIDs=build/$(PLATFORM)/flids.txt --envmachine -DSAFE_TINYOS --nolib ' $(TOSDIR)/lib/safe/msp430/fail.c 
 else
         NCC_SAFE_TINYOS_FLAGS =
 endif
