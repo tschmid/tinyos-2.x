@@ -37,9 +37,11 @@
  * every time it gets updated. A RadioCountToLeds node that hears a counter 
  * displays the bottom three bits on its LEDs. This application is a useful 
  * test to show that basic AM communication and timers work.
+ * <p>
+ * This version uses low-power listening.
  *
  * @author Philip Levis
- * @date   June 6 2005
+ * @date   June 24 2008
  */
 
 configuration RadioCountToLedsAppC {}
