@@ -38,7 +38,7 @@
 
 #include "Timer.h"
 
-module CC2420ControlP {
+module CC2420ControlP @safe() {
 
   provides interface Init;
   provides interface Resource;

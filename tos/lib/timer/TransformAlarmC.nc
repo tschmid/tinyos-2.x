@@ -42,7 +42,7 @@ generic module TransformAlarmC(
   typedef to_size_type @integer(),
   typedef from_precision_tag,
   typedef from_size_type @integer(),
-  uint8_t bit_shift_right)
+  uint8_t bit_shift_right) @safe()
 {
   /**
    * The transformed Alarm.

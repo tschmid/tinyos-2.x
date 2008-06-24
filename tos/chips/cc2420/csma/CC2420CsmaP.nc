@@ -34,7 +34,7 @@
  * @version $Revision$ $Date$
  */
 
-module CC2420CsmaP {
+module CC2420CsmaP @safe() {
 
   provides interface SplitControl;
   provides interface Send;

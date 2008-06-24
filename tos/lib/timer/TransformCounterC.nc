@@ -46,7 +46,7 @@ generic module TransformCounterC(
   typedef from_precision_tag,
   typedef from_size_type @integer(),
   uint8_t bit_shift_right,
-  typedef upper_count_type @integer())
+  typedef upper_count_type @integer()) @safe()
 {
   provides interface Counter<to_precision_tag,to_size_type> as Counter;
   uses interface Counter<from_precision_tag,from_size_type> as CounterFrom;

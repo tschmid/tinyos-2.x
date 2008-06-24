@@ -32,7 +32,7 @@
  * @author Cory Sharp <cssharp@eecs.berkeley.edu>
  */
 
-generic module CounterToLocalTimeC(typedef precision_tag)
+generic module CounterToLocalTimeC(typedef precision_tag) @safe()
 {
   provides interface LocalTime<precision_tag>;
   uses interface Counter<precision_tag,uint32_t>;
