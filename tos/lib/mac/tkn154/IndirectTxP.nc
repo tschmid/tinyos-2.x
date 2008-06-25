@@ -275,6 +275,7 @@ implementation
   event void CoordCapTx.transmitDone(ieee154_txframe_t *txFrame, ieee154_status_t status)
   {
     uint8_t i;
+    // TODO: if CSMA-CA algorithm failed, then frame shall remain in transaction queue
     for (i=0; i<NUM_MAX_PENDING; i++)
       if (m_txFrameTable[i] == txFrame){
         m_txFrameTable[i] = NULL; // slot is now empty

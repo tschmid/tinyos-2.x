@@ -165,6 +165,10 @@ implementation
   MAC.Random -> RandomC;
   MAC.Leds -> LedsC;
 
-  components NoDebugP;
-  MAC.Ieee802154Debug -> NoDebugP;
+#ifdef TKN154_SERIAL_DEBUG
+  components SerialDebugC as Debug;
+#else
+  components NoDebugP as Debug;
+#endif
+  MAC.Ieee802154Debug -> Debug;
 }

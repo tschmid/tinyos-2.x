@@ -170,6 +170,8 @@ typedef struct {
   ieee154_macMaxBE_t BE;
   ieee154_macMaxCSMABackoffs_t allowedBackoffs;
   ieee154_macMaxBE_t macMaxBE;
+  ieee154_macMinBE_t macMinBE;
+  uint8_t NB;
   uint16_t backoff;
   uint16_t backoffElapsed;
   uint32_t transactionTime;
