@@ -24,7 +24,7 @@ implementation {
   MainC.Boot <- RandRWC;
 
   RandRWC.SerialControl -> SerialActiveMessageC;
-  RandRWC.AMSend -> SerialActiveMessageC.AMSend[1];
+  RandRWC.AMSend -> SerialActiveMessageC.AMSend[139];
   RandRWC.ConfigStorage -> ConfigStorageC.ConfigStorage;
   RandRWC.ConfigMount -> ConfigStorageC.Mount;
   RandRWC.Leds -> LedsC;
