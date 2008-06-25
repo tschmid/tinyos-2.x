@@ -49,7 +49,7 @@
 configuration TestCommAppC {}
 implementation {
   enum {
-    AM_TEST  = 5
+    AM_TEST  = 133
   };
   
   components MainC, TestCommC as App, RandomC, ActiveMessageC, TossimActiveMessageC;
