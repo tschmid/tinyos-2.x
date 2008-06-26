@@ -34,7 +34,7 @@
 
 #include <Atm128Timer.h>
 
-module HplAtm128Timer0AsyncP {
+module HplAtm128Timer0AsyncP @safe() {
   provides {
     // 8-bit Timers
     interface HplAtm128Timer<uint8_t>   as Timer;

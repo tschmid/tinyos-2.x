@@ -42,7 +42,7 @@
  * @date   January 17 2005
  */
 
-module RealMainP {
+module RealMainP @safe() {
   provides interface Boot;
   uses interface Scheduler;
   uses interface Init as PlatformInit;

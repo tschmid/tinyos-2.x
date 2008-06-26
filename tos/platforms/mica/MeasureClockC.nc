@@ -19,7 +19,7 @@
  * @author David Gay
  */
 
-module MeasureClockC {
+module MeasureClockC @safe() {
   provides {
     /**
      * This code MUST be called from PlatformP only, hence the exactlyonce.

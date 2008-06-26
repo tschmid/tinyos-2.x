@@ -20,7 +20,7 @@
  *
  * @author David Gay
  */
-generic module Atm128AlarmAsyncP(typedef precision, int divider) {
+generic module Atm128AlarmAsyncP(typedef precision, int divider) @safe() {
   provides {
     interface Init;
     interface Alarm<precision, uint32_t>;

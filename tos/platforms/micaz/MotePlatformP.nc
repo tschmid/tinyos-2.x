@@ -15,7 +15,7 @@
  * 
  * @author David Gay
  */
-module MotePlatformP
+module MotePlatformP @safe()
 {
   provides interface Init as PlatformInit;
   uses interface GeneralIO as SerialIdPin;

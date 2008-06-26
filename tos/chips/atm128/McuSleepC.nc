@@ -37,7 +37,7 @@
  * @date   October 26, 2005
  */
 
-module McuSleepC {
+module McuSleepC @safe() {
   provides {
     interface McuSleep;
     interface McuPowerState;

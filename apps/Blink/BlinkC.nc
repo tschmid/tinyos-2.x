@@ -36,7 +36,7 @@
 
 #include "Timer.h"
 
-module BlinkC
+module BlinkC @safe()
 {
   uses interface Timer<TMilli> as Timer0;
   uses interface Timer<TMilli> as Timer1;

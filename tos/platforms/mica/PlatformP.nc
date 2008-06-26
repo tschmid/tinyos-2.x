@@ -30,7 +30,7 @@
 
 #include "hardware.h"
 
-module PlatformP
+module PlatformP @safe()
 {
   provides interface Init;
   uses interface Init as MoteInit;
