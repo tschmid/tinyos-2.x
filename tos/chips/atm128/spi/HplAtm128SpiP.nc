@@ -53,7 +53,7 @@
 
 #include "Atm128Spi.h"
 
-module HplAtm128SpiP {
+module HplAtm128SpiP @safe() {
   provides interface Atm128Spi as SPI;
   provides interface AsyncStdControl;
   

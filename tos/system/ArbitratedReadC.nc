@@ -20,7 +20,7 @@
  *
  * @author David Gay
  */
-generic module ArbitratedReadC(typedef width_t) {
+generic module ArbitratedReadC(typedef width_t) @safe() {
   provides interface Read<width_t>[uint8_t client];
   uses {
     interface Read<width_t> as Service[uint8_t client];

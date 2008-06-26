@@ -55,7 +55,7 @@ enum {
 
 typedef uint8_t error_t NESC_COMBINE("ecombine");
 
-error_t ecombine(error_t r1, error_t r2)
+error_t ecombine(error_t r1, error_t r2) @safe()
 /* Returns: r1 if r1 == r2, FAIL otherwise. This is the standard error
      combination function: two successes, or two identical errors are
      preserved, while conflicting errors are represented by FAIL.

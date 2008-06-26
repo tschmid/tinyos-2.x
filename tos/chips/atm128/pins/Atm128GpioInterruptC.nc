@@ -3,7 +3,7 @@
 /**
  * @author Phil Levis
  */
-generic module Atm128GpioInterruptC() {
+generic module Atm128GpioInterruptC() @safe() {
 
   provides interface GpioInterrupt as Interrupt;
   uses interface HplAtm128Interrupt as Atm128Interrupt;

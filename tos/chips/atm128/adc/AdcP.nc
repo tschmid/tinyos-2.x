@@ -43,7 +43,7 @@
  */
 #include "Timer.h"
 
-module AdcP {
+module AdcP @safe() {
   provides {
     interface Read<uint16_t>[uint8_t client];
     interface ReadNow<uint16_t>[uint8_t client];

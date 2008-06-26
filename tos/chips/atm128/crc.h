@@ -78,7 +78,7 @@ uint16_t crcTable[256] PROGMEM = {
  * @param b Byte to "add" to the CRC
  * @return New CRC value
  */
-uint16_t crcByte(uint16_t oldCrc, uint8_t byte) __attribute__((noinline))
+uint16_t crcByte(uint16_t oldCrc, uint8_t byte) __attribute__((noinline)) @safe()
 {
 #if 1
   uint16_t *table = crcTable;

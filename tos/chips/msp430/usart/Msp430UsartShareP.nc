@@ -34,7 +34,7 @@
  * @version $Revision$ $Date$
  */
 
-generic module Msp430UsartShareP() {
+generic module Msp430UsartShareP() @safe() {
   
   provides interface HplMsp430UsartInterrupts as Interrupts[ uint8_t id ];
   provides interface HplMsp430I2CInterrupts as I2CInterrupts[ uint8_t id ];

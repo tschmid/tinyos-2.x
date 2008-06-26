@@ -31,7 +31,7 @@
  * @author David Gay
  */
 
-module HplAtm128AdcP {
+module HplAtm128AdcP @safe() {
   provides interface HplAtm128Adc;
   uses interface McuPowerState;
 }

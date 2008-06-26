@@ -41,7 +41,7 @@
 
 generic module Atm128AlarmC(typedef frequency_tag, 
 			    typedef timer_size @integer(),
-			    int mindt)
+			    int mindt) @safe()
 {
   provides interface Alarm<frequency_tag, timer_size> as Alarm @atmostonce();
 

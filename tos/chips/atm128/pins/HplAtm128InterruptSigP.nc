@@ -29,7 +29,7 @@
  *
  * @author Martin Turon <mturon@xbow.com>
  */
-module HplAtm128InterruptSigP
+module HplAtm128InterruptSigP @safe()
 {
   provides interface HplAtm128InterruptSig as IntSig0;
   provides interface HplAtm128InterruptSig as IntSig1;

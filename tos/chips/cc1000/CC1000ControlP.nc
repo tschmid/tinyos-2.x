@@ -38,7 +38,7 @@
  * @author Jaein Jeong
  * @author David Gay
  */
-module CC1000ControlP {
+module CC1000ControlP @safe() {
   provides {
     interface CC1000Control;
   }

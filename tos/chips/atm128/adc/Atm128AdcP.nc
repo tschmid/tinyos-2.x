@@ -59,7 +59,7 @@
  * @author Hu Siquan <husq@xbow.com>
  */
 
-module Atm128AdcP 
+module Atm128AdcP @safe()
 {
   provides {
     interface Init;

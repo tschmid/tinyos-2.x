@@ -42,7 +42,7 @@
  * @version @version $Revision$ $Date$
  */
 
-module HplCC2420InterruptsP {
+module HplCC2420InterruptsP @safe() {
   provides {
     interface GpioInterrupt as CCA;
   }

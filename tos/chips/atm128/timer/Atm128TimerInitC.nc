@@ -32,7 +32,7 @@
  * @author David Gay <david.e.gay@intel.com>
  */
 
-generic module Atm128TimerInitC(typedef timer_size @integer(), uint8_t prescaler)
+generic module Atm128TimerInitC(typedef timer_size @integer(), uint8_t prescaler) @safe()
 {
   provides interface Init @atleastonce();
   uses interface HplAtm128Timer<timer_size> as Timer;

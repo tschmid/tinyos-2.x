@@ -41,7 +41,7 @@
  *   the stack.
  */
 
-module CC1000RssiP
+module CC1000RssiP @safe()
 {
   provides {
     interface ReadNow<uint16_t> as Rssi[uint8_t reason];

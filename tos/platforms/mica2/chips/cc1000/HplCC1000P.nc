@@ -38,7 +38,7 @@
 #include "Atm128Adc.h"
 #include "CC1000Const.h"
 
-module HplCC1000P {
+module HplCC1000P @safe() {
   provides {
     interface Init as PlatformInit;
     interface HplCC1000;

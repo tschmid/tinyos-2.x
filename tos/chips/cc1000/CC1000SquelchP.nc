@@ -37,7 +37,7 @@
  * @author David Gay
  */
   
-module CC1000SquelchP
+module CC1000SquelchP @safe()
 {
   provides {
     interface Init;

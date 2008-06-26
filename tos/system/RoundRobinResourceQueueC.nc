@@ -29,7 +29,7 @@
  
 #include "Resource.h"
  
-generic module RoundRobinResourceQueueC(uint8_t size) {
+generic module RoundRobinResourceQueueC(uint8_t size) @safe() {
   provides {
     interface Init;
     interface ResourceQueue as RoundRobinQueue;

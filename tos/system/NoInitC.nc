@@ -13,7 +13,7 @@
  *
  * @author David Gay <david.e.gay@intel.com>
  */
-module NoInitC 
+module NoInitC @safe()
 {
   provides interface Init;
 }

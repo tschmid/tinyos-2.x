@@ -45,7 +45,7 @@
  * @author Kevin Klues (klueska@cs.wustl.edu)
  */
  
-generic module AsyncPowerManagerP() {
+generic module AsyncPowerManagerP() @safe() {
   uses {
     interface AsyncStdControl;
 

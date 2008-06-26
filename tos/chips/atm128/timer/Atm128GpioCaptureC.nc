@@ -30,7 +30,7 @@
  *
  * @author Martin Turon, Crossbow <mturon@xbow.com>
  */
-generic module Atm128GpioCaptureC() {
+generic module Atm128GpioCaptureC() @safe() {
 
   provides interface GpioCapture as Capture;
   uses interface HplAtm128Capture<uint16_t> as Atm128Capture;

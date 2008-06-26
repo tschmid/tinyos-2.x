@@ -37,7 +37,7 @@
  */
 
 
-module HplCC1000SpiP {
+module HplCC1000SpiP @safe() {
   provides interface Init as PlatformInit;
   provides interface HplCC1000Spi;
   //uses interface PowerManagement;
