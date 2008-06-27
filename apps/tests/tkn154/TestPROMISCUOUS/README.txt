@@ -22,7 +22,7 @@ Start the printf client on
 
     $ cd $TOSDIR/../apps/tests/TestPrintf
     $ make telosb
-    $ java PrintfClient -comm serial@/dev/ttyUSBXXX:telosb
+    $ java net.tinyos.tools.PrintfClient -comm serial@/dev/ttyUSB0:telosb
 
 (http://docs.tinyos.net/ has a section on how to use the TinyOS printf library)
 
