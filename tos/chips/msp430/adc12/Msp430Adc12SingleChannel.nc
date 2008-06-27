@@ -224,7 +224,7 @@ interface Msp430Adc12SingleChannel
    * <code>numSamples</code> entries. The return value is ignored if the ADC
    * was configured with <code>configureMultiple()</code>.
    */    
-  async event uint16_t * ONE_NOK multipleDataReady(uint16_t *COUNT(numSamples) buffer, uint16_t numSamples); 
+  async event uint16_t * COUNT_NOK(numSamples) multipleDataReady(uint16_t *COUNT(numSamples) buffer, uint16_t numSamples); 
 
 }
 

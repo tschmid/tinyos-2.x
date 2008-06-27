@@ -159,7 +159,7 @@ implementation
   }
 
   async event uint16_t* SingleChannel.multipleDataReady[uint8_t client](
-      uint16_t * COUNT_NOK(length) buf, uint16_t length)
+      uint16_t *buf, uint16_t numSamples)
   {
     // error !
     return 0;
