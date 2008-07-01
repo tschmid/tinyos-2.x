@@ -47,6 +47,8 @@ implementation {
   components CC1000CsmaRadioC as LplRadio;
 #elif defined(PLATFORM_MICAZ) || defined(PLATFORM_TELOSB) || defined(PLATFORM_SHIMMER)
   components CC2420ActiveMessageC as LplRadio;
+#elif defined(PLATFORM_IRIS)
+  components RF230ActiveMessageC as LplRadio;
 #else
 #error "LPL testing not supported on this platform"
 #endif
