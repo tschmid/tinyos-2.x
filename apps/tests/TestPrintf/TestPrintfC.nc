@@ -33,7 +33,7 @@
  */
 
 #include "printf.h"
-module TestPrintfC {
+module TestPrintfC @safe() {
   uses {
     interface Boot;
   }
