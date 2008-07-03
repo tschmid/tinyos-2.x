@@ -30,9 +30,9 @@
  */
 
 /**
- * Blink is a basic application that toggles the a mote LED periodically.
- * It does so by starting a Timer that fires every second. It uses the
- * OSKI TimerMilli service to achieve this goal.
+ * BlinkFail is a basic application that toggles the a mote LED periodically and
+ * then accesses out of bounds storage as a demonstration and sanity check for
+ * Safe TinyOS.
  *
  * @author tinyos-help@millennium.berkeley.edu
  **/

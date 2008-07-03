@@ -30,8 +30,8 @@
  */
 
 /**
- * Implementation for Blink application.  Toggle the red LED when a
- * Timer fires.
+ * Implementation for BlinkFail application.  Toggle the LEDs when a
+ * Timer fires.  Access out of bounds storage after a few seconds.
  **/
 
 #include "Timer.h"
@@ -66,6 +66,7 @@ implementation
   {
     dbg("BlinkFailC", "Timer 1 fired @ %s \n", sim_time_string());
     call Leds.led1Toggle();
+    // here we violate memory safety on the 11th signal of this event
     a[i++] = 1;
   }
   
