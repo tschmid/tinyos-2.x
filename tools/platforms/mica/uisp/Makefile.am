@@ -49,7 +49,7 @@ DIST_SUBDIRS         = $(SUBDIRS)
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 configure src/config-h.in \
                        src/stamp-h.in $(AUX_DIST)
 
-ACLOCAL              = aclocal -I $(auxdir)
+ACLOCAL              = aclocal --warnings=none -I $(auxdir)
 
 install_aux_files    = AUTHORS ChangeLog COPYING INSTALL CHANGES CHANGES.old \
                        TODO
