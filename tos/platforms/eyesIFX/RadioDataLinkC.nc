@@ -49,11 +49,19 @@ implementation
     components 
         //Change components below as desired
         Tda5250RadioC as Radio,                  //The actual Tda5250 radio over which data is receives/transmitted
+#ifdef PHY_MANCHESTER
+        UartManchPhyC as UartPhy,
+#else
         Uart4b6bPhyC as UartPhy,                 //The UartPhy turns Bits into Bytes
+#endif
         PacketSerializerP  as PacketSerializer,  //The PacketSerializer turns Bytes into Packets
-        // RedMacC as Mac,                         //The MAC protocol to use
-        // SpeckMacDC as Mac,                         //The MAC protocol to use
+#ifdef MAC_REDMAC
+        RedMacC as Mac,                         //The MAC protocol to use
+#elif  defined(MAC_SPECKMACD)   
+        SpeckMacDC as Mac,                         //The MAC protocol to use
+#else
         CsmaMacC as Mac,                         //The MAC protocol to use
+#endif
         LinkLayerC as Llc;                       //The Link Layer Control module to use
     
     //Don't change wirings below this point, just change which components
@@ -87,6 +95,7 @@ implementation
     PacketSerializer.PhyPacketRx -> UartPhy.PhyPacketRx;
     
     UartPhy.RadioByteComm -> Radio.RadioByteComm;
-
+#ifndef RADIO_UART_VCO
     components SmclkManagerC;
+#endif
 }
