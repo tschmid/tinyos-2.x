@@ -272,7 +272,7 @@ implementation {
            // set timesync event time as the offset between the event time and the SFD interrupt time (TEP  133)
            *timesync  -= time32;
            call CSN.clr();
-           call TXFIFO_RAM.write( call PacketTimeSyncOffset.get(m_msg), (void*)timesync, sizeof(timesync_radio_t) );
+           call TXFIFO_RAM.write( call PacketTimeSyncOffset.get(m_msg), (uint8_t*)timesync, sizeof(timesync_radio_t) );
            call CSN.set();
         }
 
