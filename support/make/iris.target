@@ -20,6 +20,11 @@ endif
 
 AVR_FUSE_H ?= 0xd9
 AVR_FUSE_L ?= 0xff
+
+ifdef RF230_CHANNEL
+PFLAGS += -DRF230_DEF_CHANNEL=$(RF230_CHANNEL)
+endif
+
 $(call TOSMake_include_platform,avr)
 
 iris: $(BUILD_DEPS)
