@@ -45,6 +45,8 @@
  * @date July 20 2005
  */
 
+#include "Timer.h"
+
 configuration ActiveMessageC {
   provides {
     interface SplitControl;
@@ -57,11 +59,15 @@ configuration ActiveMessageC {
     interface AMPacket;
 
     interface PacketAcknowledgements;
+
+    interface PacketTimeStamp<T32khz, uint32_t> as PacketTimeStamp32khz;
+    interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
   }
 }
 implementation {
   components ActiveMessageFilterC as Filter;
   components Tda5250ActiveMessageC as AM;
+  components PacketStampC as PacketStamp;
 
   AMSend       = Filter;
   Receive      = Filter.Receive;
@@ -77,4 +83,7 @@ implementation {
   AMPacket     = AM;
 
   PacketAcknowledgements = AM;
+
+  PacketTimeStamp32khz = PacketStamp;
+  PacketTimeStampMilli = PacketStamp;
 }
