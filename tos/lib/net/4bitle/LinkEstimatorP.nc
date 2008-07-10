@@ -574,7 +574,7 @@ implementation {
   // done sending the message that originated by
   // the user of this component
   event void AMSend.sendDone(message_t* msg, error_t error ) {
-    return signal Send.sendDone(msg, error);
+    signal Send.sendDone(msg, error);
   }
 
   // cascade the calls down
