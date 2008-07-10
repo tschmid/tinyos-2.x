@@ -157,7 +157,7 @@ implementation {
       return getMetadata(msg)->strength;
   }
   
- default event message_t* Receive.receive[am_id_t id](message_t* msg, void* payload, uint8_t len) {
+  default event message_t* Receive.receive[am_id_t id](message_t* msg, void* payload, uint8_t len) {
     return msg;
   }
 
