@@ -214,7 +214,7 @@ implementation {
         
         if(rxFrameLength <= MAC_PACKET_SIZE) {
           if(rxFrameLength > 0) {
-            if(rxFrameLength > SACK_HEADER_LENGTH) {
+            if(rxFrameLength >= CC2420_SIZE) {
               // This packet has an FCF byte plus at least one more byte to read
               call RXFIFO.continueRead(buf + 1, SACK_HEADER_LENGTH);
               
