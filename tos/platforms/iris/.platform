@@ -9,6 +9,7 @@
 # $Id$
 #
 push( @includes, qw(
+
   %T/platforms/micaz
   %T/platforms/mica
   %T/platforms/iris/chips/rf230
@@ -31,6 +32,7 @@ push( @includes, qw(
   %T/lib/serial
   %T/lib/power
   %T/lib/diagmsg
+
 ) );
 
 @opts = qw(
