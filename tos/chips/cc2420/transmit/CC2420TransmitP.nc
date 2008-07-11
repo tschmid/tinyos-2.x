@@ -268,7 +268,8 @@ implementation {
         call CaptureSFD.captureFallingEdge();
         call PacketTimeStamp.set(m_msg, time32);
         if (call PacketTimeSyncOffset.isSet(m_msg)) {
-           timesync_radio_t *timesync = (timesync_radio_t*)((void*)m_msg + call PacketTimeSyncOffset.get(m_msg));
+           nx_uint8_t *taddr = m_msg->data + (call PacketTimeSyncOffset.get(m_msg) - sizeof(cc2420_header_t));
+           timesync_radio_t *timesync = (timesync_radio_t*)taddr;
            // set timesync event time as the offset between the event time and the SFD interrupt time (TEP  133)
            *timesync  -= time32;
            call CSN.clr();
