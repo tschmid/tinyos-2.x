@@ -46,17 +46,17 @@ implementation {
     if ( addr + len > TOSBOOT_START )
       return FAIL;    
 
-    boot_page_erase( addr );
+    boot_page_erase_safe( addr );
     while( boot_rww_busy() )
-      boot_rww_enable();
+      boot_rww_enable_safe();
     
     for ( i = 0; i < len; i += 2 )
-      boot_page_fill( addr + i, *wordBuf++ );
+      boot_page_fill_safe( addr + i, *wordBuf++ );
 
-    boot_page_write( addr );
+    boot_page_write_safe( addr );
     
     while ( boot_rww_busy() )
-      boot_rww_enable();
+      boot_rww_enable_safe();
     
     return SUCCESS;
     
