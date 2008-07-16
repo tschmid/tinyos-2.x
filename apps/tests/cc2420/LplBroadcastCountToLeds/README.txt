@@ -22,11 +22,6 @@ Verification:
 
 If you see LED's waggling on both motes, the test passed.
 
-To compile for motes with CC2420 radios, you must do:
-  env CFLAGS="-DLOW_POWER_LISTENING" make <platform>
-
-
-
 
 RadioCountToLeds maintains a 4Hz counter, broadcasting its value in 
 an AM packet every time it gets updated. A RadioCountToLeds node that 
