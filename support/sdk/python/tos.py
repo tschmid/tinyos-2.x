@@ -19,6 +19,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 # @author Razvan Musaloiu-E. <razvanm@cs.jhu.edu>
+# @author David Purdy <david@radioretail.co.za>
 
 """A library that implements the T2 serial communication.
 
