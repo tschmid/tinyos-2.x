@@ -49,6 +49,8 @@ implementation {
   components CC2420ActiveMessageC as LplRadio;
 #elif defined(PLATFORM_IRIS)
   components RF230ActiveMessageC as LplRadio;
+#elif defined(PLATFORM_EYESIFXV1) || defined(PLATFORM_EYESIFXV2)
+  components LplC as LplRadio;
 #else
 #error "LPL testing not supported on this platform"
 #endif
