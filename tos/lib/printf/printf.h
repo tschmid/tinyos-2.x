@@ -51,8 +51,9 @@
 #include "message.h"
 int printfflush();
 
+#define PRINTF_MSG_LENGTH	28
 typedef nx_struct printf_msg {
-  nx_uint8_t buffer[TOSH_DATA_LENGTH];
+  nx_uint8_t buffer[PRINTF_MSG_LENGTH];
 } printf_msg_t;
 
 enum {
