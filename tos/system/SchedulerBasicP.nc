@@ -57,8 +57,6 @@ implementation
   uint8_t m_tail;
   uint8_t m_next[NUM_TASKS];
 
-#define v_head (*(volatile uint8_t *)&m_head)
-
   // Helper functions (internal functions) intentionally do not have atomic
   // sections.  It is left as the duty of the exported interface functions to
   // manage atomicity to minimize chances for binary code bloat.
