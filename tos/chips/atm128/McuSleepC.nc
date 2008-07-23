@@ -102,7 +102,8 @@ implementation {
       (MCUCR & 0xe3) | 1 << SE | read_uint8_t(&atm128PowerBits[powerState]);
 
     sei();
-    asm volatile ("sleep");
+    // All of memory may change at this point...
+    asm volatile ("sleep" : : : "memory");
     cli();
   }
 

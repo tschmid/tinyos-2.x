@@ -110,7 +110,8 @@ implementation {
       MCUCR = temp;
     }
     sei();
-    asm volatile ("sleep");
+    // All of memory may change at this point...
+    asm volatile ("sleep" : : : "memory");
     cli();
   }
 

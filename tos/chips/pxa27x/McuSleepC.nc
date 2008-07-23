@@ -58,6 +58,8 @@ implementation {
 		  : "r" (PWRMODE_M_IDLE)
 		  );
     __nesc_enable_interrupt();
+    // All of memory may change at this point...
+    asm volatile ("" : : : "memory");
     __nesc_disable_interrupt();
     return;
   }
