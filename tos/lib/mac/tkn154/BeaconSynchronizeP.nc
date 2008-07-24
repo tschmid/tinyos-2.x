@@ -346,7 +346,7 @@ implementation
       call Debug.log(LEVEL_INFO, SyncP_BEACON_RX, m_lastBeaconRxTime, timestamp, mhr[2]);
       m_numGtsSlots = (payload[2] & 7);
       gtsFieldLength = 1 + ((m_numGtsSlots > 0) ? 1 + m_numGtsSlots * 3: 0);
-      m_lastBeaconRxTime = timestamp + IEEE154_SYNC_SYMBOL_OFFSET - IEEE154_SYMBOLS_PER_OCTET - IEEE154_PREAMBLE_LENGTH;
+      m_lastBeaconRxTime = timestamp;
       m_finalCapSlot = (payload[1] & 0x0F);
       m_sfSlotDuration = (((uint32_t) 1) << ((payload[0] & 0xF0) >> 4)) * IEEE154_aBaseSlotDuration;
       memcpy(m_gtsField, &payload[2], gtsFieldLength);
