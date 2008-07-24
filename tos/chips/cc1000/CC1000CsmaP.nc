@@ -516,7 +516,7 @@ implementation
   }
 
   command void LowPowerListening.setLocalDutyCycle(uint16_t d) {
-    return call LowPowerListening.setLocalSleepInterval(dutyToSleep(d));
+    call LowPowerListening.setLocalSleepInterval(dutyToSleep(d));
   }
 
   command uint16_t LowPowerListening.getLocalDutyCycle() {
