@@ -1,4 +1,4 @@
-README for RadioCountToLeds
+README for LplBroadcastCountToLeds
 Author/Contact: tinyos-help@millennium.berkeley.edu
 
 Description:
@@ -23,7 +23,7 @@ Verification:
 If you see LED's waggling on both motes, the test passed.
 
 
-RadioCountToLeds maintains a 4Hz counter, broadcasting its value in 
+LplBroadcastCountToLeds maintains a 4Hz counter, broadcasting its value in 
 an AM packet every time it gets updated. A RadioCountToLeds node that 
 hears a counter displays the bottom three bits on its LEDs. This 
 application is a useful test to show that basic AM communication and 

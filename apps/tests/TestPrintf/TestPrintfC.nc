@@ -36,6 +36,7 @@
 module TestPrintfC @safe() {
   uses {
     interface Boot;
+    interface Timer<TMilli>;
   }
 }
 implementation {
@@ -45,10 +46,14 @@ implementation {
   uint32_t dummyVar3 = 1234567890;
 
   event void Boot.booted() {
+	call Timer.startPeriodic(1000);
+  }
+
+  event void Timer.fired() {
   	printf("Hi I am writing to you from my TinyOS application!!\n");
   	printf("Here is a uint8: %u\n", dummyVar1);
   	printf("Here is a uint16: %u\n", dummyVar2);
-  	printf("Here is a uint32: %ld\n", dummyVar3);
+  	printf("Here is a uint32: %lu\n", dummyVar3);
   	printfflush();
   }
 }

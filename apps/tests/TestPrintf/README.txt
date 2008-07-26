@@ -1,5 +1,3 @@
-$Id$
-
 README for TestPrintf
 Author/Contact: tinyos-help@millennium.berkeley.edu
 
@@ -22,3 +20,4 @@ Known bugs/limitations:
 
 None.
  
+$Id$
