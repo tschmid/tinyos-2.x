@@ -436,7 +436,7 @@ implementation {
         parentCongested = FALSE;
         call CollectionDebug.logEvent(NET_C_FE_CONGESTION_END);
       } 
-      // Once we are here, we have decided to send the packet.
+      // Now we check if we have already sent a packet with matching signature
       if (call SentCache.lookup(qe->msg)) {
         call CollectionDebug.logEvent(NET_C_FE_DUPLICATE_CACHE_AT_SEND);
         call SendQueue.dequeue();
