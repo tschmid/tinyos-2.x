@@ -34,7 +34,7 @@
  */
 #include "TKN154_MAC.h"
 #include "TKN154_DEBUG.h"
-module FrameDispatchImplP 
+module RadioControlImplP 
 {
   provides
   {

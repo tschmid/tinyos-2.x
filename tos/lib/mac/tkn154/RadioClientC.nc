@@ -56,20 +56,20 @@ implementation
     CLIENT = unique(IEEE802154_RADIO_RESOURCE),
   };
 
-  components FrameDispatchP;
-  RadioRx = FrameDispatchP.RadioRx[CLIENT];
-  RadioTx = FrameDispatchP.RadioTx[CLIENT];
-  RadioOff = FrameDispatchP.RadioOff[CLIENT];
-  Token = FrameDispatchP.Token[CLIENT];
-  IsResourceRequested = FrameDispatchP.IsResourceRequested;
-  TokenRequested = FrameDispatchP.TokenRequested[CLIENT];
+  components RadioControlP;
+  RadioRx = RadioControlP.RadioRx[CLIENT];
+  RadioTx = RadioControlP.RadioTx[CLIENT];
+  RadioOff = RadioControlP.RadioOff[CLIENT];
+  Token = RadioControlP.Token[CLIENT];
+  IsResourceRequested = RadioControlP.IsResourceRequested;
+  TokenRequested = RadioControlP.TokenRequested[CLIENT];
 
   components new TransferClientP(CLIENT);
   ResourceTransfer = TransferClientP;
   ResourceTransferred = TransferClientP;
   TransferTo = TransferClientP;
   TransferFrom = TransferClientP;
-  TransferClientP.ResourceTransferControl -> FrameDispatchP;
-  TransferClientP.Leds -> FrameDispatchP;
+  TransferClientP.ResourceTransferControl -> RadioControlP;
+  TransferClientP.Leds -> RadioControlP;
 }
 

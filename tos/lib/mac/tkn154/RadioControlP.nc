@@ -33,7 +33,7 @@
  * ========================================================================
  */
 #include "TKN154_MAC.h"
-configuration FrameDispatchP  
+configuration RadioControlP  
 {
   provides
   {
@@ -56,16 +56,16 @@ configuration FrameDispatchP
 }
 implementation
 {
-  components FrameDispatchImplP;
-  RadioRx = FrameDispatchImplP.MacRx;
-  RadioTx = FrameDispatchImplP.MacTx;
-  RadioOff = FrameDispatchImplP.MacRadioOff;
-  PhyRx = FrameDispatchImplP.PhyRx;
-  PhyTx = FrameDispatchImplP.PhyTx;
-  PhyRadioOff = FrameDispatchImplP.PhyRadioOff;
-  RadioPromiscuousMode = FrameDispatchImplP;
-  Leds = FrameDispatchImplP;
-  Debug = FrameDispatchImplP;
+  components RadioControlImplP;
+  RadioRx = RadioControlImplP.MacRx;
+  RadioTx = RadioControlImplP.MacTx;
+  RadioOff = RadioControlImplP.MacRadioOff;
+  PhyRx = RadioControlImplP.PhyRx;
+  PhyTx = RadioControlImplP.PhyTx;
+  PhyRadioOff = RadioControlImplP.PhyRadioOff;
+  RadioPromiscuousMode = RadioControlImplP;
+  Leds = RadioControlImplP;
+  Debug = RadioControlImplP;
   LedsRadioClient = Leds;
 
   components new SimpleRoundRobinTransferArbiterC(IEEE802154_RADIO_RESOURCE) as Arbiter;
@@ -73,5 +73,5 @@ implementation
   TokenRequested = Arbiter;
   TokenTransferControl = Arbiter;
   IsResourceRequested = Arbiter;
-  FrameDispatchImplP.ArbiterInfo -> Arbiter;
+  RadioControlImplP.ArbiterInfo -> Arbiter;
 }
