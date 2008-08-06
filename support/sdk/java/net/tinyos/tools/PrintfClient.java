@@ -58,17 +58,13 @@ public class PrintfClient implements MessageListener {
   }
   
   public static void main(String[] args) throws Exception {
-    String source = "";
+    String source = null;
     if (args.length == 2) {
       if (!args[0].equals("-comm")) {
 	       usage();
 	       System.exit(1);
       }
       source = args[1];
-    }
-    else {
-      usage();
-      System.exit(1);
     }
     
     PhoenixSource phoenix;
