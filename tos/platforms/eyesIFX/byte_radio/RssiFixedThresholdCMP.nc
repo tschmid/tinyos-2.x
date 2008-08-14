@@ -286,7 +286,7 @@ implementation
     task void UpdateNoiseFloorTask() {
         shellsort(rssisamples,NSAMPLES);
         atomic { 
-            noisefloor = (5*noisefloor + rssisamples[NSAMPLES/2])/6;
+            noisefloor = (5*noisefloor + rssisamples[NSAMPLES/2] + 3)/6;
             rssiindex = 0; 
         }
         sdDebug(60000U + noisefloor);
@@ -318,7 +318,7 @@ implementation
             } else { 
                 shellsort(rssisamples,NSAMPLES);
                 if(rssisamples[MINIMUM_POSITION] < noisefloor + THREE_SIGMA)  {
-                    noisefloor = (7*noisefloor + rssisamples[NSAMPLES/2])/8;
+                    noisefloor = (7*noisefloor + rssisamples[NSAMPLES/2] + 4)/8;
                     ++deadlockCounter;
                 }
                 else {
@@ -411,6 +411,6 @@ implementation
     async command uint16_t BatteryLevel.getLevel() {
         uint16_t l;
         atomic l = batteryLevel;
-        return (uint32_t)l*39>>5;
+        return (uint32_t)(l+3)*6/5;
     }
 }
