@@ -274,9 +274,9 @@ implementation {
     }
   }
 
-  static void startRetxmitTimer(uint16_t mask, uint16_t offset) {
+  static void startRetxmitTimer(uint16_t window, uint16_t offset) {
     uint16_t r = call Random.rand16();
-    r &= mask;
+    r %= window;
     r += offset;
     call RetxmitTimer.startOneShot(r);
     dbg("Forwarder", "Rexmit timer will fire in %hu ms\n", r);

@@ -297,8 +297,8 @@ implementation {
             /* Compute this neighbor's path metric */
             linkEtx = evaluateEtx(call LinkEstimator.getLinkQuality(entry->neighbor));
             dbg("TreeRouting", 
-                "routingTable[%d]: neighbor: [id: %d parent: %d etx: %d]\n",  
-                i, entry->neighbor, entry->info.parent, linkEtx);
+                "routingTable[%d]: neighbor: [id: %d parent: %d etx: %d retx: %d]\n",  
+                i, entry->neighbor, entry->info.parent, linkEtx, entry->info.etx);
             pathEtx = linkEtx + entry->info.etx;
             /* Operations specific to the current parent */
             if (entry->neighbor == routeInfo.parent) {
@@ -321,6 +321,7 @@ implementation {
             }
             
             if (pathEtx < minEtx) {
+	      dbg("TreeRouting", "   best is %d, setting to %d\n", pathEtx, entry->neighbor);
                 minEtx = pathEtx;
                 best = entry;
             }  
@@ -354,11 +355,17 @@ implementation {
                 call LinkEstimator.unpinNeighbor(routeInfo.parent);
                 call LinkEstimator.pinNeighbor(best->neighbor);
                 call LinkEstimator.clearDLQ(best->neighbor);
-                atomic {
+
+		atomic {
                     routeInfo.parent = best->neighbor;
                     routeInfo.etx = best->info.etx;
                     routeInfo.congested = best->info.congested;
                 }
+		/* If we follow the CTP paper this should be in here.
+		if (currentEtx - minEtx > 20) {
+		  call CtpInfo.triggerRouteUpdate();
+		}
+		*/
             }
         }    
 
