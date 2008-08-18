@@ -62,6 +62,11 @@ implementation {
 					  message_t* msg,
 					  uint8_t len) {
     cc2420_header_t* header = call CC2420PacketBody.getHeader( msg );
+    
+    if (len > call Packet.maxPayloadLength()) {
+      return ESIZE;
+    }
+    
     header->type = id;
     header->dest = addr;
     header->destpan = call CC2420Config.getPanAddr();
