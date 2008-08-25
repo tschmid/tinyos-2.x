@@ -38,12 +38,14 @@ module PlatformP {
   }
   uses {
     interface Init as MoteClockInit;
+    interface Init as MoteInit;
     interface Init as LedsInit;
   }
 }
 implementation {
   command error_t Init.init() {
     call MoteClockInit.init();
+    call MoteInit.init();
     call LedsInit.init();
     return SUCCESS;
   }

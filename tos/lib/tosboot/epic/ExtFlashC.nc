@@ -1,6 +1,8 @@
 // $Id$
 
 /*
+ *
+ *
  * "Copyright (c) 2000-2005 The Regents of the University  of California.  
  * All rights reserved.
  *
@@ -19,25 +21,31 @@
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
  */
 
 /**
- * @author  Jonathan Hui <jwhui@cs.berkeley.edu>
+ * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-#ifndef __TOSBOOT_PLATFORM_H__
-#define __TOSBOOT_PLATFORM_H__
+configuration ExtFlashC {
+  provides {
+    interface Init;
+    interface StdControl;
+    interface ExtFlash;
+  }
+}
 
-enum {
-  TOSBOOT_ARGS_ADDR = 0xff0,      // address of TOSBoot args in internal flash
-  TOSBOOT_GESTURE_MAX_COUNT = 3,  // number of resets to force golden image
-  TOSBOOT_GOLDEN_IMG_ADDR = 0x0L, // address of the golden image in external flash
-  TOSBOOT_INT_PAGE_SIZE = SPM_PAGESIZE, // size of each internal program flash page
-};
+implementation {
 
-enum {
-  DELUGE_MIN_ADV_PERIOD_LOG2 = 9,
-  DELUGE_QSIZE = 2,
-};
+  components 
+    ExtFlashM,
+    HPLUSART0M;
 
-#endif
+  Init = ExtFlashM;
+  StdControl = ExtFlashM;
+  ExtFlash = ExtFlashM;
+
+  ExtFlashM.USARTControl -> HPLUSART0M;
+
+}
