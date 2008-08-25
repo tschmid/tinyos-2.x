@@ -1,9 +1,7 @@
-// $Id: PluginC.nc,v 1.2 2008/06/11 00:46:26 razvanm Exp $
+// $Id: HplAt45db_chip.h,v 1.1 2008/08/25 16:48:47 razvanm Exp $
 
 /*
- *
- *
- * "Copyright (c) 2000-2004 The Regents of the University  of California.  
+ * "Copyright (c) 2000-2003 The Regents of the University  of California.  
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -22,25 +20,26 @@
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  *
+ * Copyright (c) 2002-2006 Intel Corporation
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached INTEL-LICENSE     
+ * file. If you do not find these files, copies can be found by writing to
+ * Intel Research Berkeley, 2150 Shattuck Avenue, Suite 1300, Berkeley, CA, 
+ * 94704.  Attention:  Intel License Inquiry.
  */
 
-/**
- * @author Jonathan Hui <jwhui@cs.berkeley.edu>
- */
+#ifndef HPLAT45DB_CHIP_H
+#define HPLAT45DB_CHIP_H
 
-configuration PluginC {
-  provides {
-    interface StdControl;
-  }
-}
+// flash characteristics
+enum {
+  AT45_MAX_PAGES = 4096,
+  AT45_PAGE_SIZE = 528,
+  AT45_PAGE_SIZE_LOG2 = 9 // For those who want to ignore the last 8 bytes
+};
 
-implementation {
+typedef uint16_t at45page_t;
+typedef uint16_t at45pageoffset_t; /* must fit 0 to AT45_PAGE_SIZE - 1 */
 
-  components ExtFlashC, LedsC, PowerOffM;
-
-  StdControl = PowerOffM;
-
-  PowerOffM.Leds -> LedsC;
-  PowerOffM.SubControl -> ExtFlashC;
-
-}
+#endif
