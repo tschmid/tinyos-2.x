@@ -39,8 +39,6 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-includes InternalFlash;
-
 module InternalFlashC {
   provides interface InternalFlash;
 }
