@@ -26,7 +26,7 @@ configuration Counter32khz32C
 implementation
 {
   components CounterOne16C as Counter16, 
-    new TransformCounterC(T32khz, uint32_t, T32khz, uint16_t,
+    new TransformCounterC(T32khz, uint32_t, TOne, uint16_t,
 			  MICA_DIVIDE_ONE_FOR_32KHZ_LOG2,
 			  counter_one_overflow_t) as Transform32;
 
