@@ -361,11 +361,9 @@ implementation {
                     routeInfo.etx = best->info.etx;
                     routeInfo.congested = best->info.congested;
                 }
-		/* If we follow the CTP paper this should be in here.
 		if (currentEtx - minEtx > 20) {
 		  call CtpInfo.triggerRouteUpdate();
 		}
-		*/
             }
         }    
 
