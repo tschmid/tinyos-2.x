@@ -49,6 +49,10 @@ configuration MainC {
 implementation {
   components PlatformC, RealMainP, TinySchedulerC;
 
+#ifdef SAFE_TINYOS
+  components SafeFailureHandlerC;
+#endif
+
   RealMainP.Scheduler -> TinySchedulerC;
   RealMainP.PlatformInit -> PlatformC;
 
