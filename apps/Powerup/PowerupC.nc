@@ -34,7 +34,7 @@
   *
   * @author Cory Sharp <cssharp@eecs.berkeley.edu>
   */
-module PowerupC
+module PowerupC @safe()
 {
   uses interface Boot;
   uses interface Leds;

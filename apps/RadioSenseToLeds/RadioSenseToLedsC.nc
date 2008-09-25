@@ -43,7 +43,7 @@
  * @date   June 6 2005
  */
 
-module RadioSenseToLedsC {
+module RadioSenseToLedsC @safe(){
   uses {
     interface Leds;
     interface Boot;
