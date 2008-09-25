@@ -76,7 +76,7 @@ implementation {
   BaseStationP.SerialControl -> Serial;
   
   BaseStationP.UartSend -> Serial;
-  BaseStationP.UartReceive -> Serial;
+  BaseStationP.UartReceive -> Serial.Receive;
   BaseStationP.UartPacket -> Serial;
   BaseStationP.UartAMPacket -> Serial;
   
