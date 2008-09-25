@@ -54,6 +54,10 @@ implementation {
   components TinyThreadSchedulerC;
   components StaticThreadC;
     
+#ifdef SAFE_TINYOS
+  components SafeFailureHandlerC;
+#endif
+
   // Export the SoftwareInit and Boot for applications
   SoftwareInit = TinyOSMainP.SoftwareInit;
   Boot = TinyOSMainP;
