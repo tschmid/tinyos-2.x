@@ -49,7 +49,9 @@ TINYOS_MAKELOCAL ?= $(TINYOS_MAKE_PATH)/Makelocal
 TINYOS_MAKEDEFAULTS ?= $(TINYOS_MAKE_PATH)/Makedefaults
 
 #  Allow users to specify additional directories to find TOSMake files.
-TOSMAKE_PATH += $(TINYOS_MAKE_PATH)
+TOSMAKE_TEMP_PATH := $(TOSMAKE_PATH)
+TOSMAKE_PATH = $(TINYOS_MAKE_PATH) 
+TOSMAKE_PATH += $(TOSMAKE_TEMP_PATH)
 
 #  Save makecmdgoals (a read only var) to goals so that we can modify it.
 GOALS += $(MAKECMDGOALS)
