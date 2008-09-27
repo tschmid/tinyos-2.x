@@ -636,26 +636,20 @@ implementation {
     }
 
 
-  /* This should see if the node should be inserted in the table.
-   * If the white_bit is set, this means the LL believes this is a good
-   * first hop link. 
-   * The link will be recommended for insertion if it is better* than some
+  /* The link will be recommended for insertion if it is better* than some
    * link in the routing table that is not our parent.
    * We are comparing the path quality up to the node, and ignoring the link
    * quality from us to the node. This is because of a couple of things:
-   *   1. because of the white bit, we assume that the 1-hop to the candidate
-   *      link is good (say, etx=1)
+   *   1. we expect this call only for links with white bit set
    *   2. we are being optimistic to the nodes in the table, by ignoring the
    *      1-hop quality to them (which means we are assuming it's 1 as well)
    *      This actually sets the bar a little higher for replacement
    *   3. this is faster
-   *   4. it doesn't require the link estimator to have stabilized on a link
    */
-    event bool CompareBit.shouldInsert(message_t *msg, void* payload, uint8_t len, bool white_bit) {
+    event bool CompareBit.shouldInsert(message_t *msg, void* payload, uint8_t len) {
         
         bool found = FALSE;
         uint16_t pathEtx;
-        //uint16_t linkEtx = evaluateEtx(0);
         uint16_t neighEtx;
         int i;
         routing_table_entry* entry;
