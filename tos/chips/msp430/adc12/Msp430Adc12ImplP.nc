@@ -379,7 +379,7 @@ implementation
   {
     atomic {
       if (call ADCArbiterInfo.userId() == id){
-        if (state & MULTIPLE_DATA_REPEAT && !resultBufferStart)
+        if ((state & MULTIPLE_DATA_REPEAT) && !resultBufferStart)
           return EINVAL;
         if (state & ADC_BUSY)
           return EBUSY;
@@ -554,7 +554,7 @@ implementation
       case MULTI_CHANNEL:
         {
           uint16_t i = 0, k;
-          resultBuffer = resultBufferStart;
+          resultBuffer = resultBufferStart + resultBufferIndex;
           do {
             *resultBuffer++ = call HplAdc12.getMem(i);
           } while (++i < numChannels);
@@ -566,7 +566,7 @@ implementation
             resultBufferIndex = 0;
             signal MultiChannel.dataReady[clientID](resultBuffer, 
                 overflow ? k : resultBufferLength);
-          } else call HplAdc12.enableConversion();
+          }
         }
         break;
       case MULTIPLE_DATA:

@@ -94,7 +94,7 @@ implementation
 
   // Multi, none
   components new TestAdcMultiC(CONFIG_AVCC,
-                     SUPPLY_VOLTAGE_HALF_CHANNEL, REFERENCE_AVcc_AVss) as TestMulti1,
+                     TEMPERATURE_DIODE_CHANNEL, REFERENCE_AVcc_AVss) as TestMulti1,
              new Msp430Adc12ClientC() as Wrapper4;
 
   TestMulti1 -> MainC.Boot;
@@ -104,7 +104,7 @@ implementation
 
   // Multi, RefVolt
   components new TestAdcMultiC(CONFIG_VREF,
-                      SUPPLY_VOLTAGE_HALF_CHANNEL, REFERENCE_VREFplus_AVss) as TestMulti2,
+                      TEMPERATURE_DIODE_CHANNEL, REFERENCE_VREFplus_AVss) as TestMulti2,
              new Msp430Adc12ClientAutoRVGC() as Wrapper5;
 
   TestMulti2 -> MainC.Boot;
