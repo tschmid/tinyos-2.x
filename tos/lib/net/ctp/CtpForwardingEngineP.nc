@@ -576,7 +576,7 @@ implementation {
 	// two is different.
         if (qe->client < CLIENT_COUNT) { // Client packet
 	  clientPtrs[qe->client] = qe;
-	  signal Send.sendDone[qe->client](msg, FAIL);
+	  signal Send.sendDone[qe->client](msg, SUCCESS);
 	  call CollectionDebug.logEventMsg(NET_C_FE_SENDDONE_FAIL_ACK_SEND, 
 					   call CollectionPacket.getSequenceNumber(msg), 
 					   call CollectionPacket.getOrigin(msg), 
