@@ -93,6 +93,10 @@ implementation {
     call TaskScheduler.taskLoop();
     
   }
+  
+  async command error_t ThreadInfo.reset() {
+    return FAIL;
+  }
 
   async command thread_t* ThreadInfo.get() {
     return &thread_info;
