@@ -61,16 +61,11 @@ implementation
 
   async command uint8_t TransferredFrom.getUserId(){ return myUserId;}
 
-  task void TransferredTask()
+  async command void TransferredFrom.transfer()
   {
     signal ResourceTransferred.transferred();
   }
-
-  async command void TransferredFrom.transfer()
-  {
-    post TransferredTask();
-  }
   default async command uint8_t TransferTo.getUserId(){ call Leds.led0On(); return 0xFF;}
   default async command void TransferTo.transfer(){ call Leds.led0On(); }
-  default event void ResourceTransferred.transferred(){}
+  default async event void ResourceTransferred.transferred(){}
 }

@@ -555,7 +555,6 @@ implementation
 
   command void Packet.clear(message_t* msg)
   {
-    uint8_t i;
     memset(msg->header, 0, sizeof(message_header_t));
     memset(msg->metadata, 0, sizeof(message_metadata_t));
   }

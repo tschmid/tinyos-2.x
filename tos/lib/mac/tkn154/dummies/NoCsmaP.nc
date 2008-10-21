@@ -90,7 +90,7 @@ implementation
     return SUCCESS;
   }
 
-  event void TokenTransferred.transferred()
+  async event void TokenTransferred.transferred()
   {
     call TokenToCfp.transfer();
   }

@@ -100,7 +100,7 @@ implementation
 
   event void Token.granted() { }
 
-  event void TokenTransferred.transferred() { call Token.release(); }
+  async event void TokenTransferred.transferred() { call Token.release(); }
 
   async event void TrackAlarm.fired() {}
 
