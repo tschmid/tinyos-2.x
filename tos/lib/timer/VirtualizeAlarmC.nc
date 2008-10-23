@@ -166,7 +166,7 @@ implementation
 
   // extended interface
   async command bool Alarm.isRunning[uint8_t id]() {
-    return m.isset[id];
+    atomic return m.isset[id];
   }
 
   async command void Alarm.startAt[uint8_t id]( size_type t0, size_type dt ) {
