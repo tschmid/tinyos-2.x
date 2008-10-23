@@ -73,7 +73,7 @@ generic module NoCsmaP()
     interface RadioTx;
     interface RadioRx;
     interface RadioOff;
-    interface Get<bool> as IsBeaconEnabledPAN;
+    interface GetNow<bool> as IsBeaconEnabledPAN;
     interface MLME_GET;
     interface MLME_SET;
     interface Ieee802154Debug as Debug;

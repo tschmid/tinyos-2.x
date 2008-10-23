@@ -255,6 +255,7 @@ implementation
   BeaconTransmitP.SetMacBeaconTxTime -> PibP.SetMacBeaconTxTime;
   BeaconTransmitP.SetMacPanCoordinator -> PibP.SetMacPanCoordinator;
   BeaconTransmitP.Token -> BeaconTxRadioClient;
+  BeaconTransmitP.IsTokenRequested -> BeaconTxRadioClient;
   BeaconTransmitP.TokenTransferred -> BeaconTxRadioClient;
   BeaconTransmitP.TokenToBroadcast -> BeaconTxRadioClient;
   BeaconTransmitP.RealignmentBeaconEnabledTx -> CoordBroadcastP.RealignmentTx;
@@ -291,6 +292,7 @@ implementation
   BeaconSynchronizeP.IsBeaconEnabledPAN -> PibP.IsBeaconEnabledPAN;
   BeaconSynchronizeP.DataRequest -> PollP.DataRequest[SYNC_CLIENT];
   BeaconSynchronizeP.Token -> SyncRadioClient;
+  BeaconSynchronizeP.IsTokenRequested -> SyncRadioClient;
   BeaconSynchronizeP.TokenTransferred -> SyncRadioClient;
   BeaconSynchronizeP.TokenToCap -> SyncRadioClient;
   BeaconSynchronizeP.TimeCalc -> PibP;
@@ -428,10 +430,9 @@ implementation
   DeviceCap.IndirectTxWaitAlarm = Alarm5;
   DeviceCap.BroadcastAlarm = Alarm6;
   DeviceCap.Token -> DeviceCapRadioClient;
+  DeviceCap.IsTokenRequested -> DeviceCapRadioClient;
   DeviceCap.TokenToCfp -> DeviceCapRadioClient;
   DeviceCap.TokenTransferred -> DeviceCapRadioClient;
-  DeviceCap.TokenRequested -> DeviceCapRadioClient;
-  DeviceCap.IsTokenRequested -> DeviceCapRadioClient;
   DeviceCap.CapStart -> BeaconSynchronizeP.CapStart;
   DeviceCap.CapStartRefTime -> BeaconSynchronizeP.CapStartRefTime;
   DeviceCap.CapLen -> BeaconSynchronizeP.CapLen;
@@ -464,7 +465,6 @@ implementation
   CoordCap.Token -> CoordCapRadioClient;
   CoordCap.TokenToCfp -> CoordCapRadioClient;
   CoordCap.TokenTransferred -> CoordCapRadioClient;
-  CoordCap.TokenRequested -> CoordCapRadioClient;
   CoordCap.IsTokenRequested -> CoordCapRadioClient;
   CoordCap.CapStart -> BeaconTransmitP.CapStart;
   CoordCap.CapStartRefTime -> BeaconTransmitP.CapStartRefTime;
@@ -492,7 +492,6 @@ implementation
 
   components new RadioClientC() as DeviceCfpRadioClient;
   PibP.MacReset -> DeviceCfp;
-  DeviceCfp.Token -> DeviceCfpRadioClient;
   DeviceCfp.TokenTransferred -> DeviceCfpRadioClient;
   DeviceCfp.TokenRequested -> DeviceCfpRadioClient;
   DeviceCfp.TokenToBeaconSync -> DeviceCfpRadioClient;
@@ -515,9 +514,9 @@ implementation
 
   components new RadioClientC() as CoordCfpRadioClient;
   PibP.MacReset -> CoordCfp;
-  CoordCfp.Token -> CoordCfpRadioClient;
   CoordCfp.TokenTransferred -> CoordCfpRadioClient;
   CoordCfp.TokenRequested -> CoordCfpRadioClient;
+  CoordCfp.IsTokenRequested -> CoordCfpRadioClient;
   CoordCfp.TokenToBeaconTransmit -> CoordCfpRadioClient;
   CoordCfp.IsTrackingBeacons -> BeaconSynchronizeP.IsTrackingBeacons;
   CoordCfp.CfpEnd -> BeaconTransmitP.CfpEnd; 

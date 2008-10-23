@@ -48,7 +48,7 @@ module NoRxEnableP
   {
     interface Ieee802154Debug as Debug;
     interface Timer<TSymbolIEEE802154> as RxEnableTimer;
-    interface Get<bool> as IsBeaconEnabledPAN;
+    interface GetNow<bool> as IsBeaconEnabledPAN;
     interface Get<ieee154_macPanCoordinator_t> as IsMacPanCoordinator;
     interface GetNow<bool> as IsTrackingBeacons;
     interface GetNow<uint32_t> as IncomingSfStart; 

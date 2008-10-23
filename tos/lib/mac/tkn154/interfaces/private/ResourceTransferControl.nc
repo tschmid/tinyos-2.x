@@ -34,5 +34,4 @@
 interface ResourceTransferControl 
 {
   async command error_t transfer(uint8_t fromClient, uint8_t toClient);
-  async command error_t release(uint8_t client);
 }

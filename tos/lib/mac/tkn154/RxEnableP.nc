@@ -48,7 +48,7 @@ module RxEnableP
   {
     interface Ieee802154Debug as Debug;
     interface Timer<TSymbolIEEE802154> as RxEnableTimer;
-    interface Get<bool> as IsBeaconEnabledPAN;
+    interface GetNow<bool> as IsBeaconEnabledPAN;
     interface Get<ieee154_macPanCoordinator_t> as IsMacPanCoordinator;
     interface GetNow<bool> as IsTrackingBeacons;
     interface GetNow<uint32_t> as IncomingSfStart; 
@@ -95,7 +95,7 @@ implementation
       return IEEE154_TRANSACTION_OVERFLOW;
     if (RxOnTime > 0xFFFFFF || RxOnDuration > 0xFFFFFF)
       return IEEE154_INVALID_PARAMETER;
-    if (call IsBeaconEnabledPAN.get()){
+    if (call IsBeaconEnabledPAN.getNow()){
       if (call IsSendingBeacons.getNow() && call IsMacPanCoordinator.get()){
         // for OUTGOING SUPERFRAME
         lastBeaconTime = call OutgoingSfStart.getNow();

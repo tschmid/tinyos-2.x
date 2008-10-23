@@ -65,11 +65,12 @@ module NoBeaconTransmitP
     interface Alarm<TSymbolIEEE802154,uint32_t> as BeaconTxAlarm;
     interface Timer<TSymbolIEEE802154> as BeaconPayloadUpdateTimer;
     interface RadioOff;
-    interface Get<bool> as IsBeaconEnabledPAN;
+    interface GetNow<bool> as IsBeaconEnabledPAN;
     interface RadioTx as BeaconTx;
     interface MLME_GET;
     interface MLME_SET;
     interface Resource as Token;
+    interface GetNow<bool> as IsTokenRequested;
     interface ResourceTransfer as TokenToBroadcast;
     interface ResourceTransferred as TokenTransferred;
     interface FrameTx as RealignmentBeaconEnabledTx;

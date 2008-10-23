@@ -37,8 +37,7 @@ interface ResourceTransferred
   /** 
    * Ownership of a resource is transferred, possibly overriding the default
    * queueing policy. This event is similar to an async Resource.granted()
-   * event, but when a the resource is released, it is released on behalf of
-   * the client who was last signalled the Resource.granted() event.
+   * event, initiated by the previous owner of the resource.
    *
    * @see ResourceTransfer interface
    */

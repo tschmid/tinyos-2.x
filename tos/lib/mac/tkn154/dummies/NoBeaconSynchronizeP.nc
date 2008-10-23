@@ -71,10 +71,11 @@ module NoBeaconSynchronizeP
     interface Alarm<TSymbolIEEE802154,uint32_t> as TrackAlarm;
     interface RadioRx as BeaconRx;
     interface RadioOff;
-    interface Get<bool> as IsBeaconEnabledPAN;
+    interface GetNow<bool> as IsBeaconEnabledPAN;
     interface DataRequest;
     interface FrameRx as CoordRealignmentRx;
     interface Resource as Token;
+    interface GetNow<bool> as IsTokenRequested;
     interface ResourceTransfer as TokenToCap;
     interface ResourceTransferred as TokenTransferred;
     interface GetNow<bool> as IsSendingBeacons;
