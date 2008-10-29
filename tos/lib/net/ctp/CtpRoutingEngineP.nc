@@ -151,13 +151,6 @@ implementation {
     uint32_t parentChanges;
     /* end statistics */
 
-    uint32_t routeUpdateTimerCount;
-
-    // Maximimum it takes to hear four beacons
-    enum {
-      DEATH_TEST_INTERVAL = (maxInterval * 4) / (BEACON_INTERVAL / 1024),
-    };
-    
     // forward declarations
     void routingTableInit();
     uint8_t routingTableFind(am_addr_t);
@@ -199,7 +192,6 @@ implementation {
 
     command error_t Init.init() {
         uint8_t maxLength;
-        routeUpdateTimerCount = 0;
         radioOn = FALSE;
         running = FALSE;
         parentChanges = 0;
