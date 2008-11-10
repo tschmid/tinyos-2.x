@@ -63,7 +63,11 @@ module Msp430Adc12ImplP @safe()
 }
 implementation
 { 
-#warning Accessing TimerA for ADC12 
+
+#ifdef ADC12_TIMERA_ENABLED
+  #warning Accessing TimerA for ADC12 
+#endif
+
   enum {
     SINGLE_DATA = 1,
     SINGLE_DATA_REPEAT = 2,
@@ -218,6 +222,10 @@ implementation
   {
     error_t result = ERESERVE;
 #ifdef ADC12_CHECK_ARGS
+#ifndef ADC12_TIMERA_ENABLED
+    if (jiffies>0) 
+      return EINVAL;
+#endif
     if (!config || jiffies == 1 || jiffies == 2)
       return EINVAL;
 #endif
@@ -266,6 +274,10 @@ implementation
   {
     error_t result = ERESERVE;
 #ifdef ADC12_CHECK_ARGS
+#ifndef ADC12_TIMERA_ENABLED
+    if (jiffies>0) 
+      return EINVAL;
+#endif
     if (!config || !buf || !length || jiffies == 1 || jiffies == 2)
       return EINVAL;
 #endif
@@ -323,6 +335,10 @@ implementation
   {
     error_t result = ERESERVE;
 #ifdef ADC12_CHECK_ARGS
+#ifndef ADC12_TIMERA_ENABLED
+    if (jiffies>0) 
+      return EINVAL;
+#endif
     if (!config || !buf || !length || length > 16 || jiffies == 1 || jiffies == 2)
       return EINVAL;
 #endif
@@ -402,6 +418,10 @@ implementation
   {
     error_t result = ERESERVE;
 #ifdef ADC12_CHECK_ARGS
+#ifndef ADC12_TIMERA_ENABLED
+    if (jiffies>0) 
+      return EINVAL;
+#endif
     if (!config || !memctl || !numMemctl || numMemctl > 15 || !numSamples || 
         !buf || jiffies == 1 || jiffies == 2 || numSamples % (numMemctl+1) != 0)
       return EINVAL;
