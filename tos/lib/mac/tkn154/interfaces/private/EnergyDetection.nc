@@ -37,24 +37,24 @@ interface EnergyDetection
 {
   /**
    * Requests to measure the energy level on the current channel; the
-   * measurement should last for <code>duration<\code> symbols and the  
-   * maximum energy level is signalled through the <code>done<\code>
+   * measurement should last for <tt>duration</tt> symbols and the  
+   * maximum energy level is signalled through the <tt>done</tt>
    * event.
    *
    * @param duration Duration of the energy detection measurement 
    * (in symbol time)
    * @return SUCCESS if the request was accepted and only then 
-   * the <code>done<\code> event will be signalled, FAIL otherwise
+   * the <tt>done</tt> event will be signalled, FAIL otherwise
    **/
   command error_t start(uint32_t duration);
 
   /**
-   * Signalled in response to a call to <code>start<\code>;
+   * Signalled in response to a call to <tt>start<\tt>;
    * returns the maximum energy measured on the channel over the
    * specified period of time.
    *
    * @param status SUCCESS if the measurement succeeded
-   * and only then <code>EnergyLevel<\code> is valid, FAIL 
+   * and only then <tt>EnergyLevel<\tt> is valid, FAIL 
    * otherwise
    * @param EnergyLevel The maximum energy on the channel
    **/

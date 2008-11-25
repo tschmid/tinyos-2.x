@@ -152,7 +152,7 @@ implementation
         call TxControlPool.put(txControl);
       }
     }
-    call Debug.log(LEVEL_INFO, AssociateP_REQUEST, status, 0, 0);
+    call Debug.log(DEBUG_LEVEL_INFO, AssociateP_REQUEST, status, 0, 0);
     return status;
   }
 
@@ -165,10 +165,10 @@ implementation
       signal MLME_ASSOCIATE.confirm(0xFFFF, status, 0);
     } else {
       call ResponseTimeout.startOneShot(call MLME_GET.macResponseWaitTime()*IEEE154_aBaseSuperframeDuration);
-      call Debug.log(LEVEL_INFO, AssociateP_SETTIMER, 
+      call Debug.log(DEBUG_LEVEL_INFO, AssociateP_SETTIMER, 
           call MLME_GET.macResponseWaitTime()*IEEE154_aBaseSuperframeDuration, 0, 0);
     }
-    call Debug.log(LEVEL_INFO, AssociateP_TXDONE, status, 0, 0);
+    call Debug.log(DEBUG_LEVEL_INFO, AssociateP_TXDONE, status, 0, 0);
   }
   
   event void ResponseTimeout.fired()
@@ -202,7 +202,7 @@ implementation
   event void DataRequest.pollDone()
   {
     if (m_associationOngoing){
-      call Debug.log(LEVEL_INFO, AssociateP_POLL_DONE, m_payloadAssocRequest[0], m_assocRespStatus, 0);
+      call Debug.log(DEBUG_LEVEL_INFO, AssociateP_POLL_DONE, m_payloadAssocRequest[0], m_assocRespStatus, 0);
       call ResponseTimeout.stop();
       m_associationOngoing = FALSE;
       signal MLME_ASSOCIATE.confirm(m_shortAddress, m_assocRespStatus, 0);

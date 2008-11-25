@@ -102,4 +102,12 @@ interface CC2420Power {
    * @return SUCCESS if RSSI was read successfulyy, FAIL otherwise.
    */
   async command error_t rssi(int8_t *rssi);
+ 
+  /**
+   * Flush the RXFIFO if it is not empty. 
+   * Radio SHOULD be disabled (off) when calling this command.
+   *
+   * @return SUCCESS if fifo was flushed (or it was empty), FAIL otherwise.
+   */
+  async command error_t flushRxFifo(); 
 }

@@ -86,6 +86,7 @@ implementation {
   CC2420ControlP.CSN -> Pins.CSN;
   CC2420ControlP.RSTN -> Pins.RSTN;
   CC2420ControlP.VREN -> Pins.VREN;
+  CC2420ControlP.FIFO -> Pins.FIFO;
 
   components HplCC2420InterruptsC as Interrupts;
   CC2420ControlP.InterruptCCA -> Interrupts.InterruptCCA;
@@ -106,7 +107,10 @@ implementation {
   CC2420ControlP.TXCTRL      -> Spi.TXCTRL;
   CC2420ControlP.IEEEADR -> Spi.IEEEADR;
   CC2420ControlP.RXCTRL1 -> Spi.RXCTRL1;
+  CC2420ControlP.SFLUSHRX-> Spi.SFLUSHRX;
   CC2420ControlP.RSSI  -> Spi.RSSI;
+  CC2420ControlP.RXFIFO_REGISTER -> Spi.RXFIFO_REGISTER;
+  CC2420ControlP.SNOP -> Spi.SNOP;
 
   // CC2420TransmitC
   components CC2420TransmitP;

@@ -33,7 +33,7 @@
  * ========================================================================
  */
 #include "TKN154_MAC.h"
-generic module CsmaQueueP() {
+generic module FrameDispatchQueueP() {
   provides
   {
     interface Init as Reset;

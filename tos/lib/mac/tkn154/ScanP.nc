@@ -297,11 +297,10 @@ implementation
 
   async event void RadioTx.loadDone()
   {
-    call RadioTx.transmit(0, 0, 0, FALSE);
+    call RadioTx.transmit(NULL, 0); // transmit immediately
   }
   
-  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, 
-      ieee154_reftime_t *referenceTime, bool ackPendingFlag, error_t error)
+  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime)
   {
     if (call RadioRx.prepare() != SUCCESS) // must succeed
       call Leds.led0On();
@@ -387,6 +386,12 @@ implementation
   {
     nextIteration();
   }
+
+  async event void RadioTx.transmitUnslottedCsmaCaDone(ieee154_txframe_t *frame,
+      bool ackPendingFlag, ieee154_csma_t *csmaParams, error_t result){}
+
+  async event void RadioTx.transmitSlottedCsmaCaDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime, 
+      bool ackPendingFlag, uint16_t remainingBackoff, ieee154_csma_t *csmaParams, error_t result){}  
 
   default event message_t* MLME_BEACON_NOTIFY.indication ( message_t *beaconFrame ){return beaconFrame;}
   default event void MLME_SCAN.confirm    (

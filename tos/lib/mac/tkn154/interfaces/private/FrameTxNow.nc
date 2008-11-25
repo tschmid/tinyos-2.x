@@ -38,7 +38,7 @@ interface FrameTxNow
    *
    * @param  txFrame    the frame to transmit
    * @return IEEE154_SUCCESS if the request was accepted and
-   * only then <code>transmitDone()</code> will be signalled
+   * only then <tt>transmitDone()</tt> will be signalled
    */  
   async command ieee154_status_t transmitNow(ieee154_txframe_t *frame); 
 

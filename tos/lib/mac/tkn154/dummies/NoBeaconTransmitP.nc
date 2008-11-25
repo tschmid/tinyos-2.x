@@ -124,8 +124,13 @@ implementation
 
   async event void BeaconTx.loadDone() {}
 
-  async event void BeaconTx.transmitDone(ieee154_txframe_t *frame, 
-      ieee154_reftime_t *referenceTime, bool pendingFlag, error_t error) { }
+  async event void BeaconTx.transmitDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime){}
+
+  async event void BeaconTx.transmitUnslottedCsmaCaDone(ieee154_txframe_t *frame,
+      bool ackPendingFlag, ieee154_csma_t *csmaParameters, error_t result){}
+
+  async event void BeaconTx.transmitSlottedCsmaCaDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime, 
+      bool ackPendingFlag, uint16_t remainingBackoff, ieee154_csma_t *csmaParameters, error_t result){}
 
   command error_t IEEE154TxBeaconPayload.setBeaconPayload(void *beaconPayload, uint8_t length) { return ESIZE; }
 

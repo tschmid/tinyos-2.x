@@ -124,8 +124,7 @@ implementation
   }  
 
   async event void RadioTx.loadDone(){}
-  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, 
-      ieee154_reftime_t *referenceTime, bool ackPendingFlag, error_t error){}
+  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime){}
 
   async event void RadioRx.prepareDone(){} 
   event message_t* RadioRx.received(message_t *frame, ieee154_reftime_t *timestamp){return frame;}
@@ -138,4 +137,8 @@ implementation
   }
 
   async event void TokenRequested.immediateRequested(){ }
+  async event void RadioTx.transmitUnslottedCsmaCaDone(ieee154_txframe_t *frame,
+      bool ackPendingFlag, ieee154_csma_t *csmaParams, error_t result){}
+  async event void RadioTx.transmitSlottedCsmaCaDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime, 
+      bool ackPendingFlag, uint16_t remainingBackoff, ieee154_csma_t *csmaParams, error_t result){} 
 }

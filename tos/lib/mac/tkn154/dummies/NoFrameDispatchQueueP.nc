@@ -33,31 +33,38 @@
  * ========================================================================
  */
 #include "TKN154_MAC.h"
-module NoDeviceCapQueueP
-{
+generic module NoFrameDispatchQueueP() {
   provides
   {
-    interface Init;
+    interface Init as Reset;
     interface FrameTx[uint8_t client];
     interface FrameRx as FrameExtracted[uint8_t client];
     interface Purge;
-  }
-  uses
-  {
-    interface Queue<ieee154_txframe_t*>; 
-    interface FrameTx as DeviceCapTx;
+  } uses {
+    interface Queue<ieee154_txframe_t*>;
+    interface FrameTx as FrameTxCsma;
     interface FrameRx as SubFrameExtracted;
   }
 }
 implementation
 {
-  command error_t Init.init() { return SUCCESS; }
+  command error_t Reset.init() { return SUCCESS; }
 
-  command ieee154_status_t FrameTx.tx[uint8_t client](ieee154_txframe_t *data) { return TRANSACTION_OVERFLOW; }
+  command ieee154_status_t FrameTx.transmit[uint8_t client](ieee154_txframe_t *txFrame)
+  {
+    return IEEE154_TRANSACTION_OVERFLOW;
+  }
 
-  event void DeviceCapTx.transmitDone(ieee154_txframe_t *data, ieee154_status_t status) { }
+  event void FrameTxCsma.transmitDone(ieee154_txframe_t *txFrame, ieee154_status_t status) { }
 
-  event message_t* SubFrameExtracted.received(message_t* data) { return data; }
+  event message_t* SubFrameExtracted.received(message_t* frame) { return frame; }
 
-  command ieee154_status_t Purge.purge(uint8_t msduHandle) { return INVALID_HANDLE; }
+  default event void FrameTx.transmitDone[uint8_t client](ieee154_txframe_t *txFrame, ieee154_status_t status){}
+
+  command ieee154_status_t Purge.purge(uint8_t msduHandle)
+  {
+    return IEEE154_INVALID_HANDLE;
+  }
+  
+  default event void Purge.purgeDone(ieee154_txframe_t *txFrame, ieee154_status_t status){}
 }

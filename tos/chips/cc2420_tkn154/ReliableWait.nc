@@ -32,18 +32,14 @@
  */
 interface ReliableWait
 {
-
   async command void busyWait(uint16_t dt);
-
-  /*
-   * The following command/event pairs are platform-specific
-   * busy-waits. 
-   */
-  
   async command void waitRx(ieee154_reftime_t *t0, uint16_t dt);
   async event void waitRxDone();
-  async command void waitCCA(ieee154_reftime_t *t0, uint16_t dt);
-  async event void waitCCADone();
   async command void waitTx(ieee154_reftime_t *t0, uint16_t dt);
   async event void waitTxDone();
+  async command void waitBackoff(ieee154_reftime_t *t0, uint16_t dt);
+  async event void waitBackoffDone();
+
+  async command void busyWaitSlotBoundaryCCA(ieee154_reftime_t *t0, uint16_t *dt);
+  async command void busyWaitSlotBoundaryTx(ieee154_reftime_t *t0, uint16_t dt);
 }

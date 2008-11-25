@@ -96,9 +96,14 @@ implementation
   }
 
   async event void RadioTx.loadDone() { }
-  
-  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, ieee154_reftime_t *t0, 
-      bool ackPendingFlag, error_t error){}
+
+  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime){}
+
+  async event void RadioTx.transmitUnslottedCsmaCaDone(ieee154_txframe_t *frame,
+      bool ackPendingFlag, ieee154_csma_t *csmaParameters, error_t result){}
+
+  async event void RadioTx.transmitSlottedCsmaCaDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime, 
+      bool ackPendingFlag, uint16_t remainingBackoff, ieee154_csma_t *csmaParameters, error_t result){}
  
   event void ScanTimer.fired() { }
 

@@ -43,7 +43,7 @@
 
 enum {
   // guard time to give up the token before actual end of CAP/CFP
-  IEEE154_RADIO_GUARD_TIME = 1000,
+  IEEE154_ACTIVE_PERIOD_GUARD_TIME = 300,
 
   // the expected time for a RadioTx.prepare() operation to execute (return)
   IEEE154_RADIO_TX_PREPARE_DELAY = 220,

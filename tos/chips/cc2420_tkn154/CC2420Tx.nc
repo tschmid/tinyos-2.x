@@ -40,7 +40,7 @@ interface CC2420Tx {
   async command error_t loadTXFIFO(ieee154_txframe_t *data);
   async event void loadTXFIFODone(ieee154_txframe_t *data, error_t error );
 
-  async command void send(bool cca);
+  async command error_t send(bool cca);
   async event void sendDone(ieee154_txframe_t *frame, ieee154_reftime_t *referenceTime, 
       bool ackPendingFlag, error_t error);
 

@@ -43,8 +43,8 @@ interface MLME_BEACON_NOTIFY {
    * beacon payload is not empty.
    *
    * The beacon parameters can be accessed through the 
-   * <code>IEEE154BeaconFrame<\code> interface. The 
-   * <code>IEEE154Frame<\code> interface can be used to
+   * <tt>IEEE154BeaconFrame<\tt> interface. The 
+   * <tt>IEEE154Frame<\tt> interface can be used to
    * inspect the addressing fields in the MAC header.
    *
    * @param beacon The beacon frame

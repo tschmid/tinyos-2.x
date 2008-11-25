@@ -38,7 +38,7 @@ interface FrameTx
    *
    * @param  txFrame    the frame to transmit
    * @return IEEE154_SUCCESS if the request was accepted and
-   * only then <code>transmitDone()</code> will be signalled
+   * only then <tt>transmitDone()</tt> will be signalled
    */  
   command ieee154_status_t transmit(ieee154_txframe_t *txFrame); 
 
