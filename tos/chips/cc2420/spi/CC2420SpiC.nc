@@ -79,6 +79,7 @@ generic configuration CC2420SpiC() {
   provides interface CC2420Register as MANAND;
   provides interface CC2420Register as MANOR;
   provides interface CC2420Register as AGCCTRL;
+  provides interface CC2420Register as RXFIFO_REGISTER;
 
   // ram
   provides interface CC2420Ram as IEEEADR;
@@ -142,6 +143,7 @@ implementation {
   MANAND = Spi.Reg[ CC2420_MANAND ];
   MANOR = Spi.Reg[ CC2420_MANOR ];
   AGCCTRL = Spi.Reg[ CC2420_AGCCTRL ];
+  RXFIFO_REGISTER = Spi.Reg[ CC2420_RXFIFO ];
   
   // ram
   IEEEADR = Spi.Ram[ CC2420_RAM_IEEEADR ];
