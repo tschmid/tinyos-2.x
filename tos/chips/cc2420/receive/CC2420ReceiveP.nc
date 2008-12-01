@@ -126,6 +126,10 @@ implementation {
       reset_state();
       m_state = S_STARTED;
       atomic receivingPacket = FALSE;
+      /* Note:
+         We use the falling edge because the FIFOP polarity is reversed. 
+         This is done in CC2420Power.startOscillator from CC2420ControlP.nc.
+       */
       call InterruptFIFOP.enableFallingEdge();
     }
     return SUCCESS;
