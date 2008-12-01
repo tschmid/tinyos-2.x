@@ -72,7 +72,6 @@ implementation {
   
   /****************** Prototypes ****************/
   task void startDone_task();
-  task void startDone_task();
   task void stopDone_task();
   task void sendDone_task();
   
