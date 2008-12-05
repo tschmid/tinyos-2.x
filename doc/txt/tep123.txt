@@ -41,7 +41,8 @@ TinyOS 2.x. The users use Collection interfaces described in TEP 119
 In this TEP, after a brief discussion of Collection and CTP, we
 specify the CTP routing and data frames. CTP uses routing frames to
 update and build collection tree in the network. CTP uses data frames
-to deliver application payload to the sink.
+to deliver application payload to the sink and to probe topology
+inconsistencies.
 
 2. Assumptions and Limitations
 ==============================================================================
