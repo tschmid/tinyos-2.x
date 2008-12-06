@@ -7,13 +7,12 @@ define AVR_HELP
 
    debug    : compile with minimal optimization and debug symbols
    debugopt : compile with debug symbols
-   xnp      : compile for network programming
 
  Programmer options:
 
    dapa         : (default) use parallel port programmer
    mib510,<dev> : use MIB510/MIB520 serial port programming board at port <dev>
-   eprb,<host>	: use EPRB at hostname <host>
+   eprb,<host>	: use EPRB (MIB600) at hostname <host>
    avrisp,<dev> : use AVRISP serial programmer at port <dev>
 
    The dev or host parameter for the programmer option need not be specified,
