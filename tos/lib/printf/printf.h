@@ -51,7 +51,9 @@
 #include "message.h"
 int printfflush();
 
+#ifndef PRINTF_MSG_LENGTH
 #define PRINTF_MSG_LENGTH	28
+#endif
 typedef nx_struct printf_msg {
   nx_uint8_t buffer[PRINTF_MSG_LENGTH];
 } printf_msg_t;
