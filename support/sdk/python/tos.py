@@ -407,7 +407,7 @@ def printfHook(packet):
         s = "".join([chr(i) for i in packet.data]).strip('\0')
         lines = s.split('\n')
         for line in lines:
-            print "PRINTF:", line
+            if line: print "PRINTF:", line
         packet = None # No further processing for the printf packet
     return packet    
 
