@@ -42,6 +42,12 @@
  * @author Kevin Klues <klueska@cs.stanford.edu> 
  */
 
+#ifdef DYNTHREADS 
+  #define AT_SPONTANEOUS	@spontaneous()
+#else
+  #define AT_SPONTANEOUS
+#endif
+
 module TinyOSMainP {
   provides {
     interface Boot;
