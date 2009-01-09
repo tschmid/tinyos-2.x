@@ -611,7 +611,7 @@ class Packet:
         return self._names
 
     def values(self):
-        return self._names
+        return self._values
 
     # Custom functions
     def names(self):
