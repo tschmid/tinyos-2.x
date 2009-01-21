@@ -19,5 +19,5 @@ PFLAGS += -fnesc-separator=__
 
 buildelf: FORCE
 	@echo "    building ELF output $(MAIN_ELF) for debugging in AVR Studio"
-	@perl -pe 's/#(.*)\"(.*)\"/ "#$$1\"".`cygpath -m $$2`."\""/e; s/\n\"/\"/;' $(BUILDDIR)/app.c > $(APPC_WINPATH)
+	@perl -pe 's/#(.*)\"(.*)\"/ "#$$1\"".`cygpath -ma $$2`."\""/e; s/\n\"/\"/;' $(BUILDDIR)/app.c > $(APPC_WINPATH)
 	@$(NCC) -o $(MAIN_ELF) $(NCC_SAFE_TINYOS_FLAGS) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(APPC_WINPATH) $(LIBS) $(LDFLAGS)
