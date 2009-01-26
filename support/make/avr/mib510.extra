@@ -5,6 +5,10 @@ ifeq ($(MIB510),)
 $(error MIB510 must be defined, try "make $(TARGETS) help")
 endif
 
+ifeq ($(shell [ -f /bin/cygwin1.dll ] && echo cygwin),cygwin)
+  MIB510 := '\\.\$(MIB510)'
+endif
+
 PROGRAM = mib510
 
 ifeq ($(PROGRAMMER),avrdude)
