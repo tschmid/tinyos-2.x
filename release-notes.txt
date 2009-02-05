@@ -1,5 +1,8 @@
 These release notes are as of: $Date$
 
+Current:
+  Fixed TOSSIM ack bug for nodes that change their AM id at runtime
+
 2.1:
   Added support for iris platform
   Added support for shimmer platform
