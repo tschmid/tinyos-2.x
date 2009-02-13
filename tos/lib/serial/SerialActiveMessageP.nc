@@ -58,6 +58,11 @@ implementation {
 					  message_t* msg,
 					  uint8_t len) {
     serial_header_t* header = getHeader(msg);
+
+    if (len > call Packet.maxPayloadLength()) {
+      return ESIZE;
+    }
+
     header->dest = dest;
     // Do not set the source address or group, as doing so
     // prevents transparent bridging. Need a better long-term
