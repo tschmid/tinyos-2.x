@@ -113,6 +113,7 @@ class Serial:
         #print "DEBUG: putBytes:", data
         for b in data:
             self._s.write(struct.pack('B', b))
+            time.sleep(0.000001)
 
     def getTimeout(self):
         return self._s.timeout
