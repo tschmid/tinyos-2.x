@@ -370,6 +370,7 @@ class SimpleAM(object):
     def write(self, packet, amId, timeout=5, blocking=True, inc=1):
         self.seqno = (self.seqno + inc) % 256
         prevTimeout = self._source.getTimeout()
+        ack = None
         end = None
         if timeout: end = time.time() + timeout
         while not end or time.time() < end:
@@ -396,7 +397,7 @@ class SimpleAM(object):
                 break
         self._source.setTimeout(prevTimeout)
         #print 'SimpleAM:write: got an ack:', ack, ack.seqno == self.seqno
-        return ack.seqno == self.seqno
+        return (ack != None and ack.seqno == self.seqno)
 
     def setOobHook(self, oobHook):
         self.oobHook = oobHook
