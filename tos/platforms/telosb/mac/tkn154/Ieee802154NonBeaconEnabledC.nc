@@ -33,7 +33,6 @@
  * ========================================================================
  */
 #include "TKN154.h"
-#include "TKN154_DEBUG.h"
 configuration Ieee802154NonBeaconEnabledC
 {
   provides
