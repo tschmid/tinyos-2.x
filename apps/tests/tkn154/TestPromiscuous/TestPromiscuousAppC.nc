@@ -37,16 +37,16 @@ configuration TestPromiscuousAppC
 {
 } implementation {
  components MainC, TestPromiscuousC as App, LedsC, 
-            Ieee802154MacC as Ieee802154MacC;
+            Ieee802154BeaconEnabledC as MAC;
 
   MainC.Boot <- App;
   App.Leds -> LedsC;
 
-  App.MLME_RESET -> Ieee802154MacC;
-  App.MLME_SET -> Ieee802154MacC;
-  App.MLME_GET -> Ieee802154MacC;
-  App.MCPS_DATA -> Ieee802154MacC;
-  App.Frame -> Ieee802154MacC;
-  App.BeaconFrame -> Ieee802154MacC;
-  App.PromiscuousMode -> Ieee802154MacC;
+  App.MLME_RESET -> MAC;
+  App.MLME_SET -> MAC;
+  App.MLME_GET -> MAC;
+  App.MCPS_DATA -> MAC;
+  App.Frame -> MAC;
+  App.BeaconFrame -> MAC;
+  App.PromiscuousMode -> MAC;
 }

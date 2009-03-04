@@ -73,10 +73,7 @@ module CC2420ControlP {
   uses interface CC2420Strobe as SFLUSHRX;
   uses interface CC2420Register as TXCTRL;
   uses interface AMPacket;
-  
   uses interface Resource as SpiResource;
-
-  uses interface Leds;
   uses interface FrameUtility;
 }
 
@@ -290,7 +287,7 @@ implementation {
         // Always read at least one byte from the RXFIFO before 
         // issuing the SFLUSHRX command strobe" (CC2420 Datasheet)
         call CSN.clr();
-        call RXFIFO_REGISTER.read(&dummy); // reading 1 byte would be enough...
+        call RXFIFO_REGISTER.read(&dummy); // reading the byte
         call CSN.set();
         call CSN.clr();
         // "SFLUSHRX command strobe should be issued twice to ensure 
@@ -398,6 +395,7 @@ implementation {
   async command bool CC2420Config.needsSync(){
     atomic return m_needsSync;
   }
+
   /**
    * Sync must be called to commit software parameters configured on
    * the microcontroller (through the CC2420Config interface) to the

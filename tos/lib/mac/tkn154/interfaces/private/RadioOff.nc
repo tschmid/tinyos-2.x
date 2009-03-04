@@ -35,16 +35,14 @@
 
 interface RadioOff
 {
-
   /** 
    * Disables the transceiver and changes the radio state to RADIO_OFF. This
-   * command will succeed only if the current state of the radio is either
-   * TX_LOADED, RX_PREPARED or RECEIVING.
+   * command will succeed only if the current state of the radio is RECEIVING.
    *
    * @return SUCCESS if the command was accepted and the <tt>offDone()</tt>
-   * event will be signalled; EALREADY if radio is already switched off; FAIL
-   * if the current radio state is neither TX_LOADED, RX_PREPARED nor
-   * RECEIVING.
+   * event will be signalled; EALREADY if the radio is already switched off,
+   * i.e. in state RADIO_OFF; FAIL if the radio was not switched of because 
+   * the current state is not RECEIVING.
    */
   async command error_t off();
 
@@ -56,6 +54,7 @@ interface RadioOff
 
   /** 
    * Tells whether the radio is in state RADIO_OFF.
+   *
    * @return TRUE if the radio is in the state RADIO_OFF, FALSE otherwise 
    */
   async command bool isOff(); 

@@ -49,12 +49,12 @@ interface EnergyDetection
   command error_t start(uint32_t duration);
 
   /**
-   * Signalled in response to a call to <tt>start<\tt>;
+   * Signalled in response to a call to <tt>start</tt>;
    * returns the maximum energy measured on the channel over the
    * specified period of time.
    *
    * @param status SUCCESS if the measurement succeeded
-   * and only then <tt>EnergyLevel<\tt> is valid, FAIL 
+   * and only then <tt>EnergyLevel</tt> is valid, FAIL 
    * otherwise
    * @param EnergyLevel The maximum energy on the channel
    **/

@@ -67,7 +67,7 @@ module TestDeviceC
     m_capabilityInformation.Reserved = 0;
     m_capabilityInformation.SecurityCapability = 0;
     m_capabilityInformation.AllocateAddress = 1;    
-    call MLME_RESET.request(TRUE, BEACON_ENABLED_PAN);
+    call MLME_RESET.request(TRUE);
   }
 
   event void MLME_RESET.confirm(ieee154_status_t status)

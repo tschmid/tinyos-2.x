@@ -33,6 +33,10 @@
  * ========================================================================
  */
 
+/** 
+ * The IEEE154Frame interface allows to access the content of a IEEE 802.15.4
+ * frame.
+ */
 
 #include <TKN154.h>
 #include <message.h>
@@ -157,7 +161,7 @@ interface IEEE154Frame
 
  /**
    * Returns the point in time when the frame was received. If 
-   * <tt>isTimestampValid()<\tt> returns FALSE then the 
+   * <tt>isTimestampValid()</tt> returns FALSE then the 
    * timestamp is not valid and must be ignored.
    *
    * @param frame     the frame
@@ -192,7 +196,7 @@ interface IEEE154Frame
     * Returns the type of the frame
     * BEACON=0, DATA=1, ACK=2, COMMAND=3.
     *
-    * Note: For beacon frames one can use the <tt>IEEE154BeaconFrame<\tt>
+    * Note: For beacon frames one can use the <tt>IEEE154BeaconFrame</tt>
     * interface to inspect additional fields of the frame.
     *
     * @param  frame   the frame

@@ -34,7 +34,7 @@
 interface FrameTxNow
 {
   /**
-   * Transmits a frame buffer.
+   * Transmits a frame.
    *
    * @param  txFrame    the frame to transmit
    * @return IEEE154_SUCCESS if the request was accepted and
@@ -44,7 +44,7 @@ interface FrameTxNow
 
 
   /**
-   * Signals the completion of the transmission of a frame buffer.
+   * Signals the completion of the transmission of a frame.
    *
    * @param  txFrame    the frame that was transmitted
    * @param  status     the result of the transmission

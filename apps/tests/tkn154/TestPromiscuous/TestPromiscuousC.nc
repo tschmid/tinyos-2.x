@@ -58,7 +58,7 @@ module TestPromiscuousC
   };
 
   event void Boot.booted() {
-    call MLME_RESET.request(TRUE, BEACON_ENABLED_PAN);
+    call MLME_RESET.request(TRUE);
   }
 
   event void MLME_RESET.confirm(ieee154_status_t status)

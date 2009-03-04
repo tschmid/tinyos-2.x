@@ -99,7 +99,7 @@ interface CC2420Power {
 
   /**
    * Read RSSI from the radio. 
-   * @return SUCCESS if RSSI was read successfulyy, FAIL otherwise.
+   * @return SUCCESS if RSSI was read successfully, FAIL otherwise.
    */
   async command error_t rssi(int8_t *rssi);
  

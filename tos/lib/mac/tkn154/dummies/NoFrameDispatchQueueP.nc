@@ -32,6 +32,9 @@
  * @author Jan Hauer <hauer@tkn.tu-berlin.de>
  * ========================================================================
  */
+
+ /** Empty placeholder component for FrameDispatchQueueP. */
+
 #include "TKN154_MAC.h"
 generic module NoFrameDispatchQueueP() {
   provides

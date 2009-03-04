@@ -51,7 +51,7 @@ module TestCoordC
   uint8_t m_beaconPayload[] = {0x01, 0x02, 0x03, 0x04, 0x05};
 
   event void Boot.booted() {
-    call MLME_RESET.request(TRUE, BEACON_ENABLED_PAN);
+    call MLME_RESET.request(TRUE);
   }
 
   event void MLME_RESET.confirm(ieee154_status_t status)

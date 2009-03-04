@@ -32,6 +32,14 @@
  * @author Jan Hauer <hauer@tkn.tu-berlin.de>
  * ========================================================================
  */
+
+/** 
+ * MLME-SAP synchronization primitives define how synchronization with
+ * a coordinator may be achieved and how a loss of synchronization is
+ * communicated to the next higher layer. (IEEE 802.15.4-2006, Sect.
+ * 7.1.15)
+ */
+
 interface MLME_SYNC {
 
   /**

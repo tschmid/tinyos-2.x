@@ -34,6 +34,12 @@
  * ========================================================================
  */
 
+/** 
+ * MLME-SAP receiver state primitives define how a device can enable
+ * or disable the receiver at a given time. (IEEE 802.15.4-2006, Sect.
+ * 7.1.10)
+ */
+
 #include "TKN154.h"
 interface MLME_RX_ENABLE {
 

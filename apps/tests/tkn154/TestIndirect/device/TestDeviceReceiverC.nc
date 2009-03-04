@@ -59,7 +59,7 @@ module TestDeviceReceiverC
   void startApp();
 
   event void Boot.booted() {
-    call MLME_RESET.request(TRUE, BEACON_ENABLED_PAN);
+    call MLME_RESET.request(TRUE);
   }
   
   event void MLME_RESET.confirm(ieee154_status_t status)
@@ -99,6 +99,12 @@ module TestDeviceReceiverC
   {
     // received a beacon frame during SCAN
     ieee154_phyCurrentPage_t page = call MLME_GET.phyCurrentPage();
+    ieee154_macBSN_t beaconSequenceNumber = call BeaconFrame.getBSN(frame);
+
+    if (beaconSequenceNumber & 1)
+      call Leds.led2On();
+    else
+      call Leds.led2Off();   
 
     if (!m_isPANDescriptorValid && call BeaconFrame.parsePANDescriptor(
           frame, RADIO_CHANNEL, page, &m_PANDescriptor) == SUCCESS){

@@ -33,6 +33,12 @@
  * ========================================================================
  */
 
+/** 
+ * MLME-SAP scan primitives define how a device can determine the
+ * energy usage or the presence or absence of PANs in a communications
+ * channel. (IEEE 802.15.4-2006, Sect. 7.1.10)
+ */
+
 #include "TKN154.h"
 interface MLME_SCAN 
 {

@@ -35,18 +35,18 @@
 configuration TestIndirectAppC
 {
 } implementation {
-  components MainC, LedsC, Ieee802154MacC;
+  components MainC, LedsC, Ieee802154BeaconEnabledC as MAC;
   components TestCoordSenderC as App;
 
   MainC.Boot <- App;
   App.Leds -> LedsC;
-  App.MLME_RESET -> Ieee802154MacC;
-  App.MLME_SET -> Ieee802154MacC;
-  App.MLME_GET -> Ieee802154MacC;
-  App.MLME_START -> Ieee802154MacC;
-  App.MCPS_DATA -> Ieee802154MacC;
-  App.Frame -> Ieee802154MacC;
-  App.IEEE154TxBeaconPayload -> Ieee802154MacC;
-  App.Packet -> Ieee802154MacC;
+  App.MLME_RESET -> MAC;
+  App.MLME_SET -> MAC;
+  App.MLME_GET -> MAC;
+  App.MLME_START -> MAC;
+  App.MCPS_DATA -> MAC;
+  App.Frame -> MAC;
+  App.IEEE154TxBeaconPayload -> MAC;
+  App.Packet -> MAC;
 
 }

@@ -33,12 +33,12 @@
 interface ReferenceTime
 {
   /** 
-   * Gets current reference time plus dt symbols.
+   * Gets current time and adds dt symbols.
    */
-  async command void getNow(ieee154_reftime_t* reftime, uint16_t dt);
+  async command void getNow(ieee154_timestamp_t* time, uint16_t dt);
 
   /** 
    * Converts reference time to local time.
    */
-  async command uint32_t toLocalTime(ieee154_reftime_t* refTime);
+  async command uint32_t toLocalTime(const ieee154_timestamp_t* time);
 }

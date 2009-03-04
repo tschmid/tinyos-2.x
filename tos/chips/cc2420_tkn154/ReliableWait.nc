@@ -32,14 +32,11 @@
  */
 interface ReliableWait
 {
-  async command void busyWait(uint16_t dt);
-  async command void waitRx(ieee154_reftime_t *t0, uint16_t dt);
+  async command void waitRx(uint32_t t0, uint32_t dt);
   async event void waitRxDone();
-  async command void waitTx(ieee154_reftime_t *t0, uint16_t dt);
+  async command void waitTx(ieee154_timestamp_t *t0, uint32_t dt);
   async event void waitTxDone();
-  async command void waitBackoff(ieee154_reftime_t *t0, uint16_t dt);
+  async command void waitBackoff(uint32_t dt);
   async event void waitBackoffDone();
-
-  async command void busyWaitSlotBoundaryCCA(ieee154_reftime_t *t0, uint16_t *dt);
-  async command void busyWaitSlotBoundaryTx(ieee154_reftime_t *t0, uint16_t dt);
+  async command bool ccaOnBackoffBoundary(ieee154_timestamp_t *slot0);
 }

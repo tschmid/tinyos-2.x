@@ -37,14 +37,14 @@ configuration TestStartSyncAppC
 {
 } implementation {
 
-  components MainC, LedsC, Ieee802154MacC as Ieee802154MacC;
+  components MainC, LedsC, Ieee802154BeaconEnabledC as MAC;
   components TestCoordC as App;
 
   MainC.Boot <- App;
-  App.MLME_START -> Ieee802154MacC;
-  App.IEEE154TxBeaconPayload -> Ieee802154MacC;
+  App.MLME_START -> MAC;
+  App.IEEE154TxBeaconPayload -> MAC;
   App.Leds -> LedsC;
-  App.MLME_RESET -> Ieee802154MacC;
-  App.MLME_SET -> Ieee802154MacC;
-  App.MLME_GET -> Ieee802154MacC;
+  App.MLME_RESET -> MAC;
+  App.MLME_SET -> MAC;
+  App.MLME_GET -> MAC;
 }

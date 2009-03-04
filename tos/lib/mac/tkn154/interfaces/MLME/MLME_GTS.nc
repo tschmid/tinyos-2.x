@@ -33,6 +33,13 @@
  * ========================================================================
  */
 
+/** 
+ * The MLME-SAP GTS management primitives define how GTSs are
+ * requested and maintained. A device wishing to use these primitives
+ * and GTSs in general will already be tracking the beacons of its PAN
+ * coordinator. (IEEE 802.15.4-2006, Sect. 7.1.7)
+ */
+
 #include "TKN154.h"
 interface MLME_GTS {
 

@@ -69,7 +69,7 @@ interface Timestamp
   /**
    * Modify (overwrite) the contents of the MAC payload. This command must 
    * only be called in the context of a <code>transmittedSFD()<\code> event and it
-   * should return fast. Note: the smaller offset is the faster 
+   * should return fast. Note: the smaller the offset is the faster 
    * <code>transmittedSFD()<\code> must be finished (offset of zero might not work).
    *
    * @param token   the token signalled by <code>transmittedSFD()<\code>

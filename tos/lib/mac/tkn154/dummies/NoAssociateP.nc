@@ -33,6 +33,7 @@
  * ========================================================================
  */
 
+ /** Empty placeholder component for AssociateP. */
 
 #include "TKN154_MAC.h"
 
@@ -60,7 +61,6 @@ module NoAssociateP
     interface FrameUtility;
     interface IEEE154Frame as Frame;
     interface Get<uint64_t> as LocalExtendedAddress;
-    interface Ieee802154Debug as Debug;
   }
 }
 implementation
@@ -68,7 +68,7 @@ implementation
 
   command error_t Init.init() { return SUCCESS; }
 
-/* ------------------- MLME_ASSOCIATE Request ------------------- */
+  /* ------------------- MLME_ASSOCIATE Request ------------------- */
 
   command ieee154_status_t MLME_ASSOCIATE.request  (
                           uint8_t LogicalChannel,
@@ -91,7 +91,7 @@ implementation
 
   event void DataRequest.pollDone() { }
 
-/* ------------------- MLME_ASSOCIATE Response ------------------- */
+  /* ------------------- MLME_ASSOCIATE Response ------------------- */
 
   event message_t* AssociationRequestRx.received(message_t* frame) { return frame; }
 
@@ -107,7 +107,7 @@ implementation
 
   event void AssociationResponseTx.transmitDone(ieee154_txframe_t *txFrame, ieee154_status_t status) { }
 
-/* ------------------- Defaults ------------------- */
+  /* ------------------- Defaults ------------------- */
 
   default event void MLME_ASSOCIATE.indication (
                           uint64_t DeviceAddress,

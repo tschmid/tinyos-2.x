@@ -33,6 +33,8 @@
  * ========================================================================
  */
 
+ /** Empty placeholder component for RxEnableP. */
+
 #include "TKN154_PHY.h"
 #include "TKN154_MAC.h"
 module NoRxEnableP
@@ -46,16 +48,12 @@ module NoRxEnableP
   }
   uses
   {
-    interface Ieee802154Debug as Debug;
     interface Timer<TSymbolIEEE802154> as RxEnableTimer;
-    interface GetNow<bool> as IsBeaconEnabledPAN;
     interface Get<ieee154_macPanCoordinator_t> as IsMacPanCoordinator;
     interface GetNow<bool> as IsTrackingBeacons;
-    interface GetNow<uint32_t> as IncomingSfStart; 
-    interface GetNow<uint32_t> as IncomingBeaconInterval; 
     interface GetNow<bool> as IsSendingBeacons;
-    interface GetNow<uint32_t> as OutgoingSfStart; 
-    interface GetNow<uint32_t> as OutgoingBeaconInterval; 
+    interface SuperframeStructure as IncomingSuperframeStructure;
+    interface SuperframeStructure as OutgoingSuperframeStructure;
     interface Notify<bool> as WasRxEnabled;
     interface TimeCalc;
   }
@@ -65,7 +63,7 @@ implementation
 
   command error_t Init.init() { return SUCCESS; }
 
-/* ----------------------- MLME-RX-ENABLE ----------------------- */
+  /* ----------------------- MLME-RX-ENABLE ----------------------- */
 
   command ieee154_status_t MLME_RX_ENABLE.request  ( 
                           bool DeferPermit,

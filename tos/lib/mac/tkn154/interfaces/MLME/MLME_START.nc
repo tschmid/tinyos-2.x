@@ -33,6 +33,14 @@
  * ========================================================================
  */
 
+/** 
+ * MLME-SAP start primitives define how an FFD can request to start
+ * using a new superframe configuration in order to initiate a PAN,
+ * begin transmitting beacons on an already existing PAN, thus
+ * facilitating device discovery, or to stop transmitting beacons.
+ * (IEEE 802.15.4-2006, Sect. 7.1.14)
+ */
+
 #include "TKN154.h"
 interface MLME_START {
 

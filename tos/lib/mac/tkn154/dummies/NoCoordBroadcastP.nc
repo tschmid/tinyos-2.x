@@ -33,6 +33,8 @@
  * ========================================================================
  */
 
+ /** Empty placeholder component for CoordBroadcastP. */
+
 #include "TKN154_MAC.h"
 module NoCoordBroadcastP
 {
@@ -48,6 +50,7 @@ module NoCoordBroadcastP
     interface ResourceTransfer as TokenToCap;
     interface ResourceTransferred as TokenTransferred;
     interface GetNow<bool> as BeaconFramePendingBit;
+    interface SuperframeStructure as OutgoingSF;
     interface Leds;
   }
 }

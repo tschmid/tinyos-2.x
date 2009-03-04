@@ -73,7 +73,7 @@ module TestCoordSenderC
           &deviceShortAddress,     // DstAddr,
           NULL                     // security
           );
-      call MLME_RESET.request(TRUE, BEACON_ENABLED_PAN);
+      call MLME_RESET.request(TRUE);
     }
   }
 

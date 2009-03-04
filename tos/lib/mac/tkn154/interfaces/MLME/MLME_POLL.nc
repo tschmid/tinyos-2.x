@@ -32,6 +32,12 @@
  * @author Jan Hauer <hauer@tkn.tu-berlin.de>
  * ========================================================================
  */
+
+/** 
+ * MLME-SAP polling primitives define how to request data from a
+ * coordinator. (IEEE 802.15.4-2006, Sect. 7.1.16)
+ */
+
 #include "TKN154.h"
 
 interface MLME_POLL {

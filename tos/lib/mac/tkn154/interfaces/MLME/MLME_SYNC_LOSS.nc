@@ -33,6 +33,13 @@
  * ========================================================================
  */
 
+/** 
+ * MLME-SAP synchronization primitives define how synchronization with
+ * a coordinator may be achieved and how a loss of synchronization is
+ * communicated to the next higher layer. (IEEE 802.15.4-2006, Sect.
+ * 7.1.15)
+ */
+
 #include "TKN154.h"
 interface MLME_SYNC_LOSS {
 

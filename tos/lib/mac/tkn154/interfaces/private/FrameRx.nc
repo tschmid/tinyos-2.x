@@ -34,8 +34,7 @@
 interface FrameRx
 {
   /**
-   * Received a frame buffer, returning a buffer for the signaling
-   * component to use for the next reception.
+   * Received a frame.
    *
    * @param   frame     the received frame
    * @return            a buffer to be used by the stack for the next 

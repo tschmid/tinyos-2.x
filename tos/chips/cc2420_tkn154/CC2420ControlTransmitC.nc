@@ -64,7 +64,6 @@ configuration CC2420ControlTransmitC {
     interface Alarm<T62500hz,uint32_t> as AckAlarm;
     interface CaptureTime;
     interface ReferenceTime;
-    interface Leds;
   }
 }
 
@@ -76,7 +75,6 @@ implementation {
   CC2420Config = CC2420ControlP;
   CC2420Power = CC2420ControlP;
   FrameUtility = CC2420ControlP;
-  CC2420ControlP.Leds = Leds;
 
   components MainC;
   MainC.SoftwareInit -> CC2420ControlP;
@@ -119,13 +117,14 @@ implementation {
   AckAlarm = CC2420TransmitP;
   CaptureTime = CC2420TransmitP;
   ReferenceTime = CC2420TransmitP;
-  CC2420TransmitP.Leds = Leds;
 
   MainC.SoftwareInit -> CC2420TransmitP;
   CC2420TransmitP.CCA -> Pins.CCA;
   CC2420TransmitP.CSN -> Pins.CSN;
   CC2420TransmitP.SFD -> Pins.SFD;
   CC2420TransmitP.CaptureSFD -> Interrupts.CaptureSFD;
+  CC2420TransmitP.FIFOP -> Pins.FIFOP;
+  CC2420TransmitP.FIFO -> Pins.FIFO;
 
   CC2420TransmitP.ChipSpiResource -> Spi;
   CC2420TransmitP.SNOP        -> Spi.SNOP;

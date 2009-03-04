@@ -36,19 +36,19 @@
 configuration TestAssociateAppC
 {
 } implementation {
-  components MainC, LedsC, Ieee802154MacC as Ieee802154MacC;
+  components MainC, LedsC, Ieee802154BeaconEnabledC as MAC;
   components TestCoordC as App;
 
   MainC.Boot <- App;
   App.Leds -> LedsC;
-  App.MLME_RESET -> Ieee802154MacC;
-  App.MLME_SET -> Ieee802154MacC;
-  App.MLME_GET -> Ieee802154MacC;
+  App.MLME_RESET -> MAC;
+  App.MLME_SET -> MAC;
+  App.MLME_GET -> MAC;
 
-  App.MLME_START -> Ieee802154MacC;
-  App.MLME_ASSOCIATE -> Ieee802154MacC;
-  App.MLME_DISASSOCIATE -> Ieee802154MacC;
-  App.MLME_COMM_STATUS -> Ieee802154MacC;
-  App.Frame -> Ieee802154MacC;
-  App.IEEE154TxBeaconPayload -> Ieee802154MacC;
+  App.MLME_START -> MAC;
+  App.MLME_ASSOCIATE -> MAC;
+  App.MLME_DISASSOCIATE -> MAC;
+  App.MLME_COMM_STATUS -> MAC;
+  App.Frame -> MAC;
+  App.IEEE154TxBeaconPayload -> MAC;
 }

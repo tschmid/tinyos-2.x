@@ -33,17 +33,23 @@
  * ========================================================================
  */
 
+/** 
+ * The MCPS-PURGE.request primitive allows the next higher layer to purge an
+ * MSDU from the transaction queue. (IEEE 802.15.4-2006, Sect. 7.1.1)
+ */
+
 #include "TKN154.h"
 
 interface MCPS_PURGE {
 
   /**
-   * Request to purge a frame from the transaction queue.
-   * The result will be returned immediately (there
-   * is no confirm event for this command).
+   * Requests to purge a frame from the transaction queue. The result
+   * will be returned immediately (there is no confirm event for this
+   * command).
    * 
    * @param msduHandle The handle of the frame to be purged from the
    *                   transaction queue
+   *
    * @return       IEEE154_SUCCESS if the request succeeded, an 
    *               appropriate error code otherwise 
    */

@@ -32,14 +32,17 @@
  * @author Jan Hauer <hauer@tkn.tu-berlin.de>
  * ========================================================================
  */
+
 #include "TKN154_MAC.h"
 generic configuration RadioClientC() 
 {
   provides
   {
+    interface RadioOff;
     interface RadioRx;
     interface RadioTx;
-    interface RadioOff;
+    interface SlottedCsmaCa;
+    interface UnslottedCsmaCa;
     interface Resource as Token;
     interface ResourceRequested as TokenRequested;
     interface ResourceTransfer;
@@ -60,6 +63,8 @@ implementation
   RadioRx = RadioControlP.RadioRx[CLIENT];
   RadioTx = RadioControlP.RadioTx[CLIENT];
   RadioOff = RadioControlP.RadioOff[CLIENT];
+  SlottedCsmaCa = RadioControlP.SlottedCsmaCa[CLIENT];
+  UnslottedCsmaCa = RadioControlP.UnslottedCsmaCa[CLIENT];
   Token = RadioControlP.Token[CLIENT];
   IsResourceRequested = RadioControlP.IsResourceRequested;
   TokenRequested = RadioControlP.TokenRequested[CLIENT];

@@ -43,7 +43,6 @@ configuration CC2420ReceiveC {
   provides interface CC2420Receive; // to CC2420TransmitP for ACK
   provides interface CC2420Rx;      // to the driver
   uses interface ReferenceTime;
-  uses interface Leds;
   uses interface FrameUtility;
   uses interface CC2420Config;
 }
@@ -56,7 +55,6 @@ implementation {
   components HplCC2420PinsC as Pins;
   components HplCC2420InterruptsC as InterruptsC;
 
-  CC2420ReceiveP.Leds = Leds;
   CC2420AsyncSplitControl = CC2420ReceiveP;
   CC2420Receive = CC2420ReceiveP;
   CC2420Rx = CC2420ReceiveP;

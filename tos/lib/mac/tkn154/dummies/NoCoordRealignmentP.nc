@@ -33,6 +33,8 @@
  * ========================================================================
  */
 
+ /** Empty placeholder component for CoordRealignmentP. */
+
 #include "TKN154_MAC.h"
 module NoCoordRealignmentP
 {

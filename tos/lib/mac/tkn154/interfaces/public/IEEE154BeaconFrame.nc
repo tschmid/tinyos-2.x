@@ -33,6 +33,10 @@
  * ========================================================================
  */
 
+/** 
+ * The IEEE154BeaconFrame interface allows to access the content of a beacon
+ * frame.
+ */
 
 #include <TKN154.h>
 

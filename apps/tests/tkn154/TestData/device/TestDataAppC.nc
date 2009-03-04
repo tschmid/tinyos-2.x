@@ -32,25 +32,25 @@
  * @author: Jan Hauer <hauer@tkn.tu-berlin.de>
  * ========================================================================
  */
-
+#include "app_profile.h"
 configuration TestDataAppC
 {
 } implementation {
-  components MainC, LedsC, Ieee802154MacC;
+  components MainC, LedsC, Ieee802154BeaconEnabledC as MAC;
 
   components TestDeviceSenderC as App;
-  App.MLME_SCAN -> Ieee802154MacC;
-  App.MLME_SYNC -> Ieee802154MacC;
-  App.MLME_BEACON_NOTIFY -> Ieee802154MacC;
-  App.MLME_SYNC_LOSS -> Ieee802154MacC;
-  App.MCPS_DATA -> Ieee802154MacC;
-  App.Frame -> Ieee802154MacC;
-  App.BeaconFrame -> Ieee802154MacC;
-  App.Packet -> Ieee802154MacC;
+  App.MLME_SCAN -> MAC;
+  App.MLME_SYNC -> MAC;
+  App.MLME_BEACON_NOTIFY -> MAC;
+  App.MLME_SYNC_LOSS -> MAC;
+  App.MCPS_DATA -> MAC;
+  App.Frame -> MAC;
+  App.BeaconFrame -> MAC;
+  App.Packet -> MAC;
 
   MainC.Boot <- App;
   App.Leds -> LedsC;
-  App.MLME_RESET -> Ieee802154MacC;
-  App.MLME_SET -> Ieee802154MacC;
-  App.MLME_GET -> Ieee802154MacC;
+  App.MLME_RESET -> MAC;
+  App.MLME_SET -> MAC;
+  App.MLME_GET -> MAC;
 }

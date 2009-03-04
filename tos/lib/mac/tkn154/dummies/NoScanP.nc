@@ -33,6 +33,8 @@
  * ========================================================================
  */
 
+ /** Empty placeholder component for ScanP. */
+
 #include "TKN154_MAC.h"
 
 module NoScanP
@@ -88,23 +90,16 @@ implementation
 
   event void EnergyDetection.done(error_t status, int8_t EnergyLevel){}
 
-  async event void RadioRx.prepareDone() { }
+  async event void RadioRx.enableRxDone(){}
 
-  event message_t* RadioRx.received(message_t *frame, ieee154_reftime_t *time)
+  event message_t* RadioRx.received(message_t *frame, const ieee154_timestamp_t *timestamp)
   {
     return frame;
   }
 
-  async event void RadioTx.loadDone() { }
+  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, 
+      const ieee154_timestamp_t *timestamp, error_t result){}
 
-  async event void RadioTx.transmitDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime){}
-
-  async event void RadioTx.transmitUnslottedCsmaCaDone(ieee154_txframe_t *frame,
-      bool ackPendingFlag, ieee154_csma_t *csmaParameters, error_t result){}
-
-  async event void RadioTx.transmitSlottedCsmaCaDone(ieee154_txframe_t *frame, ieee154_reftime_t *txTime, 
-      bool ackPendingFlag, uint16_t remainingBackoff, ieee154_csma_t *csmaParameters, error_t result){}
- 
   event void ScanTimer.fired() { }
 
   async event void RadioOff.offDone() { }

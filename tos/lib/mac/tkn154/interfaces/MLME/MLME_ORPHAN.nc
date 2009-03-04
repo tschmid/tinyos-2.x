@@ -33,6 +33,12 @@
  * ========================================================================
  */
 
+/** 
+ * MLME-SAP orphan notification primitives define how a coordinator
+ * can issue a notification of an orphaned device. (IEEE 802.15.4-2006,
+ * Sect. 7.1.8)
+ */
+
 #include "TKN154.h" 
 interface MLME_ORPHAN {
 

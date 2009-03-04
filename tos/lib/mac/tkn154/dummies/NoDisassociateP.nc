@@ -33,6 +33,7 @@
  * ========================================================================
  */
 
+ /** Empty placeholder component for DisassociateP. */
 
 #include "TKN154_MAC.h"
 
@@ -58,7 +59,6 @@ module NoDisassociateP
     interface FrameUtility;
     interface IEEE154Frame as Frame;
     interface Get<uint64_t> as LocalExtendedAddress;
-    interface Ieee802154Debug as Debug;
   }
 }
 implementation
@@ -66,7 +66,7 @@ implementation
 
   command error_t Init.init() { return SUCCESS; }
 
-/* ------------------- MLME_DISASSOCIATE (initiating) ------------------- */
+  /* ------------------- MLME_DISASSOCIATE (initiating) ------------------- */
 
   command ieee154_status_t MLME_DISASSOCIATE.request  (
                           uint8_t DeviceAddrMode,
@@ -86,7 +86,7 @@ implementation
 
   event void DisassociationDirectTx.transmitDone(ieee154_txframe_t *data, ieee154_status_t status) { }
 
-/* ------------------- MLME_DISASSOCIATE (receiving) ------------------- */
+  /* ------------------- MLME_DISASSOCIATE (receiving) ------------------- */
 
   event message_t* DisassociationDirectRxFromCoord.received(message_t* frame) { return frame; }
 
@@ -95,7 +95,7 @@ implementation
 
   event message_t* DisassociationRxFromDevice.received(message_t* frame) { return frame; }
 
-/* ------------------- Defaults ------------------- */
+  /* ------------------- Defaults ------------------- */
 
   default event void MLME_DISASSOCIATE.indication (
                           uint64_t DeviceAddress,

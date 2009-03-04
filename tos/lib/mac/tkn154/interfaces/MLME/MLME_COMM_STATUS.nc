@@ -33,6 +33,14 @@
  * ========================================================================
  */
 
+/** 
+ * The MLME-SAP communication status primitive defines how the MLME
+ * communicates to the next higher layer about transmission status,
+ * when the transmission was instigated by a response primitive, and
+ * about security errors on incoming packets. (IEEE 802.15.4-2006,
+ * Sect. 7.1.12)
+ */
+
 #include "TKN154.h"
 interface MLME_COMM_STATUS {
 

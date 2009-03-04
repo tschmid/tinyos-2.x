@@ -43,5 +43,6 @@ enum {
   BEACON_ORDER = 5,
   SUPERFRAME_ORDER = 5,
 };
+//#define IEEE154_DEFAULT_TRANSMITPOWER_dBm -25
 
 #endif
