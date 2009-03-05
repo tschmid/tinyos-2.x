@@ -33,12 +33,12 @@
  * ========================================================================
  */
 
- /** Empty placeholder component for SlottedFrameDispatchP. */
+ /** Empty placeholder component for DispatchSlottedCsmaP. */
 
 #include "TKN154_PHY.h"
 #include "TKN154_MAC.h"
 
-generic module NoSlottedFrameDispatchP(uint8_t superframeDirection)
+generic module NoDispatchSlottedCsmaP(uint8_t superframeDirection)
 {
   provides
   {
