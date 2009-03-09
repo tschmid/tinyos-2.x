@@ -21,6 +21,8 @@
  * Author: Miklos Maroti
  */
 
+#include "Atm128Spi.h"
+
 module HplRF2xxP
 {
 	provides
