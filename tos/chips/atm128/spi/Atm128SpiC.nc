@@ -65,6 +65,7 @@
 configuration Atm128SpiC {
   provides interface Init;
   provides interface SpiByte;
+  provides interface FastSpiByte;
   provides interface SpiPacket;
   provides interface Resource[uint8_t id];
 }
@@ -76,6 +77,7 @@ implementation {
   Init         = SpiMaster;
   
   SpiByte      = SpiMaster;
+  FastSpiByte  = SpiMaster;
   SpiPacket    = SpiMaster;
   Resource     = SpiMaster;
 
