@@ -21,10 +21,10 @@
  * Author: Miklos Maroti
  */
 
-#include <TimeSyncMessage.h>
-#include <RadioAlarm.h>
+#include <GenericTimeSyncMessage.h>
+#include <RadioConfig.h>
 
-module RF2xxTimeSyncMessageP
+module GenericTimeSyncMessageP
 {
 	provides
 	{
@@ -121,7 +121,7 @@ implementation
 	command error_t TimeSyncAMSendMilli.send[am_id_t id](am_addr_t addr, message_t* msg, uint8_t len, uint32_t event_time)
 	{
 		// compute elapsed time in millisecond
-		event_time = ((int32_t)(event_time - call LocalTimeMilli.get()) << 10) + call LocalTimeRadio.get();
+		event_time = ((int32_t)(event_time - call LocalTimeMilli.get()) << RADIO_ALARM_MILLI_EXP) + call LocalTimeRadio.get();
 
 		return call TimeSyncAMSendRadio.send[id](addr, msg, len, event_time);
 	}
@@ -182,6 +182,6 @@ implementation
 	{
 		timesync_relative_t* timesync = getFooter(msg);
 
-		return ((int32_t)(*timesync) >> 10) + call PacketTimeStampMilli.timestamp(msg);
+		return ((int32_t)(*timesync) >> RADIO_ALARM_MILLI_EXP) + call PacketTimeStampMilli.timestamp(msg);
 	}
 }

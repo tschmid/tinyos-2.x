@@ -50,7 +50,7 @@ module TrafficMonitorLayerP
 		interface Neighborhood;
 		interface NeighborhoodFlag;
 		interface Tasklet;
-#ifdef RF2XX_DEBUG
+#ifdef RADIO_DEBUG
 		interface DiagMsg;
 #endif
 	}
@@ -153,7 +153,7 @@ implementation
 
 		call Tasklet.resume();
 
-#ifdef RF2XX_DEBUG
+#ifdef RADIO_DEBUG
 		if( ++debugCounter >= 10 && call DiagMsg.record() )
 		{
 			debugCounter = 0;

@@ -21,13 +21,37 @@
  * Author: Miklos Maroti
  */
 
-#ifndef __TIMESYNCMESSAGE_H__
-#define __TIMESYNCMESSAGE_H__
+configuration SlottedCollisionLayerC
+{
+	provides
+	{
+		interface RadioSend;
+		interface RadioReceive;
+	}
+	uses
+	{
+		interface RadioSend as SubSend;
+		interface RadioReceive as SubReceive;
+		interface SlottedCollisionConfig as Config;
+	}
+}
 
-// this value is sent in the air
-typedef nx_int32_t timesync_relative_t;
+implementation
+{
+	components SlottedCollisionLayerP, MainC, RadioAlarmC, RandomC;
 
-// this value is stored in memory
-typedef uint32_t timesync_absolute_t;
+	RadioSend = SlottedCollisionLayerP;
+	RadioReceive = SlottedCollisionLayerP;
+	SubSend = SlottedCollisionLayerP;
+	SubReceive = SlottedCollisionLayerP;
+	Config = SlottedCollisionLayerP;
+	
+	SlottedCollisionLayerP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
+	SlottedCollisionLayerP.Random -> RandomC;
+	MainC.SoftwareInit -> SlottedCollisionLayerP;
 
-#endif//__TIMESYNCMESSAGE_H__
+#ifdef RADIO_DEBUG
+	components DiagMsgC;
+	SlottedCollisionLayerP.DiagMsg -> DiagMsgC;
+#endif
+}

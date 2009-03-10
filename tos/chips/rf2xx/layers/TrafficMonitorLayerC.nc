@@ -21,64 +21,44 @@
  * Author: Miklos Maroti
  */
 
-#include "Atm128Spi.h"
-
-module HplRF2xxP
+configuration TrafficMonitorLayerC
 {
 	provides
 	{
-		interface GpioCapture as IRQ;
-		interface Init as PlatformInit;
+		interface RadioSend;
+		interface RadioReceive;
+		interface RadioState;
 	}
-
 	uses
 	{
-		interface HplAtm128Capture<uint16_t> as Capture;
-		interface GeneralIO as PortCLKM;
-		interface GeneralIO as PortIRQ;
+		interface RadioSend as SubSend;
+		interface RadioReceive as SubReceive;
+		interface RadioState as SubState;
+
+		interface TrafficMonitorConfig as Config;
 	}
 }
 
 implementation
 {
-	command error_t PlatformInit.init()
-	{
-		call PortCLKM.makeInput();
-		call PortCLKM.clr();
-		call PortIRQ.makeInput();
-		call PortIRQ.clr();
-		call Capture.stop();
+	components TrafficMonitorLayerP, new TimerMilliC() as UpdateTimerC; 
+	components NeighborhoodC, new NeighborhoodFlagC(), TaskletC;
 
-		return SUCCESS;
-	}
+	RadioSend = TrafficMonitorLayerP;
+	RadioReceive = TrafficMonitorLayerP;
+	RadioState = TrafficMonitorLayerP;
+	SubSend = TrafficMonitorLayerP;
+	SubReceive = TrafficMonitorLayerP;
+	SubState = TrafficMonitorLayerP;
+	Config = TrafficMonitorLayerP;
 
-	async event void Capture.captured(uint16_t time)
-	{
-		time = call Capture.get();	// TODO: ask Cory why time is not the captured time
-		signal IRQ.captured(time);
-	}
+	TrafficMonitorLayerP.Timer -> UpdateTimerC;
+	TrafficMonitorLayerP.Neighborhood -> NeighborhoodC;
+	TrafficMonitorLayerP.NeighborhoodFlag -> NeighborhoodFlagC;
+	TrafficMonitorLayerP.Tasklet -> TaskletC;
 
-	default async event void IRQ.captured(uint16_t time)
-	{
-	}
-
-	async command error_t IRQ.captureRisingEdge()
-	{
-		call Capture.setEdge(TRUE);
-		call Capture.reset();
-		call Capture.start();
-	
-		return SUCCESS;
-	}
-
-	async command error_t IRQ.captureFallingEdge()
-	{
-		// falling edge comes when the IRQ_STATUS register of the RF230 is read
-		return FAIL;	
-	}
-
-	async command void IRQ.disable()
-	{
-		call Capture.stop();
-	}
+#ifdef RADIO_DEBUG
+	components DiagMsgC;
+	TrafficMonitorLayerP.DiagMsg -> DiagMsgC;
+#endif
 }

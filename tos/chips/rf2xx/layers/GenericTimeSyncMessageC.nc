@@ -23,9 +23,9 @@
 
 #include <Timer.h>
 #include <AM.h>
-#include <RadioAlarm.h>
+#include <RadioConfig.h>
 
-configuration RF2xxTimeSyncMessageC
+configuration GenericTimeSyncMessageC
 {
 	provides
 	{
@@ -42,31 +42,37 @@ configuration RF2xxTimeSyncMessageC
 		interface TimeSyncAMSend<TMilli, uint32_t> as TimeSyncAMSendMilli[am_id_t id];
 		interface TimeSyncPacket<TMilli, uint32_t> as TimeSyncPacketMilli;
 	}
+
+	uses
+	{
+		interface PacketField<uint8_t> as PacketTimeSyncOffset;
+		interface LocalTime<TRadio> as LocalTimeRadio;
+	}
 }
 
 implementation
 {
-	components RF2xxTimeSyncMessageP, RF2xxActiveMessageC, LocalTimeMilliC, LocalTimeMicroC as LocalTimeRadioC, RF2xxPacketC;
+	components GenericTimeSyncMessageP, ActiveMessageC, LocalTimeMilliC;
 
-	TimeSyncAMSendRadio = RF2xxTimeSyncMessageP;
-	TimeSyncPacketRadio = RF2xxTimeSyncMessageP;
+	TimeSyncAMSendRadio = GenericTimeSyncMessageP;
+	TimeSyncPacketRadio = GenericTimeSyncMessageP;
 
-	TimeSyncAMSendMilli = RF2xxTimeSyncMessageP;
-	TimeSyncPacketMilli = RF2xxTimeSyncMessageP;
+	TimeSyncAMSendMilli = GenericTimeSyncMessageP;
+	TimeSyncPacketMilli = GenericTimeSyncMessageP;
 
-	Packet = RF2xxTimeSyncMessageP;
-	RF2xxTimeSyncMessageP.SubSend -> RF2xxActiveMessageC.AMSend;
-	RF2xxTimeSyncMessageP.SubPacket -> RF2xxActiveMessageC.Packet;
+	Packet = GenericTimeSyncMessageP;
+	GenericTimeSyncMessageP.SubSend -> ActiveMessageC.AMSend;
+	GenericTimeSyncMessageP.SubPacket -> ActiveMessageC.Packet;
 
-	RF2xxTimeSyncMessageP.PacketTimeStampRadio -> RF2xxActiveMessageC;
-	RF2xxTimeSyncMessageP.PacketTimeStampMilli -> RF2xxActiveMessageC;
-	RF2xxTimeSyncMessageP.LocalTimeRadio -> LocalTimeRadioC;
-	RF2xxTimeSyncMessageP.LocalTimeMilli -> LocalTimeMilliC;
+	GenericTimeSyncMessageP.PacketTimeStampRadio -> ActiveMessageC;
+	GenericTimeSyncMessageP.PacketTimeStampMilli -> ActiveMessageC;
+	GenericTimeSyncMessageP.LocalTimeRadio = LocalTimeRadio;
+	GenericTimeSyncMessageP.LocalTimeMilli -> LocalTimeMilliC;
 
-	RF2xxTimeSyncMessageP.PacketTimeSyncOffset -> RF2xxPacketC.PacketTimeSyncOffset;
+	GenericTimeSyncMessageP.PacketTimeSyncOffset = PacketTimeSyncOffset;
 
-	SplitControl = RF2xxActiveMessageC;
-	Receive	= RF2xxActiveMessageC.Receive;
-	Snoop = RF2xxActiveMessageC.Snoop;
-	AMPacket = RF2xxActiveMessageC;
+	SplitControl = ActiveMessageC;
+	Receive	= ActiveMessageC.Receive;
+	Snoop = ActiveMessageC.Snoop;
+	AMPacket = ActiveMessageC;
 }
