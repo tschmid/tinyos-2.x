@@ -39,7 +39,7 @@ module SlottedCollisionLayerP
 		interface RadioAlarm;
 		interface Random;
 		interface SlottedCollisionConfig as Config;
-#ifdef RF2XX_DEBUG
+#ifdef RADIO_DEBUG
 		interface DiagMsg;
 #endif
 	}
@@ -252,7 +252,7 @@ implementation
 		return SUCCESS;
 	}
 
-#ifdef RF2XX_DEBUG
+#ifdef RADIO_DEBUG
 	tasklet_norace uint8_t count;
 	void printStats()
 	{

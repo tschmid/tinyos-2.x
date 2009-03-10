@@ -21,47 +21,62 @@
  * Author: Miklos Maroti
  */
 
-#include <RadioAlarm.h>
-
-configuration HplRF2xxC
+module HplRF230P
 {
 	provides
 	{
-		interface GeneralIO as SELN;
-		interface Resource as SpiResource;
-		interface FastSpiByte;
-
-		interface GeneralIO as SLP_TR;
-		interface GeneralIO as RSTN;
-
 		interface GpioCapture as IRQ;
-		interface Alarm<TRadio, uint16_t> as Alarm;
+		interface Init as PlatformInit;
+	}
+
+	uses
+	{
+		interface HplAtm128Capture<uint16_t> as Capture;
+		interface GeneralIO as PortCLKM;
+		interface GeneralIO as PortIRQ;
 	}
 }
 
 implementation
 {
-	components HplRF2xxP;
-	IRQ = HplRF2xxP.IRQ;
+	command error_t PlatformInit.init()
+	{
+		call PortCLKM.makeInput();
+		call PortCLKM.clr();
+		call PortIRQ.makeInput();
+		call PortIRQ.clr();
+		call Capture.stop();
 
-	HplRF2xxP.PortCLKM -> IO.PortD6;
-	HplRF2xxP.PortIRQ -> IO.PortD4;
+		return SUCCESS;
+	}
+
+	async event void Capture.captured(uint16_t time)
+	{
+		time = call Capture.get();	// TODO: ask Cory why time is not the captured time
+		signal IRQ.captured(time);
+	}
+
+	default async event void IRQ.captured(uint16_t time)
+	{
+	}
+
+	async command error_t IRQ.captureRisingEdge()
+	{
+		call Capture.setEdge(TRUE);
+		call Capture.reset();
+		call Capture.start();
 	
-	components Atm128SpiC as SpiC;
-	SpiResource = SpiC.Resource[unique("Atm128SpiC.Resource")];
-	FastSpiByte = SpiC;
+		return SUCCESS;
+	}
 
-	components HplAtm128GeneralIOC as IO;
-	SLP_TR = IO.PortB7;
-	RSTN = IO.PortA6;
-	SELN = IO.PortB0;
+	async command error_t IRQ.captureFallingEdge()
+	{
+		// falling edge comes when the IRQ_STATUS register of the RF230 is read
+		return FAIL;	
+	}
 
-	components HplAtm128Timer1C as TimerC;
-	HplRF2xxP.Capture -> TimerC.Capture;
-
-	components new AlarmOne16C() as AlarmC;
-	Alarm = AlarmC;
-
-	components RealMainP;
-	RealMainP.PlatformInit -> HplRF2xxP.PlatformInit;
+	async command void IRQ.disable()
+	{
+		call Capture.stop();
+	}
 }

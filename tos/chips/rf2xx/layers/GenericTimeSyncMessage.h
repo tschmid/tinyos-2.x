@@ -21,20 +21,13 @@
  * Author: Miklos Maroti
  */
 
-#ifndef __RADIOALARM_H__
-#define __RADIOALARM_H__
+#ifndef __GENERICTIMESYNCMESSAGE_H__
+#define __GENERICTIMESYNCMESSAGE_H__
 
-#include <MicaTimer.h>
+// this value is sent in the air
+typedef nx_int32_t timesync_relative_t;
 
-/**
- * This is the timer type of the radio alarm interface
- */
-typedef TOne TRadio;
+// this value is stored in memory
+typedef uint32_t timesync_absolute_t;
 
-/**
- * The number of radio alarm ticks per one microsecond (0.9216). 
- * We use integers and no parentheses just to make deputy happy.
- */
-#define RADIO_ALARM_MICROSEC	(7372800UL / MHZ / 32) * (1 << MICA_DIVIDE_ONE_FOR_32KHZ_LOG2) / 1000000UL
-
-#endif//__RADIOALARM_H__
+#endif//__GENERICTIMESYNCMESSAGE_H__

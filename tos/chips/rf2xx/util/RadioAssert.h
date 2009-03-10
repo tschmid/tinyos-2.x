@@ -21,44 +21,18 @@
  * Author: Miklos Maroti
  */
 
-configuration TrafficMonitorLayerC
-{
-	provides
-	{
-		interface RadioSend;
-		interface RadioReceive;
-		interface RadioState;
-	}
-	uses
-	{
-		interface RadioSend as SubSend;
-		interface RadioReceive as SubReceive;
-		interface RadioState as SubState;
+#ifndef __RADIOASSERT_H__
+#define __RADIOASSERT_H__
 
-		interface TrafficMonitorConfig as Config;
-	}
-}
+#ifdef RADIO_DEBUG
 
-implementation
-{
-	components TrafficMonitorLayerP, new TimerMilliC() as UpdateTimerC; 
-	components NeighborhoodC, new NeighborhoodFlagC(), TaskletC;
+	void assert(bool condition, const char* file, uint16_t line);
+	#define ASSERT(COND) assert(COND, __FILE__, __LINE__)
 
-	RadioSend = TrafficMonitorLayerP;
-	RadioReceive = TrafficMonitorLayerP;
-	RadioState = TrafficMonitorLayerP;
-	SubSend = TrafficMonitorLayerP;
-	SubReceive = TrafficMonitorLayerP;
-	SubState = TrafficMonitorLayerP;
-	Config = TrafficMonitorLayerP;
+#else
 
-	TrafficMonitorLayerP.Timer -> UpdateTimerC;
-	TrafficMonitorLayerP.Neighborhood -> NeighborhoodC;
-	TrafficMonitorLayerP.NeighborhoodFlag -> NeighborhoodFlagC;
-	TrafficMonitorLayerP.Tasklet -> TaskletC;
+	#define ASSERT(COND) for(;0;)
 
-#ifdef RF2XX_DEBUG
-	components DiagMsgC;
-	TrafficMonitorLayerP.DiagMsg -> DiagMsgC;
 #endif
-}
+
+#endif//__RADIOASSERT_H__
