@@ -276,7 +276,7 @@ implementation {
   // called when new beacon estimate is done
   // also called when new DEETX estimate is done
   void updateEETX(neighbor_table_entry_t *ne, uint16_t newEst) {
-    ne->eetx = (ALPHA * ne->eetx + (10 - ALPHA) * newEst)/10;
+    ne->eetx = (ALPHA * ne->eetx + (10 - ALPHA) * newEst + 5)/10;
   }
 
 
@@ -346,8 +346,8 @@ implementation {
 	      ne->inquality = (ALPHA * ne->inquality) / 10;
 	    } else {
 	      newEst = (255 * ne->rcvcnt) / totalPkt;
-	      dbg("LI,LITest", "  %hu: %hhu -> %hhu", ne->ll_addr, ne->inquality, (ALPHA * ne->inquality + (10-ALPHA) * newEst)/10);
-	      ne->inquality = (ALPHA * ne->inquality + (10-ALPHA) * newEst)/10;
+	      dbg("LI,LITest", "  %hu: %hhu -> %hhu", ne->ll_addr, ne->inquality, (ALPHA * ne->inquality + (10-ALPHA) * newEst + 5)/10);
+	      ne->inquality = (ALPHA * ne->inquality + (10-ALPHA) * newEst + 5)/10;
 	    }
 	    ne->rcvcnt = 0;
 	    ne->failcnt = 0;
