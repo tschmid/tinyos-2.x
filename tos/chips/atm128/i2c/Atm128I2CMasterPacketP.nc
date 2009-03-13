@@ -93,7 +93,7 @@ implementation {
   async command error_t AsyncStdControl.start() {
     atomic {
       if (state == I2C_OFF) {
-	call I2C.init(FALSE);
+	call I2C.init(ATM128_I2C_EXTERNAL_PULLDOWN);
 	call I2C.readCurrent();
 	call I2C.enable(TRUE);
 	call I2C.enableInterrupt(FALSE);

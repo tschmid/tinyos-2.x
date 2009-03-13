@@ -47,4 +47,8 @@ enum {
     ATM128_I2C_MR_DATA_NACK     = 0x58
 };
 
+#ifndef ATM128_I2C_EXTERNAL_PULLDOWN
+#define ATM128_I2C_EXTERNAL_PULLDOWN FALSE
+#endif
+
 #endif // _H_Atm128I2C_h
