@@ -67,15 +67,16 @@ class Timeout(Exception):
 def getSource(comm):
     source = comm.split('@')
     params = source[1].split(':')
+    debug = '--debug' in sys.argv
     if source[0] == 'serial':
         try:
-            return Serial(params[0], int(params[1]), flush=True, debug=('--debug' in sys.argv))
+            return Serial(params[0], int(params[1]), flush=True, debug=debug)
         except:
             print "ERROR: Unable to initialize a serial connection to", comm
             raise Exception
     elif source[0] == 'network':
         try:
-            return SerialMIB600(params[0], int(params[1]), debug=False)
+            return SerialMIB600(params[0], int(params[1]), debug=debug)
         except:
             print "ERROR: Unable to initialize a network connection to", comm
             print "ERROR:", traceback.format_exc()
@@ -122,7 +123,7 @@ class Serial:
         self._s.timeout = timeout
 
 class SerialMIB600:
-    def __init__(self, host, port=10002, debug=False, readTimeout=None, ackTimeout=0.05):
+    def __init__(self, host, port=10002, debug=False, readTimeout=None, ackTimeout=0.5):
         self.debug = debug
         self.readTimeout = readTimeout
         self.ackTimeout = ackTimeout
