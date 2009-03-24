@@ -60,10 +60,7 @@ module NoBeaconSynchronizeP
     interface RadioOff;
     interface DataRequest;
     interface FrameRx as CoordRealignmentRx;
-    interface Resource as Token;
-    interface GetNow<bool> as IsTokenRequested;
-    interface ResourceTransferred as TokenTransferred;
-    interface ResourceTransfer as TokenToCap;
+    interface TransferableResource as RadioToken;
     interface TimeCalc;
     interface IEEE154Frame as Frame;
     interface Leds;
@@ -78,9 +75,9 @@ implementation
     return IEEE154_TRANSACTION_OVERFLOW;
   }
 
-  event void Token.granted() { }
+  event void RadioToken.granted() { }
 
-  async event void TokenTransferred.transferred() { }
+  async event void RadioToken.transferredFrom(uint8_t fromClient) { call RadioToken.transferTo(RADIO_CLIENT_BEACONTRANSMIT); }
 
   async event void RadioOff.offDone() { }
 

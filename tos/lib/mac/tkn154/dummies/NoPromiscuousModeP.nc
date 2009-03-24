@@ -44,6 +44,7 @@ module NoPromiscuousModeP
     interface SplitControl as PromiscuousMode;
     interface Get<bool> as PromiscuousModeGet;
     interface FrameRx;
+    interface GetNow<token_requested_t> as IsRadioTokenRequested;
   } uses {
     interface Resource as Token;
     interface RadioRx as PromiscuousRx;
@@ -74,4 +75,5 @@ implementation
 
   default event void PromiscuousMode.startDone(error_t error){}
   default event void PromiscuousMode.stopDone(error_t error){}
+  async command token_requested_t IsRadioTokenRequested.getNow(){ return FALSE;}
 }

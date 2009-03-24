@@ -447,10 +447,6 @@ implementation {
   /***************** StartupAlarm Events ****************/
   async event void StartupAlarm.fired() {
     if ( m_state == S_VREG_STARTING ) {
-      cc2420_status_t status;
-      do {
-       status = call SNOP.strobe();  
-      } while (!(status & CC2420_STATUS_XOSC16M_STABLE));
       m_state = S_VREG_STARTED;
       call RSTN.clr();
       call RSTN.set();
