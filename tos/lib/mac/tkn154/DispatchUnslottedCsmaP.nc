@@ -175,6 +175,7 @@ implementation
       post signalStartConfirmTask();
       status = IEEE154_SUCCESS;
     }      
+    dbg_serial("DispatchUnslottedCsmaP", "MLME_START.request -> result: %lu\n", (uint32_t) status);
     return status;
   }
 
@@ -191,7 +192,10 @@ implementation
       return IEEE154_TRANSACTION_OVERFLOW;
     } else {
       setCurrentFrame(frame);
-      call RadioToken.request();
+      if (call RadioToken.isOwner())
+        updateState();
+      else
+        call RadioToken.request();      
       return IEEE154_SUCCESS;
     }
   }

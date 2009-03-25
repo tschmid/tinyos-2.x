@@ -36,7 +36,13 @@
 configuration DebugC {
 }
 implementation {
-  components DebugP, LedsC;
+  components DebugP, LedsC, MainC;
+  DebugP.Boot -> MainC;
   DebugP.Leds -> LedsC;
+
+#if defined(PLATFORM_TELOSB)
+  components UserButtonC;
+  DebugP.ButtonPressed -> UserButtonC;
+#endif
 }
 

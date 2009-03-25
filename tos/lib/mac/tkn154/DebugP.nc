@@ -40,9 +40,18 @@
 #else
 #include <varargs.h>
 #endif
+#if defined(PLATFORM_TELOSB)
+#include <UserButton.h>
+#endif
 
 module DebugP {
-  uses interface Leds;
+  uses {
+    interface Boot;
+    interface Leds;
+#if defined(PLATFORM_TELOSB)
+    interface Notify<button_state_t> as ButtonPressed;
+#endif
+  }
 }
 implementation {
 
@@ -69,6 +78,19 @@ implementation {
   norace uint16_t m_assertLine;
   norace char m_assertFilename[MAX_LEN_FILENAME];
   norace char m_assertFunction[MAX_LEN_FUNNAME];
+
+  event void Boot.booted() {
+#if defined(PLATFORM_TELOSB)
+    call ButtonPressed.enable();
+#endif
+  }
+
+#if defined(PLATFORM_TELOSB)
+  event void ButtonPressed.notify( button_state_t val )
+  {
+    dbg_serial_flush();
+  }
+#endif
 
   task void assertFailTask()
   {
