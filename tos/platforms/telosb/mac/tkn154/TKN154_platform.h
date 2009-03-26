@@ -39,7 +39,7 @@
 /**************************************************** 
  * The following constants define guard times on Tmote Sky / TelosB. 
  * All values are in symbol time (1 symbol = 16 us) and assume the 
- * default system configuration (MCLK running at 4.6 MHz)
+ * default system configuration (MCLK running at 4 MHz)
  */
 
 enum {
