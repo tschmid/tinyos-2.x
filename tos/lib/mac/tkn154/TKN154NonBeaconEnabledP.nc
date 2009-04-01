@@ -231,6 +231,7 @@ implementation
   DataP.CoordCapTx -> DispatchQueueP.FrameTx[unique(CAP_TX_CLIENT)];
   DataP.DeviceCapRx -> PollP.DataRx;                          
   DataP.DeviceCapRx -> PromiscuousModeP.FrameRx;              
+  DataP.DeviceCapRx -> DispatchP.FrameRx[FC1_FRAMETYPE_DATA]; 
   DataP.TxFramePool -> TxFramePoolP;
   DataP.IndirectTx -> IndirectTxP.FrameTx[unique(INDIRECT_TX_CLIENT)];
   DataP.FrameUtility -> PibP;
