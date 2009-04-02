@@ -468,9 +468,10 @@ implementation
     uint8_t *mhr = MHR(frame);
     uint8_t frameType = mhr[MHR_INDEX_FC1] & FC1_FRAMETYPE_MASK;
 
-    dbg("DispatchUnslottedCsmaP", "Received frame, DSN: %lu, result: 0x%lx\n", (uint32_t) mhr[MHR_INDEX_SEQNO]);
     if (frameType == FC1_FRAMETYPE_CMD)
       frameType += payload[0];
+    dbg("DispatchUnslottedCsmaP", "Received frame, DSN: %lu, type: 0x%lu\n", 
+        (uint32_t) mhr[MHR_INDEX_SEQNO], (uint32_t) frameType);
     atomic {
       if (m_indirectTxPending) {
         message_t* frameBuf;

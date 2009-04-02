@@ -205,7 +205,6 @@ implementation
       m_lastFrame = m_currentFrame;
       m_currentFrame = NULL;
       m_txStatus = IEEE154_NO_BEACON;
-      dbg_serial("DispatchSlottedCsmaP", "CAP component got token, remaining time: %lu\n");
       post signalTxDoneTask();
       return;
     } else if (capDuration < guardTime) {
@@ -644,8 +643,11 @@ implementation
     uint8_t *payload = (uint8_t *) frame->data;
     uint8_t *mhr = MHR(frame);
     uint8_t frameType = mhr[MHR_INDEX_FC1] & FC1_FRAMETYPE_MASK;
+
     if (frameType == FC1_FRAMETYPE_CMD)
       frameType += payload[0];
+    dbg("DispatchSlottedCsmaP", "Received frame, DSN: %lu, type: 0x%lu\n", 
+        (uint32_t) mhr[MHR_INDEX_SEQNO], (uint32_t) frameType);
     atomic {
       if (DEVICE_ROLE && m_indirectTxPending) {
         message_t* frameBuf;
