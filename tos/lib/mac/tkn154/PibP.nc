@@ -567,7 +567,7 @@ implementation
 
   command uint8_t Packet.maxPayloadLength()
   {
-#if TOSH_DATA_LENGTH < 118
+#if TOSH_DATA_LENGTH < IEEE154_aMaxMACPayloadSize
 #warning Payload portion in message_t is smaller than required (TOSH_DATA_LENGTH < IEEE154_aMaxMACPayloadSize). This means that larger packets cannot be sent/received.
 #endif
     return TOSH_DATA_LENGTH;
