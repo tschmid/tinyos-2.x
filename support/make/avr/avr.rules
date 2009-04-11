@@ -141,7 +141,7 @@ ifdef WIRING_CHECK_FILE
 endif
 ifdef STACK_CHECK
 	@echo
-	@tos-ramsize $(PLATFORM) $(MAIN_EXE)
+	@-tos-ramsize $(PLATFORM) $(MAIN_EXE)
 	@echo
 endif
 	@echo "    compiled $(COMPONENT) to $(MAIN_EXE)"
