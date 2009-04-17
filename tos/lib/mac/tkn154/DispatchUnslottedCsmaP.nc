@@ -169,7 +169,6 @@ implementation
       call MLME_SET.macPANId(panID);
       call MLME_SET.phyCurrentChannel(logicalChannel);
       call MLME_SET.macBeaconOrder(beaconOrder);
-      call SetMacSuperframeOrder.set(superframeOrder);
       call SetMacPanCoordinator.set(panCoordinator);
       //TODO: check realignment
       post signalStartConfirmTask();

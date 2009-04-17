@@ -119,7 +119,7 @@ implementation {
         // only catch the first failure, output it periodically
         m_assertLine = line;
         strncpy(m_assertFilename, filename, MAX_LEN_FILENAME);
-        strncpy(m_assertFunction, func, MAX_LEN_FILENAME);
+        strncpy(m_assertFunction, func, MAX_LEN_FUNNAME);
         post assertFailTask();
       }
     }

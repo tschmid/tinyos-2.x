@@ -78,7 +78,7 @@ interface MLME_START {
    * @param coordRealignSecurity The security options for the coordinator
    *                         realignment command (NULL means security
    *                         is disabled)
-   * @param coordRealignSecurity The security options for beacon frames
+   * @param beaconSecurity The security options for beacon frames
    *                         (NULL means security is disabled)
    *
    * @return       IEEE154_SUCCESS if the request succeeded and a confirm event
