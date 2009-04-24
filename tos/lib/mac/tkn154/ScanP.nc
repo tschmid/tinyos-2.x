@@ -134,10 +134,11 @@ implementation
     } if ((ScanType > 3) || (ScanType < 3 && ScanDuration > 14) || 
           (ChannelPage != IEEE154_SUPPORTED_CHANNELPAGE) ||
           !(supportedChannels & ScanChannels) ||
-          (EnergyDetectListNumEntries && PANDescriptorListNumEntries) ||
+          ((ScanType != ORPHAN_SCAN) &&
+          ((EnergyDetectListNumEntries && PANDescriptorListNumEntries) ||
           (EnergyDetectList != NULL && PANDescriptorList != NULL) ||
           (EnergyDetectListNumEntries && EnergyDetectList == NULL) ||
-          (PANDescriptorListNumEntries && PANDescriptorList == NULL)) {
+          (PANDescriptorListNumEntries && PANDescriptorList == NULL)))) {
       status = IEEE154_INVALID_PARAMETER;
     } else if (ScanType != ENERGY_DETECTION_SCAN &&
         !(m_txFrame = call TxFramePool.get())) { 
