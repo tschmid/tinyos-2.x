@@ -324,7 +324,8 @@ implementation
       ((uint8_t*) m_resultList)[m_resultIndex++] = EnergyLevel;
     if (m_resultIndex == m_resultListNumEntries)
       m_terminateScan = TRUE; // done
-    call RadioOff.off();
+    if (call RadioOff.off() == EALREADY)
+      signal RadioOff.offDone();
   }
 
   /* ----------------------- Active/Orphan scan ----------------------- */
