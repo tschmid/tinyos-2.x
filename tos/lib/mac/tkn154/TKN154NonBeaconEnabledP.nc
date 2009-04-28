@@ -39,8 +39,6 @@
 
 #define IEEE154_BEACON_ENABLED_PAN FALSE
 
-// TODO: check the wiring!!
-
 configuration TKN154NonBeaconEnabledP
 {
   provides

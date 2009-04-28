@@ -42,7 +42,6 @@ module DataP
     interface MCPS_DATA; 
     interface MCPS_PURGE;
   } uses {
-    interface GetNow<bool> as IsSendingBeacons;
     interface FrameRx as CoordCapRx;
     interface FrameTx as DeviceCapTx;
     interface FrameTx as CoordCapTx;
@@ -145,7 +144,6 @@ implementation
 
       // indirect transmission?
       } else if ((txOptions & TX_OPTIONS_INDIRECT) && 
-          call IsSendingBeacons.getNow() && 
           (dstAddrMode >= ADDR_MODE_SHORT_ADDRESS)) {
         if (dstAddrMode == ADDR_MODE_SHORT_ADDRESS && dstAddr.shortAddress == 0xFFFF) {
           mhr[MHR_INDEX_FC1] &= ~FC1_ACK_REQUEST;
@@ -275,5 +273,4 @@ implementation
   default command ieee154_status_t DeviceCfpTx.transmit(ieee154_txframe_t *data) {return IEEE154_INVALID_GTS;}
   default command ieee154_status_t BroadcastTx.transmit(ieee154_txframe_t *data) {return IEEE154_INVALID_PARAMETER;}
   default command ieee154_status_t CoordCfpTx.transmit(ieee154_txframe_t *data) {return IEEE154_INVALID_GTS;}
-  default async command bool IsSendingBeacons.getNow() {return FALSE;}
 }

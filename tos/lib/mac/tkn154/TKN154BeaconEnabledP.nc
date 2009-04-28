@@ -325,7 +325,6 @@ implementation
 
   /* ------------------ Data Transmission (MCPS-DATA) ------------------- */
 
-  DataP.IsSendingBeacons -> BeaconTransmitP.IsSendingBeacons;
   DataP.CoordCapRx -> CoordCap.FrameRx[FC1_FRAMETYPE_DATA]; 
   DataP.DeviceCapTx -> DeviceCapQueue.FrameTx[unique(CAP_TX_CLIENT)];
   DataP.CoordCapTx -> CoordCapQueue.FrameTx[unique(CAP_TX_CLIENT)];

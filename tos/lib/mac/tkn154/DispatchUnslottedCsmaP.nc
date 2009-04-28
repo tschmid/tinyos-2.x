@@ -46,10 +46,6 @@
  * not part of the MAC implementation but of the chip-specific radio driver.
  */
 
-#if IEEE154_BEACON_ENABLED_PAN
-#error "The IEEE154_BEACON_ENABLED_PAN macro MUST NOT be set when using this component!"
-#endif
-
 module DispatchUnslottedCsmaP
 {
   provides

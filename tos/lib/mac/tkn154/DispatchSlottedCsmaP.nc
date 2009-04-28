@@ -56,10 +56,6 @@
  * typically switch the radio off unless it has a frame to transmit.
  */
 
-#ifndef IEEE154_BEACON_ENABLED_PAN
-#error "The IEEE154_BEACON_ENABLED_PAN macro MUST be defined when using this component!"
-#endif
-
 generic module DispatchSlottedCsmaP(uint8_t sfDirection)
 {
   provides
