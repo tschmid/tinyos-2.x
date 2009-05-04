@@ -413,6 +413,7 @@ implementation
   DeviceCap.GetIndirectTxFrame -> IndirectTxP;
   DeviceCap.RxEnableStateChange -> RxEnableP.RxEnableStateChange;  
   DeviceCap.IsTrackingBeacons -> BeaconSynchronizeP.IsTrackingBeacons;  
+  DeviceCap.PIBUpdateMacRxOnWhenIdle -> PibP.PIBUpdate[IEEE154_macRxOnWhenIdle];
   DeviceCap.FrameUtility -> PibP;
   DeviceCap.SlottedCsmaCa -> DeviceCapRadioClient;
   DeviceCap.RadioRx -> DeviceCapRadioClient;
@@ -439,6 +440,7 @@ implementation
   CoordCap.GetIndirectTxFrame -> IndirectTxP;
   CoordCap.RxEnableStateChange -> RxEnableP.RxEnableStateChange;  
   CoordCap.IsTrackingBeacons -> BeaconSynchronizeP.IsTrackingBeacons;  
+  CoordCap.PIBUpdateMacRxOnWhenIdle -> PibP.PIBUpdate[IEEE154_macRxOnWhenIdle];
   CoordCap.FrameUtility -> PibP;
   CoordCap.SlottedCsmaCa -> CoordCapRadioClient;
   CoordCap.RadioRx -> CoordCapRadioClient;

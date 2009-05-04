@@ -293,6 +293,7 @@ implementation
   DispatchP.IsRadioTokenRequested -> ScanP.IsRadioTokenRequested;
   DispatchP.GetIndirectTxFrame -> IndirectTxP;
   DispatchP.RxEnableStateChange -> RxEnableP.RxEnableStateChange;  
+  DispatchP.PIBUpdateMacRxOnWhenIdle -> PibP.PIBUpdate[IEEE154_macRxOnWhenIdle];
   DispatchP.FrameUtility -> PibP;
   DispatchP.UnslottedCsmaCa -> DispatchRadioClient;
   DispatchP.RadioRx -> DispatchRadioClient;

@@ -62,6 +62,7 @@ generic module NoDispatchSlottedCsmaP(uint8_t sfDirection)
     interface Get<ieee154_txframe_t*> as GetIndirectTxFrame; 
     interface Notify<bool> as RxEnableStateChange;
     interface GetNow<bool> as IsTrackingBeacons;
+    interface Notify<const void*> as PIBUpdateMacRxOnWhenIdle;
     interface FrameUtility;
     interface SlottedCsmaCa;
     interface RadioRx;
@@ -114,4 +115,5 @@ implementation
 
   command error_t WasRxEnabled.enable(){return FAIL;}
   command error_t WasRxEnabled.disable(){return FAIL;}
+  event void PIBUpdateMacRxOnWhenIdle.notify( const void* val ) {}
 }
