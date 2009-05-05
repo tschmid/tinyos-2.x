@@ -53,8 +53,7 @@ generic module NoDispatchSlottedCsmaP(uint8_t sfDirection)
   {
     interface Alarm<TSymbolIEEE802154,uint32_t> as CapEndAlarm;
     interface Alarm<TSymbolIEEE802154,uint32_t> as BLEAlarm;
-    interface Alarm<TSymbolIEEE802154,uint32_t> as IndirectTxWaitAlarm;
-    interface Alarm<TSymbolIEEE802154,uint32_t> as BroadcastAlarm;
+    interface Alarm<TSymbolIEEE802154,uint32_t> as RxWaitAlarm;
     interface GetNow<token_requested_t> as IsRadioTokenRequested;
     interface TransferableResource as RadioToken;
     interface SuperframeStructure; 
@@ -100,9 +99,7 @@ implementation
 
   event void RxEnableStateChange.notify(bool whatever){ }
 
-  async event void BroadcastAlarm.fired(){ }
-
-  async event void IndirectTxWaitAlarm.fired() { }
+  async event void RxWaitAlarm.fired(){ }
 
   async event void SlottedCsmaCa.transmitDone(ieee154_txframe_t *frame, ieee154_csma_t *csma, 
       bool ackPendingFlag,  uint16_t remainingBackoff, error_t result) { }
