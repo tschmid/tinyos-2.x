@@ -175,6 +175,7 @@ implementation
     if (!m_associationOngoing)
       return;
     // have not received an AssociationResponse yet, poll the coordinator now
+    dbg_serial("AssociationP", "Polling the coordinator for an AssociationResponse now...\n");
     if (m_coordAddrMode == ADDR_MODE_SHORT_ADDRESS)
       *((nxle_uint16_t*) &coordAddress) = call MLME_GET.macCoordShortAddress();
     else
@@ -184,6 +185,7 @@ implementation
       m_shortAddress = 0xFFFF;
       m_assocRespStatus = IEEE154_TRANSACTION_OVERFLOW;
       signal DataRequest.pollDone();
+      dbg_serial("AssociationP", "Poll failed (locally)...\n");
     }
   }
 
