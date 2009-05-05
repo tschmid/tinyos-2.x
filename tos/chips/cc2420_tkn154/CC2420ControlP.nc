@@ -157,31 +157,6 @@ implementation {
     signal Resource.granted();
   }
 
-  void switchToUnbufferedMode()
-  {
-    uint16_t mdmctrol1;
-    call CSN.set();
-    call CSN.clr();
-    call MDMCTRL1.read(&mdmctrol1);
-    call CSN.set();
-    mdmctrol1 &= ~0x0003;
-    mdmctrol1 |= 0x0000;
-    call CSN.clr();
-    call MDMCTRL1.write(mdmctrol1);
-    call CSN.set();
-  }
-
-  void switchToBufferedMode()
-  {
-    uint16_t mdmctrol1;
-    call CSN.set();
-    call CSN.clr();
-    call MDMCTRL1.read(&mdmctrol1);
-    mdmctrol1 &= ~0x03;
-    call MDMCTRL1.write(mdmctrol1);
-    call CSN.set();
-  }
-
   /***************** CC2420Power Commands ****************/
   async command error_t CC2420Power.startVReg() {
     atomic {
