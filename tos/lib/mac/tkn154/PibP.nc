@@ -150,12 +150,12 @@ implementation
     if (m) {
       k = 0;
       while (k != m) {
-        waitTime += ((uint16_t) 1 << (macMaxBE+k));
+        waitTime += ((uint16_t) 1 << (macMinBE+k));
         k += 1;
       }
     }
     waitTime *= IEEE154_aUnitBackoffPeriod;
-    waitTime += IEEE154_SHR_DURATION;
+    waitTime += call MLME_GET.phyMaxFrameDuration();
     m_pib.macMaxFrameTotalWaitTime = waitTime;
   }
 
