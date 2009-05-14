@@ -61,6 +61,7 @@ module DispatchUnslottedCsmaP
   {
     interface Timer<TSymbolIEEE802154> as IndirectTxWaitTimer;
     interface TransferableResource as RadioToken;
+    interface ResourceRequested as RadioTokenRequested;
     interface GetNow<token_requested_t> as IsRadioTokenRequested;
     interface GetNow<bool> as IsRxEnableActive; 
     interface Set<ieee154_macSuperframeOrder_t> as SetMacSuperframeOrder;
@@ -261,8 +262,9 @@ implementation
       else if (call IsRadioTokenRequested.getNow()) {
         if (call RadioOff.isOff()) {
           // nothing more to do... just release the Token
-          m_lock = FALSE; // unlock
           dbg_serial("DispatchUnslottedCsmaP", "Token requested: releasing it.\n");
+          call RadioToken.request(); // we want it back afterwards ...
+          m_lock = FALSE; // unlock
           call RadioToken.release();
           return;
         } else 
@@ -518,4 +520,6 @@ implementation
   command error_t WasRxEnabled.disable() {return FAIL;}
   default event void MLME_START.confirm(ieee154_status_t status) {}
   async event void RadioToken.transferredFrom(uint8_t fromClientID) {ASSERT(0);}
+  async event void RadioTokenRequested.requested(){ updateState(); }
+  async event void RadioTokenRequested.immediateRequested(){ updateState(); }
 }

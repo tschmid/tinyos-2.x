@@ -288,6 +288,7 @@ implementation
   DispatchP.SetMacSuperframeOrder -> PibP.SetMacSuperframeOrder;
   DispatchP.SetMacPanCoordinator -> PibP.SetMacPanCoordinator;
   DispatchP.IsRxEnableActive -> RxEnableP.IsRxEnableActive;
+  DispatchP.RadioTokenRequested -> DispatchRadioClient;
   DispatchP.IsRadioTokenRequested -> PibP.IsRadioTokenRequested; // fan out...
   DispatchP.IsRadioTokenRequested -> PromiscuousModeP.IsRadioTokenRequested;
   DispatchP.IsRadioTokenRequested -> ScanP.IsRadioTokenRequested;

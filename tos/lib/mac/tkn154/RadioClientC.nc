@@ -44,6 +44,7 @@ generic configuration RadioClientC(uint8_t clientID)
     interface SlottedCsmaCa;
     interface UnslottedCsmaCa;
     interface TransferableResource as RadioToken;
+    interface ResourceRequested as RadioTokenRequested;
   }
 }
 implementation
@@ -55,5 +56,6 @@ implementation
   SlottedCsmaCa = RadioControlP.SlottedCsmaCa[clientID];
   UnslottedCsmaCa = RadioControlP.UnslottedCsmaCa[clientID];
   RadioToken = RadioControlP.TransferableResource[clientID];
+  RadioTokenRequested = RadioControlP.ResourceRequested[clientID];
 }
 

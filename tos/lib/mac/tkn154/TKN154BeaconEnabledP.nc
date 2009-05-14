@@ -403,6 +403,7 @@ implementation
   DeviceCap.BLEAlarm = Alarm4;
   DeviceCap.RxWaitAlarm = Alarm5;
   DeviceCap.RadioToken -> DeviceCapRadioClient;
+  DeviceCap.RadioTokenRequested -> DeviceCapRadioClient;
   DeviceCap.SuperframeStructure -> BeaconSynchronizeP.IncomingSF;
   DeviceCap.IsRxEnableActive -> RxEnableP.IsRxEnableActive;
   DeviceCap.IsRadioTokenRequested -> PibP.IsRadioTokenRequested; // fan out...
@@ -430,6 +431,7 @@ implementation
   CoordCap.CapEndAlarm = Alarm6;
   CoordCap.BLEAlarm = Alarm7;
   CoordCap.RadioToken -> CoordCapRadioClient;
+  CoordCap.RadioTokenRequested -> CoordCapRadioClient;
   CoordCap.SuperframeStructure -> BeaconTransmitP.OutgoingSF;
   CoordCap.IsRxEnableActive -> RxEnableP.IsRxEnableActive;
   CoordCap.IsRadioTokenRequested -> PibP.IsRadioTokenRequested; // fan out...

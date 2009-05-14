@@ -73,6 +73,7 @@ generic module DispatchSlottedCsmaP(uint8_t sfDirection)
     interface Alarm<TSymbolIEEE802154,uint32_t> as BLEAlarm;
     interface Alarm<TSymbolIEEE802154,uint32_t> as RxWaitAlarm;
     interface TransferableResource as RadioToken;
+    interface ResourceRequested as RadioTokenRequested;
     interface SuperframeStructure; 
     interface GetNow<token_requested_t> as IsRadioTokenRequested;
     interface GetNow<bool> as IsRxEnableActive; 
@@ -741,4 +742,6 @@ implementation
 
   command error_t WasRxEnabled.enable() {return FAIL;}
   command error_t WasRxEnabled.disable() {return FAIL;}
+  async event void RadioTokenRequested.requested(){ updateState(); }
+  async event void RadioTokenRequested.immediateRequested(){ updateState(); }
 }
