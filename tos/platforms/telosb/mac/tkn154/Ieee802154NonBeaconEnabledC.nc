@@ -56,6 +56,7 @@ configuration Ieee802154NonBeaconEnabledC
     interface MLME_START;
     interface IEEE154Frame;
     interface IEEE154BeaconFrame;
+    interface IEEE154TxBeaconPayload;
     interface SplitControl as PromiscuousMode;
     interface Get<uint64_t> as LocalExtendedAddress;
     interface Timestamp;
@@ -82,6 +83,7 @@ implementation
   MLME_ORPHAN = MAC;
   IEEE154Frame = MAC;
   IEEE154BeaconFrame = MAC;
+  IEEE154TxBeaconPayload = MAC;
   LocalExtendedAddress = MAC;
   PromiscuousMode = MAC;
   Packet = MAC;

@@ -65,6 +65,7 @@ configuration TKN154NonBeaconEnabledP
     interface Notify<const void*> as PIBUpdate[uint8_t attributeID];
     interface IEEE154Frame;
     interface IEEE154BeaconFrame;
+    interface IEEE154TxBeaconPayload;
     interface SplitControl as PromiscuousMode;
     interface Get<uint64_t> as GetLocalExtendedAddress;
     interface TimeCalc;
@@ -98,6 +99,7 @@ implementation
              RadioControlP,
              IndirectTxP,
              PollP,
+             BeaconRequestRxP,
 
 #ifndef IEEE154_SCAN_DISABLED
              ScanP,
@@ -164,12 +166,13 @@ implementation
   MLME_SET = PibP;
   IEEE154Frame = PibP;
   IEEE154BeaconFrame = PibP;
+  IEEE154TxBeaconPayload = BeaconRequestRxP;
   PromiscuousMode = PromiscuousModeP;
   GetLocalExtendedAddress = PibP.GetLocalExtendedAddress;
   Packet = PibP; 
   TimeCalc = PibP;
   FrameUtility = PibP;
-  
+
   /* ----------------------- Scanning (MLME-SCAN) ----------------------- */
 
   components new RadioClientC(RADIO_CLIENT_SCAN) as ScanRadioClient;
@@ -188,6 +191,15 @@ implementation
   ScanP.RadioToken -> ScanRadioClient;
   ScanP.Leds = Leds;
   ScanP.FrameUtility -> PibP;
+
+  /* -------------------- Responding to Active Scans  --------------------- */
+
+  PibP.MacReset -> BeaconRequestRxP;
+  BeaconRequestRxP.BeaconRequestRx -> DispatchP.FrameRx[FC1_FRAMETYPE_CMD + CMD_FRAME_BEACON_REQUEST];
+  BeaconRequestRxP.BeaconRequestResponseTx -> DispatchQueueP.FrameTx[unique(CAP_TX_CLIENT)];
+  BeaconRequestRxP.MLME_GET -> PibP;
+  BeaconRequestRxP.FrameUtility -> PibP;
+  BeaconRequestRxP.Frame -> PibP;
 
   /* -------------------- Association (MLME-ASSOCIATE) -------------------- */
 
