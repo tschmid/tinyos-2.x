@@ -214,7 +214,7 @@ implementation
       status =  IEEE154_INVALID_PARAMETER;
     else if (startTime && !call IsTrackingBeacons.getNow())
       status = IEEE154_TRACKING_OFF;
-    else if (startTime && 0xFF000000)
+    else if (startTime & 0xFF000000)
       status = IEEE154_INVALID_PARAMETER;
     else if (m_requestBitmap & (REQUEST_CONFIRM_PENDING | REQUEST_UPDATE_SF))
       status = IEEE154_TRANSACTION_OVERFLOW;
