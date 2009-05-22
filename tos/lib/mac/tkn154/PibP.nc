@@ -939,7 +939,7 @@ implementation
     uint8_t *mhr = MHR(frame);
     uint8_t len = ((ieee154_header_t*) frame->header)->length & FRAMECTL_LENGTH_MASK;
     if ((mhr[MHR_INDEX_FC1] & FC1_FRAMETYPE_MASK) == FC1_FRAMETYPE_BEACON) {
-      uint8_t *payload = call Frame.getPayload(frame);
+      uint8_t *payload = call BeaconFrame.getBeaconPayload(frame);
       len = len - (payload - (uint8_t *) frame->data);
     } 
     return len;
