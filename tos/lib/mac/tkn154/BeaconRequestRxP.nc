@@ -106,18 +106,18 @@ implementation
     m_beaconFrame.headerLen = offset;
 
     // Superframe-spec
-    m_payload[0] = 0xff; // beacon- and superframe order always 15 in non-beaconenabled mode
-    m_payload[1] = 0x00; 
+    m_payload[BEACON_INDEX_SF_SPEC1] = 0xff; // beacon- and superframe order always 15 in nonbeacon-enabled mode
+    m_payload[BEACON_INDEX_SF_SPEC2] = 0x00; 
     if (call MLME_GET.macPanCoordinator() == TRUE) 
-      m_payload[1] |= 0x40;
+      m_payload[BEACON_INDEX_SF_SPEC2] |= SF_SPEC2_PAN_COORD;
     if (call MLME_GET.macAssociationPermit() == TRUE) 
-      m_payload[1] |= 0x80;
+      m_payload[BEACON_INDEX_SF_SPEC2] |= SF_SPEC2_ASSOCIATION_PERMIT;
     if (call MLME_GET.macBattLifeExt() == TRUE) 
-      m_payload[1] |= 0x10;
+      m_payload[BEACON_INDEX_SF_SPEC2] |= SF_SPEC2_BATT_LIFE_EXT;
     // GTS-spec
-    m_payload[2] = 0;
-    // Pending-Address-spec
-    m_payload[3] = 0;
+    m_payload[BEACON_INDEX_GTS_SPEC] = 0;
+    // Pending-Address-spec (behind empty single-byte GTS field)
+    m_payload[BEACON_INDEX_GTS_SPEC + 1] = 0;
 
     signal IEEE154TxBeaconPayload.aboutToTransmit(); 
     post sendBeaconTask();
