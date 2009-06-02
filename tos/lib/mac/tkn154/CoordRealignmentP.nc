@@ -114,7 +114,7 @@ implementation
     dstAddress.extendedAddress = OrphanAddress;
     if (!AssociatedMember)
       txStatus = IEEE154_SUCCESS;
-    else if (m_busy || (txFrame = newRealignmentFrame(ORPHAN_RESPONSE, &dstAddress)) != NULL)
+    else if (m_busy || (txFrame = newRealignmentFrame(ORPHAN_RESPONSE, &dstAddress)) == NULL)
       txStatus = IEEE154_TRANSACTION_OVERFLOW;
     else {
       m_busy = TRUE;
