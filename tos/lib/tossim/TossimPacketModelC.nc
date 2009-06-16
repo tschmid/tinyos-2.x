@@ -214,6 +214,7 @@ implementation {
       delay *= (sim_ticks_per_sec() / sim_csma_symbols_per_sec());
       evt->time += delay;
       transmitting = TRUE;
+      call GainRadioModel.checkPendingTransmission(transmitting);
       evt->handle = send_transmit;
       sim_queue_insert(evt);
     }

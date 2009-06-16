@@ -46,6 +46,7 @@ interface GainRadioModel {
 
   command void setClearValue(double value);
   command bool clearChannel();
+  command void checkPendingTransmission(bool isTransmitting);
   
   event void acked(message_t* msg);
   event void receive(message_t* msg);
