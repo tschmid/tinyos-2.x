@@ -107,13 +107,13 @@ def main(argv):
         print "Starting OpenOCD..."
         openocd_cmd = "openocd -f /usr/local/lib/openocd/interface/olimex-arm-usb-ocd.cfg -f /usr/local/lib/openocd/board/stm32f10x_128k_eval.cfg".split()
         openocd_proc = subprocess.Popen(openocd_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        expect(openocd_proc.stderr, "JTAG device found:")
+        expect(openocd_proc.stderr, "Info : JTAG Tap/device matched")
 
         # Connect to openocd daemon
         print "Connecting to OpenOCD..."
 
         time.sleep(3)
-        tn = telnetlib.Telnet('localhost', 3333)
+        tn = telnetlib.Telnet('localhost', 4444)
 
         # Uncomment the following line for debugging output
         #tn.set_debuglevel(10)
@@ -123,7 +123,7 @@ def main(argv):
             print "Could not connect to OpenOCD."
             sys.exit()
         tn.write('reset\n')
-        tn.read_until('(processor reset)')
+        tn.read_until('xPSR:')
 
         print "Halting device..."
         tn.read_until('>')
@@ -131,21 +131,19 @@ def main(argv):
 
         print "Erasing flash..."
         tn.read_until('>')
-        tn.write("flash protect 0 0 10 off\n")
-        tn.read_until("cleared protection for sectors 0 through 10 on flash bank 0")
-        tn.read_until('>')
-        tn.write("flash erase_sector 0 0 10\n")
-        tn.read_until("erased sectors 0 through 10 on flash bank 0")
+        tn.write("stm32x mass_erase 0\n")
+        tn.read_until("stm32x mass erase complete")
 
         print "Writing image..."
         tn.read_until('>')
-        tn.write('flash write_image %s\n' % (tempfn))
+        #tn.write('flash write_image %s\n' % (tempfn))
+        tn.write('flash write_bank 0 %s 0\n'%(tempfn, ))
         tn.read_until('wrote')
 
         print "Resuming device..."
         tn.read_until('>')
         tn.write('reset\n')
-        tn.read_until('(processor reset)')
+        tn.read_until('target halted due to breakpoint')
         tn.read_until('>')
         tn.write('resume\n')
         tn.read_until('>')

@@ -30,10 +30,11 @@ MAIN_BIN = $(BUILDDIR)/main.bin
 INSTALL_BIN = $(MAIN_BIN).out$(if $(NODEID),-$(NODEID),)
 #PLATFORM_DIR = $(TOSDIR)/chips/stm32
 #ASSEMBLY_FILES += $(PLATFORM_DIR)/mmu_table.s $(PLATFORM_DIR)/util.s 
-ASSEMBLY_OBJS =  $(BUILDDIR)/asms.o
+#ASSEMBLY_OBJS =  $(BUILDDIR)/asms.o
 #LIBRARY_OBJS  =  $(PLATFORM_DIR)/lib/profile.o $(PLATFORM_DIR)/lib/queue.o
 
 OPTFLAGS ?= -O3 -g
+CFLAGS += -mcpu=cortex-m3 -mthumb
 PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
 PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c -board=$(SENSORBOARD)
 ifdef MSG_SIZE
@@ -85,7 +86,8 @@ bin: exe FORCE
 exe: exe0 bytes FORCE
 	@:
 
-exe0: builddir asms $(BUILD_EXTRA_DEPS) FORCE
+#exe0: builddir asms $(BUILD_EXTRA_DEPS) FORCE
+exe0: builddir $(BUILD_EXTRA_DEPS) FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
 	$(NCC) -o $(MAIN_EXE) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS) $(ASSEMBLY_OBJS) $(LIBRARY_OBJS)
 ifdef WIRING_CHECK_FILE
