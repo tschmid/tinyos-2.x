@@ -21,6 +21,9 @@ module PlatformP {
       interface Init;
       interface PlatformReset;
   }
+  uses {
+      interface Init as MoteInit;
+  }
 }
 implementation {
 
