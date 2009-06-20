@@ -1,5 +1,4 @@
-/*
- *
+/**
  *
  * "Copyright (c) 2009 The Regents of the University  of California.  
  * All rights reserved.
@@ -21,13 +20,27 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  *
  */
+/**
+ * @author Thomas Schmid
+ */
+#include "hardware.h"
 
-#ifndef __TOSH_HARDWARE_H__
-#define __TOSH_HARDWARE_H__
+configuration PlatformLedsC
+{
+  provides interface GeneralIO as Led0;
+  provides interface GeneralIO as Led1;
+  provides interface GeneralIO as Led2;
+  uses interface Init;
+}
 
-#include "stm32hardware.h"
+implementation
+{
+  components HplSTM32GeneralIOC as GeneralIOC;
+  components PlatformP;
 
-#define RED_LED_PIN (80) // PC.12
+  Init = PlatformP.MoteInit;
 
-#endif
-
+  Led0 = GeneralIOC.PortC12;
+  Led1 = GeneralIOC.PortC12;
+  Led2 = GeneralIOC.PortC12;
+}
