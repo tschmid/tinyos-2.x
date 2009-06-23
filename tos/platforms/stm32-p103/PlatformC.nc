@@ -24,9 +24,10 @@ configuration PlatformC
 
 implementation
 {
-  components PlatformP;
+  components PlatformP, HplSTM32InterruptM;
 
   Init = PlatformP;
   PlatformReset = PlatformP;
+  PlatformP.Interrupt -> HplSTM32InterruptM;
 
 }

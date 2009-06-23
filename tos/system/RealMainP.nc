@@ -50,6 +50,7 @@ module RealMainP @safe() {
 }
 implementation {
   int main() @C() @spontaneous() {
+      while(1) {};
     atomic
       {
 	/* First, initialize the Scheduler so components can post
