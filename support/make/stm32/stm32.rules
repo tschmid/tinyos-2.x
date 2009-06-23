@@ -21,14 +21,19 @@ OBJDUMP = arm-none-eabi-objdump
 SET_ID = tos-set-symbols
 XDB_SYMBOL_EXTRACT = dwarf2bd
 NCC = ncc
-LIBS = -lm
+LIBS = -lm -lvectors-stm32
+AR = arm-none-eabi-ar
+ARFLAGS = cr
+
 
 AMADDR = ActiveMessageAddressC\$$addr
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_BIN = $(BUILDDIR)/main.bin
 INSTALL_BIN = $(MAIN_BIN).out$(if $(NODEID),-$(NODEID),)
-#PLATFORM_DIR = $(TOSDIR)/chips/stm32
+PLATFORM_DIR = $(TOSDIR)/platforms/stm32-p103
+LIBRARY_DIRS = -L$(PLATFORM_DIR)/vectors -L$(PLATFORM_DIR)
+INCLUDE_DIRS = -I$(PLATFORM_DIR)
 #ASSEMBLY_FILES += $(PLATFORM_DIR)/mmu_table.s $(PLATFORM_DIR)/util.s 
 #ASSEMBLY_OBJS =  $(BUILDDIR)/asms.o
 #LIBRARY_OBJS  =  $(PLATFORM_DIR)/lib/profile.o $(PLATFORM_DIR)/lib/queue.o
@@ -37,12 +42,15 @@ OPTFLAGS ?= -O3 -g
 CFLAGS += -mcpu=cortex-m3 -mthumb
 PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
 PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c -board=$(SENSORBOARD)
+PFLAGS += $(LIBRARY_DIRS)
 ifdef MSG_SIZE
 PFLAGS += -DTOSH_DATA_LENGTH=$(MSG_SIZE)
 endif
 ifdef DEFAULT_LOCAL_GROUP
 PFLAGS += -DDEFINED_TOS_AM_GROUP=$(DEFAULT_LOCAL_GROUP)
 endif
+
+LDFLAGS += $(INCLUDE_DIRS) $(LIBRARY_DIRS)
 
 DEFAULT_PROGRAM ?= openocd
 
@@ -87,7 +95,7 @@ exe: exe0 bytes FORCE
 	@:
 
 #exe0: builddir asms $(BUILD_EXTRA_DEPS) FORCE
-exe0: builddir $(BUILD_EXTRA_DEPS) FORCE
+exe0: builddir library $(BUILD_EXTRA_DEPS) FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
 	$(NCC) -o $(MAIN_EXE) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS) $(ASSEMBLY_OBJS) $(LIBRARY_OBJS)
 ifdef WIRING_CHECK_FILE
@@ -105,4 +113,4 @@ asms:
 	$(GAS) $(ASSEMBLY_FILES) -o $(BUILDDIR)/asms.o 
 
 library:
-	cd $(PLATFORM_DIR)/lib; make;
+	cd $(PLATFORM_DIR)/vectors; make;
