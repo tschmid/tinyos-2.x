@@ -220,7 +220,7 @@ ErrorStatus RCC_WaitForHSEStartUp(void)
 
   if(RCC_GetFlagStatus(RCC_FLAG_HSERDY) != RESET)
   {
-    return SUCCESS;
+    return SUCCESS_fwlib;
   }
   else
   {

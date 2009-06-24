@@ -21,7 +21,7 @@ OBJDUMP = arm-none-eabi-objdump
 SET_ID = tos-set-symbols
 XDB_SYMBOL_EXTRACT = dwarf2bd
 NCC = ncc
-LIBS = -lm -lvectors-stm32
+LIBS = -lm -lvectors-stm32 -lstm32fw
 AR = arm-none-eabi-ar
 ARFLAGS = cr
 
@@ -32,7 +32,7 @@ MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_BIN = $(BUILDDIR)/main.bin
 INSTALL_BIN = $(MAIN_BIN).out$(if $(NODEID),-$(NODEID),)
 PLATFORM_DIR = $(TOSDIR)/platforms/stm32-p103
-LIBRARY_DIRS = -L$(PLATFORM_DIR)/vectors -L$(PLATFORM_DIR)
+LIBRARY_DIRS = -L$(PLATFORM_DIR)/vectors -L$(PLATFORM_DIR) -L$(PLATFORM_DIR)/fwlib
 INCLUDE_DIRS = -I$(PLATFORM_DIR)
 #ASSEMBLY_FILES += $(PLATFORM_DIR)/mmu_table.s $(PLATFORM_DIR)/util.s 
 #ASSEMBLY_OBJS =  $(BUILDDIR)/asms.o
@@ -114,3 +114,4 @@ asms:
 
 library:
 	cd $(PLATFORM_DIR)/vectors; make;
+	cd $(PLATFORM_DIR)/fwlib; make;

@@ -12,6 +12,8 @@
 push ( @includes, qw(
 
   %T/platforms/stm32-p103
+  %T/platforms/stm32-p103/fwlib
+  %T/platforms/stm32-p103/fwlib/inc
   %T/platforms/stm32-p103/vectors
   %T/chips/stm32
   %T/chips/stm32/gpio

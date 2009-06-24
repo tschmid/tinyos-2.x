@@ -920,7 +920,7 @@ ErrorStatus I2C_CheckEvent(I2C_TypeDef* I2Cx, uint32_t I2C_EVENT)
   if (LastEvent == I2C_EVENT )
   {
     /* SUCCESS: last event is equal to I2C_EVENT */
-    status = SUCCESS;
+    status = SUCCESS_fwlib;
   }
   else
   {

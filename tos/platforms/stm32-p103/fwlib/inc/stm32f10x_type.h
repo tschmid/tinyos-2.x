@@ -22,11 +22,15 @@
 #ifndef __STM32F10x_TYPE_H
 #define __STM32F10x_TYPE_H
 
+#include <inttypes.h>
+
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
+/*
 typedef signed int   int32;
 typedef signed short int16;
 typedef signed char  int8;
+*/
 /*
 typedef signed int   const sc32;  // Read Only
 typedef signed short const sc16;  // Read Only
@@ -40,10 +44,11 @@ typedef volatile signed int   const vsc32;  // Read Only
 typedef volatile signed short const vsc16;  // Read Only
 typedef volatile signed char  const vsc8;   // Read Only
 */
-
+/*
 typedef unsigned int   uint32_t;
 typedef unsigned short uint16_t;
 typedef unsigned char  uint8_t;
+*/
 /*
 typedef unsigned int   const uc32;  // Read Only
 typedef unsigned short const uc16;  // Read Only
@@ -65,7 +70,7 @@ typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) ((STATE == DISABLE) || (STATE == ENABLE))
 
-typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
+typedef enum {ERROR = 0, SUCCESS_fwlib = !ERROR} ErrorStatus;
 /*
 #define U8_MAX     ((uint8_t)255)
 #define S8_MAX     ((s8)127)
