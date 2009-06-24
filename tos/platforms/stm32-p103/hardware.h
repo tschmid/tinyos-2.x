@@ -27,24 +27,7 @@
 
 #include "stm32hardware.h"
 
-#define STACK_TOP 0x20000800
 #define NVIC_CCR ((volatile unsigned long *)(0xE000ED14))
-
-void nmi_handler(void);
-void hardfault_handler(void);
-int main(void);
-void Clk_Init (void);
-
-// Define the vector table
-unsigned int * myvectors[4]
-__attribute__ ((section("vectors")))= {
-    (unsigned int *)    STACK_TOP, // stack pointer
-    (unsigned int *)    main,       // code entry point
-    (unsigned int *)    nmi_handler,        // NMI handler (not really)
-    (unsigned int *)    hardfault_handler       // hard fault handler (let's hope not)
-};
-
-
 
 #endif
 

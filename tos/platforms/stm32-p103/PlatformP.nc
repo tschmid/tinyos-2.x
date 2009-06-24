@@ -17,6 +17,8 @@
 #include "hardware.h"
 #include "stm32f10x_rcc.h"
 
+
+
 module PlatformP {
     provides {
         interface Init;
@@ -75,6 +77,8 @@ void Clk_Init (void)
 
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOA, ENABLE);
+
+        call MoteInit.init();
 
         return SUCCESS;
     }
