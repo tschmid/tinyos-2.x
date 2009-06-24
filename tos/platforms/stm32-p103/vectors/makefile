@@ -14,7 +14,7 @@ ARFLAGS = cr
 
 LIB_OUT = libvectors-stm32.a
 
-LIB_OBJS = stm32-vector.o stm32_isr_interrupt.o stm32-reset.o stm32-start.o
+LIB_OBJS = stm32-vector.o
 
 
 # all
