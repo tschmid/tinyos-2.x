@@ -45,9 +45,22 @@ module NullC @safe()
 }
 implementation
 {
-  event void Boot.booted() {
-    // Do nothing.
-    call Leds.led0On();
-  }
+
+    //Functions definitions
+    void myDelay(unsigned long delay )
+    {
+        while(delay) delay--;
+    }
+
+
+
+    event void Boot.booted() {
+        while(1) {
+            call Leds.led0On();
+            myDelay(500000);
+            call Leds.led0Off();
+            myDelay(500000);
+        }
+    }
 }
 

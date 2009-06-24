@@ -36,7 +36,7 @@ LIBRARY_DIRS = -L$(PLATFORM_DIR)/vectors -L$(PLATFORM_DIR)
 INCLUDE_DIRS = -I$(PLATFORM_DIR)
 #ASSEMBLY_FILES += $(PLATFORM_DIR)/mmu_table.s $(PLATFORM_DIR)/util.s 
 #ASSEMBLY_OBJS =  $(BUILDDIR)/asms.o
-#LIBRARY_OBJS  =  $(PLATFORM_DIR)/lib/profile.o $(PLATFORM_DIR)/lib/queue.o
+LIBRARY_OBJS  =  $(PLATFORM_DIR)/vectors/stm32-vector.o
 
 OPTFLAGS ?= -O3 -g
 CFLAGS += -mcpu=cortex-m3 -mthumb

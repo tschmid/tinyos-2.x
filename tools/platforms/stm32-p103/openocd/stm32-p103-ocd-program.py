@@ -112,7 +112,7 @@ def main(argv):
         # Connect to openocd daemon
         print "Connecting to OpenOCD..."
 
-        time.sleep(3)
+        time.sleep(1)
         tn = telnetlib.Telnet('localhost', 4444)
 
         # Uncomment the following line for debugging output

@@ -11,7 +11,7 @@
 module HplSTM32InterruptM
 {
     provides {
-        interface HplSTM32Interrupt;
+        interface HplSTM32Interrupt as Irq;
     }
 
 }
@@ -25,23 +25,15 @@ implementation
  * Handlers that are part of the application should be defined elsewhere. */
 
 
-#ifndef CUSTOM_EXCEPTION_HANDLER
-	#ifdef DEBUG
-		/* Use individual infinite loops to ease debugging. */
-		#define DEFAULT_EXCEPTION_HANDLER(handler, name, number, address) while (1);
-	#else
-		/* Avoid individual infinite loops when not debugging. */
-		#define SHARED_EXCEPTION_HANDLER
-	#endif
-#endif
+#define DEFAULT_EXCEPTION_HANDLER(handler, name, number, address) while (1);
 
 /* Undefined handlers will default to a shared infinite loop (see stm32-isrs.S). */
-#ifndef SHARED_EXCEPTION_HANDLER
 
 	/* [0x08] NMI Exception (from the RCC Clock Security System) */
 	void NMIException(void) @spontaneous() @C()
 	{
 		DEFAULT_EXCEPTION_HANDLER(NMIException, "NMI", 2, 0x08);
+        signal Irq.fired();
 	}
 
 	/* [0x0C] Hard Fault Exception */
@@ -350,9 +342,8 @@ implementation
 		DEFAULT_EXCEPTION_HANDLER(USBWakeUp_IRQHandler, "USB Wake Up", 58, 0xE8);
 	}
 
-#endif /* COMBINED_DEFAULT_HANDLER */
 
-    default async event void HplSTM32Interrupt.fired()
+    default async event void Irq.fired()
     {
         return;
     }
