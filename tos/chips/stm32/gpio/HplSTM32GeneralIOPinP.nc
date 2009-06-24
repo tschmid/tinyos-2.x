@@ -19,7 +19,7 @@ generic module HplSTM32GeneralIOPinP (uint32_t port_addr, uint8_t bit) @safe()
 implementation
 {
     inline async command bool IO.get() {
-        gpio_t* port = (gpio_t*)port_addr;
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
         // this depends on the mode
         if(call IO.isInput())
             return (port->IDR >> bit) & 0x01;
@@ -27,66 +27,53 @@ implementation
             return (port->ODR >> bit) & 0x01;
     }
     inline async command void IO.set() { 
-        gpio_t* port = (gpio_t*)port_addr;
-        port->BSRR = 1 << (bit << 1);
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
+        *PERIPHERAL_BIT(port->ODR, bit) = 1;
+        //port->BSRR = 1 << (bit << 1);
     }
 
     inline async command void IO.clr() {
-        gpio_t* port = (gpio_t*)port_addr;
-        port->BRR = 1 << bit;
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
+        *PERIPHERAL_BIT(port->ODR, bit) = 0;
+        //port->BRR = 1 << bit;
     }
     async command void IO.toggle() {
-        gpio_t* port = (gpio_t*)port_addr;
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
         // toggle only makes sense in output mode
         // if the bit is set, then reset through the BSRR, if it is reset,
         // then set it.
-        port->BSRR = 1 << (bit << ((port->ODR >> bit) & 0x01)); 
+        *PERIPHERAL_BIT(port->ODR, bit) ^= 1;
+        //port->BSRR = 1 << (bit << ((port->ODR >> bit) & 0x01)); 
     }
 
     inline async command void IO.makeInput()  {
-        gpio_t* port = (gpio_t*)port_addr;
-        // currently we only support analog input mode
-        if(bit < 8)
-        {
-            // clear the corresponding controle registers
-            port->CRL &= ~(0x0F << ( bit << 2 ));
-            // write the mode
-            port->CRL |= (0 << ( bit << 2 ));
-        } else {
-            // clear the corresponding controle registers
-            port->CRH &= ~(0x0F << ( (bit-8) << 2 ));
-            // write the mode
-            port->CRH |= (0 << ( (bit-8) << 2 ));
-        }
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
     }
+
     inline async command bool IO.isInput() {
-        gpio_t* port = (gpio_t*)port_addr;
-        // MODEx == 0 is input... everything else is output
-        if(bit < 8)
-        {
-            return ( ( port->CRL & (0x03 << (bit << 2) ) ) == 0);
-        } else {
-            return ( ( port->CRH & (0x03 << (( bit-8) << 2) ) ) == 0);
-        }
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
+
+        GPIO_InitTypeDef gpioi = {
+            (uint16_t) 1 << bit, // select the pin
+            GPIO_Speed_10MHz,
+            GPIO_Mode_IN_FLOATING
+        };
+        GPIO_Init(port, &gpioi);
     }
+
     inline async command void IO.makeOutput() {
-        gpio_t* port = (gpio_t*)port_addr;
-        // currently we only support general purpose output push-pull at 50MHz
-        if(bit < 8)
-        {
-            // clear the corresponding controle registers
-            port->CRL &= ~(0xF << ( bit << 2 ));
-            // write the mode
-            port->CRL |= (0x0C << ( bit << 2 ));
-        } else {
-            // clear the corresponding controle registers
-            port->CRH &= ~(0x0F << ( (bit-8) << 2 ));
-            // write the mode
-            port->CRH |= (0x0C << ( (bit-8) << 2 ));
-        }
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
+
+        GPIO_InitTypeDef gpioi = {
+            (uint16_t) 1 << bit, // select the pin
+            GPIO_Speed_10MHz,
+            GPIO_Mode_Out_PP
+        };
+        GPIO_Init(port, &gpioi);
     }
+
     inline async command bool IO.isOutput() {
-        gpio_t* port = (gpio_t*)port_addr;
+        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
         // MODEx == 0 is input... everything else is output
         if(bit < 8)
         {

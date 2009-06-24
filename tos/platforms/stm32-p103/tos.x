@@ -14,12 +14,38 @@ SECTIONS
     .text : {
     *(vectors)      /* Vector table */
     ASSERT(. != 0, "No interrupt vector");
-    *(.text)        /* Program code */
-    *(.rodata)      /* Read only data */
+        /* Program code */
+    *(.text .text.* .gnu.linkonce.t.*)
+    *(.plt)
+    *(.gnu.warning)
+    *(.glue_7t) *(.glue_7) *(.vfp11_veneer)
+
+
+    *(.rodata .rodata.* .gnu.linonce.r.*)      /* Read only data */
+    *(.ARM.extab* .gnu.linkonce.armextab.*)
+    *(.gcc_except_table)
+    *(.eh_frame_hdr)
+    *(.eh_frame)
+
     } >rom
+
+    /* .ARM.exidx is sorted, so has to go in its own output section.  */
+    __exidx_start = .;
+    .ARM.exidx :
+    {
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } >rom
+    __exidx_end = .;
+    .text.align :
+    {
+        . = ALIGN(8);
+        _etext = .;
+    } >rom
+
+
     .  = 0x20000000;   /* From 0x20000000 */
     .data : {
-    *(.data)        /* Data memory */
+    *(.data .data.* .gnu.linonce.d.*)        /* Data memory */
     } >ram AT > rom
   .bss : {
     *(.bss)         /* Zero-filled run time allocate data memory */

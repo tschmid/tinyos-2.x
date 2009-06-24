@@ -28,7 +28,7 @@
 #ifndef STM32_HARDWARE_H
 #define STM32_HARDWARE_H
 
-#include "stm32f10x_map.h"
+#include "stm32fwlib.h"
 #include "stm32exceptions.h"
 
 #define ARM_BASEPRI_INT_MASK (0x000000C0)
