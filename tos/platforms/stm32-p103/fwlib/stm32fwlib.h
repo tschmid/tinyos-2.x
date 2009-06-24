@@ -1,6 +1,7 @@
 #ifndef __STM32FWLIB_H
 #define __STM32FWLIB_H
 
+#include <stdint.h>
 #include "stm32f10x_lib.h"
 
 #define BB_BIT(REGISTER, BIT_NUMBER, BASE, BB_BASE) \

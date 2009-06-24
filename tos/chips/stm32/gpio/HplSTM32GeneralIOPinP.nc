@@ -75,7 +75,7 @@ implementation
         if(bit < 8)
         {
             // clear the corresponding controle registers
-            port->CRL &= ~(0x0F << ( bit << 2 ));
+            port->CRL &= ~(0xF << ( bit << 2 ));
             // write the mode
             port->CRL |= (0x0C << ( bit << 2 ));
         } else {
