@@ -32,7 +32,8 @@ MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_BIN = $(BUILDDIR)/main.bin
 INSTALL_BIN = $(MAIN_BIN).out$(if $(NODEID),-$(NODEID),)
 PLATFORM_DIR = $(TOSDIR)/platforms/stm32-p103
-LIBRARY_DIRS = -L$(PLATFORM_DIR)/vectors -L$(PLATFORM_DIR) -L$(PLATFORM_DIR)/fwlib
+CHIP_DIR = $(TOSDIR)/chips/stm32
+LIBRARY_DIRS = -L$(PLATFORM_DIR)/vectors -L$(PLATFORM_DIR) -L$(CHIP_DIR)/fwlib
 INCLUDE_DIRS = -I$(PLATFORM_DIR)
 #ASSEMBLY_FILES += $(PLATFORM_DIR)/mmu_table.s $(PLATFORM_DIR)/util.s 
 #ASSEMBLY_OBJS =  $(BUILDDIR)/asms.o
@@ -114,4 +115,4 @@ asms:
 
 library:
 	cd $(PLATFORM_DIR)/vectors; make;
-	cd $(PLATFORM_DIR)/fwlib; make;
+	cd $(CHIP_DIR)/fwlib; make;
