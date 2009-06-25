@@ -111,7 +111,9 @@ implementation {
   
   command queue_t Queue.element(uint8_t idx) {
     idx += head;
-    idx %= QUEUE_SIZE;
+    if (idx >= QUEUE_SIZE) {
+      idx -= QUEUE_SIZE;
+    }
     return queue[idx];
   }  
 
