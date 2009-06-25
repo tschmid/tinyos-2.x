@@ -14,7 +14,6 @@ implementation
 
   event void Boot.booted()
   {
-    atomic
     {
       call Leds.led1On();
       call Alarm.start( DELAY_MILLI );
@@ -23,7 +22,6 @@ implementation
 
   async event void Alarm.fired()
   {
-    atomic
     {
       // this usage produces a periodic alarm with no frequency skew
       call Alarm.startAt( call Alarm.getAlarm(), DELAY_MILLI );

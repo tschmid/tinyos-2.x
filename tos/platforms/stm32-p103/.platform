@@ -12,9 +12,9 @@
 push ( @includes, qw(
 
   %T/platforms/stm32-p103
-  %T/platforms/stm32-p103/vectors
   %T/chips/stm32
   %T/chips/stm32/gpio
+  %T/chips/stm32/timer
   %T/chips/stm32/fwlib
   %T/chips/stm32/fwlib/inc
   %T/lib/timer

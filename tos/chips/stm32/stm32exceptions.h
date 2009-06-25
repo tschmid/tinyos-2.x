@@ -32,11 +32,18 @@ void BusFaultException(void);
 /* [0x18] Usage Fault Exception (undefined instruction or illegal state faults) */
 void UsageFaultException(void);
 
+void __STM32ReservedException7(void);
+void __STM32ReservedException8(void);
+void __STM32ReservedException9(void);
+void __STM32ReservedException10(void);
+
 /* [0x2C] SVCall Exception (system service call via SWI instruction) */
 void SVCHandler(void);
 
 /* [0x30] Debug Monitor Exception */
 void DebugMonitor(void);
+
+void __STM32ReservedException13(void);
 
 /* [0x38] PendSVC Exception (pendable request for system service) */
 void PendSVC(void);
