@@ -60,6 +60,26 @@ implementation
 		DEFAULT_EXCEPTION_HANDLER(UsageFaultException, "Usage Fault", 6, 0x18);
 	}
 
+    void __STM32ReservedException7(void) @spontaneous() @C()
+    {
+		DEFAULT_EXCEPTION_HANDLER(__STM32ReservedException7, "Reserved Exception 7", 7, 0x1C);
+    }
+
+    void __STM32ReservedException8(void) @spontaneous() @C()
+    {
+        DEFAULT_EXCEPTION_HANDLER(__STM32ReservedException8, "Reserved Exception 8", 8, 0x20);
+    }
+
+    void __STM32ReservedException9(void) @spontaneous() @C()
+    {
+        DEFAULT_EXCEPTION_HANDLER(__STM32ReservedException9, "Reserved Exception 9", 9, 0x24);
+    }
+
+    void __STM32ReservedException10(void) @spontaneous() @C()
+    {
+        DEFAULT_EXCEPTION_HANDLER(__STM32ReservedException10, "Reserved Exception 10", 10, 0x28);
+    }
+
 	/* [0x2C] SVCall Exception (system service call via SWI instruction) */
 	void SVCHandler(void) @spontaneous() @C()
 	{
@@ -71,6 +91,12 @@ implementation
 	{
 		DEFAULT_EXCEPTION_HANDLER(DebugMonitor, "Debug Monitor", 12, 0x30);
 	}
+
+    void __STM32ReservedException13(void) @spontaneous() @C()
+    {
+		DEFAULT_EXCEPTION_HANDLER(__STM32ReservedException13, "Reserved Exception 13", 13, 0x34);
+    }
+
 
 	/* [0x38] PendSVC Exception (pendable request for system service) */
 	void PendSVC(void) @spontaneous() @C()
@@ -103,10 +129,13 @@ implementation
 	}
 
 	/* [0x4C] RTC Interrupt */
+
+    /* Defined in STM32AlarmC!!!
 	void RTC_IRQHandler(void) @spontaneous() @C()
 	{
 		DEFAULT_EXCEPTION_HANDLER(RTC_IRQHandler, "RTC", 19, 0x4C);
 	}
+    */
 
 	/* [0x50] Flash Interrupt */
 	void FLASH_IRQHandler(void) @spontaneous() @C()

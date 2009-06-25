@@ -10,11 +10,15 @@ MEMORY
 
 SECTIONS
   {
-    .  = 0x0;          /* From 0x00000000 */
+    .vector : {
+        . = ALIGN(4);
+        KEEP(*(vectors))
+        ASSERT(. != 0, "No interrupt vector");
+        . = ALIGN(4);
+    } >rom
+
     .text : {
-    *(vectors)      /* Vector table */
-    ASSERT(. != 0, "No interrupt vector");
-        /* Program code */
+        . = ALIGN(4);
     *(.text .text.* .gnu.linkonce.t.*)
     *(.plt)
     *(.gnu.warning)
@@ -38,18 +42,25 @@ SECTIONS
     __exidx_end = .;
     .text.align :
     {
-        . = ALIGN(8);
+        . = ALIGN(4);
         _etext = .;
     } >rom
 
 
     .  = 0x20000000;   /* From 0x20000000 */
-    .data : {
-    *(.data .data.* .gnu.linonce.d.*)        /* Data memory */
-    } >ram AT > rom
+    .data : AT ( _etext ){
+        . = ALIGN(4);
+        _sdata = .;
+        *(.data .data.* .gnu.linonce.d.*)        /* Data memory */
+        _edata = .;
+    } >ram 
   .bss : {
+    . = ALIGN(4);
+    _sbss = .;
     *(.bss)         /* Zero-filled run time allocate data memory */
-    } >ram AT > rom
+    . = ALIGN(4);
+    _ebss = .;
+    } >ram 
  }
 
 /*========== end of file ==========*/

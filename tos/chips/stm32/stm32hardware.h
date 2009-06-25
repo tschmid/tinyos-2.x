@@ -49,7 +49,7 @@ inline __nesc_atomic_t __nesc_atomic_start(void) @spontaneous()
         : "0" (result) , "1" (temp) , "i" (ARM_BASEPRI_INT_MASK)
         );
   asm volatile("" : : : "memory"); // ensure atomic section effect visibility 
-        */
+  */
   return result;
 }
 
@@ -68,15 +68,13 @@ inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous()
         : "=r" (statusReg)
         : "0" (statusReg),"i" (ARM_BASEPRI_INT_MASK), "r" (oldState)
         );
-*/
+        */
   return;
 }
 
 inline void __nesc_enable_interrupt() {
-    /*
-
   uint32_t statusReg = 0;
-
+/*
   asm volatile (
            "mrs %0,basepri\n\t"
            "bic %0,%1,#0xc0\n\t"
@@ -89,10 +87,8 @@ inline void __nesc_enable_interrupt() {
 }
 
 inline void __nesc_disable_interrupt() {
-    /*
-
   uint32_t statusReg = 0;
-
+/*
   asm volatile (
         "mrs %0,basepri\n\t"
         "orr %0,%1,#0xc0\n\t"
@@ -102,7 +98,6 @@ inline void __nesc_disable_interrupt() {
         );
         */
   return;
-
 }
 
 
