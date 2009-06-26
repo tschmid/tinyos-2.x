@@ -26,10 +26,16 @@
 
 configuration PlatformLedsC
 {
-  provides interface GeneralIO as Led0;
-  provides interface GeneralIO as Led1;
-  provides interface GeneralIO as Led2;
-  uses interface Init;
+  provides 
+  {
+      interface GeneralIO as Led0;
+      interface GeneralIO as Led1;
+      interface GeneralIO as Led2;
+  }
+  uses 
+  {
+      interface Init;
+  }
 }
 
 implementation

@@ -26,7 +26,11 @@
  
 configuration MoteClockC
 {
-  provides interface Init as MoteClockInit;
+  provides 
+  {
+      interface Init as MoteClockInit;
+  }
+
 }
 implementation
 

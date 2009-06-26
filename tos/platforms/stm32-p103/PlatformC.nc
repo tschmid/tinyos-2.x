@@ -17,14 +17,15 @@
 
 configuration PlatformC
 {
-  provides interface Init;
-  provides interface PlatformReset;
-
+  provides {
+      interface Init;
+      interface PlatformReset;
+  }
 }
 
 implementation
 {
-  components PlatformP, HplSTM32InterruptM;
+  components PlatformP, MoteClockC, HplSTM32InterruptM;
 
   Init = PlatformP;
   PlatformReset = PlatformP;

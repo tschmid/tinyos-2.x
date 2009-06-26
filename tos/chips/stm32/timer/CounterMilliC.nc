@@ -26,8 +26,11 @@
 
 configuration CounterMilliC
 {
-  provides interface Counter<TMilli,uint32_t> as CounterMilli32;
-  provides interface LocalTime<TMilli> as LocalTimeMilli;
+  provides 
+  {
+      interface Counter<TMilli,uint32_t> as CounterMilli32;
+      interface LocalTime<TMilli> as LocalTimeMilli;
+  }
 }
 
 implementation

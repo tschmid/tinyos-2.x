@@ -26,12 +26,15 @@
  */
  
 module MoteClockP {
-  uses interface Init;
+  provides 
+  {
+      interface Init as MoteClockInit;
+  }
 }
 
 implementation {
 
-  event void Init.init()
+  command error_t MoteClockInit.init()
   {
     // 1. Cloking the controller from internal HSI RC (8 MHz)
     RCC_HSICmd(ENABLE);
@@ -67,6 +70,8 @@ implementation {
 
     // 5. Clock system from PLL
     RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+
+    return SUCCESS;
 
   }
  
