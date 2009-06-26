@@ -27,8 +27,11 @@
  
 generic configuration AlarmMilliC()
 {
-  provides interface Init;
-  provides interface Alarm<TMilli,uint32_t>;
+  provides 
+  {
+      interface Init;
+      interface Alarm<TMilli,uint32_t>;
+  }
 }
 implementation
 {
