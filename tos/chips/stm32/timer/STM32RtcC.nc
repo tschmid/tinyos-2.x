@@ -26,15 +26,19 @@
 
 #include "stm32fwlib.h"
 
-module STM32AlarmC @safe()
+module STM32RtcC @safe()
 {
-    provides interface Init;
-    provides interface Alarm<TMilli,uint32_t> as Alarm;
+    provides {
+        interface Init;
+        interface Alarm<TMilli,uint32_t> as Alarm;
+        interface Counter<TMilli,uint32_t> as Counter;
+        interface LocalTime<TMilli> as LocalTime;
+    }
 }
 implementation
 {
 
-    uint32_t alarm;
+    norace uint32_t alarm;
     bool running;
 
     void enableInterrupt()
@@ -113,7 +117,13 @@ implementation
         /* wait till last write has finished */
         RTC_WaitForLastTask();
 
-        alarm=0;
+        /* enable overflow interrupt for counter */
+        RTC_ITConfig(RTC_IT_OW, ENABLE);
+
+        /* wait till last write has finished */
+        RTC_WaitForLastTask();
+
+        atomic alarm=0;
 
         return SUCCESS;
     }
@@ -178,6 +188,31 @@ implementation
         return alarm;
     }
 
+    async command uint32_t Counter.get()
+    {
+        return call Alarm.getNow();
+    }
+
+    async command bool Counter.isOverflowPending()
+    {
+        return (RTC_GetITStatus(RTC_IT_OW));
+    }
+
+    async command void Counter.clearOverflow()
+    {
+        RTC_ClearITPendingBit(RTC_IT_OW);
+        RTC_WaitForLastTask();
+    }
+
+    async command uint32_t LocalTime.get() {
+        return call Alarm.getNow();
+    }
+
+
+    default async event void Counter.overflow() {
+        return;
+    }
+
     /**
      * This is the interrupt handler defined in stm32-vectors.c.
      */
@@ -189,7 +224,15 @@ implementation
             // Alarm.stop()
             call Alarm.stop();
             signal Alarm.fired();
+        } 
+        if (RTC_GetITStatus(RTC_IT_OW) != RESET)
+        {
+            RTC_ClearITPendingBit(RTC_IT_OW);
+            RTC_WaitForLastTask();
+            signal Counter.overflow();
         }
+
     }
+
 }
 
