@@ -29,5 +29,6 @@ implementation
   Init = PlatformP;
   PlatformReset = PlatformP;
   PlatformP.Interrupt -> HplSTM32InterruptM;
+  PlatformP.MoteClockInit -> MoteClockC;
 
 }

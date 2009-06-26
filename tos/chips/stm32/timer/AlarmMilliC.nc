@@ -1,5 +1,5 @@
-
-/* "Copyright (c) 2000-2003 The Regents of the University of California.
+/**
+ * "Copyright (c) 2009 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -22,9 +22,7 @@
 /**
  * AlarmMilliC is the alarm for async millisecond alarms
  *
- * @author Cory Sharp <cssharp@eecs.berkeley.edu>
- * @see  Please refer to TEP 102 for more information about this component and its
- *          intended use.
+ * @author Thomas Schmid
  */
  
 generic configuration AlarmMilliC()
