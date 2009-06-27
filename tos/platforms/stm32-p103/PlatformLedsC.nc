@@ -46,6 +46,6 @@ implementation
   Init = PlatformP.MoteInit;
 
   Led0 = GeneralIOC.PortC12;
-  Led1 = GeneralIOC.PortC12;
-  Led2 = GeneralIOC.PortC12;
+  Led1 = GeneralIOC.PortC8;
+  Led2 = GeneralIOC.PortC9;
 }
