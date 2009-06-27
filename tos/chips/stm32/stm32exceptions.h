@@ -195,9 +195,6 @@ void USART3_IRQHandler(void);
 /* [0xE0] EXTI Lines 10-15 Interrupt */
 void EXTI15_10_IRQHandler(void);
 
-/* [0xE4] RTC Alarm Interrupt (EXTI Line 17) */
-void RTCAlarm_IRQHandler(void);
-
 /* [0xE8] USB Wake Up Interrupt (EXTI Line 18) */
 void USBWakeUp_IRQHandler(void);
 

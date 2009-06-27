@@ -377,10 +377,13 @@ implementation
 	}
 
 	/* [0xE4] RTC Alarm Interrupt (EXTI Line 17) */
+    /*
+     * Now defined in McuSleepC.nc
 	void RTCAlarm_IRQHandler(void) @spontaneous() @C()
 	{
 		DEFAULT_EXCEPTION_HANDLER(RTCAlarm_IRQHandler, "RTC Alarm", 57, 0xE4);
 	}
+    */
 
 	/* [0xE8] USB Wake Up Interrupt (EXTI Line 18) */
 	void USBWakeUp_IRQHandler(void) @spontaneous() @C()
