@@ -66,10 +66,6 @@ implementation
 
     inline async command void IO.makeInput()  {
         GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
-    }
-
-    inline async command bool IO.isInput() {
-        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
 
         GPIO_InitTypeDef gpioi = {
             (uint16_t) 1 << bit, // select the pin
@@ -77,6 +73,10 @@ implementation
             GPIO_Mode_IN_FLOATING
         };
         GPIO_Init(port, &gpioi);
+    }
+
+    inline async command bool IO.isInput() {
+       GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
     }
 
     inline async command void IO.makeOutput() {

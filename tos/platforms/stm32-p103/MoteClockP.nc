@@ -52,7 +52,7 @@ implementation {
     // 3. Init PLL
     RCC_PLLConfig(RCC_PLLSource_HSE_Div1,RCC_PLLMul_9); // 72MHz
 
-    //  RCC_PLLConfig(RCC_PLLSource_HSE_Div2,RCC_PLLMul_9); // 72MHz
+    //  RCC_PLLConfig(RCC_PLLSource_HSE_Div2,RCC_PLLMul_9); // 36MHz
     RCC_PLLCmd(ENABLE);
 
     // wait until the PLL is ready
