@@ -51,6 +51,12 @@
 #include <Atm128Adc.h>
 #include <MicaTimer.h>
 
+// enum so components can override power saving,
+// as per TEP 112.
+enum {
+  TOS_SLEEP_NONE = ATM128_POWER_IDLE,
+};
+
 // A/D channels
 enum {
   CHANNEL_RSSI       = ATM128_ADC_SNGL_ADC0,
