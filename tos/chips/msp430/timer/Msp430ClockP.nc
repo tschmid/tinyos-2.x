@@ -33,6 +33,7 @@ module Msp430ClockP @safe()
 {
   provides interface Init;
   provides interface Msp430ClockInit;
+  provides interface McuPowerOverride;
 }
 implementation
 {
@@ -48,6 +49,9 @@ implementation
     TARGET_DCO_DELTA = (TARGET_DCO_KHZ / ACLK_KHZ) * ACLK_CALIB_PERIOD,
   };
 
+  async command mcu_power_t McuPowerOverride.lowestState() {
+    return MSP430_POWER_LPM3;
+  }
 
   command void Msp430ClockInit.defaultSetupDcoCalibrate()
   {
