@@ -262,7 +262,7 @@ implementation {
     rval = call Random.rand16() % (trickles[id].period << (scale - 1));
     newTime += rval;
     
-    trickles[id].remainder = (trickles[id].period << scale) - newTime;
+    trickles[id].remainder = (((uint32_t)trickles[id].period) << scale) - newTime;
     trickles[id].time += newTime;
     dbg("Trickle,TrickleTimes", "Generated time for %hhu with period %hu (%u) is %u (%i + %hu)\n", id, trickles[id].period, (uint32_t)trickles[id].period << scale, trickles[id].time, (trickles[id].period << (scale - 1)), rval);
   }
