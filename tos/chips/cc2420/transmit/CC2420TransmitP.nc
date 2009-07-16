@@ -278,6 +278,8 @@ implementation {
            call CSN.clr();
            call TXFIFO_RAM.write( absOffset, (uint8_t*)timesync, sizeof(timesync_radio_t) );
            call CSN.set();
+           //restoring the event time to the original value
+           *timesync  += time32;
         }
 
         if ( (call CC2420PacketBody.getHeader( m_msg ))->fcf & ( 1 << IEEE154_FCF_ACK_REQ ) ) {
