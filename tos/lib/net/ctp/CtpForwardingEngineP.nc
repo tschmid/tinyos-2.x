@@ -32,19 +32,19 @@
 
 /**
  *  This component contains the forwarding path
- *  of CTP London, the standard CTP implementation packaged with
+ *  of the standard CTP implementation packaged with
  *  TinyOS 2.x. The CTP specification can be found in TEP 123.
  *  The paper entitled "Collection Tree Protocol," by Omprakash
  *  Gnawali et al., in SenSys 2009, describes the implementation and
  *  provides detailed performance results.</p>
  *
- *  <p>The CTP London ForwardingEngine is responsible for queueing and scheduling
- *  outgoing packets. It maintains a pool of
- *  forwarding messages and a packet send queue. A ForwardingEngine
- *  with a forwarding message pool of size <i>F</i> and <i>C</i>
+ *  <p>The CTP ForwardingEngine is responsible for queueing and
+ *  scheduling outgoing packets. It maintains a pool of forwarding
+ *  messages and a packet send queue. A ForwardingEngine with a
+ *  forwarding message pool of size <i>F</i> and <i>C</i>
  *  CollectionSenderC clients has a send queue of size <i>F +
- *  C</i>. This implementation several configuration
- *  constants, which can be found in <code>ForwardingEngine.h</code>.</p>
+ *  C</i>. This implementation several configuration constants, which
+ *  can be found in <code>ForwardingEngine.h</code>.</p>
  *
  *  <p>Packets in the send queue are sent in FIFO order, with head-of-line
  *  blocking. Because this is a tree collection protocol, all packets are going
