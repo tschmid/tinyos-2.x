@@ -15,22 +15,31 @@ void NmiHandler() __attribute__((weak, alias ("DefaultHandler")));
 void HardFaultHandler() __attribute__((weak, alias ("DefaultHandler")));
 void MpuFaultHandler() __attribute__((weak, alias ("DefaultHandler")));
 void BusFaultHandler() __attribute__((weak, alias ("DefaultHandler")));
+void UsageFaultHandler() __attribute__((weak, alias ("DefaultHandler")));
+void SVCallFaultHandler() __attribute__((weak, alias ("DefaultHandler")));
+void DebugHandler() __attribute__((weak, alias ("DefaultHandler")));
+void PendSVHandler() __attribute__((weak, alias ("DefaultHandler")));
+void SysTickHandler() __attribute__((weak, alias ("DefaultHandler")));
 
 __attribute__((section(".vectors"))) unsigned int *__vectors[] = {
-	// Defined by Cortex-M3
+	// Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 78
+	// See also The Definitive Guide to the ARM Cortex-M3, p. 331
 	&_estack,
 	(unsigned int *) __init,
     (unsigned int *) NmiHandler,
     (unsigned int *) HardFaultHandler,
     (unsigned int *) MpuFaultHandler,
     (unsigned int *) BusFaultHandler,
-//    UsageFault_Handler,
-//    0, 0, 0, 0,             // Reserved
-//    SVC_Handler,
-//    DebugMon_Handler,
-//    0,                      // Reserved
-//    PendSV_Handler,
-//    SysTick_Handler,
+	(unsigned int *) UsageFaultHandler,
+	(unsigned int *) 0, // Reserved
+	(unsigned int *) 0, // Reserved
+	(unsigned int *) 0, // Reserved
+	(unsigned int *) 0, // Reserved
+	(unsigned int *) SVCallHandler,
+	(unsigned int *) DebugHandler,
+	(unsigned int *) 0, // Reserved
+	(unsigned int *) PendSVHandler,
+	(unsigned int *) SysTickHandler,
 //    // Defined by board
 //    SUPC_IrqHandler,    // 0  SUPPLY CONTROLLER
 //    RSTC_IrqHandler,    // 1  RESET CONTROLLER
