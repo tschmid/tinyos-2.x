@@ -16,7 +16,7 @@ void HardFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void BusFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void UsageFaultHandler() __attribute__((weak, alias("DefaultHandler")));
-void SVCallFaultHandler() __attribute__((weak, alias("DefaultHandler")));
+void SVCallHandler() __attribute__((weak, alias("DefaultHandler")));
 void DebugHandler() __attribute__((weak, alias("DefaultHandler")));
 void PendSVHandler() __attribute__((weak, alias("DefaultHandler")));
 void SysTickHandler() __attribute__((weak, alias("DefaultHandler")));
