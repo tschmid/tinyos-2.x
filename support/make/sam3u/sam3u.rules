@@ -1,0 +1,57 @@
+define SAM3U_HELP
+
+ SAM3U extras:
+  None available at the moment.
+
+endef
+
+HELP += $(SAM3U_HELP)
+
+OBJCOPY = arm-none-eabi-objcopy
+OBJDUMP = arm-none-eabi-objdump
+NCC = ncc
+LIBS =
+
+BUILDDIR ?= build/$(PLATFORM)
+MAIN_EXE = $(BUILDDIR)/main.exe
+MAIN_BIN = $(BUILDDIR)/main.bin
+INCLUDE_DIRS = $(TOSDIR)/platforms/sam3u-ek
+EXTRA_MODULES = $(TOSDIR)/platforms/sam3u-ek/vectors.c
+
+OPTFLAGS ?= -O3 -g
+CFLAGS += -mcpu=cortex-m3 -mthumb
+CFLAGS += -I$(INCLUDE_DIRS)
+CFLAGS += $(EXTRA_MODULES)
+PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
+PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c
+PFLAGS += -finline-limit=100000
+
+LDFLAGS += -L$(INCLUDE_DIRS) -T sam3u-ek-flash.x
+
+BUILDLESS_DEPS += bytes
+
+ifndef BUILD_DEPS
+  ifeq ($(filter $(BUILDLESS_DEPS),$(GOALS)),)
+    BUILD_DEPS = bin bytes $(POST_BUILD_EXTRA_DEPS)
+  endif
+endif
+
+exe: exe0 bytes FORCE
+	@:
+
+exe0: builddir $(BUILD_EXTRA_DEPS) FORCE
+	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
+	$(NCC) -o $(MAIN_EXE) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS)
+ifdef WIRING_CHECK_FILE
+	@nescc-wiring $(WIRING_CHECK_FILE)
+endif
+	@echo "    compiled $(COMPONENT) to $(MAIN_EXE)"
+
+builddir: FORCE
+	mkdir -p $(BUILDDIR)
+
+bin: exe FORCE
+	$(OBJCOPY) --output-target=binary $(MAIN_EXE) $(MAIN_BIN)
+
+bytes: FORCE
+	@$(OBJDUMP) -h $(MAIN_EXE) | perl -ne '$$b{$$1}=hex $$2 if /^\s*\d+\s*\.(text|data|bss)\s+(\S+)/; END { printf("%16d bytes in ROM\n%16d bytes in RAM\n",$$b{text}+$$b{data},$$b{data}+$$b{bss}); }'
