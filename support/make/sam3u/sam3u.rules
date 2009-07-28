@@ -1,6 +1,7 @@
+#-*-Makefile-*- vim:syntax=make
 define SAM3U_HELP
 
- SAM3U extras:
+SAM3U extras:
   None available at the moment.
 
 endef
@@ -36,6 +37,13 @@ ifndef BUILD_DEPS
   endif
 endif
 
+DEFAULT_PROGRAM ?= sam-ba
+
+# Use the 'if' function instead of the 'ifdef' construct because ifdef freaks
+# out with call in there.  I don't know why.
+$(if $(PROGRAM),,$(call TOSMake_include,sam3u/$(DEFAULT_PROGRAM).extra))
+
+
 exe: exe0 bytes FORCE
 	@:
 
@@ -49,6 +57,9 @@ endif
 
 builddir: FORCE
 	mkdir -p $(BUILDDIR)
+
+setid: FORCE
+    @cmd () { echo "$$@"; $$@; }; if [ x = x$(NODEID) ]; then cmd $(OBJCOPY) --output-target=binary $(MAIN_EXE) $(INSTALL_BIN); else cmd $(SET_ID) --objcopy $(OBJCOPY) --objdump $(OBJDUMP) --target binary $(MAIN_EXE) $(INSTALL_BIN) TOS_NODE_ID=$(NODEID) $(AMADDR)=$(NODEID); fi
 
 bin: exe FORCE
 	$(OBJCOPY) --output-target=binary $(MAIN_EXE) $(MAIN_BIN)
