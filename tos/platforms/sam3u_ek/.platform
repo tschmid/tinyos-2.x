@@ -5,7 +5,7 @@
 
 push ( @includes, qw(
 
-  %T/platforms/sam3u-ek
+  %T/platforms/sam3u_ek
   %T/chips/sam3u
   %T/chips/sam3u/pins
 
