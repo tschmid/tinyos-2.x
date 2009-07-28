@@ -8,12 +8,12 @@ implementation
 	{
 		if ((call IO.isInput()) == 1) {
 			/* Read bit from Pin Data Status Register */
-			uint32_t currentport = *((uint32_t *) (pio_addr + 0x03c));
+			uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x03c));
 			uint32_t currentpin = (currentport & (1 << bit)) >> bit;
 			return ((currentpin & 1) == 1);
 		} else {
 			/* Read bit from Output Data Status Register */
-			uint32_t currentport = *((uint32_t *) (pio_addr + 0x038));
+			uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x038));
 			uint32_t currentpin = (currentport & (1 << bit)) >> bit;
 			return ((currentpin & 1) == 1);
 		}
@@ -22,13 +22,13 @@ implementation
 	async command void IO.set()
 	{
 		/* Set bit in Set Output Data Register */
-		*((uint32_t *) (pio_addr + 0x030)) = (1 << bit);
+		*((volatile uint32_t *) (pio_addr + 0x030)) = (1 << bit);
 	}
 
 	async command void IO.clr()
 	{
 		/* Set bit in Clear Output Data Register */
-		*((uint32_t *) (pio_addr + 0x034)) = (1 << bit);
+		*((volatile uint32_t *) (pio_addr + 0x034)) = (1 << bit);
 	}
 
 	async command void IO.toggle()
@@ -43,18 +43,18 @@ implementation
 	async command void IO.makeInput()
 	{
 		/* Set bit in Output Disable Register */
-		*((uint32_t *) (pio_addr + 0x014)) = (1 << bit);
+		*((volatile uint32_t *) (pio_addr + 0x014)) = (1 << bit);
     }
 
 	async command void IO.makeOutput()
 	{
 		/* Set bit in Output Enable Register */
-		*((uint32_t *) (pio_addr + 0x010)) = (1 << bit);
+		*((volatile uint32_t *) (pio_addr + 0x010)) = (1 << bit);
     }
 
 	async command bool IO.isOutput() {
 		/* Read bit from Output Status Register */
-		uint32_t currentport = *((uint32_t *) (pio_addr + 0x018));
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x018));
 		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
 		return ((currentpin & 1) == 1);
 	}

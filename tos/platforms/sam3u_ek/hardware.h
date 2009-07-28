@@ -36,8 +36,10 @@ void __init() @spontaneous()
 	unsigned int *from;
 	unsigned int *to;
 	unsigned int *i;
+#if 0
 	volatile int j;
 	volatile unsigned int value = 0x0;
+#endif
 
 	// Copy pre-initialized data into RAM
 	from = &_etext;
@@ -55,11 +57,12 @@ void __init() @spontaneous()
 		i++;
 	}
 
+#if 0
 	// FIXME
 	// test GPIO and LEDs
-	*PIOB_PUDR = 0x0007; // disable all pull-up resistors
-	*PIOB_MDDR = 0x0007; // disable all multi-drives
-	*PIOB_PER = 0x0007; // enable PB0 and PB1 and PB2 to be controlled by PIO controller
+//	*PIOB_PUDR = 0x0007; // disable all pull-up resistors
+//	*PIOB_MDDR = 0x0007; // disable all multi-drives
+//	*PIOB_PER = 0x0007; // enable PB0 and PB1 and PB2 to be controlled by PIO controller
 	*PIOB_OER = 0x0007; // enable PB0 and PB1 and PB2 to be driven by PIO controller
 	*PIOB_SODR = 0x0000; // drive PB0-2 at low level
 	*PIOB_CODR = 0x0007; // drive PB0-2 at low level
@@ -76,6 +79,7 @@ void __init() @spontaneous()
 			*PIOB_CODR = 0x0003;
 		}
 	}
+#endif
 
 	// Call main()
 	main();
