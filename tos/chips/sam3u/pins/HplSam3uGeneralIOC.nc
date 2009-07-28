@@ -1,4 +1,4 @@
-configuration HplSTM32GeneralIOC
+configuration HplSam3uGeneralIOC
 {
 	provides {
 		interface GeneralIO as PioA0;
@@ -105,9 +105,9 @@ configuration HplSTM32GeneralIOC
 implementation
 {
 	components 
-	new HplSTM32GeneralIOPioP(0x400e0c00) as PioA,
-	new HplSTM32GeneralIOPioP(0x400e0e00) as PioB,
-	new HplSTM32GeneralIOPioP(0x400e1000) as PioC;
+	new HplSam3uGeneralIOPioP(0x400e0c00) as PioA,
+	new HplSam3uGeneralIOPioP(0x400e0e00) as PioB,
+	new HplSam3uGeneralIOPioP(0x400e1000) as PioC;
 
 	PioA0 = PioA.Pin0;
 	PioA1 = PioA.Pin1;
