@@ -21,16 +21,17 @@
  * Author: Miklos Maroti, Brano Kusy, Janos Sallai
  * Date last modified: 3/17/03
  * Ported to T2: 3/17/08 by Brano Kusy (branislav.kusy@gmail.com)
+ * Adapted for 32kHz and LPL: 6/16/09 by Thomas Schmid (thomas.schmid@ucla.edu)
  */
 
 #include "TimeSyncMsg.h"
 
-configuration TimeSyncC
+configuration TimeSync32kC
 {
   uses interface Boot;
   provides interface Init;
   provides interface StdControl;
-  provides interface GlobalTime<TMilli>;
+  provides interface GlobalTime<T32khz>;
 
   //interfaces for extra fcionality: need not to be wired
   provides interface TimeSyncInfo;
@@ -40,7 +41,7 @@ configuration TimeSyncC
 
 implementation
 {
-  components new TimeSyncP(TMilli);
+  components new TimeSyncP(T32khz) as TimeSyncP;
 
   GlobalTime      =   TimeSyncP;
   StdControl      =   TimeSyncP;
@@ -52,12 +53,13 @@ implementation
 
   components TimeSyncMessageC as ActiveMessageC;
   TimeSyncP.RadioControl    ->  ActiveMessageC;
-  TimeSyncP.Send            ->  ActiveMessageC.TimeSyncAMSendMilli[AM_TIMESYNCMSG];
+  TimeSyncP.Send            ->  ActiveMessageC.TimeSyncAMSend32khz[AM_TIMESYNCMSG];
   TimeSyncP.Receive         ->  ActiveMessageC.Receive[AM_TIMESYNCMSG];
   TimeSyncP.TimeSyncPacket  ->  ActiveMessageC;
 
-  components HilTimerMilliC;
-  TimeSyncP.LocalTime       ->  HilTimerMilliC;
+  components Counter32khz32C, new CounterToLocalTimeC(T32khz) as LocalTime32khzC;
+  LocalTime32khzC.Counter -> Counter32khz32C;
+  TimeSyncP.LocalTime     -> LocalTime32khzC;
 
   components new TimerMilliC() as TimerC;
   TimeSyncP.Timer ->  TimerC;
@@ -73,5 +75,6 @@ implementation
   components CC2420ActiveMessageC;
   TimeSyncP.LowPowerListening -> CC2420ActiveMessageC;
 #endif
+
 
 }
