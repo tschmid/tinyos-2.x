@@ -1,0 +1,6 @@
+PLATFORM = sam3u-ek
+
+$(call TOSMake_include_platform,sam3u)
+
+sam3u-ek: $(BUILD_DEPS)
+	@:
