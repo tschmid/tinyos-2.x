@@ -16,7 +16,7 @@ implementation
 
 		while (1) {
 			volatile int i = 0;
-			for (i = 0; i < 20000; i++);
+			for (i = 0; i < 100000; i++);
 
 			counter++;
 			counter = counter % 8;
