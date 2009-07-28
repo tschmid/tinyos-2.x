@@ -12,7 +12,7 @@ configuration PlatformC
 
 implementation
 {
-  components PlatformP;
+	components PlatformP;
 
-  Init = PlatformP;
+	Init = PlatformP;
 }

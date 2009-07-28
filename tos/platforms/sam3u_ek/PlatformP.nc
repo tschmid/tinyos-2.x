@@ -6,6 +6,10 @@ module PlatformP
 	{
         interface Init;
     }
+	uses
+	{
+		interface Init as LedsInit;
+	}
 }
 
 implementation
@@ -15,7 +19,13 @@ implementation
 		/* I/O pin configuration, clock calibration, and LED configuration
 		 * (see TEP 107)
 		 */
+		call LedsInit.init();
 
-        return SUCCESS;
-    }
+		return SUCCESS;
+	}
+
+	default command error_t LedsInit.init()
+	{
+		return SUCCESS;
+	}
 }
