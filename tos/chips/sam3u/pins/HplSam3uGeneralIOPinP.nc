@@ -6,7 +6,7 @@ implementation
 {
 	async command bool IO.get()
 	{
-		if ((call IO.isInput()) == true) {
+		if ((call IO.isInput()) == 1) {
 			/* Read bit from Pin Data Status Register */
 			uint32_t currentport = *((uint32_t *) (pio_addr + 0x03c));
 			uint32_t currentpin = (currentport & (1 << bit)) >> bit;
@@ -16,6 +16,7 @@ implementation
 			uint32_t currentport = *((uint32_t *) (pio_addr + 0x038));
 			uint32_t currentpin = (currentport & (1 << bit)) >> bit;
 			return ((currentpin & 1) == 1);
+		}
 	}
 
 	async command void IO.set()
@@ -32,7 +33,7 @@ implementation
 
 	async command void IO.toggle()
 	{
-		if ((call IO.get()) == true) {
+		if ((call IO.get()) == 1) {
 			call IO.clr();
 		} else {
 			call IO.set();
