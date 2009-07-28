@@ -10,12 +10,14 @@ HELP += $(SAM3U_HELP)
 
 OBJCOPY = arm-none-eabi-objcopy
 OBJDUMP = arm-none-eabi-objdump
+SET_ID = tos-set-symbols
 NCC = ncc
 LIBS =
 
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_BIN = $(BUILDDIR)/main.bin
+INSTALL_BIN = $(MAIN_BIN).out$(if $(NODEID),-$(NODEID),)
 INCLUDE_DIRS = $(TOSDIR)/platforms/sam3u_ek
 EXTRA_MODULES = $(TOSDIR)/platforms/sam3u_ek/vectors.c
 
@@ -59,7 +61,7 @@ builddir: FORCE
 	mkdir -p $(BUILDDIR)
 
 setid: FORCE
-    @cmd () { echo "$$@"; $$@; }; if [ x = x$(NODEID) ]; then cmd $(OBJCOPY) --output-target=binary $(MAIN_EXE) $(INSTALL_BIN); else cmd $(SET_ID) --objcopy $(OBJCOPY) --objdump $(OBJDUMP) --target binary $(MAIN_EXE) $(INSTALL_BIN) TOS_NODE_ID=$(NODEID) $(AMADDR)=$(NODEID); fi
+	@cmd () { echo "$$@"; $$@; }; if [ x = x$(NODEID) ]; then cmd $(OBJCOPY) --output-target=binary $(MAIN_EXE) $(INSTALL_BIN); else cmd $(SET_ID) --objcopy $(OBJCOPY) --objdump $(OBJDUMP) --target binary $(MAIN_EXE) $(INSTALL_BIN) TOS_NODE_ID=$(NODEID) $(AMADDR)=$(NODEID); fi
 
 bin: exe FORCE
 	$(OBJCOPY) --output-target=binary $(MAIN_EXE) $(MAIN_BIN)
