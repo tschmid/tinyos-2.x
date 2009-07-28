@@ -16,8 +16,8 @@ LIBS =
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_BIN = $(BUILDDIR)/main.bin
-INCLUDE_DIRS = $(TOSDIR)/platforms/sam3u-ek
-EXTRA_MODULES = $(TOSDIR)/platforms/sam3u-ek/vectors.c
+INCLUDE_DIRS = $(TOSDIR)/platforms/sam3u_ek
+EXTRA_MODULES = $(TOSDIR)/platforms/sam3u_ek/vectors.c
 
 OPTFLAGS ?= -O3 -g
 CFLAGS += -mcpu=cortex-m3 -mthumb
