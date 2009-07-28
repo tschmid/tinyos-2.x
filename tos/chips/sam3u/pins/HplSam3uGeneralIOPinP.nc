@@ -39,42 +39,26 @@ implementation
 		}
 	}
 
-    async command void IO.makeInput()  {
-        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
-
-        GPIO_InitTypeDef gpioi = {
-            (uint16_t) 1 << bit, // select the pin
-            GPIO_Speed_10MHz,
-            GPIO_Mode_IN_FLOATING
-        };
-        GPIO_Init(port, &gpioi);
+	async command void IO.makeInput()
+	{
+		/* Set bit in Output Disable Register */
+		*((uint32_t *) (pio_addr + 0x014)) = (1 << bit);
     }
 
-	/*
-    async command bool IO.isInput() {
-       GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
+	async command void IO.makeOutput()
+	{
+		/* Set bit in Output Enable Register */
+		*((uint32_t *) (pio_addr + 0x010)) = (1 << bit);
     }
 
-    async command void IO.makeOutput() {
-        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
+	async command bool IO.isOutput() {
+		/* Read bit from Output Status Register */
+		uint32_t currentport = *((uint32_t *) (pio_addr + 0x018));
+		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+		return ((currentpin & 1) == 1);
+	}
 
-        GPIO_InitTypeDef gpioi = {
-            (uint16_t) 1 << bit, // select the pin
-            GPIO_Speed_10MHz,
-            GPIO_Mode_Out_PP
-        };
-        GPIO_Init(port, &gpioi);
-    }
-
-    async command bool IO.isOutput() {
-        GPIO_TypeDef* port = (GPIO_TypeDef*)port_addr;
-        // MODEx == 0 is input... everything else is output
-        if(bit < 8)
-        {
-            return ((port->CRL&(0x03<<(bit<<2))) > 0);
-        } else {
-            return ((port->CRH&(0x03<<((bit-8)<<2))) > 0);
-        }
-    }
-	*/
+	async command bool IO.isInput() {
+		return (! (call IO.isOutput()));
+	}
 }
