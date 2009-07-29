@@ -1,6 +1,25 @@
+/* Section symbols defined in linker script
+ * sam3u-ek-flash.x
+ */
+extern unsigned int _stext;
+extern unsigned int _etext;
+extern unsigned int _sdata;
+extern unsigned int _edata;
+extern unsigned int _sbss;
+extern unsigned int _ebss;
 extern unsigned int _estack;
-extern void __init();
 
+/* main() symbol defined in RealMainP
+ */
+int main();
+
+/* Start-up code called upon reset.
+ * Definition see below.
+ */
+void __init();
+
+/* Default handler for any IRQ or fault
+ */
 void DefaultHandler()
 {
 	// do nothing, just return
@@ -10,7 +29,6 @@ void DefaultHandler()
  * The handler functions are provided by weak aliases; thus, a regular
  * handler definition will override this.
  */
-
 void NmiHandler() __attribute__((weak, alias("DefaultHandler")));
 void HardFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
@@ -104,3 +122,37 @@ __attribute__((section(".vectors"))) unsigned int *__vectors[] = {
 	(unsigned int *) UDPDIrqHandler,    // 29 USB Device High Speed UDP_HS
 	(unsigned int *) 0 // not used
 };
+
+/* Start-up code to copy data into RAM
+ * and zero BSS segment
+ * and call main()
+ * and "exit"
+ */
+void __init()
+{
+	unsigned int *from;
+	unsigned int *to;
+	unsigned int *i;
+
+	// Copy pre-initialized data into RAM
+	from = &_etext;
+	to = &_sdata;
+	while (to < &_edata) {
+		*to = *from;
+		to++;
+		from++;
+	}
+
+	// Fill BSS data with 0
+	i = &_sbss;
+	while (i < &_ebss) {
+		*i = 0;
+		i++;
+	}
+
+	// Call main()
+	main();
+
+	// "Exit"
+	while (1);
+}
