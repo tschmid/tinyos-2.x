@@ -47,14 +47,14 @@ class samba:
         if not os.path.isfile(cmdOptions.binfile):
             print '"%s" does not exist. Exiting.' % cmdOptions.binfile
             sys.exit(1)
-
-        self.f = tempfile.NamedTemporaryFile(delete=False)
+        # once we switch to python 2.6, we should do this
+        #self.f = tempfile.NamedTemporaryFile(delete=False)
+        self.f = file('/tmp/samba.tcl', 'w+')
         self.f.write("""FLASH::Init 0
     send_file {Flash 0} "%s" 0x80000 0
     FLASH::ScriptGPNMV 2
     """%(cmdOptions.binfile,))
-        self.f.close()
-
+        self.f.flush()
 
         try:
             error = False
@@ -80,7 +80,7 @@ class samba:
             print "Remove JP1 and hit [Enter]"
             a = raw_input()
 
-            samba_cmd = "sam-ba %s %s %s"%(cmdOptions.port, cmdOptions.target,
+            samba_cmd = "DISPLAY=:0 sam-ba %s %s %s"%(cmdOptions.port, cmdOptions.target,
                     self.f.name)
             samba_proc = subprocess.Popen(samba_cmd, shell=True, stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE)
@@ -114,7 +114,8 @@ class samba:
             pass
 
     def cleanup(self):
-         os.unlink(self.f.name)
+        self.f.close()
+        os.unlink(self.f.name)
 
 
     def alarmHandler(self, signum, frame):
