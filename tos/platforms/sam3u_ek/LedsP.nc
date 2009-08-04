@@ -1,5 +1,3 @@
-// $Id: LedsP.nc,v 1.6 2008/06/24 05:32:32 regehr Exp $
-
 /*
  * "Copyright (c) 2000-2005 The Regents of the University  of California.  
  * All rights reserved.
