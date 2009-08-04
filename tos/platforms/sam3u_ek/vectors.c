@@ -1,6 +1,62 @@
-extern unsigned int _estack;
-extern void __init();
+/*
+ * Copyright (c) 2009 Stanford University.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the
+ *   distribution.
+ * - Neither the name of the Stanford University nor the names of
+ *   its contributors may be used to endorse or promote products derived
+ *   from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL STANFORD
+ * UNIVERSITY OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
+/*
+ * Startup code and interrupt and trap handlers for the SAM3U-EK board.
+ *
+ * @author wanja@cs.fau.de
+ */
+
+/* Section symbols defined in linker script
+ * sam3u-ek-flash.x
+ */
+extern unsigned int _stext;
+extern unsigned int _etext;
+extern unsigned int _sdata;
+extern unsigned int _edata;
+extern unsigned int _sbss;
+extern unsigned int _ebss;
+extern unsigned int _estack;
+
+/* main() symbol defined in RealMainP
+ */
+int main();
+
+/* Start-up code called upon reset.
+ * Definition see below.
+ */
+void __init();
+
+/* Default handler for any IRQ or fault
+ */
 void DefaultHandler()
 {
 	// do nothing, just return
@@ -10,7 +66,6 @@ void DefaultHandler()
  * The handler functions are provided by weak aliases; thus, a regular
  * handler definition will override this.
  */
-
 void NmiHandler() __attribute__((weak, alias("DefaultHandler")));
 void HardFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
@@ -20,38 +75,40 @@ void SVCallHandler() __attribute__((weak, alias("DefaultHandler")));
 void DebugHandler() __attribute__((weak, alias("DefaultHandler")));
 void PendSVHandler() __attribute__((weak, alias("DefaultHandler")));
 void SysTickHandler() __attribute__((weak, alias("DefaultHandler")));
-void SUPCIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void RSTCIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void RTCIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void RTTIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void WDTIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void PMCIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void EFC0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void EFC1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void DBGUIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void HSMC4IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void PIOAIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void PIOBIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void PIOCIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void USART0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void USART1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void USART2IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void USART3IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void MCI0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void TWI0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void TWI1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void SPI0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void SSC0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+
+void SupcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void RstcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void RtcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void RttIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void WdtIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void PmcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Eefc0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Eefc1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void UartIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void SmcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void PioAIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void PioBIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void PioCIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Usart0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Usart1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Usart2IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Usart3IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void HsmciIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Twi0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Twi1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void SpiIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void SscIrqHandler() __attribute__((weak, alias("DefaultHandler")));
 void TC0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
 void TC1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
 void TC2IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void PWMIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void ADCC0IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void ADCC1IrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void HDMAIrqHandler() __attribute__((weak, alias("DefaultHandler")));
-void UDPDIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void PwmIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void Adc12BIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void AdcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void DmacIrqHandler() __attribute__((weak, alias("DefaultHandler")));
+void UdphsIrqHandler() __attribute__((weak, alias("DefaultHandler")));
 
 __attribute__((section(".vectors"))) unsigned int *__vectors[] = {
+	// Defined by Cortex-M3
 	// Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 78
 	// See also The Definitive Guide to the ARM Cortex-M3, p. 331
 	&_estack,
@@ -70,37 +127,70 @@ __attribute__((section(".vectors"))) unsigned int *__vectors[] = {
 	(unsigned int *) 0, // Reserved
 	(unsigned int *) PendSVHandler,
 	(unsigned int *) SysTickHandler,
-	// Defined by SAM3U-EK board
-	// See at91lib/boards/at91sam3u-ek/board_cstartup_gnu.c
-	(unsigned int *) SUPCIrqHandler,    // 0  SUPPLY CONTROLLER
-	(unsigned int *) RSTCIrqHandler,    // 1  RESET CONTROLLER
-	(unsigned int *) RTCIrqHandler,     // 2  REAL TIME CLOCK
-	(unsigned int *) RTTIrqHandler,     // 3  REAL TIME TIMER
-	(unsigned int *) WDTIrqHandler,     // 4  WATCHDOG TIMER
-	(unsigned int *) PMCIrqHandler,     // 5  PMC
-	(unsigned int *) EFC0IrqHandler,    // 6  EFC0
-	(unsigned int *) EFC1IrqHandler,    // 7  EFC1
-	(unsigned int *) DBGUIrqHandler,    // 8  DBGU
-	(unsigned int *) HSMC4IrqHandler,   // 9  HSMC4
-	(unsigned int *) PIOAIrqHandler,    // 10 Parallel IO Controller A
-	(unsigned int *) PIOBIrqHandler,    // 11 Parallel IO Controller B
-	(unsigned int *) PIOCIrqHandler,    // 12 Parallel IO Controller C
-	(unsigned int *) USART0IrqHandler,  // 13 USART 0
-	(unsigned int *) USART1IrqHandler,  // 14 USART 1
-	(unsigned int *) USART2IrqHandler,  // 15 USART 2
-	(unsigned int *) USART3IrqHandler,  // 16 USART 3
-	(unsigned int *) MCI0IrqHandler,    // 17 Multimedia Card Interface
-	(unsigned int *) TWI0IrqHandler,    // 18 TWI 0
-	(unsigned int *) TWI1IrqHandler,    // 19 TWI 1
-	(unsigned int *) SPI0IrqHandler,    // 20 Serial Peripheral Interface
-	(unsigned int *) SSC0IrqHandler,    // 21 Serial Synchronous Controller 0
-	(unsigned int *) TC0IrqHandler,     // 22 Timer Counter 0
-	(unsigned int *) TC1IrqHandler,     // 23 Timer Counter 1
-	(unsigned int *) TC2IrqHandler,     // 24 Timer Counter 2
-	(unsigned int *) PWMIrqHandler,     // 25 Pulse Width Modulation Controller
-	(unsigned int *) ADCC0IrqHandler,   // 26 ADC controller0
-	(unsigned int *) ADCC1IrqHandler,   // 27 ADC controller1
-	(unsigned int *) HDMAIrqHandler,    // 28 HDMA
-	(unsigned int *) UDPDIrqHandler,    // 29 USB Device High Speed UDP_HS
-	(unsigned int *) 0 // not used
+	// Defined by SAM3U MCU
+	// Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 41
+	(unsigned int *) SupcIrqHandler,
+	(unsigned int *) RstcIrqHandler,
+	(unsigned int *) RtcIrqHandler,
+	(unsigned int *) RttIrqHandler,
+	(unsigned int *) WdtIrqHandler,
+	(unsigned int *) PmcIrqHandler,
+	(unsigned int *) Eefc0IrqHandler,
+	(unsigned int *) Eefc1IrqHandler,
+	(unsigned int *) UartIrqHandler,
+	(unsigned int *) SmcIrqHandler,
+	(unsigned int *) PioAIrqHandler,
+	(unsigned int *) PioBIrqHandler,
+	(unsigned int *) PioCIrqHandler,
+	(unsigned int *) Usart0IrqHandler,
+	(unsigned int *) Usart1IrqHandler,
+	(unsigned int *) Usart2IrqHandler,
+	(unsigned int *) Usart3IrqHandler,
+	(unsigned int *) HsmciIrqHandler,
+	(unsigned int *) Twi0IrqHandler,
+	(unsigned int *) Twi1IrqHandler,
+	(unsigned int *) SpiIrqHandler,
+	(unsigned int *) SscIrqHandler,
+	(unsigned int *) TC0IrqHandler,
+	(unsigned int *) TC1IrqHandler,
+	(unsigned int *) TC2IrqHandler,
+	(unsigned int *) PwmIrqHandler,
+	(unsigned int *) Adc12BIrqHandler,
+	(unsigned int *) AdcIrqHandler,
+	(unsigned int *) DmacIrqHandler,
+	(unsigned int *) UdphsIrqHandler
 };
+
+/* Start-up code to copy data into RAM
+ * and zero BSS segment
+ * and call main()
+ * and "exit"
+ */
+void __init()
+{
+	unsigned int *from;
+	unsigned int *to;
+	unsigned int *i;
+
+	// Copy pre-initialized data into RAM
+	from = &_etext;
+	to = &_sdata;
+	while (to < &_edata) {
+		*to = *from;
+		to++;
+		from++;
+	}
+
+	// Fill BSS data with 0
+	i = &_sbss;
+	while (i < &_ebss) {
+		*i = 0;
+		i++;
+	}
+
+	// Call main()
+	main();
+
+	// "Exit"
+	while (1);
+}
