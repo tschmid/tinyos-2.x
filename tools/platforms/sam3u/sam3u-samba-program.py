@@ -132,14 +132,10 @@ class samba:
             signal.alarm(timeout)
 
         while (not expect_found and not self.expect_timeout):
-            try:
-                line = fh.readline().strip()
-                if cmdOptions.DEBUG:
-                    print line
-                    time.sleep(0.2)
-            except:
-                # Possibly due to alarm
-                break
+            line = fh.readline().strip()
+            if cmdOptions.DEBUG:
+                print line
+                time.sleep(0.2)
             matches = r.findall(line)
             if (len(matches) != 0):
                 expect_found = True

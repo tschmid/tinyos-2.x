@@ -94,5 +94,4 @@ inline void __nesc_disable_interrupt()
 		: "r" (newState) // input
 	);
 }
-
 #endif // SAM3U_HARDWARE_H
