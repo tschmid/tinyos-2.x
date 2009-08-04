@@ -74,6 +74,23 @@ typedef union
 	} bits;
 } uart_mr_t;
 
+enum
+{
+	UART_MR_PAR_EVEN  = 0x0,
+	UART_MR_PAR_ODD   = 0x1,
+	UART_MR_PAR_SPACE = 0x2,
+	UART_MR_PAR_MARK  = 0x3,
+	UART_MR_PAR_NONE  = 0x4
+};
+
+enum
+{
+	UART_MR_CHMODE_NORMAL     = 0x0,
+	UART_MR_CHMODE_AUTOECHO   = 0x1,
+	UART_MR_CHMODE_LOCALLOOP  = 0x2,
+	UART_MR_CHMODE_REMOTELOOP = 0x3
+};
+
 // Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 670
 typedef union
 {
