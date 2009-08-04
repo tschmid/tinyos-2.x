@@ -42,7 +42,7 @@ interface HplSam3uUartConfig
 	 * cd = 0: baud rate = MCK
 	 * cd = 2--65535: baud rate = MCK / (cd * 16)
 	 */
-	async command setClockDivisor(uint16_t cd);
+	async command error_t setClockDivisor(uint16_t cd);
 
 	/**
 	 * par = 0x0/UART_MR_PAR_EVEN: even
@@ -51,7 +51,7 @@ interface HplSam3uUartConfig
 	 * par = 0x3/UART_MR_PAR_MARK: mark (forced to 1)
 	 * par = 0x4/UART_MR_PAR_NONE: none
 	 */
-	async command setParityType(uint8_t par);
+	async command error_t setParityType(uint8_t par);
 
 	/**
 	 * chmode = 0x0/UART_MR_CHMODE_NORMAL: normal
@@ -59,5 +59,5 @@ interface HplSam3uUartConfig
 	 * chmode = 0x2/UART_MR_CHMODE_LOCALLOOP: local loopback
 	 * chmode = 0x3/UART_MR_CHMODE_REMOTELOOP: remote loopback
 	 */
-	async command setChannelMode(uint8_t chmode);
+	async command error_t setChannelMode(uint8_t chmode);
 }
