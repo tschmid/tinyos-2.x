@@ -171,6 +171,7 @@ void __init()
 	unsigned int *from;
 	unsigned int *to;
 	unsigned int *i;
+	volatile unsigned int *NVIC_VTOFFR = (volatile unsigned int *) 0xe000ed08;
 
 	// Copy pre-initialized data into RAM.
 	// Data lies in Flash after the text segment (_etext),
@@ -191,8 +192,11 @@ void __init()
 		i++;
 	}
 
-	i = (unsigned int *) &_stext; // Beginning of vector table
-	*((volatile unsigned int *) 0xE000ED08) = ((unsigned int) (i)) | (0x0 << 7);
+	// Configure location of IRQ vector table
+	// Vector table is in the beginning of text segment / Flash 0
+	i = (unsigned int *) &_stext;
+	// TBLBASE bit is automatically 0 -> table in code space
+	*NVIC_VTOFFR = (unsigned int) i;
 
 	// Call main()
 	main();
