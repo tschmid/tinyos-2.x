@@ -172,7 +172,10 @@ void __init()
 	unsigned int *to;
 	unsigned int *i;
 
-	// Copy pre-initialized data into RAM
+	// Copy pre-initialized data into RAM.
+	// Data lies in Flash after the text segment (_etext),
+	// but is linked to be at _sdata.
+	// Thus, we have to copy it to that place in RAM.
 	from = &_etext;
 	to = &_sdata;
 	while (to < &_edata) {
@@ -187,6 +190,9 @@ void __init()
 		*i = 0;
 		i++;
 	}
+
+	i = (unsigned int *) &_stext; // Beginning of vector table
+	*((volatile unsigned int *) 0xE000ED08) = ((unsigned int) (i)) | (0x0 << 7);
 
 	// Call main()
 	main();
