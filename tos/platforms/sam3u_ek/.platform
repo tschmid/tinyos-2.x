@@ -9,6 +9,7 @@ push ( @includes, qw(
   %T/chips/sam3u
   %T/chips/sam3u/pins
   %T/chips/sam3u/timer
+  %T/chips/sam3u/uart
   %T/lib/timer
 
 ) );
