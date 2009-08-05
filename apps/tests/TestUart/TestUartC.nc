@@ -72,7 +72,7 @@ implementation
 		// Baud rate = MCK / (13 x 16) = 4 MHz / 208 = 19,230 Hz
 		// Baud rate = MCK / (26 x 16) = 4 MHz / 416 = 9,615 Hz
 		//call HplSam3uUartConfig.setClockDivisor(26);
-		call HplSam3uUartConfig.setClockDivisor(315); // 9,615 Hz
+		call HplSam3uUartConfig.setClockDivisor(312); // 9,615 Hz
 		//call HplSam3uUartConfig.setClockDivisor(3333); // 900 Hz
 		//*UART_BRGR2 = 0x0000000d;
 
@@ -112,7 +112,7 @@ implementation
 				call Leds.led1Toggle(); // Led 1 = Sent Something
 				while ((call HplSam3uUartStatus.isTransmitterEmpty()) == FALSE) {
 					// wait until character is sent
-					//call Leds.led2Toggle(); // Led 2 = Waiting
+					call Leds.led2Toggle(); // Led 2 = Waiting
 				}
 			}
 			call Leds.led0Toggle(); // Led 0 = Living
@@ -122,8 +122,13 @@ implementation
 		}
 	}
 
-	void UartIrqHandler() @C() @spontaneous()
+	async event void HplSam3uUartInterrupts.uartInterrupt()
 	{
-		//call Leds.led1Toggle();
 	}
+
+
+//	void UartIrqHandler() @C() @spontaneous()
+//	{
+//		//call Leds.led1Toggle();
+//	}
 }
