@@ -25,7 +25,7 @@
  * @author Thomas Schmid
  */
 
-#include "nvic.h"
+#include "sam3unvic.h"
 
 module HplNVICCntlP
 {

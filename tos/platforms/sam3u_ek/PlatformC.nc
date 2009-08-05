@@ -43,7 +43,9 @@ configuration PlatformC
 
 implementation
 {
-	components PlatformP;
+	components PlatformP, MoteClockC;
 
 	Init = PlatformP;
+
+    PlatformP.MoteClockInit -> MoteClockC;
 }

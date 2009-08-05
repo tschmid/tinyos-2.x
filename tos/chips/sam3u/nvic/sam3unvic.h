@@ -1,5 +1,5 @@
-#ifndef NVIC_H
-#define NVIC_H
+#ifndef SAM3UNVIC_H
+#define SAM3UNVIC_H
 
 #ifndef __NVIC_PRIO_BITS
   #define __NVIC_PRIO_BITS    4               /*!< standard definition for NVIC Priority Bits */
@@ -151,4 +151,4 @@ typedef enum irqn
  IROn_UDPHS               = AT91C_ID_UDPHS // USB Device High Speed
 } irqn_t;
 
-#endif
+#endif // SAM3UNVIC
