@@ -6,6 +6,7 @@
 push ( @includes, qw(
 
   %T/platforms/sam3u_ek
+  %T/platforms/sam3u_ek/includes
   %T/chips/sam3u
   %T/chips/sam3u/pins
   %T/chips/sam3u/timer
