@@ -37,6 +37,12 @@
 
 interface HplSam3uUartInterrupts
 {
+	/**
+	 * The UART device interrupt. Can be any of the below interrupts,
+	 * thus has to be dispatched first.
+	 */
+	async event void uartInterrupt();
+
 	async command void enableRxrdyIrq();
 	async command void disableRxrdyIrq();
 	async command bool isEnabledRxrdyIrq();
