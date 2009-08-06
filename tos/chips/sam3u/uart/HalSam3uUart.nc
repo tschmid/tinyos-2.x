@@ -65,6 +65,12 @@ interface HalSam3uUart
 	 */
 	command error_t sendChar(uint8_t letter);
 
+	/**
+	 * Reads the receiver buffer. That doesn't mean that the
+	 * read character has to be valid.
+	 */
+	command uint8_t receiveChar();
+
 	async event void receiverReady();
 	async event void transmitterReady();
 	async event void endOfReceiverTransfer();

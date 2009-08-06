@@ -116,7 +116,7 @@ implementation
 		UART_CR->bits.rststa = 1;
 	}
 
-	void UartIrqHandler() @C() @spontaneous()
+	__attribute__((interrupt)) void UartIrqHandler() @C() @spontaneous()
 	{
 		signal HplSam3uUartInterrupts.uartInterrupt();
 	}
