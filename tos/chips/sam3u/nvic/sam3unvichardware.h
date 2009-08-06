@@ -1,17 +1,44 @@
-#ifndef SAM3UNVIC_H
-#define SAM3UNVIC_H
+/**
+ * "Copyright (c) 2009 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement
+ * is hereby granted, provided that the above copyright notice, the following
+ * two paragraphs and the author appear in all copies of this software.
+ *
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
+ * OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ */
 
-#ifndef __NVIC_PRIO_BITS
-  #define __NVIC_PRIO_BITS    4               /*!< standard definition for NVIC Priority Bits */
-#endif
+/**
+ * Header definition for the Nested Vector Interrupt Controller.
+ *
+ * @author Thomas Schmid
+ */
+
+#ifndef SAM3UNVICHARDWARE_H
+#define SAM3UNVICHARDWARE_H
+
+#include "sam3uhardware.h"
+
+#define __NVIC_PRIO_BITS    4               /*!< standard definition for NVIC Priority Bits */
 
 #define NVIC_AIRCR_VECTKEY    (0x5FA << 16)   /*!< AIRCR Key for write access   */
 
 /**
- *  * IO definitions
- *   *
- *    * define access restrictions to peripheral registers
- *     */
+ *  IO definitions
+ * 
+ * define access restrictions to peripheral registers
+ **/
 
 #define     __I     volatile const            /*!< defines 'read only' permissions      */
 #define     __O     volatile                  /*!< defines 'write only' permissions     */
@@ -21,19 +48,19 @@
 /* memory mapping struct for Nested Vectored Interrupt Controller (NVIC) */
 typedef struct
 {
-  __IO uint32_t ISER[8];                      /*!< Interrupt Set Enable Register            */
-       uint32_t RESERVED0[24];
-  __IO uint32_t ICER[8];                      /*!< Interrupt Clear Enable Register          */
-       uint32_t RSERVED1[24];
-  __IO uint32_t ISPR[8];                      /*!< Interrupt Set Pending Register           */
-       uint32_t RESERVED2[24];
-  __IO uint32_t ICPR[8];                      /*!< Interrupt Clear Pending Register         */
-       uint32_t RESERVED3[24];
-  __IO uint32_t IABR[8];                      /*!< Interrupt Active bit Register            */
-       uint32_t RESERVED4[56];
-  __IO uint8_t  IP[240];                      /*!< Interrupt Priority Register, 8Bit wide   */
-       uint32_t RESERVED5[644];
-  __O  uint32_t STIR;                         /*!< Software Trigger Interrupt Register      */
+  volatile uint32_t iser0;              // Interrupt Set Enable
+           uint32_t reserved[31];
+  volatile uint32_t icer0;              // Interrupt Clear-enable
+           uint32_t reserved1[31];
+  volatile uint32_t ispr0;              // Interrupt Set-pending
+           uint32_t reserved2[31];
+  volatile uint32_t icpr0;              // Interrupt Clear-pending
+           uint32_t reserved3[31];
+  volatile uint32_t iabr0;              // Interrupt Active Bit
+           uint32_t reserved4[63];
+  volatile uint8_t  ip[32];             // Interrupt Priority Registers
+           uint32_t reserved5[696];
+  volatile uint32_t stir;               // Software Trigger Interrupt
 }  nvic_t;
 
 /* memory mapping struct for System Control Block */
@@ -62,50 +89,14 @@ typedef struct
 
 
 /* Memory mapping of Cortex-M3 Hardware */
+volatile nvic_t* NVIC = (volatile nvic_t *) 0xE000E100; // NVIC Base Address
+
 #define SCS_BASE            (0xE000E000)                  /*!< System Control Space Base Address    */
-#define NVIC_BASE           (SCS_BASE +  0x0100)          /*!< NVIC Base Address                    */
 #define SCB_BASE            (SCS_BASE +  0x0D00)          /*!< System Control Block Base Address    */
 
-#define NVIC                ((nvic_t *) NVIC_BASE)        /*!< NVIC configuration struct            */
 #define SCB                 ((scb_t*)   SCB_BASE)         /*!< SCB configuration struct             */
 
-// *****************************************************************************
-//               PERIPHERAL ID DEFINITIONS FOR AT91SAM3U4
-// *****************************************************************************
-#define AT91C_ID_SUPC   ( 0) // SUPPLY CONTROLLER
-#define AT91C_ID_RSTC   ( 1) // RESET CONTROLLER
-#define AT91C_ID_RTC    ( 2) // REAL TIME CLOCK
-#define AT91C_ID_RTT    ( 3) // REAL TIME TIMER
-#define AT91C_ID_WDG    ( 4) // WATCHDOG TIMER
-#define AT91C_ID_PMC    ( 5) // PMC
-#define AT91C_ID_EFC0   ( 6) // EFC0
-#define AT91C_ID_EFC1   ( 7) // EFC1
-#define AT91C_ID_DBGU   ( 8) // DBGU
-#define AT91C_ID_HSMC4  ( 9) // HSMC4
-#define AT91C_ID_PIOA   (10) // Parallel IO Controller A
-#define AT91C_ID_PIOB   (11) // Parallel IO Controller B
-#define AT91C_ID_PIOC   (12) // Parallel IO Controller C
-#define AT91C_ID_US0    (13) // USART 0
-#define AT91C_ID_US1    (14) // USART 1
-#define AT91C_ID_US2    (15) // USART 2
-#define AT91C_ID_US3    (16) // USART 3
-#define AT91C_ID_MCI0   (17) // Multimedia Card Interface
-#define AT91C_ID_TWI0   (18) // TWI 0
-#define AT91C_ID_TWI1   (19) // TWI 1
-#define AT91C_ID_SPI0   (20) // Serial Peripheral Interface
-#define AT91C_ID_SSC0   (21) // Serial Synchronous Controller 0
-#define AT91C_ID_TC0    (22) // Timer Counter 0
-#define AT91C_ID_TC1    (23) // Timer Counter 1
-#define AT91C_ID_TC2    (24) // Timer Counter 2
-#define AT91C_ID_PWMC   (25) // Pulse Width Modulation Controller
-#define AT91C_ID_ADC12B (26) // 12-bit ADC Controller (ADC12B)
-#define AT91C_ID_ADC    (27) // 10-bit ADC Controller (ADC)
-#define AT91C_ID_HDMA   (28) // HDMA
-#define AT91C_ID_UDPHS  (29) // USB Device High Speed
-#define AT91C_ALL_INT   (0x3FFFFFFF) // ALL VALID INTERRUPTS
-
-
-/// Interrupt source
+/// Interrupt sources
 typedef enum irqn
 {
 /******  Cortex-M3 Processor Exceptions Numbers ***************************************************/
@@ -151,4 +142,4 @@ typedef enum irqn
  IROn_UDPHS               = AT91C_ID_UDPHS // USB Device High Speed
 } irqn_t;
 
-#endif // SAM3UNVIC
+#endif // SAM3UNVICHARDWARE_H

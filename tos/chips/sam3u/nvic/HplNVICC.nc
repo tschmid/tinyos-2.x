@@ -23,7 +23,7 @@
  * @author Thomas Schmid
  */
 
-#include "sam3unvic.h"
+#include "sam3unvichardware.h"
 
 configuration HplNVICC
 {

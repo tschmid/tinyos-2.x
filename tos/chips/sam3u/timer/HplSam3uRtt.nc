@@ -25,16 +25,16 @@
  * @author Thomas Schmid
  */
 
-interface Rtt {
+interface HplSam3uRtt {
 
     /**
-     * Sets the prescalar value of the RTT and restart it. This function
+     * Sets the prescaler value of the RTT and restart it. This function
      * disables all interrupt sources!
      *
-     * @par prescalar 16-bit prescalar for the counter. The RTT is fed by a
+     * @par prescaler 16-bit prescaler for the counter. The RTT is fed by a
      * 32.768 Hz clock.
      */
-    async command error_t setPrescalar(uint16_t prescalar);
+    async command error_t setPrescaler(uint16_t prescaler);
 
     /**
      * Retrieves the current time of the timer.
@@ -81,14 +81,6 @@ interface Rtt {
      */
     async command uint32_t getAlarm();
 
-    /**
-     * Returns the status of the RTT. There are only two important bits:
-     * bit 0: indicates if the alarm has occured since last read of the status
-     * bit 1: indicates if the RTT has been incremented since last read of the
-     *        status
-     */
-    async command bool getStatus();
- 
     /**
      * Event indicating that the increment interrupt fired.
      */

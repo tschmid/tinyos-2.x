@@ -25,13 +25,13 @@
  * @author Thomas Schmid
  */
 
-#include "rtt.h"
+#include "sam3urtthardware.h"
 
 module HplSam3uRttP @safe()
 {
     provides {
         interface Init;
-        interface Rtt;
+        interface HplSam3uRtt;
     }
     uses {
         interface HplNVICCntl;
@@ -49,52 +49,52 @@ implementation
     }
 
     /**
-     * Sets the prescalar value of the RTT and restart it. This function
+     * Sets the prescaler value of the RTT and restart it. This function
      * disables all interrupt sources!
      */
-    async command error_t Rtt.setPrescalar(uint16_t prescalar)
+    async command error_t HplSam3uRtt.setPrescaler(uint16_t prescaler)
     {
-        // after changing the prescalar, we have to restart the RTT
-        RTT->rtmr = (prescalar | RTTC_RTTRST);
-        return SUCCESS;
+        // after changing the prescaler, we have to restart the RTT
+        RTT->rtmr.bits.rtpres = prescaler;
+        return call HplSam3uRtt.restart();
     }
 
-    async command uint32_t Rtt.getTime()
+    async command uint32_t HplSam3uRtt.getTime()
     {
         return RTT->rtvr;
     }
 
-    async command error_t Rtt.enableAlarmInterrupt()
+    async command error_t HplSam3uRtt.enableAlarmInterrupt()
     {
-        RTT->rtmr |= RTTC_ALMIEN;
+        RTT->rtmr.bits.almien = 1;;
         return SUCCESS;
     }
 
-    async command error_t Rtt.disableAlarmInterrupt()
+    async command error_t HplSam3uRtt.disableAlarmInterrupt()
     {
-        RTT->rtmr &= ~RTTC_ALMIEN;
+        RTT->rtmr.bits.almien = 0;
         return SUCCESS;
     }
 
-    async command error_t Rtt.enableIncrementalInterrupt()
+    async command error_t HplSam3uRtt.enableIncrementalInterrupt()
     {
-        RTT->rtmr |= RTTC_RTTINCIEN;
+        RTT->rtmr.bits.rttincien = 1;
         return SUCCESS;
     }
 
-    async command error_t Rtt.disableIncrementalInterrupt()
+    async command error_t HplSam3uRtt.disableIncrementalInterrupt()
     {
-        RTT->rtmr &= ~RTTC_RTTINCIEN;
+        RTT->rtmr.bits.rttincien = 0;
         return SUCCESS;
     }
 
-    async command error_t Rtt.restart()
+    async command error_t HplSam3uRtt.restart()
     {
-        RTT->rtmr |= RTTC_RTTRST;
+        RTT->rtmr.bits.rttrst = 1;
         return SUCCESS;
     }
 
-    async command error_t Rtt.setAlarm(uint32_t time)
+    async command error_t HplSam3uRtt.setAlarm(uint32_t time)
     {
         if(time > 0)
         {
@@ -105,40 +105,35 @@ implementation
         }
     }
 
-    async command uint32_t Rtt.getAlarm()
+    async command uint32_t HplSam3uRtt.getAlarm()
     {
         return RTT->rtar;
     }
 
-    /**
-     * Returns the status of the RTT. There are only two important bits:
-     * bit 0: indicates if the alarm has occured since last read of the status
-     * bit 1: indicates if the RTT has been incremented since last read of the
-     *        status
-     */
-    async command bool Rtt.getStatus()
-    {
-        return RTT->rtsr;
-    }
-
     void RttIrqHandler() @C() @spontaneous()
     {
-        uint32_t status;
-        status = call Rtt.getStatus();
+        rtt_rtsr_t status;
 
-        if ((status & RTTC_RTTINC) == RTTC_RTTINC) {
-            // we got an increment interrupt
-            signal Rtt.incrementFired();
-        }
+        atomic {
+            // clear pending interrupt
+            call NVICRTTInterrupt.clearPending();
 
-        if ((status & RTTC_ALMS) == RTTC_ALMS) {
-            // we got an alarm
-            signal Rtt.alarmFired();
+            status = RTT->rtsr;
+
+            if (status.bits.rttinc) {
+                // we got an increment interrupt
+                signal HplSam3uRtt.incrementFired();
+            }
+
+            if (status.bits.alms) {
+                // we got an alarm
+                signal HplSam3uRtt.alarmFired();
+            }
         }
     }
 
-    default async event void Rtt.incrementFired() {}
-    default async event void Rtt.alarmFired() {}
+    default async event void HplSam3uRtt.incrementFired() {}
+    default async event void HplSam3uRtt.alarmFired() {}
 
 }
 
