@@ -33,70 +33,23 @@
  * @author wanja@cs.fau.de
  **/
 
-#include "sam3uuarthardware.h"
-
 module TestUartC
 {
 	uses interface Leds;
 	uses interface Boot;
-	uses interface HplSam3uUartConfig;
-	uses interface HplSam3uUartControl;
-	uses interface HplSam3uUartInterrupts;
-	uses interface HplSam3uUartStatus;
+	uses interface HalSam3uUart;
 	uses interface HplNVICInterruptCntl as UartIrqControl;
+	uses interface Init as UartInit;
 }
 implementation
 {
 	event void Boot.booted()
 	{
-		//uint8_t counter = 0;
-		uint8_t letter = 'a';
+		// ` comes before a in the ASCII table
+		uint8_t letter = '`';
 
-		volatile uint32_t *PIOA_PDR = (volatile uint32_t *) 0x400e0c04;
-		volatile uint32_t *PIOA_ABSR = (volatile uint32_t *) 0x400e0c70;
-		volatile uint32_t *PMC_PCER = (volatile uint32_t *) 0x400e0410;
-//		volatile uint32_t *UART_CR = (volatile uint32_t *) 0x400e0600;
-//		volatile uint32_t *UART_MR = (volatile uint32_t *) 0x400e0604;
-//		volatile uint32_t *UART_BRGR2 = (volatile uint32_t *) 0x400e0620;
+		call UartInit.init();
 
-		// setup PIOC: PA11, PA12 -> peripheral A
-		// disable PIO driving
-		*PIOA_PDR = 0x00001800;
-		// select peripheral A
-		*PIOA_ABSR = 0x00000000;
-
-		// enable peripheral clock (ID 8; p. 41)
-		*PMC_PCER = 0x00000100;
-		//*PMC_PCER = 0xffffffff;
-
-		// Baud rate = MCK / (13 x 16) = 4 MHz / 208 = 19,230 Hz
-		// Baud rate = MCK / (26 x 16) = 4 MHz / 416 = 9,615 Hz
-		//call HplSam3uUartConfig.setClockDivisor(26);
-		call HplSam3uUartConfig.setClockDivisor(312); // 9,615 Hz
-		//call HplSam3uUartConfig.setClockDivisor(3333); // 900 Hz
-		//*UART_BRGR2 = 0x0000000d;
-
-		// 0100.0010.0000.0000: CHMODE = Remote Loopback, PAR = No Parity
-		// 0100.0010.0000.0000: CHMODE = Auto Echo
-		//*UART_MR = 0x00004800;
-		call HplSam3uUartConfig.setChannelMode(UART_MR_CHMODE_NORMAL);
-
-		// FIXME: bug (has to be written at once)
-		call HplSam3uUartConfig.setParityType(UART_MR_PAR_NONE);
-
-		// enable UART and echo mode
-		// 0000.0000.0101.0000: TXEN, RXEN
-		//*UART_CR = 0x00000050;
-		call HplSam3uUartControl.enableReceiver();
-		call HplSam3uUartControl.enableTransmitter();
-		
-//		call HplSam3uUartInterrupts.enableRxrdyIrq();
-//		call HplSam3uUartInterrupts.enableRxbuffIrq();
-//
-//		call UartIrqControl.configure(7);
-//		call UartIrqControl.setPriority(7);
-//		call UartIrqControl.enable();
-//
 //		__nesc_enable_interrupt();
 
 		while (1) {
@@ -104,31 +57,30 @@ implementation
 			for (i = 0; i < 100000; i++);
 
 			letter++;
-			if (letter == 'z') { letter = 'a'; }
+			// { comes after z in the ASCII table
+			if (letter == '{') { letter = 'a'; }
 
-
-			if ((call HplSam3uUartStatus.isTransmitterReady()) == TRUE) {
-				call HplSam3uUartStatus.setCharToTransmit(letter);
-				call Leds.led1Toggle(); // Led 1 = Sent Something
-				while ((call HplSam3uUartStatus.isTransmitterEmpty()) == FALSE) {
-					// wait until character is sent
-					call Leds.led2Toggle(); // Led 2 = Waiting
+			while (TRUE) {
+				error_t result = call HalSam3uUart.sendChar(letter);
+				call Leds.led0Toggle(); // Led 0 (green) = tried to send something (= living)
+				if (result == SUCCESS) {
+					call Leds.led1Toggle(); // Led 1 (green) = sent something
+					break;
+				} else {
+					call Leds.led2Toggle(); // Led 2 (red) = waiting
 				}
 			}
-			call Leds.led0Toggle(); // Led 0 = Living
-			//counter++;
-			//counter = counter % 8;
-			//call Leds.set(counter);
 		}
 	}
 
-	async event void HplSam3uUartInterrupts.uartInterrupt()
-	{
-	}
-
-
-//	void UartIrqHandler() @C() @spontaneous()
-//	{
-//		//call Leds.led1Toggle();
-//	}
+	async event void HalSam3uUart.receiverReady() {}
+	async event void HalSam3uUart.transmitterReady() {}
+	async event void HalSam3uUart.endOfReceiverTransfer() {}
+	async event void HalSam3uUart.endOfTransmitterTransfer() {}
+	async event void HalSam3uUart.overrunError() {}
+	async event void HalSam3uUart.framingError() {}
+	async event void HalSam3uUart.parityError() {}
+	async event void HalSam3uUart.transmitterEmpty() {}
+	async event void HalSam3uUart.transmissionBufferEmpty() {}
+	async event void HalSam3uUart.receiveBufferFull() {}
 }
