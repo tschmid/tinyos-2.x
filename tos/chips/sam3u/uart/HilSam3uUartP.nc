@@ -33,6 +33,8 @@
  * @author wanja@cs.fau.de
  */
 
+#include "sam3uuarthardware.h"
+
 module HilSam3uUartP
 {
 	provides
@@ -52,23 +54,45 @@ module HilSam3uUartP
 }
 implementation
 {
-	uint8_t *receiveBuffer; // pointer to current receive buffer or 0 if none
-	uint16_t receiveBufferLength; // length of the current receive buffer
-	uint16_t receiveBufferPosition; // position of the next character to receive in the buffer
+	// FIXME check norace!
+	norace uint8_t *receiveBuffer; // pointer to current receive buffer or 0 if none
+	norace uint16_t receiveBufferLength; // length of the current receive buffer
+	norace uint16_t receiveBufferPosition; // position of the next character to receive in the buffer
 
-	uint8_t *transmitBuffer; // pointer to current transmit buffer or 0 if none
-	uint16_t transmitBufferLength; // length of the current transmit buffer
-	uint16_t transmitBufferPosition; // position of the next character to transmit from the buffer
+	norace uint8_t *transmitBuffer; // pointer to current transmit buffer or 0 if none
+	norace uint16_t transmitBufferLength; // length of the current transmit buffer
+	norace uint16_t transmitBufferPosition; // position of the next character to transmit from the buffer
 
 	command error_t Init.init()
 	{
-		// FIXME
+		// FIXME: init PIO, NVIC, PMC clock enable
+		volatile uint32_t *PIOA_PDR = (volatile uint32_t *) 0x400e0c04;
+		volatile uint32_t *PIOA_ABSR = (volatile uint32_t *) 0x400e0c70;
+		volatile uint32_t *PMC_PCER = (volatile uint32_t *) 0x400e0410;
+
+		// turn off all UART IRQs
+		call HplSam3uUartInterrupts.disableAllUartIrqs();
+
+		// FIXME: init PIO, NVIC, PMC clock enable
+		// setup PIOC: PA11, PA12 -> peripheral A
+		// disable PIO driving
+		*PIOA_PDR = 0x00001800;
+		// select peripheral A
+		*PIOA_ABSR = 0x00000000;
+		// enable peripheral clock (ID 8; p. 41)
+		*PMC_PCER = 0x00000100;
+
+		// configure mode, parity, baud rate
+		// FIXME should be configurable
+		call HplSam3uUartConfig.setChannelMode(UART_MR_CHMODE_NORMAL);
+		call HplSam3uUartConfig.setParityType(UART_MR_PAR_NONE);
+		call HplSam3uUartConfig.setClockDivisor(312); // 9,600 baud with MCK = 48 MHz
+
+		return SUCCESS;
 	}
 
 	command error_t StdControl.start()
 	{
-		// turn off all UART IRQs
-		call HplSam3uUartInterrupts.disableAllUartIrqs();
 
 		// enable receiver and transmitter
 		call HplSam3uUartControl.enableReceiver();
@@ -85,6 +109,8 @@ implementation
 		// will finish any ongoing receptions and transmissions
 		call HplSam3uUartControl.disableReceiver();
 		call HplSam3uUartControl.disableTransmitter();
+
+		return SUCCESS;
 	}
 
 	async command error_t UartStream.enableReceiveInterrupt()
@@ -157,6 +183,8 @@ implementation
 
 		// enable ready-to-transmit IRQ
 		call HplSam3uUartInterrupts.enableTxrdyIrq();
+
+		return SUCCESS;
 	}
 
 	async event void HplSam3uUartInterrupts.transmitterReady()
