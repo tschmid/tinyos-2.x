@@ -118,7 +118,8 @@ implementation
 		call HplSam3uUartControl.enableTransmitter();
 
 		// enable generation of UART IRQs
-		call HalSam3uUart.enableAllUartInterrupts();
+		//call HalSam3uUart.enableAllUartInterrupts();
+		call HplSam3uUartInterrupts.enableRxrdyIrq();
 
 		return SUCCESS;
 	}
@@ -159,6 +160,11 @@ implementation
 		} else {
 			return FAIL;
 		}
+	}
+
+	command uint8_t HalSam3uUart.receiveChar()
+	{
+		return (call HplSam3uUartStatus.getReceivedChar());
 	}
 
 	default async event void HalSam3uUart.receiverReady() {}
