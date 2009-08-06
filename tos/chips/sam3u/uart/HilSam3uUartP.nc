@@ -44,10 +44,10 @@ module HilSam3uUartP
 	}
 	uses
 	{
-		interface HplSam3uControl;
-		interface HplSam3uInterrupts;
-		interface HplSam3uStatus;
-		interface HplSam3uConfig;
+		interface HplSam3uUartControl;
+		interface HplSam3uUartInterrupts;
+		interface HplSam3uUartStatus;
+		interface HplSam3uUartConfig;
 	}
 }
 implementation
@@ -55,6 +55,10 @@ implementation
 	uint8_t *receiveBuffer; // pointer to current receive buffer or 0 if none
 	uint16_t receiveBufferLength; // length of the current receive buffer
 	uint16_t receiveBufferPosition; // position of the next character to receive in the buffer
+
+	uint8_t *transmitBuffer; // pointer to current transmit buffer or 0 if none
+	uint16_t transmitBufferLength; // length of the current transmit buffer
+	uint16_t transmitBufferPosition; // position of the next character to transmit from the buffer
 
 	command error_t Init.init()
 	{
@@ -64,14 +68,14 @@ implementation
 	command error_t StdControl.start()
 	{
 		// turn off all UART IRQs
-		call HplSam3uInterrupts.disableAllUartIrqs();
+		call HplSam3uUartInterrupts.disableAllUartIrqs();
 
 		// enable receiver and transmitter
-		call HplSam3uControl.enableReceiver();
-		call HplSam3uControl.enableTransmitter();
+		call HplSam3uUartControl.enableReceiver();
+		call HplSam3uUartControl.enableTransmitter();
 
 		// enable receive IRQ
-		call HplSam3uInterrupts.enableRxrdyIrq();
+		call HplSam3uUartInterrupts.enableRxrdyIrq();
 
 		return SUCCESS;
 	}
@@ -79,19 +83,19 @@ implementation
 	command error_t StdControl.stop()
 	{
 		// will finish any ongoing receptions and transmissions
-		call HplSam3uControl.disableReceiver();
-		call HplSam3uControl.disableTransmitter();
+		call HplSam3uUartControl.disableReceiver();
+		call HplSam3uUartControl.disableTransmitter();
 	}
 
 	async command error_t UartStream.enableReceiveInterrupt()
 	{
-		call HplSam3uInterrupts.enableRxrdyIrq();
+		call HplSam3uUartInterrupts.enableRxrdyIrq();
 		return SUCCESS;
 	}
 
 	async command error_t UartStream.disableReceiveInterrupt()
 	{
-		call HplSam3uInterrupts.disableRxrdyIrq();
+		call HplSam3uUartInterrupts.disableRxrdyIrq();
 		return SUCCESS;
 	}
 
@@ -109,12 +113,12 @@ implementation
 			receiveBufferLength = length;
 			receiveBufferPosition = 0;
 
-			call HplSam3uInterrupts.enableRxrdyIrq();
+			call HplSam3uUartInterrupts.enableRxrdyIrq();
 		}
 		return SUCCESS;
 	}
 
-	async event void HplSam3uInterrupts.receivedByte(uint8_t data)
+	async event void HplSam3uUartInterrupts.receivedByte(uint8_t data)
 	{
 		if (receiveBuffer != NULL) {
 			// receive into buffer
@@ -126,11 +130,11 @@ implementation
 				uint8_t *bufferToSignal = receiveBuffer;
 				atomic {
 					receiveBuffer = NULL;
-					call HplSam3uInterrupts.disableRxrdyIrq();
+					call HplSam3uUartInterrupts.disableRxrdyIrq();
 				}
 
 				// signal reception of complete buffer
-				signal UartStream.receiveDone(bufferToSignal, bufferLength, SUCCESS);
+				signal UartStream.receiveDone(bufferToSignal, receiveBufferLength, SUCCESS);
 			}
 		} else {
 			// signal single byte reception
@@ -152,48 +156,48 @@ implementation
 		transmitBufferPosition = 0;
 
 		// enable ready-to-transmit IRQ
-		call HplSam3uInterrupts.enableTxrdyIrq();
+		call HplSam3uUartInterrupts.enableTxrdyIrq();
 	}
 
-	async event void HplSam3uInterrupts.transmitterReady()
+	async event void HplSam3uUartInterrupts.transmitterReady()
 	{
 		if (transmitBufferPosition < transmitBufferLength) {
 			// characters to transfer in the buffer
-			call HplSam3uStatus.setCharToTransmit(transmitBuffer[transmitBufferPosition]);
+			call HplSam3uUartStatus.setCharToTransmit(transmitBuffer[transmitBufferPosition]);
 			transmitBufferPosition++;
 		} else {
 			// all characters transmitted
 			uint8_t *bufferToSignal = transmitBuffer;
 
 			transmitBuffer = NULL;
-			call HplSam3uInterrupts.disableTxrdyIrq();
+			call HplSam3uUartInterrupts.disableTxrdyIrq();
 			signal UartStream.sendDone(bufferToSignal, transmitBufferLength, SUCCESS);
 		}
 	}
 
 	async command error_t UartByte.send(uint8_t byte)
 	{
-		if (call HplSam3uInterrupts.isEnabledTxrdyIrq() == TRUE) {
+		if (call HplSam3uUartInterrupts.isEnabledTxrdyIrq() == TRUE) {
 			return FAIL; // in the middle of a stream transmission
 		}
 
 		// transmit synchronously
-		call HplSam3uStatus.setCharToTransmit(byte);
-		while (call HplSam3uStatus.isTransmitterReady() == FALSE);
+		call HplSam3uUartStatus.setCharToTransmit(byte);
+		while (call HplSam3uUartStatus.isTransmitterReady() == FALSE);
 
-		return SUCCESS:
+		return SUCCESS;
 	}
 
 	async command error_t UartByte.receive(uint8_t *byte, uint8_t timeout)
 	{
 		// FIXME timeout currently ignored
-		if (call HplSam3uInterrupts.isEnabledRxrdyIrq() == TRUE) {
+		if (call HplSam3uUartInterrupts.isEnabledRxrdyIrq() == TRUE) {
 			return FAIL; // in the middle of a stream reception
 		}
 
 		// receive synchronously
-		while (call HplSam3uStatus.isReceiverReady() == FALSE);
-		*byte = HplSam3uStatus.getReceivedChar();
+		while (call HplSam3uUartStatus.isReceiverReady() == FALSE);
+		*byte = call HplSam3uUartStatus.getReceivedChar();
 
 		return SUCCESS;
 	}

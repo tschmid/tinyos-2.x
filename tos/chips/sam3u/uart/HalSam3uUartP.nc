@@ -117,8 +117,7 @@ implementation
 		call HplSam3uUartControl.enableReceiver();
 		call HplSam3uUartControl.enableTransmitter();
 
-		// enable generation of UART IRQs
-		//call HalSam3uUart.enableAllUartInterrupts();
+		// enable generation of UART receive IRQ
 		call HplSam3uUartInterrupts.enableRxrdyIrq();
 
 		return SUCCESS;
