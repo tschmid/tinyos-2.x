@@ -87,6 +87,20 @@ implementation
 		return SUCCESS;
 	}
 
+	async command void HplSam3uUartInterrupts.disableAllUartIrqs()
+	{
+		call HplSam3uUartInterrupts.disableRxrdyIrq();
+		call HplSam3uUartInterrupts.disableTxrdyIrq();
+		call HplSam3uUartInterrupts.disableEndrxIrq();
+		call HplSam3uUartInterrupts.disableEndtxIrq();
+		call HplSam3uUartInterrupts.disableOvreIrq();
+		call HplSam3uUartInterrupts.disableFrameIrq();
+		call HplSam3uUartInterrupts.disablePareIrq();
+		call HplSam3uUartInterrupts.disableTxemptyIrq();
+		call HplSam3uUartInterrupts.disableTxbufeIrq();
+		call HplSam3uUartInterrupts.disableRxbuffIrq();
+	}
+
 	async command void HplSam3uUartControl.resetReceiver()
 	{
 		UART_CR->bits.rstrx = 1;
@@ -118,11 +132,13 @@ implementation
 
 	__attribute__((interrupt)) void UartIrqHandler() @C() @spontaneous()
 	{
-		signal HplSam3uUartInterrupts.uartInterrupt();
-	}
-
-	default async event void HplSam3uUartInterrupts.uartInterrupt()
-	{
+		if (call HplSam3uUartStatus.isReceiverReady() == TRUE) {
+			uint8_t data = call HplSam3uUartStatus.getReceivedChar();
+			signal HplSam3uUartInterrupts.receivedByte(data);
+		}
+		if (call HplSam3uUartStatus.isTransmitterReady() == TRUE) {
+			signal HplSam3uUartInterrupts.transmitterReady();
+		}
 	}
 
 	// Rxrdy
