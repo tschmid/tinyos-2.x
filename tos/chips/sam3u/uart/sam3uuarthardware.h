@@ -44,17 +44,17 @@ typedef union
 	uint32_t flat;
 	struct
 	{
-		uint8_t reserved0 : 8;
-		uint8_t reserved1 : 8;
-		uint8_t reserved2 : 7;
-		uint8_t rststa    : 1; // reset status bits
-		uint8_t txdis     : 1; // transmitter disable
-		uint8_t txen      : 1; // transmitter enable
-		uint8_t rxdis     : 1; // receiver disable
-		uint8_t rxen      : 1; // receiver enable
-		uint8_t rsttx     : 1; // reset transmitter
-		uint8_t rstrx     : 1; // reset receiver
 		uint8_t reserved3 : 2;
+		uint8_t rstrx     : 1; // reset receiver
+		uint8_t rsttx     : 1; // reset transmitter
+		uint8_t rxen      : 1; // receiver enable
+		uint8_t rxdis     : 1; // receiver disable
+		uint8_t txen      : 1; // transmitter enable
+		uint8_t txdis     : 1; // transmitter disable
+		uint8_t rststa    : 1; // reset status bits
+		uint8_t reserved2 : 7;
+		uint8_t reserved1 : 8;
+		uint8_t reserved0 : 8;
 	} bits;
 } uart_cr_t;
 
@@ -64,13 +64,13 @@ typedef union
 	uint32_t flat;
 	struct
 	{
-		uint8_t reserved0 : 8;
-		uint8_t reserved1 : 8;
-		uint8_t chmode    : 2; // channel mode
-		uint8_t reserved2 : 2;
-		uint8_t par       : 3; // parity type
-		uint8_t reserved3 : 1;
 		uint8_t reserved4 : 8;
+		uint8_t reserved3 : 1;
+		uint8_t par       : 3; // parity type
+		uint8_t reserved2 : 2;
+		uint8_t chmode    : 2; // channel mode
+		uint8_t reserved1 : 8;
+		uint8_t reserved0 : 8;
 	} bits;
 } uart_mr_t;
 
@@ -97,22 +97,22 @@ typedef union
 	uint32_t flat;
 	struct
 	{
-		uint8_t reserved0 : 8;
-		uint8_t reserved1 : 8;
-		uint8_t reserved2 : 3;
-		uint8_t rxbuff    : 1; // receive buffer full
-		uint8_t txbufe    : 1; // transmission buffer empty
-		uint8_t reserved3 : 1;
-		uint8_t txempty   : 1; // transmitter empty
-		uint8_t reserved4 : 1;
-		uint8_t pare      : 1; // parity error
-		uint8_t frame     : 1; // framing error
-		uint8_t ovre      : 1; // overrun error
-		uint8_t endtx     : 1; // end of transmitter transfer
-		uint8_t endrx     : 1; // end of receiver transfer
-		uint8_t reserved5 : 1;
-		uint8_t txrdy     : 1; // transmitter ready
 		uint8_t rxrdy     : 1; // receiver ready
+		uint8_t txrdy     : 1; // transmitter ready
+		uint8_t reserved5 : 1;
+		uint8_t endrx     : 1; // end of receiver transfer
+		uint8_t endtx     : 1; // end of transmitter transfer
+		uint8_t ovre      : 1; // overrun error
+		uint8_t frame     : 1; // framing error
+		uint8_t pare      : 1; // parity error
+		uint8_t reserved4 : 1;
+		uint8_t txempty   : 1; // transmitter empty
+		uint8_t reserved3 : 1;
+		uint8_t txbufe    : 1; // transmission buffer empty
+		uint8_t rxbuff    : 1; // receive buffer full
+		uint8_t reserved2 : 3;
+		uint8_t reserved1 : 8;
+		uint8_t reserved0 : 8;
 	} bits;
 } uart_ier_t;
 
@@ -131,10 +131,10 @@ typedef union
 	uint32_t flat;
 	struct
 	{
-		uint8_t reserved0 : 8;
-		uint8_t reserved1 : 8;
+		uint8_t rxchr     : 8; // received character
 		uint8_t reserved2 : 8;
-		uint8_t rxchr     : 1; // received character
+		uint8_t reserved1 : 8;
+		uint8_t reserved0 : 8;
 	} bits;
 } uart_rhr_t;
 
@@ -144,10 +144,10 @@ typedef union
 	uint32_t flat;
 	struct
 	{
-		uint8_t reserved0 : 8;
-		uint8_t reserved1 : 8;
+		uint8_t txchr     : 8; // character to be transmitted
 		uint8_t reserved2 : 8;
-		uint8_t txchr     : 1; // character to be transmitted
+		uint8_t reserved1 : 8;
+		uint8_t reserved0 : 8;
 	} bits;
 } uart_thr_t;
 
@@ -157,22 +157,22 @@ typedef union
 	uint32_t flat;
 	struct
 	{
-		uint8_t  reserved0 :  8;
-		uint8_t  reserved1 :  8;
 		uint16_t cd        : 16; // clock divisor
+		uint8_t  reserved1 :  8;
+		uint8_t  reserved0 :  8;
 	} bits;
 } uart_brgr_t;
 
 // Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 667
-volatile uint32_t*    UART_BASE = 0x400e0600;
-volatile uart_cr_t*   UART_CR   = 0x400e0600; // control, wo
-volatile uart_mr_t*   UART_MR   = 0x400e0604; // mode, rw, reset 0x0
-volatile uart_ier_t*  UART_IER  = 0x400e0608; // interrupt enable, wo
-volatile uart_idr_t*  UART_IDR  = 0x400e060c; // interrupt disable, wo
-volatile uart_imr_t*  UART_IMR  = 0x400e0610; // interrupt mask, ro, reset 0x0
-volatile uart_sr_t*   UART_SR   = 0x400e0614; // status, ro
-volatile uart_rhr_t*  UART_RHR  = 0x400e0618; // receive holding, ro, reset 0x0
-volatile uart_thr_t*  UART_THR  = 0x400e061c; // transmit holding, wo
-volatile uart_brgr_t* UART_BRGR = 0x400e0620; // baud rate generator, rw, reset 0x0
+volatile uint32_t*    UART_BASE = (volatile uint32_t *)   0x400e0600;
+volatile uart_cr_t*   UART_CR   = (volatile uart_cr_t*)   0x400e0600; // control, wo
+volatile uart_mr_t*   UART_MR   = (volatile uart_mr_t*)   0x400e0604; // mode, rw, reset 0x0
+volatile uart_ier_t*  UART_IER  = (volatile uart_ier_t*)  0x400e0608; // interrupt enable, wo
+volatile uart_idr_t*  UART_IDR  = (volatile uart_idr_t*)  0x400e060c; // interrupt disable, wo
+volatile uart_imr_t*  UART_IMR  = (volatile uart_imr_t*)  0x400e0610; // interrupt mask, ro, reset 0x0
+volatile uart_sr_t*   UART_SR   = (volatile uart_sr_t*)   0x400e0614; // status, ro
+volatile uart_rhr_t*  UART_RHR  = (volatile uart_rhr_t*)  0x400e0618; // receive holding, ro, reset 0x0
+volatile uart_thr_t*  UART_THR  = (volatile uart_thr_t*)  0x400e061c; // transmit holding, wo
+volatile uart_brgr_t* UART_BRGR = (volatile uart_brgr_t*) 0x400e0620; // baud rate generator, rw, reset 0x0
 
 #endif // SAM3UUARTHARDWARE_H
