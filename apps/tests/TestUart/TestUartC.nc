@@ -86,9 +86,12 @@ while(TRUE) {
 
 
 		{
-			uint8_t buffer[6] = {'H', 'e', 'l', 'l', 'o', '\n'};
+//			uint8_t buffer[6] = {'H', 'e', 'l', 'l', 'o', '\n'};
+//
+//			call UartStream.send(buffer, 6);
 
-			call UartStream.send(buffer, 6);
+			uint8_t buffer[10];
+			call UartStream.receive(buffer, 10);
 
 			while (TRUE);
 		}
