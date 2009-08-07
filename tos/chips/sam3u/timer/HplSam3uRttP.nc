@@ -121,7 +121,7 @@ implementation
         return RTT->rtsr;
     }
 
-    void RTTIrqHandler() @C() @spontaneous()
+    void RttIrqHandler() @C() @spontaneous()
     {
         uint32_t status;
         status = call Rtt.getStatus();
