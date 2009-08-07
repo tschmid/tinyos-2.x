@@ -82,14 +82,6 @@ interface Rtt {
     async command uint32_t getAlarm();
 
     /**
-     * Returns the status of the RTT. There are only two important bits:
-     * bit 0: indicates if the alarm has occured since last read of the status
-     * bit 1: indicates if the RTT has been incremented since last read of the
-     *        status
-     */
-    async command bool getStatus();
- 
-    /**
      * Event indicating that the increment interrupt fired.
      */
     async event void incrementFired();
