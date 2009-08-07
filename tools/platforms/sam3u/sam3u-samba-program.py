@@ -31,6 +31,16 @@ parser.add_option("-t", "--target",
         dest="target",
         default="AT91SAM3U4-EK",
         help="Target board type.")
+parser.add_option("-c", "--check",
+        action="store_true",
+        dest="check",
+        default=False,
+        help="Checks and verifies the programmed flash")
+parser.add_option("-r", "--run",
+        action="store_true",
+        dest="run",
+        default=False,
+        help="Starts executing the binary after flashing it")
 parser.add_option("-d", "--debug",
         action="store_true",
         dest="DEBUG",
@@ -54,6 +64,12 @@ class samba:
     send_file {Flash 0} "%s" 0x80000 0
     FLASH::ScriptGPNMV 2
     """%(cmdOptions.binfile,))
+        if cmdOptions.check:
+            # verify flash
+            self.f.write('compare_file {Flash 0} "%s" 0x80000 0\n'%(cmdOptions.binfile,))
+        if cmdOptions.run:
+            # automatically run the code after writing
+            self.f.write("TCL_Go $target(handle) 0x80000\n")
         self.f.flush()
 
         try:
@@ -108,7 +124,18 @@ class samba:
                 self.cleanup()
                 sys.exit(1)
 
-            print "Done! Reboot your system (hit NRSTB button)."
+            if cmdOptions.check:
+                try:
+                    self.expect(samba_proc.stdout, "match exactly")
+                except:
+                    print "Verification failed!"
+                    self.cleanup()
+                    sys.exit(1)
+
+            if cmdOptions.run:
+                print "Done! Your code should be running now."
+            else:
+                print "Done! Reboot your system (hit NRSTB button)."
 
         finally:
             pass
@@ -135,7 +162,7 @@ class samba:
             line = fh.readline().strip()
             if cmdOptions.DEBUG:
                 print line
-                time.sleep(0.2)
+                time.sleep(0.1)
             matches = r.findall(line)
             if (len(matches) != 0):
                 expect_found = True

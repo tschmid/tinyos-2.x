@@ -40,7 +40,7 @@ typedef union
         uint8_t reserved1  :  5;
         uint8_t reserved0  :  8;
     } bits;
-} rtt_rtmr_t;
+} rtt_mr_t;
 
 /* Note: Never read directly the status register since it gets reset after
  * each read. Thus, you migh tmiss an interrupt!
@@ -56,15 +56,15 @@ typedef union
         uint8_t reserved1  :  8;
         uint16_t reserved0 : 16;
     } bits;
-} rtt_rtsr_t;
+} rtt_sr_t;
 
 // Real Time Timer Register definition
 typedef struct rtt 
 {
-    volatile rtt_rtmr_t rtmr;	// Real Time Mode Register
-    volatile uint32_t   rtar;	// Real Time Alarm Register
-    volatile uint32_t   rtvr;	// Real Time Value Register
-    volatile rtt_rtsr_t rtsr;	// Real Time Status Register
+    volatile rtt_mr_t mr;	// Real Time Mode Register
+    volatile uint32_t   ar;	// Real Time Alarm Register
+    volatile uint32_t   vr;	// Real Time Value Register
+    volatile rtt_sr_t sr;	// Real Time Status Register
 } rtt_t;
 
 //#define RTT ((rtt_t *) 0x400E1230) // (RTTC) Base Address

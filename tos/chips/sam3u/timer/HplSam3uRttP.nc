@@ -55,42 +55,42 @@ implementation
     async command error_t HplSam3uRtt.setPrescaler(uint16_t prescaler)
     {
         // after changing the prescaler, we have to restart the RTT
-        RTT->rtmr.bits.rtpres = prescaler;
+        RTT->mr.bits.rtpres = prescaler;
         return call HplSam3uRtt.restart();
     }
 
     async command uint32_t HplSam3uRtt.getTime()
     {
-        return RTT->rtvr;
+        return RTT->vr;
     }
 
     async command error_t HplSam3uRtt.enableAlarmInterrupt()
     {
-        RTT->rtmr.bits.almien = 1;;
+        RTT->mr.bits.almien = 1;;
         return SUCCESS;
     }
 
     async command error_t HplSam3uRtt.disableAlarmInterrupt()
     {
-        RTT->rtmr.bits.almien = 0;
+        RTT->mr.bits.almien = 0;
         return SUCCESS;
     }
 
     async command error_t HplSam3uRtt.enableIncrementalInterrupt()
     {
-        RTT->rtmr.bits.rttincien = 1;
+        RTT->mr.bits.rttincien = 1;
         return SUCCESS;
     }
 
     async command error_t HplSam3uRtt.disableIncrementalInterrupt()
     {
-        RTT->rtmr.bits.rttincien = 0;
+        RTT->mr.bits.rttincien = 0;
         return SUCCESS;
     }
 
     async command error_t HplSam3uRtt.restart()
     {
-        RTT->rtmr.bits.rttrst = 1;
+        RTT->mr.bits.rttrst = 1;
         return SUCCESS;
     }
 
@@ -98,7 +98,7 @@ implementation
     {
         if(time > 0)
         {
-            RTT->rtar = time - 1;
+            RTT->ar = time - 1;
             return SUCCESS;
         } else {
             return FAIL;
@@ -107,18 +107,18 @@ implementation
 
     async command uint32_t HplSam3uRtt.getAlarm()
     {
-        return RTT->rtar;
+        return RTT->ar;
     }
 
     void RttIrqHandler() @C() @spontaneous()
     {
-        rtt_rtsr_t status;
+        rtt_sr_t status;
 
         atomic {
             // clear pending interrupt
             call NVICRTTInterrupt.clearPending();
 
-            status = RTT->rtsr;
+            status = RTT->sr;
 
             if (status.bits.rttinc) {
                 // we got an increment interrupt
