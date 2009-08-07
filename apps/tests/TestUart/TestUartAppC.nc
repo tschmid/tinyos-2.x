@@ -51,4 +51,5 @@ implementation
 	components HilSam3uUartC;
 	TestUartC.UartControl -> HilSam3uUartC;
 	TestUartC.UartByte -> HilSam3uUartC;
+	TestUartC.UartStream -> HilSam3uUartC;
 }

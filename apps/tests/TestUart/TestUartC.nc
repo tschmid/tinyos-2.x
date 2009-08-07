@@ -40,6 +40,7 @@ module TestUartC
 	uses interface HplNVICInterruptCntl as UartIrqControl;
 	uses interface StdControl as UartControl;
 	uses interface UartByte;
+	uses interface UartStream;
 }
 implementation
 {
@@ -83,6 +84,16 @@ while(TRUE) {
 		if (letter == '{') { letter = 'a'; }
 		//blinkRed();
 
+
+		{
+			uint8_t buffer[6] = {'H', 'e', 'l', 'l', 'o', '\n'};
+
+			call UartStream.send(buffer, 6);
+
+			while (TRUE);
+		}
+
+#if 0
 		while (TRUE) {
 			uint8_t got = 0;
 
@@ -102,9 +113,25 @@ while(TRUE) {
 				call Leds.led2Toggle(); // Led 2 (red) = error
 			}
 		}
+#endif
 }
 
 		//post sendTask();
+	}
+
+	async event void UartStream.sendDone(uint8_t* buf, uint16_t len, error_t error)
+	{
+		blinkRed();
+	}
+
+	async event void UartStream.receiveDone(uint8_t* buf, uint16_t len, error_t error)
+	{
+		blinkRed();
+	}
+
+	async event void UartStream.receivedByte(uint8_t byte)
+	{
+		blinkRed();
 	}
 
 /*
