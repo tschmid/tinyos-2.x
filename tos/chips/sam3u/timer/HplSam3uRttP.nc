@@ -25,13 +25,13 @@
  * @author Thomas Schmid
  */
 
-#include "rtt.h"
+#include "sam3urtthardware.h"
 
 module HplSam3uRttP @safe()
 {
     provides {
         interface Init;
-        interface Rtt;
+        interface HplSam3uRtt;
     }
     uses {
         interface HplNVICCntl;
@@ -52,49 +52,49 @@ implementation
      * Sets the prescalar value of the RTT and restart it. This function
      * disables all interrupt sources!
      */
-    async command error_t Rtt.setPrescalar(uint16_t prescalar)
+    async command error_t HplSam3uRtt.setPrescalar(uint16_t prescalar)
     {
         // after changing the prescalar, we have to restart the RTT
         RTT->rtmr.bits.rtpres = prescalar;
-        return call Rtt.restart();
+        return call HplSam3uRtt.restart();
     }
 
-    async command uint32_t Rtt.getTime()
+    async command uint32_t HplSam3uRtt.getTime()
     {
         return RTT->rtvr;
     }
 
-    async command error_t Rtt.enableAlarmInterrupt()
+    async command error_t HplSam3uRtt.enableAlarmInterrupt()
     {
         RTT->rtmr.bits.almien = 1;;
         return SUCCESS;
     }
 
-    async command error_t Rtt.disableAlarmInterrupt()
+    async command error_t HplSam3uRtt.disableAlarmInterrupt()
     {
         RTT->rtmr.bits.almien = 0;
         return SUCCESS;
     }
 
-    async command error_t Rtt.enableIncrementalInterrupt()
+    async command error_t HplSam3uRtt.enableIncrementalInterrupt()
     {
         RTT->rtmr.bits.rttincien = 1;
         return SUCCESS;
     }
 
-    async command error_t Rtt.disableIncrementalInterrupt()
+    async command error_t HplSam3uRtt.disableIncrementalInterrupt()
     {
         RTT->rtmr.bits.rttincien = 0;
         return SUCCESS;
     }
 
-    async command error_t Rtt.restart()
+    async command error_t HplSam3uRtt.restart()
     {
         RTT->rtmr.bits.rttrst = 1;
         return SUCCESS;
     }
 
-    async command error_t Rtt.setAlarm(uint32_t time)
+    async command error_t HplSam3uRtt.setAlarm(uint32_t time)
     {
         if(time > 0)
         {
@@ -105,12 +105,12 @@ implementation
         }
     }
 
-    async command uint32_t Rtt.getAlarm()
+    async command uint32_t HplSam3uRtt.getAlarm()
     {
         return RTT->rtar;
     }
 
-    void RttIrqHandler() @C() @spontaneous()
+    void HplSam3uRttIrqHandler() @C() @spontaneous()
     {
         rtt_rtsr_t status;
 
@@ -122,18 +122,18 @@ implementation
 
             if (status.bits.rttinc) {
                 // we got an increment interrupt
-                signal Rtt.incrementFired();
+                signal HplSam3uRtt.incrementFired();
             }
 
             if (status.bits.alms) {
                 // we got an alarm
-                signal Rtt.alarmFired();
+                signal HplSam3uRtt.alarmFired();
             }
         }
     }
 
-    default async event void Rtt.incrementFired() {}
-    default async event void Rtt.alarmFired() {}
+    default async event void HplSam3uRtt.incrementFired() {}
+    default async event void HplSam3uRtt.alarmFired() {}
 
 }
 
