@@ -49,7 +49,7 @@ typedef union message_footer
 
 typedef union message_metadata
 {
-  serial_metadata_t serial;
+	serial_metadata_t serial;
 } message_metadata_t;
 
 #endif

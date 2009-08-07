@@ -57,4 +57,7 @@ implementation
 
 	components MainC;
 	MainC.SoftwareInit -> HilSam3uUartP.Init;
+
+	components HplNVICC;
+	HilSam3uUartP.UartIrqControl -> HplNVICC.DBGUInterrupt;
 }
