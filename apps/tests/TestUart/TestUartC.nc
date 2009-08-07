@@ -47,6 +47,8 @@ implementation
 	// ` comes before a in the ASCII table
 	uint8_t letter = '`';
 
+	uint8_t buffer[10];
+
 	//task void sendTask();
 	//task void receiveTask();
 
@@ -85,15 +87,12 @@ while(TRUE) {
 		//blinkRed();
 
 
-		{
+		while (TRUE) {
 //			uint8_t buffer[6] = {'H', 'e', 'l', 'l', 'o', '\n'};
 //
 //			call UartStream.send(buffer, 6);
 
-			uint8_t buffer[10];
 			call UartStream.receive(buffer, 10);
-
-			while (TRUE);
 		}
 
 #if 0
@@ -124,17 +123,18 @@ while(TRUE) {
 
 	async event void UartStream.sendDone(uint8_t* buf, uint16_t len, error_t error)
 	{
-		blinkRed();
+		call Leds.led1Toggle(); // Led 1 (green) = sent something
 	}
 
 	async event void UartStream.receiveDone(uint8_t* buf, uint16_t len, error_t error)
 	{
-		blinkRed();
+		call Leds.led0Toggle(); // Led 0 (green) = got something
+		call UartStream.send(buffer, 10);
 	}
 
 	async event void UartStream.receivedByte(uint8_t byte)
 	{
-		blinkRed();
+		// do nothing
 	}
 
 /*
