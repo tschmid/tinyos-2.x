@@ -25,8 +25,8 @@
  * @author Thomas Schmid
  */
 
-#ifndef RTT_H
-#define RTT_H
+#ifndef SAM3URTTHARDWARE_H
+#define SAM3URTTHARDWARE_H
 
 typedef union
 {
@@ -71,4 +71,4 @@ typedef struct rtt {
 // Preliminary, p. 249
 volatile rtt_t* RTT = (volatile rtt_t*) 0x400E1230;
 
-#endif // RTT_H
+#endif // SAM3URTTHARDWARE_H

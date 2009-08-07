@@ -34,7 +34,7 @@ module HalSam3uRttP @safe()
         interface LocalTime<TMilli> as LocalTime;
     }
     uses {
-        interface Rtt;
+        interface HplSam3uRtt;
         interface Init as RttInit;
     }
 }
@@ -50,7 +50,7 @@ implementation
         call RttInit.init();
         // make the counter count in milliseconds. This restarts the RTT and
         // resets the counter.
-        call Rtt.setPrescalar(32);
+        call HplSam3uRtt.setPrescalar(32);
         return SUCCESS;
     }
 
@@ -63,7 +63,7 @@ implementation
     async command void Alarm.stop()
     {
         atomic running = FALSE;
-        call Rtt.disableAlarmInterrupt();
+        call HplSam3uRtt.disableAlarmInterrupt();
     }
 
     async command bool Alarm.isRunning()
@@ -79,31 +79,31 @@ implementation
             if(elapsed >= dt )
             {
                 // l.et the timer expire at the next tic of the RTT
-                call Rtt.setAlarm(now+1);
+                call HplSam3uRtt.setAlarm(now+1);
             } else {
                 uint32_t remaining = dt - elapsed;
                 if(remaining <= 1)
                 {
-                    call Rtt.setAlarm(now + 1);
+                    call HplSam3uRtt.setAlarm(now + 1);
                 } else {
-                    call Rtt.setAlarm(now + remaining);
+                    call HplSam3uRtt.setAlarm(now + remaining);
                 }
             }
-            call Rtt.enableAlarmInterrupt();
+            call HplSam3uRtt.enableAlarmInterrupt();
         }
     }
 
     async command uint32_t Alarm.getNow()
     {
         uint32_t c;
-        c = call Rtt.getTime();
+        c = call HplSam3uRtt.getTime();
         return c;
     }
 
     async command uint32_t Alarm.getAlarm()
     {
         uint32_t c;
-        c = call Rtt.getAlarm();
+        c = call HplSam3uRtt.getAlarm();
         return c;
     }
 
@@ -112,13 +112,13 @@ implementation
         return call Alarm.getNow();
     }
 
-    async event void Rtt.alarmFired() 
+    async event void HplSam3uRtt.alarmFired() 
     {
         call Alarm.stop();
         signal Alarm.fired();
     }
 
-    async event void Rtt.incrementFired()
+    async event void HplSam3uRtt.incrementFired()
     {
     }
 

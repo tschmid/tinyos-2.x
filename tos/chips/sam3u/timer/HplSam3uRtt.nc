@@ -25,7 +25,7 @@
  * @author Thomas Schmid
  */
 
-interface Rtt {
+interface HplSam3uRtt {
 
     /**
      * Sets the prescalar value of the RTT and restart it. This function

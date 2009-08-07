@@ -4,7 +4,7 @@ configuration HplSam3uRttC
     provides
     {
         interface Init;
-        interface Rtt;
+        interface HplSam3uRtt;
     }
 }
 
@@ -13,7 +13,7 @@ implementation
     components HplSam3uRttP, HplNVICC;
 
     Init = HplSam3uRttP;
-    Rtt = HplSam3uRttP;
+    HplSam3uRtt = HplSam3uRttP;
 
     HplSam3uRttP.HplNVICCntl -> HplNVICC;
     HplSam3uRttP.NVICRTTInterrupt -> HplNVICC.RTTInterrupt;

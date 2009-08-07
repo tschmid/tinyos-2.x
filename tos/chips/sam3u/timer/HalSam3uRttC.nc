@@ -12,7 +12,7 @@ implementation
 {
     components HplSam3uRttC, HalSam3uRttP;
 
-    HalSam3uRttP.Rtt -> HplSam3uRttC;
+    HalSam3uRttP.HplSam3uRtt -> HplSam3uRttC;
     HalSam3uRttP.RttInit -> HplSam3uRttC.Init;
 
     Init = HalSam3uRttP;
