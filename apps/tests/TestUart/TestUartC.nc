@@ -84,16 +84,20 @@ while(TRUE) {
 		//blinkRed();
 
 		while (TRUE) {
-			//error_t result = call HalSam3uUart.sendChar(letter);
-			error_t result = call UartByte.send(letter);
+			//error_t result = call UartByte.send(letter);
+			uint8_t got = 0;
+			call UartByte.receive(&got, 42);
+			//blinkRed();
+			call Leds.set(got);
+			//call Leds.led0Toggle(); // Led 0 (green) = got something
 			//error_t result = SUCCESS;
-			call Leds.led0Toggle(); // Led 0 (green) = tried to send something (= living)
-			if (result == SUCCESS) {
-				call Leds.led1Toggle(); // Led 1 (green) = sent something
-				break;
-			} else {
-				//call Leds.led2Toggle(); // Led 2 (red) = waiting
-			}
+//			call Leds.led0Toggle(); // Led 0 (green) = tried to send something (= living)
+//			if (result == SUCCESS) {
+//				call Leds.led1Toggle(); // Led 1 (green) = sent something
+//				break;
+//			} else {
+//				//call Leds.led2Toggle(); // Led 2 (red) = waiting
+//			}
 		}
 }
 

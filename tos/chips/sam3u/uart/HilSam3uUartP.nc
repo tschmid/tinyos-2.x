@@ -88,18 +88,23 @@ implementation
 		call HplSam3uUartConfig.setParityType(UART_MR_PAR_NONE);
 		call HplSam3uUartConfig.setClockDivisor(312); // 9,600 baud with MCK = 48 MHz
 
+		// initialize buffer pointers
+		// important because this determines if UartByte commands fail or not
+		receiveBuffer = NULL;
+		transmitBuffer = NULL;
+
 		return SUCCESS;
 	}
 
 	command error_t StdControl.start()
 	{
-
 		// enable receiver and transmitter
 		call HplSam3uUartControl.enableReceiver();
 		call HplSam3uUartControl.enableTransmitter();
 
-		// enable receive IRQ
-		call HplSam3uUartInterrupts.enableRxrdyIrq();
+		// do not enable receive IRQ because this indicates that
+		// a stream reception is in progress.
+		//call HplSam3uUartInterrupts.enableRxrdyIrq();
 
 		return SUCCESS;
 	}
