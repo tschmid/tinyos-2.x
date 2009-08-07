@@ -132,11 +132,13 @@ implementation
 
 	__attribute__((interrupt)) void UartIrqHandler() @C() @spontaneous()
 	{
-		if (call HplSam3uUartStatus.isReceiverReady() == TRUE) {
+		if ((call HplSam3uUartInterrupts.isEnabledRxrdyIrq() == TRUE) &&
+				(call HplSam3uUartStatus.isReceiverReady() == TRUE)) {
 			uint8_t data = call HplSam3uUartStatus.getReceivedChar();
 			signal HplSam3uUartInterrupts.receivedByte(data);
 		}
-		if (call HplSam3uUartStatus.isTransmitterReady() == TRUE) {
+		if ((call HplSam3uUartInterrupts.isEnabledTxrdyIrq() == TRUE) &&
+				(call HplSam3uUartStatus.isTransmitterReady() == TRUE)) {
 			signal HplSam3uUartInterrupts.transmitterReady();
 		}
 	}

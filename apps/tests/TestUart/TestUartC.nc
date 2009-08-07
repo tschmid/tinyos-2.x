@@ -44,120 +44,47 @@ module TestUartC
 }
 implementation
 {
-	// ` comes before a in the ASCII table
-	uint8_t letter = '`';
-
 	uint8_t buffer[10];
 
-	//task void sendTask();
-	//task void receiveTask();
-
-	void blinkRed()
-	{
-		while (TRUE) {
-			volatile int i = 0;
-			for (i = 0; i < 100000; i++);
-
-			call Leds.led2Toggle();
-		}
-	}
+	task void sendTask();
+	task void receiveTask();
 
 	event void Boot.booted()
 	{
-		// call UartInit.init(); // should be called by SW init
-
 		call UartIrqControl.configure(0xff);
 		call UartIrqControl.enable();
 		call UartControl.start();
-		//call UartIrqControl.disable();
+
 //		__nesc_enable_interrupt();
 
-//		post sendTask();
-//	}
-//
-//	task void sendTask()
-//	{
-while(TRUE) {
-		volatile int i = 0;
-		for (i = 0; i < 100000; i++);
-
-		letter++;
-		// { comes after z in the ASCII table
-		if (letter == '{') { letter = 'a'; }
-		//blinkRed();
-
-
-		while (TRUE) {
-//			uint8_t buffer[6] = {'H', 'e', 'l', 'l', 'o', '\n'};
-//
-//			call UartStream.send(buffer, 6);
-
-			call UartStream.receive(buffer, 10);
-		}
-
-#if 0
-		while (TRUE) {
-			uint8_t got = 0;
-
-			// blocking call to receive()
-			error_t result = call UartByte.receive(&got, 42);
-			if (result == SUCCESS) {
-				call Leds.led0Toggle(); // Led 0 (green) = got something
-			} else {
-				call Leds.led2Toggle(); // Led 2 (red) = error
-			}
-
-			// send back received char
-			result = call UartByte.send(got);
-			if (result == SUCCESS) {
-				call Leds.led1Toggle(); // Led 1 (green) = sent something
-			} else {
-				call Leds.led2Toggle(); // Led 2 (red) = error
-			}
-		}
-#endif
-}
-
-		//post sendTask();
-	}
-
-	async event void UartStream.sendDone(uint8_t* buf, uint16_t len, error_t error)
-	{
-		call Leds.led1Toggle(); // Led 1 (green) = sent something
-	}
-
-	async event void UartStream.receiveDone(uint8_t* buf, uint16_t len, error_t error)
-	{
-		call Leds.led0Toggle(); // Led 0 (green) = got something
-		call UartStream.send(buffer, 10);
-	}
-
-	async event void UartStream.receivedByte(uint8_t byte)
-	{
-		// do nothing
-	}
-
-/*
-	async event void HalSam3uUart.receiverReady()
-	{
 		post receiveTask();
 	}
 
 	task void receiveTask()
 	{
-		uint8_t receivedLetter;
-		call Leds.led2Toggle(); // Led 2 (red) = received something
-		receivedLetter = call HalSam3uUart.receiveChar();
+		call UartStream.receive(buffer, 10);
 	}
 
-	async event void HalSam3uUart.transmitterReady() {}
-	async event void HalSam3uUart.endOfReceiverTransfer() {}
-	async event void HalSam3uUart.endOfTransmitterTransfer() {}
-	async event void HalSam3uUart.overrunError() {}
-	async event void HalSam3uUart.framingError() {}
-	async event void HalSam3uUart.parityError() {}
-	async event void HalSam3uUart.transmitterEmpty() {}
-	async event void HalSam3uUart.transmissionBufferEmpty() {}
-	async event void HalSam3uUart.receiveBufferFull() {}
-	*/
+	async event void UartStream.receiveDone(uint8_t* buf, uint16_t len, error_t error)
+	{
+		call Leds.led0Toggle(); // Led 0 (green) = received something
+		post sendTask();
+	}
+
+	task void sendTask()
+	{
+		// send out received buffer
+		call UartStream.send(buffer, 10);
+	}
+
+	async event void UartStream.sendDone(uint8_t* buf, uint16_t len, error_t error)
+	{
+		call Leds.led1Toggle(); // Led 1 (green) = sent something
+		post receiveTask();
+	}
+
+	async event void UartStream.receivedByte(uint8_t byte)
+	{
+		call Leds.led2Toggle(); // Led 2 (red) = received something w/o a buffer
+	}
 }
