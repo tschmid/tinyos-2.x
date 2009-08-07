@@ -51,6 +51,23 @@ implementation
 		/* I/O pin configuration, clock calibration, and LED configuration
 		 * (see TEP 107)
 		 */
+        // Stop UTMI
+        AT91C_BASE_CKGR->CKGR_UCKR &= ~AT91C_CKGR_UPLLEN;
+
+        // Configure all PIO as input
+        // Set PIO as Input
+        AT91C_BASE_PIOA->PIO_ODR = 0xFFFFFFFF;
+        AT91C_BASE_PIOB->PIO_ODR = 0xFFFFFFFF;
+        AT91C_BASE_PIOC->PIO_ODR = 0xFFFFFFFF;
+        // Enable PIO
+        AT91C_BASE_PIOA->PIO_PER = 0xFFFFFFFF;
+        AT91C_BASE_PIOB->PIO_PER = 0xFFFFFFFF;
+        AT91C_BASE_PIOC->PIO_PER = 0xFFFFFFFF;
+        // stop all peripheral clocks
+        AT91C_BASE_PMC->PMC_PCDR = MASK_STATUS;
+        while((AT91C_BASE_PMC->PMC_PCSR & MASK_STATUS) != 0);
+
+
         call MoteClockInit.init();
 		call LedsInit.init();
 
