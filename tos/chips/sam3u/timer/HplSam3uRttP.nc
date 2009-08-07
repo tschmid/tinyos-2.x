@@ -55,8 +55,8 @@ implementation
     async command error_t Rtt.setPrescalar(uint16_t prescalar)
     {
         // after changing the prescalar, we have to restart the RTT
-        RTT->rtmr = (prescalar | RTTC_RTTRST);
-        return SUCCESS;
+        RTT->rtmr.bits.rtpres = prescalar;
+        return call Rtt.restart();
     }
 
     async command uint32_t Rtt.getTime()
@@ -66,31 +66,31 @@ implementation
 
     async command error_t Rtt.enableAlarmInterrupt()
     {
-        RTT->rtmr |= RTTC_ALMIEN;
+        RTT->rtmr.bits.almien = 1;;
         return SUCCESS;
     }
 
     async command error_t Rtt.disableAlarmInterrupt()
     {
-        RTT->rtmr &= ~RTTC_ALMIEN;
+        RTT->rtmr.bits.almien = 0;
         return SUCCESS;
     }
 
     async command error_t Rtt.enableIncrementalInterrupt()
     {
-        RTT->rtmr |= RTTC_RTTINCIEN;
+        RTT->rtmr.bits.rttincien = 1;
         return SUCCESS;
     }
 
     async command error_t Rtt.disableIncrementalInterrupt()
     {
-        RTT->rtmr &= ~RTTC_RTTINCIEN;
+        RTT->rtmr.bits.rttincien = 0;
         return SUCCESS;
     }
 
     async command error_t Rtt.restart()
     {
-        RTT->rtmr |= RTTC_RTTRST;
+        RTT->rtmr.bits.rttrst = 1;
         return SUCCESS;
     }
 
@@ -110,30 +110,25 @@ implementation
         return RTT->rtar;
     }
 
-    /**
-     * Returns the status of the RTT. There are only two important bits:
-     * bit 0: indicates if the alarm has occured since last read of the status
-     * bit 1: indicates if the RTT has been incremented since last read of the
-     *        status
-     */
-    async command bool Rtt.getStatus()
-    {
-        return RTT->rtsr;
-    }
-
     void RttIrqHandler() @C() @spontaneous()
     {
-        uint32_t status;
-        status = call Rtt.getStatus();
+        rtt_rtsr_t status;
 
-        if ((status & RTTC_RTTINC) == RTTC_RTTINC) {
-            // we got an increment interrupt
-            signal Rtt.incrementFired();
-        }
+        atomic {
+            // clear pending interrupt
+            call NVICRTTInterrupt.clearPending();
 
-        if ((status & RTTC_ALMS) == RTTC_ALMS) {
-            // we got an alarm
-            signal Rtt.alarmFired();
+            status = RTT->rtsr;
+
+            if (status.bits.rttinc) {
+                // we got an increment interrupt
+                signal Rtt.incrementFired();
+            }
+
+            if (status.bits.alms) {
+                // we got an alarm
+                signal Rtt.alarmFired();
+            }
         }
     }
 

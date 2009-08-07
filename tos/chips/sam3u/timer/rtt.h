@@ -1,28 +1,74 @@
+/**
+ * "Copyright (c) 2009 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement
+ * is hereby granted, provided that the above copyright notice, the following
+ * two paragraphs and the author appear in all copies of this software.
+ *
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
+ * OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ */
+
+/**
+ * Real-Time Timer register definitions.
+ *
+ * @author Thomas Schmid
+ */
+
 #ifndef RTT_H
 #define RTT_H
 
+typedef union
+{
+    uint32_t flat;
+    struct
+    {
+        uint16_t rtpres    : 16; // RTT prescalar
+        uint8_t almien     :  1; // alarm interrupt enable
+        uint8_t rttincien  :  1; // RTT increment interrupt enable
+        uint8_t rttrst     :  1; // RTT restart
+        uint8_t reserved1  :  5;
+        uint8_t reserved0  :  8;
+    } bits;
+} rtt_rtmr_t;
+
+/* Note: Never read directly the status register since it gets reset after
+ * each read. Thus, you migh tmiss an interrupt!
+ */
+typedef union
+{
+    uint32_t flat;
+    struct
+    {
+        uint8_t alms       :  1; // RT alarm status
+        uint8_t rttinc     :  1; // RTT increment status
+        uint8_t reserved2  :  6;
+        uint8_t reserved1  :  8;
+        uint16_t reserved0 : 16;
+    } bits;
+} rtt_rtsr_t;
+
 // Real Time Timer Register definition
 typedef struct rtt {
-    volatile uint32_t rtmr;	// Real Time Mode Register
-    volatile uint32_t rtar;	// Real Time Alarm Register
-    volatile uint32_t rtvr;	// Real Time Value Register
-    volatile uint32_t rtsr;	// Real Time Status Register
+    volatile rtt_rtmr_t rtmr;	// Real Time Mode Register
+    volatile uint32_t   rtar;	// Real Time Alarm Register
+    volatile uint32_t   rtvr;	// Real Time Value Register
+    volatile rtt_rtsr_t rtsr;	// Real Time Status Register
 } rtt_t;
 
-#define RTT ((rtt_t *) 0x400E1230) // (RTTC) Base Address
-
-// -------- RTTC_RTMR : (RTTC Offset: 0x0) Real-time Mode Register --------
-#define RTTC_RTPRES     (0xFFFF <<  0) // (RTTC) Real-time Timer Prescaler Value
-#define RTTC_ALMIEN     (0x1 << 16) // (RTTC) Alarm Interrupt Enable
-#define RTTC_RTTINCIEN  (0x1 << 17) // (RTTC) Real Time Timer Increment Interrupt Enable
-#define RTTC_RTTRST     (0x1 << 18) // (RTTC) Real Time Timer Restart
-// -------- RTTC_RTAR : (RTTC Offset: 0x4) Real-time Alarm Register --------
-#define RTTC_ALMV       (0x0 <<  0) // (RTTC) Alarm Value
-// -------- RTTC_RTVR : (RTTC Offset: 0x8) Current Real-time Value Register --------
-#define RTTC_CRTV       (0x0 <<  0) // (RTTC) Current Real-time Value
-// -------- RTTC_RTSR : (RTTC Offset: 0xc) Real-time Status Register --------
-#define RTTC_ALMS       (0x1 <<  0) // (RTTC) Real-time Alarm Status
-#define RTTC_RTTINC     (0x1 <<  1) // (RTTC) Real-time Timer Increment
-
+//#define RTT ((rtt_t *) 0x400E1230) // (RTTC) Base Address
+// Defined in AT91 ARM Coretx-M3 based Microcontrollers, SAM3U Series,
+// Preliminary, p. 249
+volatile rtt_t* RTT = (volatile rtt_t*) 0x400E1230;
 
 #endif // RTT_H
