@@ -84,20 +84,23 @@ while(TRUE) {
 		//blinkRed();
 
 		while (TRUE) {
-			//error_t result = call UartByte.send(letter);
 			uint8_t got = 0;
-			call UartByte.receive(&got, 42);
-			//blinkRed();
-			call Leds.set(got);
-			//call Leds.led0Toggle(); // Led 0 (green) = got something
-			//error_t result = SUCCESS;
-//			call Leds.led0Toggle(); // Led 0 (green) = tried to send something (= living)
-//			if (result == SUCCESS) {
-//				call Leds.led1Toggle(); // Led 1 (green) = sent something
-//				break;
-//			} else {
-//				//call Leds.led2Toggle(); // Led 2 (red) = waiting
-//			}
+
+			// blocking call to receive()
+			error_t result = call UartByte.receive(&got, 42);
+			if (result == SUCCESS) {
+				call Leds.led0Toggle(); // Led 0 (green) = got something
+			} else {
+				call Leds.led2Toggle(); // Led 2 (red) = error
+			}
+
+			// send back received char
+			result = call UartByte.send(got);
+			if (result == SUCCESS) {
+				call Leds.led1Toggle(); // Led 1 (green) = sent something
+			} else {
+				call Leds.led2Toggle(); // Led 2 (red) = error
+			}
 		}
 }
 
