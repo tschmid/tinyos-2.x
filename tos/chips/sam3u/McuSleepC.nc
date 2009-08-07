@@ -44,7 +44,13 @@ implementation
 	async command void McuSleep.sleep()
 	{
 		// FIXME: implementation
+
 		__nesc_enable_interrupt();
+
+		// all of memory may change at that point, because an IRQ handler
+		// can have posted a task!
+		asm volatile("" : : : "memory");
+
 		__nesc_disable_interrupt();
 	}
 	async command void McuPowerState.update()
