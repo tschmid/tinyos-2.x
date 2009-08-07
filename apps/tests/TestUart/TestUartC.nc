@@ -37,42 +37,56 @@ module TestUartC
 {
 	uses interface Leds;
 	uses interface Boot;
-	uses interface HalSam3uUart;
 	uses interface HplNVICInterruptCntl as UartIrqControl;
-	uses interface Init as UartInit;
+	uses interface StdControl as UartControl;
+	uses interface UartByte;
 }
 implementation
 {
 	// ` comes before a in the ASCII table
 	uint8_t letter = '`';
 
-	task void sendTask();
-	task void receiveTask();
+	//task void sendTask();
+	//task void receiveTask();
+
+	void blinkRed()
+	{
+		while (TRUE) {
+			volatile int i = 0;
+			for (i = 0; i < 100000; i++);
+
+			call Leds.led2Toggle();
+		}
+	}
 
 	event void Boot.booted()
 	{
-		call UartInit.init();
+		// call UartInit.init(); // should be called by SW init
 
-		call UartIrqControl.configure(8);
+		call UartIrqControl.configure(0xff);
 		call UartIrqControl.enable();
+		call UartControl.start();
 		//call UartIrqControl.disable();
 //		__nesc_enable_interrupt();
 
-
-		post sendTask();
-	}
-
-	task void sendTask()
-	{
+//		post sendTask();
+//	}
+//
+//	task void sendTask()
+//	{
+while(TRUE) {
 		volatile int i = 0;
 		for (i = 0; i < 100000; i++);
 
 		letter++;
 		// { comes after z in the ASCII table
 		if (letter == '{') { letter = 'a'; }
+		//blinkRed();
 
 		while (TRUE) {
-			error_t result = call HalSam3uUart.sendChar(letter);
+			//error_t result = call HalSam3uUart.sendChar(letter);
+			error_t result = call UartByte.send(letter);
+			//error_t result = SUCCESS;
 			call Leds.led0Toggle(); // Led 0 (green) = tried to send something (= living)
 			if (result == SUCCESS) {
 				call Leds.led1Toggle(); // Led 1 (green) = sent something
@@ -81,20 +95,22 @@ implementation
 				//call Leds.led2Toggle(); // Led 2 (red) = waiting
 			}
 		}
+}
 
-		post sendTask();
+		//post sendTask();
 	}
 
+/*
 	async event void HalSam3uUart.receiverReady()
 	{
-		uint8_t receivedLetter;
-		call Leds.led2Toggle(); // Led 2 (red) = received something
-		receivedLetter = call HalSam3uUart.receiveChar();
-		//post receiveTask();
+		post receiveTask();
 	}
 
 	task void receiveTask()
 	{
+		uint8_t receivedLetter;
+		call Leds.led2Toggle(); // Led 2 (red) = received something
+		receivedLetter = call HalSam3uUart.receiveChar();
 	}
 
 	async event void HalSam3uUart.transmitterReady() {}
@@ -106,4 +122,5 @@ implementation
 	async event void HalSam3uUart.transmitterEmpty() {}
 	async event void HalSam3uUart.transmissionBufferEmpty() {}
 	async event void HalSam3uUart.receiveBufferFull() {}
+	*/
 }
