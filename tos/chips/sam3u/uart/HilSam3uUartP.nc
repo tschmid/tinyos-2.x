@@ -50,6 +50,7 @@ module HilSam3uUartP
 		interface HplSam3uUartInterrupts;
 		interface HplSam3uUartStatus;
 		interface HplSam3uUartConfig;
+		interface HplNVICInterruptCntl as UartIrqControl;
 	}
 }
 implementation
@@ -71,6 +72,10 @@ implementation
 
 		// turn off all UART IRQs
 		call HplSam3uUartInterrupts.disableAllUartIrqs();
+
+		// configure NVIC
+		call UartIrqControl.configure(0x88);
+		call UartIrqControl.enable();
 
 		// FIXME: init PIO, NVIC, PMC clock enable
 		// setup PIOC: PA11, PA12 -> peripheral A
