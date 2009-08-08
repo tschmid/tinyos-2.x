@@ -25,7 +25,7 @@
  * @author Thomas Schmid
  */
 
-#include "sam3unvic.h"
+#include "sam3unvichardware.h"
 
 generic module HplNVICInterruptP (irqn_t irqn) @safe()
 {
@@ -65,35 +65,35 @@ implementation
     }
 
     inline async command void Cntl.enable(){
-        NVIC->ISER[((uint32_t)(irqn) >> 5)] = (1 << ((uint32_t)(irqn) & 0x1F));                             /* enable interrupt */
+        NVIC->iser0 = (1 << ((uint32_t)(irqn) & 0x1F));                             /* enable interrupt */
     }
 
     inline async command void Cntl.disable(){
-        NVIC->ICER[((uint32_t)(irqn) >> 5)] = (1 << ((uint32_t)(irqn) & 0x1F));                             /* disable interrupt */
+        NVIC->icer0 = (1 << ((uint32_t)(irqn) & 0x1F));                             /* disable interrupt */
     }
 
     inline async command bool Cntl.isPending(){
-        return((irqn_t) (NVIC->ISPR[(uint32_t)(irqn) >> 5] & (1 << ((uint32_t)(irqn) & 0x1F))));         /* Return Interrupt bit or 'zero' */
+        return((irqn_t) (NVIC->ispr0 & (1 << ((uint32_t)(irqn) & 0x1F))));         /* Return Interrupt bit or 'zero' */
     }
 
     inline async command void Cntl.setPending(){
-        NVIC->ISPR[((uint32_t)(irqn) >> 5)] = (1 << ((uint32_t)(irqn) & 0x1F));                             /* set interrupt pending */
+        NVIC->ispr0 = (1 << ((uint32_t)(irqn) & 0x1F));                             /* set interrupt pending */
     }
 
     inline async command void Cntl.clearPending(){
-        NVIC->ICPR[((uint32_t)(irqn) >> 5)] = (1 << ((uint32_t)(irqn) & 0x1F));
+        NVIC->icpr0 = (1 << ((uint32_t)(irqn) & 0x1F));
     }
 
     inline async command uint32_t Cntl.getActive(){
-        return((irqn_t)(NVIC->IABR[(uint32_t)(irqn) >> 5] & (1 << ((uint32_t)(irqn) & 0x1F))));                        /* Return Interruptnumber or 'zero' */
+        return((irqn_t)(NVIC->iabr0 & (1 << ((uint32_t)(irqn) & 0x1F))));                        /* Return Interruptnumber or 'zero' */
     }
 
     inline async command void Cntl.setPriority(uint32_t priority){
-        NVIC->IP[(uint32_t)(irqn)] = (priority & 0xff);
+        NVIC->ip[(uint32_t)(irqn)] = (priority & 0xff);
     }
 
     inline async command uint32_t Cntl.getPriority(){
-        return((uint32_t)(NVIC->IP[(uint32_t)(irqn)] >> (8 - __NVIC_PRIO_BITS)));
+        return((uint32_t)(NVIC->ip[(uint32_t)(irqn)] >> (8 - __NVIC_PRIO_BITS)));
     }
 
 }
