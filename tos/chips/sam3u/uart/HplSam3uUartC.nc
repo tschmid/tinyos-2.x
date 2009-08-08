@@ -116,6 +116,15 @@ implementation
 		UART_CR->bits.rststa = 1;
 	}
 
+	void UartIrqHandler() @C() @spontaneous()
+	{
+		signal HplSam3uUartInterrupts.uartInterrupt();
+	}
+
+	default async event void HplSam3uUartInterrupts.uartInterrupt()
+	{
+	}
+
 	// Rxrdy
 	async command void HplSam3uUartInterrupts.enableRxrdyIrq()
 	{

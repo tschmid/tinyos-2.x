@@ -62,12 +62,19 @@ void DefaultHandler()
 	// do nothing, just return
 }
 
+/* Default Hardfault Handler
+ */
+void DefaultHardFaultHandler()
+{
+    while(1) {}
+}
+
 /* By default, every exception and IRQ is handled by the default handler.
  * The handler functions are provided by weak aliases; thus, a regular
  * handler definition will override this.
  */
 void NmiHandler() __attribute__((weak, alias("DefaultHandler")));
-void HardFaultHandler() __attribute__((weak, alias("DefaultHandler")));
+void HardFaultHandler() __attribute__((weak, alias("DefaultHardFaultHandler")));
 void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void BusFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void UsageFaultHandler() __attribute__((weak, alias("DefaultHandler")));
@@ -171,8 +178,12 @@ void __init()
 	unsigned int *from;
 	unsigned int *to;
 	unsigned int *i;
+	volatile unsigned int *NVIC_VTOFFR = (volatile unsigned int *) 0xe000ed08;
 
-	// Copy pre-initialized data into RAM
+	// Copy pre-initialized data into RAM.
+	// Data lies in Flash after the text segment (_etext),
+	// but is linked to be at _sdata.
+	// Thus, we have to copy it to that place in RAM.
 	from = &_etext;
 	to = &_sdata;
 	while (to < &_edata) {
@@ -187,6 +198,12 @@ void __init()
 		*i = 0;
 		i++;
 	}
+
+	// Configure location of IRQ vector table
+	// Vector table is in the beginning of text segment / Flash 0
+	i = (unsigned int *) &_stext;
+	// TBLBASE bit is automatically 0 -> table in code space
+	*NVIC_VTOFFR = (unsigned int) i;
 
 	// Call main()
 	main();

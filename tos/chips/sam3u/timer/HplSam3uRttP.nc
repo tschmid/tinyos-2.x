@@ -110,7 +110,7 @@ implementation
         return RTT->rtar;
     }
 
-    void HplSam3uRttIrqHandler() @C() @spontaneous()
+    void RttIrqHandler() @C() @spontaneous()
     {
         rtt_rtsr_t status;
 
