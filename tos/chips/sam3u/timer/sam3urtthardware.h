@@ -59,7 +59,8 @@ typedef union
 } rtt_rtsr_t;
 
 // Real Time Timer Register definition
-typedef struct rtt {
+typedef struct rtt 
+{
     volatile rtt_rtmr_t rtmr;	// Real Time Mode Register
     volatile uint32_t   rtar;	// Real Time Alarm Register
     volatile uint32_t   rtvr;	// Real Time Value Register
