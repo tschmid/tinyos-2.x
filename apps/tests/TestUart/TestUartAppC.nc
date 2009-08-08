@@ -45,10 +45,10 @@ implementation
 	TestUartC -> MainC.Boot;
 	TestUartC.Leds -> LedsC;
 
-	components HplSam3uUartC, HplNVICC;
-	TestUartC.HplSam3uUartConfig -> HplSam3uUartC;
-	TestUartC.HplSam3uUartControl -> HplSam3uUartC;
-	TestUartC.HplSam3uUartInterrupts -> HplSam3uUartC;
-	TestUartC.HplSam3uUartStatus -> HplSam3uUartC;
+	components HplNVICC;
 	TestUartC.UartIrqControl -> HplNVICC.DBGUInterrupt;
+
+	components HalSam3uUartC;
+	TestUartC.HalSam3uUart -> HalSam3uUartC;
+	TestUartC.UartInit -> HalSam3uUartC;
 }

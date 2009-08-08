@@ -29,58 +29,29 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @author wanja@cs.fau.de
- **/
+#include "sam3uuarthardware.h"
 
-module TestUartC
+/**
+ * The hardware abstraction layer for the SAM3U UART, grouping functionality.
+ *
+ * @author wanja@cs.fau.de
+ */
+
+configuration HalSam3uUartC
 {
-	uses interface Leds;
-	uses interface Boot;
-	uses interface HalSam3uUart;
-	uses interface HplNVICInterruptCntl as UartIrqControl;
-	uses interface Init as UartInit;
+	provides
+	{
+		interface Init;
+		interface HalSam3uUart;
+	}
 }
 implementation
 {
-	event void Boot.booted()
-	{
-		// ` comes before a in the ASCII table
-		uint8_t letter = '`';
-
-		call UartInit.init();
-
-//		__nesc_enable_interrupt();
-
-		while (1) {
-			volatile int i = 0;
-			for (i = 0; i < 100000; i++);
-
-			letter++;
-			// { comes after z in the ASCII table
-			if (letter == '{') { letter = 'a'; }
-
-			while (TRUE) {
-				error_t result = call HalSam3uUart.sendChar(letter);
-				call Leds.led0Toggle(); // Led 0 (green) = tried to send something (= living)
-				if (result == SUCCESS) {
-					call Leds.led1Toggle(); // Led 1 (green) = sent something
-					break;
-				} else {
-					call Leds.led2Toggle(); // Led 2 (red) = waiting
-				}
-			}
-		}
-	}
-
-	async event void HalSam3uUart.receiverReady() {}
-	async event void HalSam3uUart.transmitterReady() {}
-	async event void HalSam3uUart.endOfReceiverTransfer() {}
-	async event void HalSam3uUart.endOfTransmitterTransfer() {}
-	async event void HalSam3uUart.overrunError() {}
-	async event void HalSam3uUart.framingError() {}
-	async event void HalSam3uUart.parityError() {}
-	async event void HalSam3uUart.transmitterEmpty() {}
-	async event void HalSam3uUart.transmissionBufferEmpty() {}
-	async event void HalSam3uUart.receiveBufferFull() {}
+	components HalSam3uUartP, HplSam3uUartC;
+	HalSam3uUartP.HplSam3uUartConfig -> HplSam3uUartC;
+	HalSam3uUartP.HplSam3uUartControl -> HplSam3uUartC;
+	HalSam3uUartP.HplSam3uUartInterrupts -> HplSam3uUartC;
+	HalSam3uUartP.HplSam3uUartStatus -> HplSam3uUartC;
+	Init = HalSam3uUartP.Init;
+	HalSam3uUart = HalSam3uUartP.HalSam3uUart;
 }

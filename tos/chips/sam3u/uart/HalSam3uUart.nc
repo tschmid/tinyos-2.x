@@ -29,58 +29,50 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "sam3uuarthardware.h"
+
 /**
+ * The interface definition for the hardware abstraction layer
+ * for the SAM3U UART, grouping functionality.
+ *
  * @author wanja@cs.fau.de
- **/
+ */
 
-module TestUartC
+interface HalSam3uUart
 {
-	uses interface Leds;
-	uses interface Boot;
-	uses interface HalSam3uUart;
-	uses interface HplNVICInterruptCntl as UartIrqControl;
-	uses interface Init as UartInit;
-}
-implementation
-{
-	event void Boot.booted()
-	{
-		// ` comes before a in the ASCII table
-		uint8_t letter = '`';
+	/**
+	 * Initializes the UART subsystem. This includes:
+	 * <ul>
+	 * <li>Configuring mode, parity, baud rate</li>
+	 * <li>Enabling the receiver and transmitter</li>
+	 * </ul>
+	 */
+	//command void Init.init();
 
-		call UartInit.init();
+	/**
+	 * Disables generation of all UART interrupts in the unit.
+	 */
+	command void disableAllUartInterrupts();
 
-//		__nesc_enable_interrupt();
+	/**
+	 * Enables generation of all UART interrupts in the unit.
+	 */
+	command void enableAllUartInterrupts();
 
-		while (1) {
-			volatile int i = 0;
-			for (i = 0; i < 100000; i++);
+	/**
+	 * Sends a character asynchronously; that is, the send call
+	 * can fail if the hardware buffer is full.
+	 */
+	command error_t sendChar(uint8_t letter);
 
-			letter++;
-			// { comes after z in the ASCII table
-			if (letter == '{') { letter = 'a'; }
-
-			while (TRUE) {
-				error_t result = call HalSam3uUart.sendChar(letter);
-				call Leds.led0Toggle(); // Led 0 (green) = tried to send something (= living)
-				if (result == SUCCESS) {
-					call Leds.led1Toggle(); // Led 1 (green) = sent something
-					break;
-				} else {
-					call Leds.led2Toggle(); // Led 2 (red) = waiting
-				}
-			}
-		}
-	}
-
-	async event void HalSam3uUart.receiverReady() {}
-	async event void HalSam3uUart.transmitterReady() {}
-	async event void HalSam3uUart.endOfReceiverTransfer() {}
-	async event void HalSam3uUart.endOfTransmitterTransfer() {}
-	async event void HalSam3uUart.overrunError() {}
-	async event void HalSam3uUart.framingError() {}
-	async event void HalSam3uUart.parityError() {}
-	async event void HalSam3uUart.transmitterEmpty() {}
-	async event void HalSam3uUart.transmissionBufferEmpty() {}
-	async event void HalSam3uUart.receiveBufferFull() {}
+	async event void receiverReady();
+	async event void transmitterReady();
+	async event void endOfReceiverTransfer();
+	async event void endOfTransmitterTransfer();
+	async event void overrunError();
+	async event void framingError();
+	async event void parityError();
+	async event void transmitterEmpty();
+	async event void transmissionBufferEmpty();
+	async event void receiveBufferFull();
 }
