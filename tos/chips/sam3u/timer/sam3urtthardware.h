@@ -33,7 +33,7 @@ typedef union
     uint32_t flat;
     struct
     {
-        uint16_t rtpres    : 16; // RTT prescalar
+        uint16_t rtpres    : 16; // RTT prescaler
         uint8_t almien     :  1; // alarm interrupt enable
         uint8_t rttincien  :  1; // RTT increment interrupt enable
         uint8_t rttrst     :  1; // RTT restart

@@ -49,13 +49,13 @@ implementation
     }
 
     /**
-     * Sets the prescalar value of the RTT and restart it. This function
+     * Sets the prescaler value of the RTT and restart it. This function
      * disables all interrupt sources!
      */
-    async command error_t HplSam3uRtt.setPrescalar(uint16_t prescalar)
+    async command error_t HplSam3uRtt.setPrescaler(uint16_t prescaler)
     {
-        // after changing the prescalar, we have to restart the RTT
-        RTT->rtmr.bits.rtpres = prescalar;
+        // after changing the prescaler, we have to restart the RTT
+        RTT->rtmr.bits.rtpres = prescaler;
         return call HplSam3uRtt.restart();
     }
 

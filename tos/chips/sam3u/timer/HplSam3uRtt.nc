@@ -28,13 +28,13 @@
 interface HplSam3uRtt {
 
     /**
-     * Sets the prescalar value of the RTT and restart it. This function
+     * Sets the prescaler value of the RTT and restart it. This function
      * disables all interrupt sources!
      *
-     * @par prescalar 16-bit prescalar for the counter. The RTT is fed by a
+     * @par prescaler 16-bit prescaler for the counter. The RTT is fed by a
      * 32.768 Hz clock.
      */
-    async command error_t setPrescalar(uint16_t prescalar);
+    async command error_t setPrescaler(uint16_t prescaler);
 
     /**
      * Retrieves the current time of the timer.
