@@ -26,26 +26,12 @@
  */
 
 #include "AT91SAM3U4.h"
-
-//------------------------------------------------------------------------------
-//         Local definitions
-//------------------------------------------------------------------------------
-// Settings at 48/48MHz
-#define AT91C_CKGR_MUL_SHIFT         16
-#define AT91C_CKGR_OUT_SHIFT         14
-#define AT91C_CKGR_PLLCOUNT_SHIFT     8
-#define AT91C_CKGR_DIV_SHIFT          0
-
-#define BOARD_OSCOUNT         (AT91C_CKGR_MOSCXTST & (0x3F << 8))
-#define BOARD_PLLR ((1 << 29) | (0x7 << AT91C_CKGR_MUL_SHIFT) \
-        | (0x0 << AT91C_CKGR_OUT_SHIFT) |(0x3f << AT91C_CKGR_PLLCOUNT_SHIFT) \
-        | (0x1 << AT91C_CKGR_DIV_SHIFT))
-#define BOARD_MCKR ( AT91C_PMC_PRES_CLK_2 | AT91C_PMC_CSS_PLLA_CLK)
+#include "sam3upmchardware.h"
+#include "sam3usupchardware.h"
 
 // Define clock timeout
 #define CLOCK_TIMEOUT           0xFFFFFFFF
 
-extern void LowLevelInit(void);
 extern void SetDefaultMaster(unsigned char enable);
 extern void SetFlashWaitState(unsigned char ws);
 
@@ -67,66 +53,82 @@ implementation
     //------------------------------------------------------------------------------
 
     command error_t Init.init(){
+        pmc_mor_t mor;
+        pmc_pllar_t pllar;
         uint32_t timeout = 0;
 
-        /* Set 2 WS for Embedded Flash Access
-         ************************************/
+        // Set 2 WS for Embedded Flash Access
         AT91C_BASE_EFC0->EFC_FMR = AT91C_EFC_FWS_2WS;
         AT91C_BASE_EFC1->EFC_FMR = AT91C_EFC_FWS_2WS;
 
-        /* Watchdog initialization
-         *************************/
+        // Watchdog initialization
         AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDDIS;
 
-        /* Select external slow clock
-         ****************************/
-        if ((AT91C_BASE_SUPC->SUPC_SR & AT91C_SUPC_SR_OSCSEL_CRYST) != AT91C_SUPC_SR_OSCSEL_CRYST) {
-            AT91C_BASE_SUPC->SUPC_CR = AT91C_SUPC_CR_XTALSEL_CRYSTAL_SEL | (0xA5 << 24);
+        // Select external slow clock
+        if(SUPC->sr.bits.oscsel == 0) 
+        {
+            supc_cr_t cr;
+            cr.bits.xtalsel = 1;
+            cr.bits.key = SUPC_CR_KEY;
+
+            SUPC->cr = cr;
             timeout = 0;
-            while (!(AT91C_BASE_SUPC->SUPC_SR & AT91C_SUPC_SR_OSCSEL_CRYST) && (timeout++ < CLOCK_TIMEOUT));
+            while (!(SUPC->sr.bits.oscsel) && (timeout++ < CLOCK_TIMEOUT));
         }
 
         /* Initialize main oscillator
          ****************************/
-        if(!(AT91C_BASE_PMC->PMC_MOR & AT91C_CKGR_MOSCSEL))
+        if(PMC->mor.bits.moscsel == 0)
         {
+            mor.flat = 0; // make sure it is zreoed out
+            mor.bits.key = PMC_MOR_KEY;
+            mor.bits.moscxtst = 0x3F; // main oscillator startup time
+            mor.bits.moscrcen = 1;    // enable the on-chip rc oscillator
+            mor.bits.moscxten = 1;    // main crystal oscillator enable
+            PMC->mor = mor;
 
-            AT91C_BASE_PMC->PMC_MOR = (0x37 << 16) | BOARD_OSCOUNT | AT91C_CKGR_MOSCRCEN | AT91C_CKGR_MOSCXTEN;
             timeout = 0;
-            while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCXTS) && (timeout++ < CLOCK_TIMEOUT));
-
+            while (!(PMC->sr.bits.moscxts) && (timeout++ < CLOCK_TIMEOUT));
         }
 
-        /* Switch to moscsel */
-        AT91C_BASE_PMC->PMC_MOR = (0x37 << 16) | BOARD_OSCOUNT | AT91C_CKGR_MOSCRCEN | AT91C_CKGR_MOSCXTEN | AT91C_CKGR_MOSCSEL;
+        // Switch to moscsel
+        mor.flat = 0; // make sure it is zeroed
+        mor.bits.key = PMC_MOR_KEY;
+        mor.bits.moscxtst = 0x3F;
+        mor.bits.moscrcen = 1;
+        mor.bits.moscxten = 1;
+        mor.bits.moscsel = 1;
+        PMC->mor = mor;
         timeout = 0;
-        while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MOSCSELS) && (timeout++ < CLOCK_TIMEOUT));
-        AT91C_BASE_PMC->PMC_MCKR = (AT91C_BASE_PMC->PMC_MCKR & ~AT91C_PMC_CSS) | AT91C_PMC_CSS_MAIN_CLK;
+        while (!(PMC->sr.bits.moscsels) && (timeout++ < CLOCK_TIMEOUT));
+        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
         timeout = 0;
-        while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY) && (timeout++ < CLOCK_TIMEOUT));
+        while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
-        /* Initialize PLLA */
-        AT91C_BASE_PMC->PMC_PLLAR = BOARD_PLLR;
+        // Initialize PLLA
+        pllar.flat = 0; // make sure it is zeroed out
+        pllar.bits.bit29 = 1; // we always have to do this!
+        pllar.bits.mula = 0x7;
+        pllar.bits.pllacount = 0x3F;
+        pllar.bits.diva = 0x1;
+        pllar.bits.stmode = PMC_PLLAR_STMODE_FAST_STARTUP;
+        PMC->pllar = pllar;
         timeout = 0;
-        while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCKA) && (timeout++ < CLOCK_TIMEOUT));
+        while (!(PMC->sr.bits.locka) && (timeout++ < CLOCK_TIMEOUT));
 
-        /* Initialize UTMI for USB usage */
-        AT91C_BASE_CKGR->CKGR_UCKR |= (AT91C_CKGR_UPLLCOUNT & (3 << 20)) | AT91C_CKGR_UPLLEN;
+        // Switch to fast clock
+        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
         timeout = 0;
-        while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_LOCKU) && (timeout++ < CLOCK_TIMEOUT));
+        while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
-        /* Switch to fast clock
-         **********************/
-        AT91C_BASE_PMC->PMC_MCKR = (BOARD_MCKR & ~AT91C_PMC_CSS) | AT91C_PMC_CSS_MAIN_CLK;
+        PMC->mckr.bits.pres = PMC_MCKR_PRES_DIV_2;
+        PMC->mckr.bits.css = PMC_MCKR_CSS_PLLA_CLOCK;
         timeout = 0;
-        while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY) && (timeout++ < CLOCK_TIMEOUT));
+        while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
-        AT91C_BASE_PMC->PMC_MCKR = BOARD_MCKR;
-        timeout = 0;
-        while (!(AT91C_BASE_PMC->PMC_SR & AT91C_PMC_MCKRDY) && (timeout++ < CLOCK_TIMEOUT));
-        /* Enable clock for UART
-         ************************/
-        AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_DBGU);
+        // Enable clock for UART
+        // FIXME: this should go into the UART start/stop!
+        PMC->pcer.bits.dbgu = 1;
 
         /* Optimize CPU setting for speed */
         SetDefaultMaster(1);
@@ -137,7 +139,7 @@ implementation
 
     //------------------------------------------------------------------------------
     /// Enable or disable default master access
-    /// \param enalbe 1 enable defaultMaster settings, 0 disable it.
+    /// \param enable 1 enable defaultMaster settings, 0 disable it.
     //------------------------------------------------------------------------------
     void SetDefaultMaster(unsigned char enable) @C() @spontaneous()
     {

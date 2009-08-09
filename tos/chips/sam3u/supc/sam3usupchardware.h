@@ -238,12 +238,12 @@ typedef union
  */
 typedef struct supc
 {
-    volatile supc_cr_t supc_cr; // Control Register
-    volatile supc_smmr_t supc_smmr; // Supply Monitor Mode Register
-    volatile supc_mr_t supc_mr; // Mode Register
-    volatile supc_wumr_t supc_wumr; // Wake Up Mode Register
-    volatile supc_wuir_t supc_wuir; // Wake Up Inputs Register
-    volatile supc_sr_t supc_sr; // Status Register
+    volatile supc_cr_t cr;     // Control Register
+    volatile supc_smmr_t smmr; // Supply Monitor Mode Register
+    volatile supc_mr_t mr;     // Mode Register
+    volatile supc_wumr_t wumr; // Wake Up Mode Register
+    volatile supc_wuir_t wuir; // Wake Up Inputs Register
+    volatile supc_sr_t sr;     // Status Register
 } supc_t;
 
 /**
