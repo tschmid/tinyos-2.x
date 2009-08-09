@@ -238,7 +238,7 @@ typedef union
         uint8_t upllcount :  4; // UTMI PLL Start-up Time (in number of slow clock cycles times 8
         uint8_t reserved2 :  8; 
     } bits;
-} ckgr_uckr_t;
+} pmc_uckr_t;
 
 /**
  * PMC Clock Generator Main Oscillator Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -264,7 +264,9 @@ typedef union
         uint8_t cfden      : 1; // clock failure detector enable
         uint8_t reserved1  : 6;
     } bits;
-} ckgr_mor_t;
+} pmc_mor_t;
+
+#define PMC_MOR_KEY 0x37
 
 /**
  * PMC Clock Generator Main Clock Frequency Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -280,7 +282,7 @@ typedef union
         uint8_t mainfrdy   :  1; // main clock ready
         uint16_t reserved0 : 15;
     } bits;
-} ckgr_mcfr_t;
+} pmc_mcfr_t;
 
 
 /**
@@ -301,7 +303,10 @@ typedef union
         uint8_t bit29      :  1; // ALWAYS SET THIS TO 1!!!!!!
         uint8_t reserved1  :  2;
     } bits;
-} ckgr_pllar;
+} pmc_pllar_t;
+
+#define PMC_PLLAR_STMODE_FAST_STARTUP 0
+#define PMC_PLLAR_STMODE_NORMAL_STARTUP 2
 
 /**
  * PMC Master Clock Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -320,7 +325,7 @@ typedef union
         uint8_t reserved2 :  2;
         uint16_t reserved3: 16;
     } bits;
-} pmc_mckr_t
+} pmc_mckr_t;
 
 #define PMC_MCKR_CSS_SLOW_CLOCK 0
 #define PMC_MCKR_CSS_MAIN_CLOCK 1
@@ -571,10 +576,10 @@ typedef struct pmc
     volatile pmc_pcer_t   pcer;  // Peripheral Clock Enable Register
     volatile pmc_pcdr_t   pcdr;  // Peripheral Clock Disable Register
     volatile pmc_pcsr_t   pcsr;  // Peripheral Clock STatus Register
-    volatile ckgr_uckr_t  uckr;  // UTMI Clock Register
-    volatile ckgr_mor_t   mor;   // Main Oscillator Register
-    volatile ckgr_mcfr_t  mcfr;  // Main Clock Frequency Register
-    volatile ckgr_pllar_t pllar; // PLLA Register
+    volatile pmc_uckr_t   uckr;  // UTMI Clock Register
+    volatile pmc_mor_t    mor;   // Main Oscillator Register
+    volatile pmc_mcfr_t   mcfr;  // Main Clock Frequency Register
+    volatile pmc_pllar_t  pllar; // PLLA Register
     uint32_t reserved1;
     volatile pmc_mckr_t   mckr;  // Master Clock Register
     uint32_t reserved2[3];

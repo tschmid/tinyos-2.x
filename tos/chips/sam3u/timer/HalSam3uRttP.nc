@@ -50,7 +50,7 @@ implementation
         call RttInit.init();
         // make the counter count in milliseconds. This restarts the RTT and
         // resets the counter.
-        call HplSam3uRtt.setPrescalar(32);
+        call HplSam3uRtt.setPrescaler(32);
         return SUCCESS;
     }
 
