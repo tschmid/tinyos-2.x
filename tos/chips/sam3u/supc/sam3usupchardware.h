@@ -40,10 +40,10 @@ typedef union
         uint8_t reserved0  :  2;
         uint8_t vroff      :  1; // voltage regulator off (1: stop regularot if key correct)
         uint8_t xtalsel    :  1; // crystal oscillator select (1: select crystal if key correct)
-        uint8_t reserved   :  4;
+        uint8_t reserved1  :  4;
         uint16_t reserved2 : 16;
         uint8_t key        :  8; // key shoulc be written to value 0xA5
-    } bits;
+    } __attribute__((__packed__)) bits;
 } supc_cr_t;
 
 #define SUPC_CR_KEY 0xA5
@@ -65,7 +65,7 @@ typedef union
         uint8_t smien     :  1; // supply monitor interrupt enable
         uint8_t reserved2 :  2;
         uint16_t reserved3: 16;
-    } bits;
+    }  __attribute__((__packed__)) bits;
 } supc_smmr_t;
 
 #define SUPC_SMMR_SMTH_1_9V 0x0
@@ -104,11 +104,12 @@ typedef union
         uint8_t bodrsten    :  1; // brownout detector reset enable
         uint8_t boddis      :  1; // brownout detector disable
         uint8_t vddiordy    :  1; // VDDIO ready
-        uint8_t reserved1   :  5;
+        uint8_t reserved1   :  1;
+        uint8_t reserved2   :  4;
         uint8_t oscbypass   :  1; // oscillator bypass
-        uint8_t reserved2   :  3;
+        uint8_t reserved3   :  3;
         uint8_t key         :  8; // key should be written to value 0xA5
-    } bits;
+    } __attribute__((__packed__)) bits;
 } supc_mr_t;
 
 #define SUPC_MR_KEY 0xA5
@@ -132,7 +133,7 @@ typedef union
         uint8_t wkupdbc     :  3; // wake up inputs debouncer
         uint8_t reserved2   :  1;
         uint16_t reserved3  : 16;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } supc_wumr_t;
 
 #define SUPC_WUMR_FWUPDBC_1SCLK     0x0
@@ -190,7 +191,7 @@ typedef union
         uint8_t wkupt13  : 1; // wake up input transition 13
         uint8_t wkupt14  : 1; // wake up input transition 14
         uint8_t wkupt15  : 1; // wake up input transition 15
-    } bits;
+    } __attribute__((__packed__)) bits;
 } supc_wuir_t;
 
 /**
@@ -229,7 +230,7 @@ typedef union
         uint8_t wkupis13   :  1; // wkup input status 13
         uint8_t wkupis14   :  1; // wkup input status 14
         uint8_t wkupis15   :  1; // wkup input status 15
-    } bits;
+    } __attribute__((__packed__)) bits;
 } supc_sr_t;
 
 /**

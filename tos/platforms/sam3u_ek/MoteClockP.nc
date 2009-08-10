@@ -68,11 +68,14 @@ implementation
         if(SUPC->sr.bits.oscsel == 0) 
         {
             supc_cr_t cr;
+            cr.flat = 0; // assure it is all zero!
             cr.bits.xtalsel = 1;
             cr.bits.key = SUPC_CR_KEY;
 
             SUPC->cr = cr;
+            //AT91C_BASE_SUPC->SUPC_CR = AT91C_SUPC_CR_XTALSEL_CRYSTAL_SEL | (0xA5 << 24);
             timeout = 0;
+            //while (!(AT91C_BASE_SUPC->SUPC_SR & AT91C_SUPC_SR_OSCSEL_CRYST) && (timeout++ < CLOCK_TIMEOUT));
             while (!(SUPC->sr.bits.oscsel) && (timeout++ < CLOCK_TIMEOUT));
         }
 
