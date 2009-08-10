@@ -45,7 +45,7 @@ typedef union
         uint8_t pck2      : 1; // enables clock output 2
         uint8_t reserved1 : 5;
         uint16_t reserved2 : 16;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_scer_t;
 
 /**
@@ -65,7 +65,7 @@ typedef union
         uint8_t pck2      : 1; // disables clock output 2
         uint8_t reserved1 : 5;
         uint16_t reserved2 : 16;
-    } bits;
+    } __attribute__((__packed__))  bits;
 } pmc_scdr_t;
 
 /**
@@ -85,7 +85,7 @@ typedef union
         uint8_t pck2      : 1; // status of clock output 2
         uint8_t reserved1 : 5;
         uint16_t reserved2 : 16;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_scsr_t;
 
 /**
@@ -130,7 +130,7 @@ typedef union
         uint8_t udphs     : 1;
         uint8_t pid30     : 1; // not used on sam3u
         uint8_t pid31     : 1; // not use don sam3u
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_pcer_t;
 
 /**
@@ -175,7 +175,7 @@ typedef union
         uint8_t udphs     : 1;
         uint8_t pid30     : 1; // not used on sam3u
         uint8_t pid31     : 1; // not use don sam3u
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_pcdr_t;
 
 /**
@@ -220,7 +220,7 @@ typedef union
         uint8_t udphs     : 1;
         uint8_t pid30     : 1; // not used on sam3u
         uint8_t pid31     : 1; // not use don sam3u
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_pcsr_t;
 
 /**
@@ -237,7 +237,7 @@ typedef union
         uint8_t reserved1 :  3;
         uint8_t upllcount :  4; // UTMI PLL Start-up Time (in number of slow clock cycles times 8
         uint8_t reserved2 :  8; 
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_uckr_t;
 
 /**
@@ -263,7 +263,7 @@ typedef union
         uint8_t moscsel    : 1; // main oscillator selection (0: on-chip RC, 1: main crystal)
         uint8_t cfden      : 1; // clock failure detector enable
         uint8_t reserved1  : 6;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_mor_t;
 
 #define PMC_MOR_KEY 0x37
@@ -281,7 +281,7 @@ typedef union
         uint16_t mainf     : 16; // gives the number of main clock cycles within 16 slow clock periods
         uint8_t mainfrdy   :  1; // main clock ready
         uint16_t reserved0 : 15;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_mcfr_t;
 
 
@@ -302,7 +302,7 @@ typedef union
         uint8_t reserved0  :  2;
         uint8_t bit29      :  1; // ALWAYS SET THIS TO 1!!!!!!
         uint8_t reserved1  :  2;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_pllar_t;
 
 #define PMC_PLLAR_STMODE_FAST_STARTUP 0
@@ -317,14 +317,15 @@ typedef union
     uint32_t flat;
     struct
     {
-        uint8_t css       :  2; // master clock source select
-        uint8_t reserved0 :  2;
-        uint8_t pres      :  3; // processor clock prescaler
-        uint8_t reserved1 :  6;
-        uint8_t uplldiv   :  1; // upll clock divider by 1 or 2
-        uint8_t reserved2 :  2;
-        uint16_t reserved3: 16;
-    } bits;
+        uint8_t css        :  2; // master clock source select
+        uint8_t reserved0  :  2;
+        uint8_t pres       :  3; // processor clock prescaler
+        uint8_t reserved1  :  1;
+        uint8_t reserved2  :  5;
+        uint8_t uplldiv    :  1; // upll clock divider by 1 or 2
+        uint8_t reserved3  :  2;
+        uint16_t reserved4 : 16;
+    } __attribute__((__packed__)) bits;
 } pmc_mckr_t;
 
 #define PMC_MCKR_CSS_SLOW_CLOCK 0
@@ -359,7 +360,7 @@ typedef union
         uint8_t reserved1 :  1;
         uint8_t reserved2 :  8;
         uint16_t reserved3: 16;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_pckx_t;
 
 #define PMC_PCKX_CSS_SLOW_CLOCK   0
@@ -400,7 +401,7 @@ typedef union
         uint8_t moscrcs     :  1; // main on-chip rc status interrupt enable
         uint8_t cfdev       :  1; // clock failure detector event interrupt enable
         uint16_t reserved4  : 13;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_ier_t;
 
 /**
@@ -427,7 +428,7 @@ typedef union
         uint8_t moscrcs     :  1; // main on-chip rc status interrupt disable
         uint8_t cfdev       :  1; // clock failure detector event interrupt disable
         uint16_t reserved4  : 13;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_idr_t;
 
 /**
@@ -456,7 +457,7 @@ typedef union
         uint8_t cfds        :  1; // clock failure detected
         uint8_t fos         :  1; // clock failure detector fault output status
         uint16_t reserved3  : 11;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_sr_t;
 
 /**
@@ -483,7 +484,7 @@ typedef union
         uint8_t moscrcs     :  1; // main on-chip rc status interrupt mask
         uint8_t cfdev       :  1; // clock failure detector event interrupt mask
         uint16_t reserved4  : 13;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_imr_t;
 
 /**
@@ -517,7 +518,7 @@ typedef union
         uint8_t reserved0   :  1;
         uint8_t lpm         :  1; // low power mode (0: wfi or wfe makes processor go into idle mode, 1: wfe makes processor go into wait mode)
         uint16_t reserved1  : 11;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_fsmr_t;
 
 /**
@@ -546,7 +547,7 @@ typedef union
         uint8_t fstt14      :  1; // fast startup input 14
         uint8_t fstt15      :  1; // fast startup input 15
         uint16_t reserved0  : 16;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_fspr_t;
 
 /**
@@ -560,7 +561,7 @@ typedef union
     {
         uint8_t foclr       :  1; // fault output clear
         uint32_t reserved0  : 31;
-    } bits;
+    } __attribute__((__packed__)) bits;
 } pmc_focr_t;
 
 /**
@@ -591,7 +592,7 @@ typedef struct pmc
     volatile pmc_idr_t    idr;   // Interrupt Disable Register
     volatile pmc_sr_t     sr;    // Status Register
     volatile pmc_imr_t    imr;   // Interrupt Mask Register
-    volatile pmc_fsmr_t   fmsr;  // Fast Startup Mode Register
+    volatile pmc_fsmr_t   fsmr;  // Fast Startup Mode Register
     volatile pmc_fspr_t   fspr;  // Fast Startup Polarity Register
     volatile pmc_focr_t   focr;  // Fault Output Clear Register
 } pmc_t;
