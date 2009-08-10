@@ -7,7 +7,7 @@ PROGRAMMER ?= $(TOSROOT)/tools/platforms/sam3u/$(PROGRAM)
 
 program: FORCE
 	@echo "    installing $(PLATFORM) binary using $(PROGRAM)"
-	$(PROGRAMMER) -b $(INSTALL_BIN) -t AT91SAM3U4-EK -p $(SAM-BA)
+	$(PROGRAMMER) -b $(INSTALL_BIN) -t AT91SAM3U4-EK -p $(SAM-BA) -r -c
 
 program_input: bin
 	@:
