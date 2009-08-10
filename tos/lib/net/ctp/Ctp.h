@@ -57,6 +57,7 @@ enum {
     // CTP Options:
     CTP_OPT_PULL      = 0x80, // TEP 123: P field
     CTP_OPT_ECN       = 0x40, // TEP 123: C field
+    CTP_OPT_ALL       = 0xff
 };
 
 typedef nx_uint8_t nx_ctp_options_t;
