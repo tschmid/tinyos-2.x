@@ -30,56 +30,31 @@
  */
 
 /**
- * Interface to control and query SAM3U UART interrupts.
- *
  * @author wanja@cs.fau.de
  */
 
-interface HplSam3uUartInterrupts
+configuration HilSam3uUartC
 {
-	async event void receivedByte(uint8_t data);
+	provides
+	{
+		interface StdControl;
+		interface UartByte;
+		interface UartStream;
+	}
+}
+implementation
+{
+	components HilSam3uUartP;
+	StdControl = HilSam3uUartP;
+	UartByte = HilSam3uUartP;
+	UartStream = HilSam3uUartP;
 
-	async event void transmitterReady();
+	components HplSam3uUartC;
+	HilSam3uUartP.HplSam3uUartInterrupts -> HplSam3uUartC;
+	HilSam3uUartP.HplSam3uUartStatus -> HplSam3uUartC;
+	HilSam3uUartP.HplSam3uUartControl -> HplSam3uUartC;
+	HilSam3uUartP.HplSam3uUartConfig -> HplSam3uUartC;
 
-	async command void disableAllUartIrqs();
-
-	async command void enableRxrdyIrq();
-	async command void disableRxrdyIrq();
-	async command bool isEnabledRxrdyIrq();
-
-	async command void enableTxrdyIrq();
-	async command void disableTxrdyIrq();
-	async command bool isEnabledTxrdyIrq();
-
-	async command void enableEndrxIrq();
-	async command void disableEndrxIrq();
-	async command bool isEnabledEndrxIrq();
-
-	async command void enableEndtxIrq();
-	async command void disableEndtxIrq();
-	async command bool isEnabledEndtxIrq();
-
-	async command void enableOvreIrq();
-	async command void disableOvreIrq();
-	async command bool isEnabledOvreIrq();
-
-	async command void enableFrameIrq();
-	async command void disableFrameIrq();
-	async command bool isEnabledFrameIrq();
-
-	async command void enablePareIrq();
-	async command void disablePareIrq();
-	async command bool isEnabledPareIrq();
-
-	async command void enableTxemptyIrq();
-	async command void disableTxemptyIrq();
-	async command bool isEnabledTxemptyIrq();
-
-	async command void enableTxbufeIrq();
-	async command void disableTxbufeIrq();
-	async command bool isEnabledTxbufeIrq();
-
-	async command void enableRxbuffIrq();
-	async command void disableRxbuffIrq();
-	async command bool isEnabledRxbuffIrq();
+	components MainC;
+	MainC.SoftwareInit -> HilSam3uUartP.Init;
 }

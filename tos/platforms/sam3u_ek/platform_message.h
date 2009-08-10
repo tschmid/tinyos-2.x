@@ -29,29 +29,27 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sam3uuarthardware.h"
-
 /**
- * The hardware abstraction layer for the SAM3U UART, grouping functionality.
- *
  * @author wanja@cs.fau.de
  */
 
-configuration HalSam3uUartC
+#ifndef PLATFORM_MESSAGE_H
+#define PLATFORM_MESSAGE_H
+
+#include "Serial.h"
+
+typedef union message_header
 {
-	provides
-	{
-		interface Init;
-		interface HalSam3uUart;
-	}
-}
-implementation
+	serial_header_t serial;
+} message_header_t;
+
+typedef union message_footer
 {
-	components HalSam3uUartP, HplSam3uUartC;
-	HalSam3uUartP.HplSam3uUartConfig -> HplSam3uUartC;
-	HalSam3uUartP.HplSam3uUartControl -> HplSam3uUartC;
-	HalSam3uUartP.HplSam3uUartInterrupts -> HplSam3uUartC;
-	HalSam3uUartP.HplSam3uUartStatus -> HplSam3uUartC;
-	Init = HalSam3uUartP.Init;
-	HalSam3uUart = HalSam3uUartP.HalSam3uUart;
-}
+} message_footer_t;
+
+typedef union message_metadata
+{
+  serial_metadata_t serial;
+} message_metadata_t;
+
+#endif

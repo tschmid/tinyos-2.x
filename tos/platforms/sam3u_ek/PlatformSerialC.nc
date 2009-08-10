@@ -29,50 +29,24 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "sam3uuarthardware.h"
-
 /**
- * The interface definition for the hardware abstraction layer
- * for the SAM3U UART, grouping functionality.
- *
  * @author wanja@cs.fau.de
  */
 
-interface HalSam3uUart
+configuration PlatformSerialC
 {
-	/**
-	 * Initializes the UART subsystem. This includes:
-	 * <ul>
-	 * <li>Configuring mode, parity, baud rate</li>
-	 * <li>Enabling the receiver and transmitter</li>
-	 * </ul>
-	 */
-	//command void Init.init();
+	provides
+	{
+		interface StdControl;
+		interface UartStream;
+		interface UartByte;
+	}
+}
+implementation
+{
+	components HilSam3uUartC;
 
-	/**
-	 * Disables generation of all UART interrupts in the unit.
-	 */
-	command void disableAllUartInterrupts();
-
-	/**
-	 * Enables generation of all UART interrupts in the unit.
-	 */
-	command void enableAllUartInterrupts();
-
-	/**
-	 * Sends a character asynchronously; that is, the send call
-	 * can fail if the hardware buffer is full.
-	 */
-	command error_t sendChar(uint8_t letter);
-
-	async event void receiverReady();
-	async event void transmitterReady();
-	async event void endOfReceiverTransfer();
-	async event void endOfTransmitterTransfer();
-	async event void overrunError();
-	async event void framingError();
-	async event void parityError();
-	async event void transmitterEmpty();
-	async event void transmissionBufferEmpty();
-	async event void receiveBufferFull();
+	StdControl = HilSam3uUartC;
+	UartStream = HilSam3uUartC;
+	UartByte = HilSam3uUartC;
 }
