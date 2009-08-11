@@ -186,7 +186,7 @@ implementation {
   }
 
   bool isCurrentBufferLocked() {
-    return (receiveState.which)? receiveState.bufZeroLocked : receiveState.bufOneLocked;
+    return (receiveState.which)? receiveState.bufOneLocked : receiveState.bufZeroLocked;
   }
 
   void lockCurrentBuffer() {
