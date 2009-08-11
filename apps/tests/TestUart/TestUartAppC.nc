@@ -48,7 +48,8 @@ implementation
 	components HplNVICC;
 	TestUartC.UartIrqControl -> HplNVICC.DBGUInterrupt;
 
-	components HalSam3uUartC;
-	TestUartC.HalSam3uUart -> HalSam3uUartC;
-	TestUartC.UartInit -> HalSam3uUartC;
+	components HilSam3uUartC;
+	TestUartC.UartControl -> HilSam3uUartC;
+	TestUartC.UartByte -> HilSam3uUartC;
+	TestUartC.UartStream -> HilSam3uUartC;
 }
