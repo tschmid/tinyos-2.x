@@ -29,6 +29,9 @@ PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
 PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c
 PFLAGS += -finline-limit=100000
 
+# FIXME: this optimization flag somehow breaks our port! Not sure why...
+PFLAGS += -fno-tree-dominator-opts
+
 LDFLAGS += -L$(INCLUDE_DIRS) -T sam3u-ek-flash.x
 
 BUILDLESS_DEPS += bytes
