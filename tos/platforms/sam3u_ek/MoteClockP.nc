@@ -35,7 +35,6 @@
 #define CLOCK_TIMEOUT           0xFFFFFFFF
 
 extern void SetDefaultMaster(unsigned char enable);
-extern void SetFlashWaitState(unsigned char ws);
 
 
 module MoteClockP
@@ -146,7 +145,7 @@ implementation
     /// Enable or disable default master access
     /// \param enable 1 enable defaultMaster settings, 0 disable it.
     //------------------------------------------------------------------------------
-    void SetDefaultMaster(unsigned char enable) @C() @spontaneous()
+    void SetDefaultMaster(unsigned char enable) @C() 
     {
         AT91PS_HMATRIX2 pMatrix = AT91C_BASE_MATRIX;
 
@@ -176,18 +175,6 @@ implementation
             pMatrix->HMATRIX2_SCFG3 &= (~AT91C_MATRIX_DEFMSTR_TYPE);
         }
     }
-
-    //------------------------------------------------------------------------------
-    /// Set flash wait state
-    /// \param ws    Value of flash wait state
-    //------------------------------------------------------------------------------
-    void SetFlashWaitState(unsigned char ws) @C() @spontaneous()
-    {
-        // Set Wait State for Embedded Flash Access
-        AT91C_BASE_EFC0->EFC_FMR = ((ws << 8) & AT91C_EFC_FWS);
-        AT91C_BASE_EFC1->EFC_FMR = ((ws << 8) & AT91C_EFC_FWS);
-    }
-
 
 }
 
