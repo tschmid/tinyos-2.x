@@ -28,6 +28,7 @@
 #include "AT91SAM3U4.h"
 #include "sam3upmchardware.h"
 #include "sam3usupchardware.h"
+#include "sam3ueefchardware.h"
 
 // Define clock timeout
 #define CLOCK_TIMEOUT           0xFFFFFFFF
@@ -58,8 +59,8 @@ implementation
         uint32_t timeout = 0;
 
         // Set 2 WS for Embedded Flash Access
-        AT91C_BASE_EFC0->EFC_FMR = AT91C_EFC_FWS_2WS;
-        AT91C_BASE_EFC1->EFC_FMR = AT91C_EFC_FWS_2WS;
+        EEFC0->fmr.bits.fws = 2;
+        EEFC1->fmr.bits.fws = 2;
 
         // Watchdog initialization
         AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDDIS;
