@@ -25,11 +25,11 @@
  * @author Thomas Schmid
  */
 
-#include "AT91SAM3U4.h"
 #include "sam3upmchardware.h"
 #include "sam3usupchardware.h"
 #include "sam3ueefchardware.h"
 #include "sam3uwdtchardware.h"
+#include "sam3umatrixhardware.h"
 
 // Define clock timeout
 #define CLOCK_TIMEOUT           0xFFFFFFFF
@@ -147,32 +147,29 @@ implementation
     //------------------------------------------------------------------------------
     void SetDefaultMaster(unsigned char enable) @C() 
     {
-        AT91PS_HMATRIX2 pMatrix = AT91C_BASE_MATRIX;
-
         // Set default master
         if (enable == 1) {
-
             // Set default master: SRAM0 -> Cortex-M3 System
-            pMatrix->HMATRIX2_SCFG0 |= AT91C_MATRIX_FIXED_DEFMSTR_SCFG0_ARMS |
-                AT91C_MATRIX_DEFMSTR_TYPE_FIXED_DEFMSTR;
+            MATRIX->scfg0.bits.fixed_defmstr = 1;
+            MATRIX->scfg0.bits.defmstr_type = MATRIX_SCFG_MASTER_TYPE_FIXED_DEFAULT;
 
             // Set default master: SRAM1 -> Cortex-M3 System
-            pMatrix->HMATRIX2_SCFG1 |= AT91C_MATRIX_FIXED_DEFMSTR_SCFG1_ARMS |
-                AT91C_MATRIX_DEFMSTR_TYPE_FIXED_DEFMSTR;
+            MATRIX->scfg1.bits.fixed_defmstr = 1;
+            MATRIX->scfg1.bits.defmstr_type = MATRIX_SCFG_MASTER_TYPE_FIXED_DEFAULT;
 
             // Set default master: Internal flash0 -> Cortex-M3 Instruction/Data
-            pMatrix->HMATRIX2_SCFG3 |= AT91C_MATRIX_FIXED_DEFMSTR_SCFG3_ARMC |
-                AT91C_MATRIX_DEFMSTR_TYPE_FIXED_DEFMSTR;
+            MATRIX->scfg3.bits.fixed_defmstr = 0;
+            MATRIX->scfg3.bits.defmstr_type = MATRIX_SCFG_MASTER_TYPE_FIXED_DEFAULT;
         } else {
 
             // Clear default master: SRAM0 -> Cortex-M3 System
-            pMatrix->HMATRIX2_SCFG0 &= (~AT91C_MATRIX_DEFMSTR_TYPE);
+            MATRIX->scfg0.bits.defmstr_type = MATRIX_SCFG_MASTER_TYPE_NO_DEFAULT;
 
             // Clear default master: SRAM1 -> Cortex-M3 System
-            pMatrix->HMATRIX2_SCFG1 &= (~AT91C_MATRIX_DEFMSTR_TYPE);
+            MATRIX->scfg1.bits.defmstr_type = MATRIX_SCFG_MASTER_TYPE_NO_DEFAULT;
 
             // Clear default master: Internal flash0 -> Cortex-M3 Instruction/Data
-            pMatrix->HMATRIX2_SCFG3 &= (~AT91C_MATRIX_DEFMSTR_TYPE);
+            MATRIX->scfg3.bits.defmstr_type = MATRIX_SCFG_MASTER_TYPE_NO_DEFAULT;
         }
     }
 
