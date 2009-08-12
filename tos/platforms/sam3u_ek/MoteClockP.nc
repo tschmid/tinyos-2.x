@@ -29,6 +29,7 @@
 #include "sam3upmchardware.h"
 #include "sam3usupchardware.h"
 #include "sam3ueefchardware.h"
+#include "sam3uwdtchardware.h"
 
 // Define clock timeout
 #define CLOCK_TIMEOUT           0xFFFFFFFF
@@ -62,8 +63,8 @@ implementation
         EEFC0->fmr.bits.fws = 2;
         EEFC1->fmr.bits.fws = 2;
 
-        // Watchdog initialization
-        AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDDIS;
+        // Disable Watchdog
+        WDTC->mr.bits.wddis = 1;
 
         // Select external slow clock
         if(SUPC->sr.bits.oscsel == 0) 
