@@ -162,3 +162,4 @@ volatile mpu_mmfsr_t* MPU_MMFSR = (volatile mpu_mmfsr_t *) 0xe000ed28;
 volatile mpu_mmfar_t* MPU_MMFAR = (volatile mpu_mmfar_t *) 0xe000ed34;
 
 #endif // SAM3UMPUHARDWARE_H
+
