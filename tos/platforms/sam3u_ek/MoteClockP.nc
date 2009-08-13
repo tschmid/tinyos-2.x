@@ -31,33 +31,25 @@
 #include "sam3uwdtchardware.h"
 #include "sam3umatrixhardware.h"
 
-// Define clock timeout
-#define CLOCK_TIMEOUT           0xFFFFFFFF
-
 extern void SetDefaultMaster(unsigned char enable);
 
 
 module MoteClockP
 {
-    provides {
+    provides 
+    {
         interface Init;
+    }
+    uses
+    {
+        interface HplSam3uClock;
     }
 }
 
 implementation
 {
-    //------------------------------------------------------------------------------
-    /// After POR, at91sam3u device is running on 4MHz internal RC
-    /// At the end of the LowLevelInit procedure MCK = 48MHz PLLA = 96 CPU=48MHz
-    /// Performs the low-level initialization of the chip. This includes EFC, master
-    /// clock, IRQ & watchdog configuration.
-    //------------------------------------------------------------------------------
 
     command error_t Init.init(){
-        pmc_mor_t mor;
-        pmc_pllar_t pllar;
-        uint32_t timeout = 0;
-
         // Set 2 WS for Embedded Flash Access
         EEFC0->fmr.bits.fws = 2;
         EEFC1->fmr.bits.fws = 2;
@@ -66,69 +58,10 @@ implementation
         WDTC->mr.bits.wddis = 1;
 
         // Select external slow clock
-        if(SUPC->sr.bits.oscsel == 0) 
-        {
-            supc_cr_t cr;
-            cr.flat = 0; // assure it is all zero!
-            cr.bits.xtalsel = 1;
-            cr.bits.key = SUPC_CR_KEY;
+        call HplSam3uClock.slckExternalOsc();
 
-            SUPC->cr = cr;
-            //AT91C_BASE_SUPC->SUPC_CR = AT91C_SUPC_CR_XTALSEL_CRYSTAL_SEL | (0xA5 << 24);
-            timeout = 0;
-            //while (!(AT91C_BASE_SUPC->SUPC_SR & AT91C_SUPC_SR_OSCSEL_CRYST) && (timeout++ < CLOCK_TIMEOUT));
-            while (!(SUPC->sr.bits.oscsel) && (timeout++ < CLOCK_TIMEOUT));
-        }
-
-        /* Initialize main oscillator
-         ****************************/
-        if(PMC->mor.bits.moscsel == 0)
-        {
-            mor.flat = 0; // make sure it is zreoed out
-            mor.bits.key = PMC_MOR_KEY;
-            mor.bits.moscxtst = 0x3F; // main oscillator startup time
-            mor.bits.moscrcen = 1;    // enable the on-chip rc oscillator
-            mor.bits.moscxten = 1;    // main crystal oscillator enable
-            PMC->mor = mor;
-
-            timeout = 0;
-            while (!(PMC->sr.bits.moscxts) && (timeout++ < CLOCK_TIMEOUT));
-        }
-
-        // Switch to moscsel
-        mor.flat = 0; // make sure it is zeroed
-        mor.bits.key = PMC_MOR_KEY;
-        mor.bits.moscxtst = 0x3F;
-        mor.bits.moscrcen = 1;
-        mor.bits.moscxten = 1;
-        mor.bits.moscsel = 1;
-        PMC->mor = mor;
-        timeout = 0;
-        while (!(PMC->sr.bits.moscsels) && (timeout++ < CLOCK_TIMEOUT));
-        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
-        timeout = 0;
-        while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
-
-        // Initialize PLLA
-        pllar.flat = 0; // make sure it is zeroed out
-        pllar.bits.bit29 = 1; // we always have to do this!
-        pllar.bits.mula = 0x7;
-        pllar.bits.pllacount = 0x3F;
-        pllar.bits.diva = 0x1;
-        pllar.bits.stmode = PMC_PLLAR_STMODE_FAST_STARTUP;
-        PMC->pllar = pllar;
-        timeout = 0;
-        while (!(PMC->sr.bits.locka) && (timeout++ < CLOCK_TIMEOUT));
-
-        // Switch to fast clock
-        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
-        timeout = 0;
-        while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
-
-        PMC->mckr.bits.pres = PMC_MCKR_PRES_DIV_2;
-        PMC->mckr.bits.css = PMC_MCKR_CSS_PLLA_CLOCK;
-        timeout = 0;
-        while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
+        // Initialize main oscillator
+        call HplSam3uClock.mckInit48();
 
         // Enable clock for UART
         // FIXME: this should go into the UART start/stop!
@@ -172,6 +105,11 @@ implementation
             MATRIX->scfg3.bits.defmstr_type = MATRIX_SCFG_MASTER_TYPE_NO_DEFAULT;
         }
     }
+
+    /**
+     * informs us when the main clock changes
+     */
+    async event void HplSam3uClock.mainClockChanged() {}
 
 }
 
