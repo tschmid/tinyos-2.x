@@ -376,7 +376,11 @@ implementation {
       NeighborTable[idx].inquality = 0;
     }
 
-    if (packetGap >= BLQ_PKT_WINDOW) {
+    // The or with packetGap >= BLQ_PKT_WINDOW is needed in case
+    // failcnt gets reset above
+
+    if (((NeighborTable[idx].rcvcnt + NeighborTable[idx].failcnt) >= BLQ_PKT_WINDOW)
+	|| (packetGap >= BLQ_PKT_WINDOW)) {
       updateNeighborTableEst(NeighborTable[idx].ll_addr);
     }
 
