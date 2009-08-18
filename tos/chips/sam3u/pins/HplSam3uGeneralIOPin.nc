@@ -33,35 +33,31 @@
  * @author wanja@cs.fau.de
  */
 
-configuration HilSam3uUartC
+interface HplSam3uGeneralIOPin
 {
-	provides
-	{
-		interface StdControl;
-		interface UartByte;
-		interface UartStream;
-	}
-}
-implementation
-{
-	components HilSam3uUartP;
-	StdControl = HilSam3uUartP;
-	UartByte = HilSam3uUartP;
-	UartStream = HilSam3uUartP;
+	async command void enablePioControl();
+	/**
+	 * Disables the PIO controller from driving the pin. The connected
+	 * peripheral (if any) will do that.
+	 */
+	async command void disablePioControl();
+	async command bool isEnabledPioControl();
 
-	components HplSam3uUartC;
-	HilSam3uUartP.HplSam3uUartInterrupts -> HplSam3uUartC;
-	HilSam3uUartP.HplSam3uUartStatus -> HplSam3uUartC;
-	HilSam3uUartP.HplSam3uUartControl -> HplSam3uUartC;
-	HilSam3uUartP.HplSam3uUartConfig -> HplSam3uUartC;
+	async command void enableMultiDrive();
+	async command void disableMultiDrive();
+	async command bool isEnabledMultiDrive();
 
-	components MainC;
-	MainC.SoftwareInit -> HilSam3uUartP.Init;
+	async command void enablePullUpResistor();
+	async command void disablePullUpResistor();
+	async command bool isEnabledPullUpResistor();
 
-	components HplNVICC;
-	HilSam3uUartP.UartIrqControl -> HplNVICC.DBGUInterrupt;
+	async command void selectPeripheralA();
+	async command void selectPeripheralB();
+	/**
+	 * Returns TRUE if peripheral A is selected, returns FALSE if
+	 * peripheral B is selected.
+	 */
+	async command bool isSelectedPeripheralA();
 
-	components HplSam3uGeneralIOC;
-	HilSam3uUartP.UartPin1 -> HplSam3uGeneralIOC.HplPioA11;
-	HilSam3uUartP.UartPin2 -> HplSam3uGeneralIOC.HplPioA12;
+	/* TODO: input, interrupt, and filter functions */
 }

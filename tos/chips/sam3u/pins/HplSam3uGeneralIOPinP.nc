@@ -37,7 +37,11 @@
 
 generic module HplSam3uGeneralIOPinP(uint32_t pio_addr, uint8_t bit)
 {
-	provides interface GeneralIO as IO;
+	provides
+	{
+		interface GeneralIO as IO;
+		interface HplSam3uGeneralIOPin as HplPin;
+	}
 }
 implementation
 {
@@ -89,14 +93,104 @@ implementation
 		*((volatile uint32_t *) (pio_addr + 0x010)) = (1 << bit);
     }
 
-	async command bool IO.isOutput() {
+	async command bool IO.isOutput()
+	{
 		/* Read bit from Output Status Register */
 		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x018));
 		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
 		return ((currentpin & 1) == 1);
 	}
 
-	async command bool IO.isInput() {
+	async command bool IO.isInput()
+	{
 		return (! (call IO.isOutput()));
+	}
+
+	async command void HplPin.enablePioControl()
+	{
+		/* Set bit in PIO Enable Register */
+		*((volatile uint32_t *) (pio_addr + 0x000)) = (1 << bit);
+	}
+
+	async command void HplPin.disablePioControl()
+	{
+		/* Set bit in PIO Disable Register */
+		*((volatile uint32_t *) (pio_addr + 0x004)) = (1 << bit);
+	}
+
+	async command bool HplPin.isEnabledPioControl()
+	{
+		/* Read bit from PIO Status Register */
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x008));
+		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+		return ((currentpin & 1) == 1);
+	}
+
+	async command void HplPin.enableMultiDrive()
+	{
+		/* Set bit in Multi-Driver Enable Register */
+		*((volatile uint32_t *) (pio_addr + 0x050)) = (1 << bit);
+	}
+
+	async command void HplPin.disableMultiDrive()
+	{
+		/* Set bit in Multi-Driver Disable Register */
+		*((volatile uint32_t *) (pio_addr + 0x054)) = (1 << bit);
+	}
+
+	async command bool HplPin.isEnabledMultiDrive()
+	{
+		/* Read bit from Multi-Driver Status Register */
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x058));
+		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+		return ((currentpin & 1) == 1);
+	}
+
+	async command void HplPin.enablePullUpResistor()
+	{
+		/* Set bit in Pull-Up Enable Register */
+		*((volatile uint32_t *) (pio_addr + 0x064)) = (1 << bit);
+	}
+
+	async command void HplPin.disablePullUpResistor()
+	{
+		/* Set bit in Pull-Up Disable Register */
+		*((volatile uint32_t *) (pio_addr + 0x060)) = (1 << bit);
+	}
+
+	async command bool HplPin.isEnabledPullUpResistor()
+	{
+		/* Read bit from Pull-Up Status Register */
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x068));
+		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+		return ((currentpin & 1) == 0);
+	}
+
+	async command void HplPin.selectPeripheralA()
+	{
+		/* Read in Peripheral AB Select Register */
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x070));
+		/* Clear bit */
+		currentport &= ! (1 << bit);
+		/* Write back to register */
+		*((volatile uint32_t *) (pio_addr + 0x070)) = currentport;
+	}
+
+	async command void HplPin.selectPeripheralB()
+	{
+		/* Read in Peripheral AB Select Register */
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x070));
+		/* Set bit */
+		currentport |= (1 << bit);
+		/* Write back to register */
+		*((volatile uint32_t *) (pio_addr + 0x070)) = currentport;
+	}
+
+	async command bool HplPin.isSelectedPeripheralA()
+	{
+		/* Read bit from Peripheral AB Select Register */
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x068));
+		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+		return ((currentpin & 1) == 0);
 	}
 }

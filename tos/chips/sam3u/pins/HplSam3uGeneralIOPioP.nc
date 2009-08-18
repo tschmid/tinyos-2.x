@@ -70,6 +70,39 @@ generic configuration HplSam3uGeneralIOPioP(uint32_t pio_addr)
 		interface GeneralIO as Pin29;
 		interface GeneralIO as Pin30;
 		interface GeneralIO as Pin31;
+
+		interface HplSam3uGeneralIOPin as HplPin0;
+		interface HplSam3uGeneralIOPin as HplPin1;
+		interface HplSam3uGeneralIOPin as HplPin2;
+		interface HplSam3uGeneralIOPin as HplPin3;
+		interface HplSam3uGeneralIOPin as HplPin4;
+		interface HplSam3uGeneralIOPin as HplPin5;
+		interface HplSam3uGeneralIOPin as HplPin6;
+		interface HplSam3uGeneralIOPin as HplPin7;
+		interface HplSam3uGeneralIOPin as HplPin8;
+		interface HplSam3uGeneralIOPin as HplPin9;
+		interface HplSam3uGeneralIOPin as HplPin10;
+		interface HplSam3uGeneralIOPin as HplPin11;
+		interface HplSam3uGeneralIOPin as HplPin12;
+		interface HplSam3uGeneralIOPin as HplPin13;
+		interface HplSam3uGeneralIOPin as HplPin14;
+		interface HplSam3uGeneralIOPin as HplPin15;
+		interface HplSam3uGeneralIOPin as HplPin16;
+		interface HplSam3uGeneralIOPin as HplPin17;
+		interface HplSam3uGeneralIOPin as HplPin18;
+		interface HplSam3uGeneralIOPin as HplPin19;
+		interface HplSam3uGeneralIOPin as HplPin20;
+		interface HplSam3uGeneralIOPin as HplPin21;
+		interface HplSam3uGeneralIOPin as HplPin22;
+		interface HplSam3uGeneralIOPin as HplPin23;
+		interface HplSam3uGeneralIOPin as HplPin24;
+		interface HplSam3uGeneralIOPin as HplPin25;
+		interface HplSam3uGeneralIOPin as HplPin26;
+		interface HplSam3uGeneralIOPin as HplPin27;
+		interface HplSam3uGeneralIOPin as HplPin28;
+		interface HplSam3uGeneralIOPin as HplPin29;
+		interface HplSam3uGeneralIOPin as HplPin30;
+		interface HplSam3uGeneralIOPin as HplPin31;
 	}
 }
 implementation
@@ -140,4 +173,37 @@ implementation
 	Pin29 = Bit29;
 	Pin30 = Bit30;
 	Pin31 = Bit31;
+
+	HplPin0 = Bit0;
+	HplPin1 = Bit1;
+	HplPin2 = Bit2;
+	HplPin3 = Bit3;
+	HplPin4 = Bit4;
+	HplPin5 = Bit5;
+	HplPin6 = Bit6;
+	HplPin7 = Bit7;
+	HplPin8 = Bit8;
+	HplPin9 = Bit9;
+	HplPin10 = Bit10;
+	HplPin11 = Bit11;
+	HplPin12 = Bit12;
+	HplPin13 = Bit13;
+	HplPin14 = Bit14;
+	HplPin15 = Bit15;
+	HplPin16 = Bit16;
+	HplPin17 = Bit17;
+	HplPin18 = Bit18;
+	HplPin19 = Bit19;
+	HplPin20 = Bit20;
+	HplPin21 = Bit21;
+	HplPin22 = Bit22;
+	HplPin23 = Bit23;
+	HplPin24 = Bit24;
+	HplPin25 = Bit25;
+	HplPin26 = Bit26;
+	HplPin27 = Bit27;
+	HplPin28 = Bit28;
+	HplPin29 = Bit29;
+	HplPin30 = Bit30;
+	HplPin31 = Bit31;
 }
