@@ -14,6 +14,9 @@ push ( @includes, qw(
   %T/chips/sam3u/nvic
   %T/chips/sam3u/supc
   %T/chips/sam3u/pmc
+  %T/chips/sam3u/eefc
+  %T/chips/sam3u/wdtc
+  %T/chips/sam3u/matrix
   %T/chips/sam3u/mpu
   %T/lib/timer
   %T/lib/serial
