@@ -51,6 +51,8 @@ module HilSam3uUartP
 		interface HplSam3uUartStatus;
 		interface HplSam3uUartConfig;
 		interface HplNVICInterruptCntl as UartIrqControl;
+		interface HplSam3uGeneralIOPin as UartPin1;
+		interface HplSam3uGeneralIOPin as UartPin2;
 	}
 }
 implementation
@@ -66,8 +68,6 @@ implementation
 	command error_t Init.init()
 	{
 		// FIXME: init PIO, NVIC, PMC clock enable
-		volatile uint32_t *PIOA_PDR = (volatile uint32_t *) 0x400e0c04;
-		volatile uint32_t *PIOA_ABSR = (volatile uint32_t *) 0x400e0c70;
 		volatile uint32_t *PMC_PCER = (volatile uint32_t *) 0x400e0410;
 
 		// turn off all UART IRQs
@@ -77,12 +77,12 @@ implementation
 		call UartIrqControl.configure(0x88);
 		call UartIrqControl.enable();
 
-		// FIXME: init PIO, NVIC, PMC clock enable
-		// setup PIOC: PA11, PA12 -> peripheral A
-		// disable PIO driving
-		*PIOA_PDR = 0x00001800;
-		// select peripheral A
-		*PIOA_ABSR = 0x00000000;
+		// configure PIO
+		call UartPin1.disablePioControl();
+		call UartPin1.selectPeripheralA();
+		call UartPin2.disablePioControl();
+		call UartPin2.selectPeripheralA();
+
 		// enable peripheral clock (ID 8; p. 41)
 		*PMC_PCER = 0x00000100;
 
