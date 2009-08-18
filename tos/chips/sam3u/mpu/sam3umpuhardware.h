@@ -100,7 +100,7 @@ typedef union
 	struct
 	{
 		uint8_t enable    : 1; // region enable bit
-		uint8_t size      : 5; // size of the MPU protection region; minimum is 3 (32 B), maximum is 31 (4 GB)
+		uint8_t size      : 5; // size of the MPU protection region; minimum is 4 (32 B), maximum is 31 (4 GB)
 		uint8_t reserved0 : 2;
 		uint8_t srd       : 8; // subregion disable bits; 0 = enabled, 1 = disabled
 		uint8_t b         : 1; // bufferable bit
