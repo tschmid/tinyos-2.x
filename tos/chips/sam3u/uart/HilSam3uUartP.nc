@@ -30,6 +30,9 @@
  */
 
 /**
+ * UART implementation for the SAM3U chip. Does not use DMA (PDC) at this
+ * point, but does use IRQs for operation.
+ *
  * @author wanja@cs.fau.de
  */
 
