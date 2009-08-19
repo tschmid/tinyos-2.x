@@ -41,4 +41,8 @@
 
 #include "sam3uhardware.h"
 
+#define PLATFORM_BAUDRATE (9600)
+
+#define IRQ_PRIO_UART (0x88)
+
 #endif // HARDWARE_H
