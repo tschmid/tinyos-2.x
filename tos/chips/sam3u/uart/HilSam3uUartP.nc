@@ -99,10 +99,10 @@ implementation
 		call UartPin2.disablePioControl();
 		call UartPin2.selectPeripheralA();
 
-		// configure mode, parity, baud rate
-		call HplSam3uUartConfig.setChannelMode(UART_MR_CHMODE_NORMAL);
-		call HplSam3uUartConfig.setParityType(UART_MR_PAR_NONE);
+		// configure mode and parity
+		call HplSam3uUartConfig.setChannelModeAndParityType(UART_MR_CHMODE_NORMAL, UART_MR_PAR_NONE);
 
+		// configure baud rate
 		setClockDivisor();
 
 		// initialize buffer pointers
