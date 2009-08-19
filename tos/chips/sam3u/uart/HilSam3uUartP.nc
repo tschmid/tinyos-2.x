@@ -53,6 +53,8 @@ module HilSam3uUartP
 		interface HplNVICInterruptCntl as UartIrqControl;
 		interface HplSam3uGeneralIOPin as UartPin1;
 		interface HplSam3uGeneralIOPin as UartPin2;
+		interface HplSam3uPeripheralClockCntl as UartClockControl;
+		interface HplSam3uClock as ClockConfig;
 	}
 }
 implementation
@@ -65,16 +67,30 @@ implementation
 	uint16_t transmitBufferLength; // length of the current transmit buffer
 	uint16_t transmitBufferPosition; // position of the next character to transmit from the buffer
 
+	void setClockDivisor()
+	{
+		uint32_t mck;
+		uint16_t cd;
+
+		mck = call ClockConfig.getMainClockSpeed(); // in kHz (e.g., 48,000)
+
+		// set to 9,600 baud
+		// baudrate = mck / (cd * 16)
+		// cd = mck / (16 * baudrate)
+		// here: cd = mck / 16 * 1000 / baudrate
+		cd = (uint16_t) (((mck / 16) * 1000) / PLATFORM_BAUDRATE);
+
+		call HplSam3uUartConfig.setClockDivisor(312); // 9,600 baud with MCK = 48 MHz
+		//call HplSam3uUartConfig.setClockDivisor(cd); // FIXME currently bug in getMCSpeed()
+	}
+
 	command error_t Init.init()
 	{
-		// FIXME: init PIO, NVIC, PMC clock enable
-		volatile uint32_t *PMC_PCER = (volatile uint32_t *) 0x400e0410;
-
 		// turn off all UART IRQs
 		call HplSam3uUartInterrupts.disableAllUartIrqs();
 
 		// configure NVIC
-		call UartIrqControl.configure(0x88);
+		call UartIrqControl.configure(IRQ_PRIO_UART);
 		call UartIrqControl.enable();
 
 		// configure PIO
@@ -83,14 +99,11 @@ implementation
 		call UartPin2.disablePioControl();
 		call UartPin2.selectPeripheralA();
 
-		// enable peripheral clock (ID 8; p. 41)
-		*PMC_PCER = 0x00000100;
-
 		// configure mode, parity, baud rate
-		// FIXME should be configurable
 		call HplSam3uUartConfig.setChannelMode(UART_MR_CHMODE_NORMAL);
 		call HplSam3uUartConfig.setParityType(UART_MR_PAR_NONE);
-		call HplSam3uUartConfig.setClockDivisor(312); // 9,600 baud with MCK = 48 MHz
+
+		setClockDivisor();
 
 		// initialize buffer pointers
 		// important because this determines if UartStream is busy or not
@@ -100,8 +113,17 @@ implementation
 		return SUCCESS;
 	}
 
+	async event void ClockConfig.mainClockChanged()
+	{
+		// adapt clock divisor to accommodate for PLATFORM_BAUDRATE
+		setClockDivisor();
+	}
+
 	command error_t StdControl.start()
 	{
+		// enable peripheral clock
+		call UartClockControl.enable();
+
 		// enable receiver and transmitter
 		call HplSam3uUartControl.enableReceiver();
 		call HplSam3uUartControl.enableTransmitter();
@@ -117,6 +139,9 @@ implementation
 		// will finish any ongoing receptions and transmissions
 		call HplSam3uUartControl.disableReceiver();
 		call HplSam3uUartControl.disableTransmitter();
+
+		// disable peripheral clock
+		call UartClockControl.disable();
 
 		return SUCCESS;
 	}

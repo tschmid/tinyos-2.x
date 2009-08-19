@@ -64,4 +64,8 @@ implementation
 	components HplSam3uGeneralIOC;
 	HilSam3uUartP.UartPin1 -> HplSam3uGeneralIOC.HplPioA11;
 	HilSam3uUartP.UartPin2 -> HplSam3uGeneralIOC.HplPioA12;
+
+	components HplSam3uClockC;
+	HilSam3uUartP.UartClockControl -> HplSam3uClockC.DBGUPPCntl;
+	HilSam3uUartP.ClockConfig -> HplSam3uClockC;
 }
