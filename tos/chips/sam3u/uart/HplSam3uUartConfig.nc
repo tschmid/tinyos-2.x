@@ -45,19 +45,18 @@ interface HplSam3uUartConfig
 	async command error_t setClockDivisor(uint16_t cd);
 
 	/**
+	 * Have to be set together since they are in the same register.
+	 *
+	 * chmode = 0x0/UART_MR_CHMODE_NORMAL: normal
+	 * chmode = 0x1/UART_MR_CHMODE_AUTOECHO: automatic echo
+	 * chmode = 0x2/UART_MR_CHMODE_LOCALLOOP: local loopback
+	 * chmode = 0x3/UART_MR_CHMODE_REMOTELOOP: remote loopback
+	 *
 	 * par = 0x0/UART_MR_PAR_EVEN: even
 	 * par = 0x1/UART_MR_PAR_ODD: odd
 	 * par = 0x2/UART_MR_PAR_SPACE: space (forced to 0)
 	 * par = 0x3/UART_MR_PAR_MARK: mark (forced to 1)
 	 * par = 0x4/UART_MR_PAR_NONE: none
 	 */
-	async command error_t setParityType(uint8_t par);
-
-	/**
-	 * chmode = 0x0/UART_MR_CHMODE_NORMAL: normal
-	 * chmode = 0x1/UART_MR_CHMODE_AUTOECHO: automatic echo
-	 * chmode = 0x2/UART_MR_CHMODE_LOCALLOOP: local loopback
-	 * chmode = 0x3/UART_MR_CHMODE_REMOTELOOP: remote loopback
-	 */
-	async command error_t setChannelMode(uint8_t chmode);
+	async command error_t setChannelModeAndParityType(uint8_t chmode, uint8_t par);
 }
