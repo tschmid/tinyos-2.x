@@ -171,7 +171,7 @@ implementation
 		/* Read in Peripheral AB Select Register */
 		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x070));
 		/* Clear bit */
-		currentport &= ! (1 << bit);
+		currentport &= ~ (1 << bit);
 		/* Write back to register */
 		*((volatile uint32_t *) (pio_addr + 0x070)) = currentport;
 	}
