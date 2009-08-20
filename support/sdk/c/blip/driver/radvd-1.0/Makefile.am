@@ -33,7 +33,7 @@ radvd_LDADD = -lfl
 EXTRA_radvd_SOURCES = device-linux.c device-bsd44.c
 YFLAGS = -d
 CFLAGS = @CFLAGS@ -Wall -Wpointer-arith  -Wcast-qual -Wcast-align -Wconversion \
-	-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations
+	-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -D_GNU_SOURCE
 
 radvdump_SOURCES = $(COMMON_SRC) radvdump.c
 

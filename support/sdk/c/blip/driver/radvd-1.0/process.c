@@ -14,9 +14,9 @@
  *
  */
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
 
 static void process_rs(int, struct Interface *, unsigned char *msg,
 		       int len, struct sockaddr_in6 *);

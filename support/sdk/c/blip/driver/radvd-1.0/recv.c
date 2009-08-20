@@ -14,9 +14,9 @@
  *
  */
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
 
 int
 recv_rs_ra(int sock, unsigned char *msg, struct sockaddr_in6 *addr,

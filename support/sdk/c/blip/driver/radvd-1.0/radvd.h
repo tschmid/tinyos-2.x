@@ -17,9 +17,9 @@
 #ifndef RADV_H
 #define RADV_H
 
-#include <config.h>
-#include <includes.h>
-#include <defaults.h>
+#include "config.h"
+#include "includes.h"
+#include "defaults.h"
 
 #define CONTACT_EMAIL	"Pekka Savola <pekkas@netcore.fi>"
 

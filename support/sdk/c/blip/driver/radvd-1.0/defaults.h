@@ -16,9 +16,9 @@
 #ifndef DEFAULTS_H
 #define DEFAULTS_H
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
 
 /* maximum message size for incoming and outgoing RSs and RAs */
 
