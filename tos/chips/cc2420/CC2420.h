@@ -104,6 +104,9 @@ typedef nx_struct cc2420_header_t {
   nxle_uint16_t dest;
   nxle_uint16_t src;
   /** CC2420 802.15.4 header ends here */
+#ifdef CC2420_HW_SECURITY
+  security_header_t secHdr;
+#endif
   
 #ifdef CC2420_IFRAME_TYPE
   /** I-Frame 6LowPAN interoperability byte */
@@ -112,10 +115,6 @@ typedef nx_struct cc2420_header_t {
 
 #if defined(TFRAMES_ENABLED) || defined(CC2420_IFRAME_TYPE)
   nxle_uint8_t type;
-#endif
-
-#ifdef CC2420_HW_SECURITY
-  security_header_t secHdr;
 #endif
 
 } cc2420_header_t;
