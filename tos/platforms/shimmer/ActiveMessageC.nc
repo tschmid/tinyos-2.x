@@ -35,7 +35,7 @@
  *
  */
 /**
- * The Active Message layer on the SHIMER platform. This is a naming wrapper
+ * The Active Message layer on the SHIMMER platform. This is a naming wrapper
  * around the CC2420 Active Message layer.
  *
  * @author Konrad Lorincz
