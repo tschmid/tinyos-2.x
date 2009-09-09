@@ -126,10 +126,14 @@ implementation {
   }
 
   async command uint8_t SpiByte.write( uint8_t tx ) {
-    /* no need to enable the SPI bus since that must have been done 
-       when the resource was granted */
-    // call Spi.enableSpi(TRUE);
-    // call McuPowerState.update();
+    /* There is no need to enable the SPI bus and update the power state
+       here since that must have been done when the resource was granted. 
+       However there seems to be a bug somewhere in the radio driver for 
+       the MicaZ platform so we cannot remove the following two lines 
+       before that problem is resolved. (Miklos Maroti) */
+    call Spi.enableSpi(TRUE);
+    call McuPowerState.update();
+
     call Spi.write( tx );
     while ( !( SPSR & 0x80 ) );
     return call Spi.read();
