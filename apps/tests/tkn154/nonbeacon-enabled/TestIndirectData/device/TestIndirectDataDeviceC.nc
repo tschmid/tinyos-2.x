@@ -64,6 +64,7 @@ module TestIndirectDataDeviceC
 
   void startApp()
   {
+    call MLME_SET.phyCurrentChannel(RADIO_CHANNEL);
     call MLME_SET.macAutoRequest(FALSE);
     call MLME_SET.macPANId(PAN_ID);
     call MLME_SET.macCoordShortAddress(COORDINATOR_ADDRESS);  
