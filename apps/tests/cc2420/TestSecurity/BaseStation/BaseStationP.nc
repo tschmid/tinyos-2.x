@@ -63,6 +63,8 @@ module BaseStationP @safe() {
     interface Packet as RadioPacket;
     interface AMPacket as RadioAMPacket;
 
+    interface CC2420Keys;
+
     interface Leds;
   }
 }
@@ -83,6 +85,8 @@ implementation
   message_t  * ONE_NOK radioQueue[RADIO_QUEUE_LEN];
   uint8_t    radioIn, radioOut;
   bool       radioBusy, radioFull;
+
+  uint8_t key[16] = {0x98,0x67,0x7F,0xAF,0xD6,0xAD,0xB7,0x0C,0x59,0xE8,0xD9,0x47,0xC9,0x71,0x15,0x0F};
 
   task void uartSendTask();
   task void radioSendTask();
@@ -117,6 +121,7 @@ implementation
   event void RadioControl.startDone(error_t error) {
     if (error == SUCCESS) {
       radioFull = FALSE;
+      call CC2420Keys.setKey(1, key);
     }
   }
 
@@ -128,6 +133,8 @@ implementation
 
   event void SerialControl.stopDone(error_t error) {}
   event void RadioControl.stopDone(error_t error) {}
+
+  event void CC2420Keys.setKeyDone(uint8_t keyNo, uint8_t* skey) {}
 
   uint8_t count = 0;
 

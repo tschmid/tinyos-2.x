@@ -69,6 +69,7 @@ configuration BaseStationC {
 implementation {
   components MainC, BaseStationP, LedsC;
   components ActiveMessageC as Radio, SerialActiveMessageC as Serial;
+  components CC2420KeysC;
   
   MainC.Boot <- BaseStationP;
 
@@ -87,4 +88,5 @@ implementation {
   BaseStationP.RadioAMPacket -> Radio;
   
   BaseStationP.Leds -> LedsC;
+  BaseStationP.CC2420Keys -> CC2420KeysC;
 }
