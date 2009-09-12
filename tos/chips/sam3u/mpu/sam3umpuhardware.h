@@ -44,11 +44,11 @@ typedef union
 	uint32_t flat;
 	struct
 	{
-		uint8_t separate  : 1; // support for unified or separate instruction and data memory maps
+		uint8_t separate  : 1; // support for unified or separate instruction and data memory maps, always unified on SAM3U
 		uint8_t reserved0 : 7;
-		uint8_t dregion   : 8; // number of supported MPU data regions
-		uint8_t iregion   : 8; // number of supported MPU instruction regions
-		uint8_t reserved1 : 8; // receiver disable
+		uint8_t dregion   : 8; // number of supported MPU data regions, always 8 on SAM3U
+		uint8_t iregion   : 8; // number of supported MPU instruction regions, always 0 on SAM3U
+		uint8_t reserved1 : 8;
 	} bits;
 } mpu_type_t;
 
@@ -60,7 +60,7 @@ typedef union
 	{
 		uint8_t enable     : 1; // enables the MPU
 		uint8_t hfnmiena   : 1; // enables MPU operation during hard fault, NMI, and FAULTMASK handlers
-		uint8_t privdefena : 1; // enables priviliged access to default memory map
+		uint8_t privdefena : 1; // enables privileged access to default memory map
 		uint8_t reserved0  : 5;
 		uint8_t reserved1  : 8;
 		uint8_t reserved2  : 8;
@@ -91,7 +91,7 @@ typedef union
 		uint8_t  valid  : 1; // MPU region number valid bit
 		uint32_t addr   : 27; // region base address field, depending on the region size in RASR!
 	} bits;
-} mpu_rbar_r;
+} mpu_rbar_t;
 
 // Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 216
 typedef union
