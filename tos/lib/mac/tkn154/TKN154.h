@@ -78,6 +78,7 @@ typedef enum ieee154_status
   IEEE154_UNSUPPORTED_ATTRIBUTE   = 0xF4,
   IEEE154_UNSUPPORTED_LEGACY      = 0xDE,
   IEEE154_UNSUPPORTED_SECURITY    = 0xDF,
+  IEEE154_PURGED                  = 0xDA, // custom attribute
 } ieee154_status_t;
 
 typedef enum ieee154_association_status 

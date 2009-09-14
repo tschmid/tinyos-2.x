@@ -361,7 +361,7 @@ implementation
   IndirectTxP.CoordCapTx -> CoordCapQueue.FrameTx[unique(CAP_TX_CLIENT)];
   IndirectTxP.DataRequestRx -> CoordCap.FrameRx[FC1_FRAMETYPE_CMD + CMD_FRAME_DATA_REQUEST];
   IndirectTxP.MLME_GET -> PibP;
-  IndirectTxP.FrameUtility -> PibP;
+  IndirectTxP.IEEE154Frame -> PibP;
   IndirectTxP.IndirectTxTimeout = Timer4;
   IndirectTxP.TimeCalc -> PibP;
   IndirectTxP.Leds = Leds;
