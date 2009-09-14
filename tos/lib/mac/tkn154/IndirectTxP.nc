@@ -241,7 +241,6 @@ implementation
       post tryCoordCapTxTask();
     } else {
       dbg_serial("IndirectTxP", "We don't have data for this device, sending an empty frame...");
-      call Leds.led0Toggle();
       transmitEmptyDataFrame(frame);
     }
     return frame;
