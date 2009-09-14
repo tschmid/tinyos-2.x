@@ -86,7 +86,8 @@ interface UartControl {
     * only be called when both the receive and transmit paths
     * are disabled, either through a power control interface
     * or setDuplexMode. Valid parity settings are
-    * TOS_PARITY_NONE, TOS_PARITY_EVEN, and TOS_PARITY_ODD.
+    * TOS_UART_PARITY_NONE, TOS_UART_PARITY_EVEN, 
+    * and TOS_UART_PARITY_ODD.
     *
     *  @param parity The parity mode to change to.
     */
