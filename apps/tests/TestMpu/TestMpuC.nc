@@ -20,6 +20,13 @@ void protected()
 	for (; i < 50; i++);
 }
 
+void __attribute__((aligned(32))) protected() @C()
+//void __attribute__((noinline)) protected() @C()
+{
+	volatile int i = 0;
+	for (; i < 50; i++);
+}
+
 module TestMpuC
 {
 	uses interface Leds;
