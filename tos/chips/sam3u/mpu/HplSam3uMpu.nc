@@ -47,6 +47,7 @@ interface HplSam3uMpu
 	async command void disableDefaultBackgroundRegion();
 
 	async command void writeProtect(void *pointer);
+	async command void executeProtect(void *pointer);
 
 	async event void mpuFault();
 }
