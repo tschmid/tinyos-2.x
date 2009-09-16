@@ -111,7 +111,7 @@ implementation
   };
 
   uint16_t radioRetries = BLIP_L2_RETRIES;
-  uint16_t radioDelay   = 30;
+  uint16_t radioDelay   = BLIP_L2_DELAY;
 
   uint16_t serial_read;
   uint16_t radio_read;
@@ -306,7 +306,6 @@ implementation
 #if defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC)
     WDTCTL = WDT_ARST_1000;
 #endif
-
     atomic
       if (!radioFull)
 	{
