@@ -294,6 +294,9 @@ implementation {
         receiveTaskSize = recvIndex;
         receiveBufferSwap();
         receiveState.state = RECV_STATE_IDLE;
+      } else {
+        // we can't deliver the packet, better free the current buffer.
+        unlockBuffer(receiveState.which);
       }
     }
     if (postsignalreceive){
