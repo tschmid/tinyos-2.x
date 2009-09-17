@@ -303,7 +303,7 @@ implementation
     bool reflectToken = FALSE;
     CHECK_NODE_ID msg;
     dbg("base", "uartreceive len %i of 0x%x\n", len, call SerialAMPacket.destination(msg));
-#if defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC)
+#if defined(BLIP_WATCHDOG) && (defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC))
     WDTCTL = WDT_ARST_1000;
 #endif
     atomic
@@ -397,7 +397,7 @@ implementation
                                             uint8_t len) {
     config_cmd_t *cmd;
     uint8_t error = CONFIG_ERROR_OK;
-#if defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC)
+#if defined(BLIP_WATCHDOG) && (defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC))
     WDTCTL = WDT_ARST_1000;
 #endif
 
