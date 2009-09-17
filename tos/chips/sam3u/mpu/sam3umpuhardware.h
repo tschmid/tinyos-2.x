@@ -115,6 +115,32 @@ typedef union
 	} bits;
 } mpu_rasr_t;
 
+// Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 195
+typedef union
+{
+	uint8_t flat;
+	struct
+	{
+		uint8_t iaccviol	: 1; // instruction fetch from location that does not permit execution
+		uint8_t daccviol	: 1; // load or store at location that does not permit that
+		uint8_t reserved0	: 1;
+		uint8_t munstkerr	: 1; // unstack for an exception return caused access violation(s)
+		uint8_t mstkerr		: 1; // stacking for an exception entry caused access violation(s)
+		uint8_t reserved1	: 2;
+		uint8_t mmarvalid	: 1; // MMAR holds a valid fault address
+	} bits;
+} mpu_mmfsr_t;
+
+// Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 201
+typedef union
+{
+	uint32_t flat;
+	struct
+	{
+		uint32_t address : 32; // when MMARVALID in MMFSR is set to 1, this holds the address of the location that caused the fault
+	} bits;
+} mpu_mmfar_t;
+
 // Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 210
 volatile uint32_t*   MPU_BASE    = (volatile uint32_t *)   0xe000ed90;
 volatile mpu_type_t* MPU_TYPE    = (volatile mpu_type_t *) 0xe000ed90;
@@ -128,5 +154,11 @@ volatile mpu_rbar_t* MPU_RBAR_A2 = (volatile mpu_rbar_t *) 0xe000edac;
 volatile mpu_rasr_t* MPU_RASR_A2 = (volatile mpu_rasr_t *) 0xe000edb0;
 volatile mpu_rbar_t* MPU_RBAR_A3 = (volatile mpu_rbar_t *) 0xe000edb4;
 volatile mpu_rasr_t* MPU_RASR_A3 = (volatile mpu_rasr_t *) 0xe000edb8;
+
+// Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 194
+volatile mpu_mmfsr_t* MPU_MMFSR_A3 = (volatile mpu_mmfsr_t *) 0xe000ed28;
+
+// Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 175
+volatile mpu_mmfar_t* MPU_MMFAR_A3 = (volatile mpu_mmfar_t *) 0xe000ed34;
 
 #endif // SAM3UMPUHARDWARE_H
