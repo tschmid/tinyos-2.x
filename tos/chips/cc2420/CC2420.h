@@ -183,17 +183,6 @@ typedef nx_struct cc2420_packet_t {
 #define TINYOS_6LOWPAN_NETWORK_ID 0x3f
 #endif
 
-/**
- * The LPL defaults to stay-on.
- */
-#ifndef LPL_DEF_LOCAL_WAKEUP
-#define LPL_DEF_LOCAL_WAKEUP 0
-#endif
-
-#ifndef LPL_DEF_REMOTE_WAKEUP
-#define LPL_DEF_REMOTE_WAKEUP 0
-#endif
-
 enum {
   // size of the header not including the length byte
   MAC_HEADER_SIZE = sizeof( cc2420_header_t ) - 1,
