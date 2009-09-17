@@ -693,7 +693,7 @@ implementation {
       securityOn = 0;
       authentication = 0;
 #endif
-      m_p_rx_buf = signal Receive.receive( m_p_rx_buf, CC2420_PAYLOAD(m_p_rx_buf),
+      m_p_rx_buf = signal Receive.receive( m_p_rx_buf, m_p_rx_buf->data,
 					   length - CC2420_SIZE);
     }
     atomic receivingPacket = FALSE;
