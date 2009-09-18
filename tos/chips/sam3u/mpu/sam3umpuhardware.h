@@ -156,9 +156,9 @@ volatile mpu_rbar_t* MPU_RBAR_A3 = (volatile mpu_rbar_t *) 0xe000edb4;
 volatile mpu_rasr_t* MPU_RASR_A3 = (volatile mpu_rasr_t *) 0xe000edb8;
 
 // Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 194
-volatile mpu_mmfsr_t* MPU_MMFSR_A3 = (volatile mpu_mmfsr_t *) 0xe000ed28;
+volatile mpu_mmfsr_t* MPU_MMFSR = (volatile mpu_mmfsr_t *) 0xe000ed28;
 
 // Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 175
-volatile mpu_mmfar_t* MPU_MMFAR_A3 = (volatile mpu_mmfar_t *) 0xe000ed34;
+volatile mpu_mmfar_t* MPU_MMFAR = (volatile mpu_mmfar_t *) 0xe000ed34;
 
 #endif // SAM3UMPUHARDWARE_H
