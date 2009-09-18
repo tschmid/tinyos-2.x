@@ -184,42 +184,6 @@ implementation
 		return SUCCESS;
 	}
 
-	async command void HplSam3uMpu.executeProtect(void *pointer)
-	{
-		mpu_rbar_t rbar;
-		mpu_rasr_t rasr;
-
-		// setup IRQ, p. 8-28, MEMFAULTENA = 1
-		uint32_t value = *((volatile uint32_t *) 0xe000ed24);
-		value |= 0x00010000;
-		*((volatile uint32_t *) 0xe000ed24) = value;
-
-
-		// setup MPU
-		call HplSam3uMpu.enableDefaultBackgroundRegion();
-		call HplSam3uMpu.disableMpuDuringHardFaults();
-
-		rbar.flat = (uint32_t) pointer;
-		rbar.bits.region = 0; // define region 0
-		rbar.bits.valid = 1; // region field is valid
-		//rbar.bits.addr = (((uint32_t) pointer) >> 5); // base address (now aligned to the minimum size)
-
-		rasr.bits.xn = 1; // disable instruction fetch
-		rasr.bits.ap = 6; // read only for privileged and user
-		rasr.bits.srd = 0; // no subregions disabled
-		rasr.bits.tex = 0;
-		rasr.bits.s = 1;
-		rasr.bits.c = 1;
-		rasr.bits.b = 1; // p. 211
-		rasr.bits.size = 4; // 32 Byte
-		rasr.bits.enable = 1; // region enabled
-
-		*MPU_RBAR = rbar;
-		*MPU_RASR = rasr;
-
-		call HplSam3uMpu.enableMpu();
-	}
-
 	__attribute__((interrupt)) void MpuFaultHandler() @C() @spontaneous()
 	{
 		signal HplSam3uMpu.mpuFault();

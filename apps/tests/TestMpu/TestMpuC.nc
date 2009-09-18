@@ -12,16 +12,7 @@ typedef struct
 
 volatile struct32bytes __attribute__((aligned(32))) structure; // 32 bytes aligned
 
-void  __attribute__((noinline)) __attribute__((aligned(32))) protected();
-
-void protected()
-{
-	volatile int i = 0;
-	for (; i < 50; i++);
-}
-
-void __attribute__((aligned(32))) protected() @C()
-//void __attribute__((noinline)) protected() @C()
+void  __attribute__((noinline)) __attribute__((aligned(32))) protected() @C()
 {
 	volatile int i = 0;
 	for (; i < 50; i++);
@@ -39,6 +30,12 @@ implementation
 
 	event void Boot.booted()
 	{
+		// FIXME hack
+		// setup IRQ, p. 8-28, MEMFAULTENA = 1
+		uint32_t value = *((volatile uint32_t *) 0xe000ed24);
+		value |= 0x00010000;
+		*((volatile uint32_t *) 0xe000ed24) = value;
+
 		// setup MPU
 		call HplSam3uMpu.enableDefaultBackgroundRegion();
 		call HplSam3uMpu.disableMpuDuringHardFaults();
@@ -54,7 +51,7 @@ implementation
 		//}
 
 		// activate MPU and execute-protect protected()
-		if ((call HplSam3uMpu.setupRegion(0, (void *) (((uint32_t) &protected) & (~ (32 - 1))), 32, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, 0)) == FAIL) { // aligned
+		if ((call HplSam3uMpu.setupRegion(0, (void *) (((uint32_t) &protected) & (~ (32 - 1))), 32, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, 0)) == FAIL) {
 		//if ((call HplSam3uMpu.setupRegion(0, (void *) &protected, 32, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, 0)) == FAIL) { // unaligned
 			fatal();
 		}
