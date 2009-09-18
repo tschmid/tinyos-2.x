@@ -34,6 +34,7 @@
 module HplSam3uMpuP
 {
 	provides interface HplSam3uMpu;
+	provides interface HplSam3uMpuStatus;
 }
 implementation
 {
@@ -65,6 +66,62 @@ implementation
 	async command void HplSam3uMpu.disableDefaultBackgroundRegion()
 	{
 		MPU_CTRL->bits.privdefena = 0;
+	}
+
+	async command error_t HplSam3uMpu.setupRegion(
+		uint8_t regionNumber,
+		void *baseAddress,
+		uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
+		bool enableInstructionFetch,
+		bool enableReadPrivileged,
+		bool enableWritePrivileged,
+		bool enableReadUnprivileged,
+		bool enableWriteUnprivileged,
+		bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
+		bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+		)
+	{
+		uint8_t sizeField = 0; // size encoded in 5 bits (definitive guide, p. 209)
+		uint32_t sizeIter = size;
+		uint8_t i = 0;
+
+		mpu_rbar_t rbar;
+		mpu_rasr_t rasr;
+
+		if (regionNumber > 7) return FAIL;
+
+		// size has to be greater or equal to 32
+		if (size < 32) return FAIL;
+
+		// compute size encoding
+		while (sizeIter != 0) {
+			sizeIter = sizeIter >> 1;
+			sizeField++;
+		}
+		sizeField -= 2; // 32 bytes has to equal b00100 (4)
+
+		// size has to be power of 2
+		// compute size from power
+		sizeIter = 2; // = sizeField of 0
+		for (i = 0; i < sizeField; i++) {
+			sizeIter *= 2;
+		}
+		if (sizeIter != size) return FAIL;
+
+		// check alignment of base address to size
+		if (((uint32_t) baseAddress) & (size - 1) != 0) return FAIL;
+		
+		// program region
+		rbar.flat = (uint32_t) baseAddress;
+		rbar.bits.region = regionNumber;
+		rbar.bits.valid = 1; // region field is valid
+
+		rasr.flat = 0;
+
+		// TODO
+
+
+		return SUCCESS;
 	}
 
 	async command void HplSam3uMpu.writeProtect(void *pointer)
@@ -142,5 +199,35 @@ implementation
 	__attribute__((interrupt)) void MpuFaultHandler() @C() @spontaneous()
 	{
 		signal HplSam3uMpu.mpuFault();
+	}
+
+	async command bool HplSam3uMpuStatus.isStackingFault()
+	{
+		return (MPU_MMFSR->bits.mstkerr == 0x1);
+	}
+
+	async command bool HplSam3uMpuStatus.isUnstackingFault()
+	{
+		return (MPU_MMFSR->bits.munstkerr == 0x1);
+	}
+
+	async command bool HplSam3uMpuStatus.isDataAccessFault()
+	{
+		return (MPU_MMFSR->bits.daccviol == 0x1);
+	}
+
+	async command bool HplSam3uMpuStatus.isInstructionAccessFault()
+	{
+		return (MPU_MMFSR->bits.iaccviol == 0x1);
+	}
+
+	async command bool HplSam3uMpuStatus.isValidFaultAddress()
+	{
+		return (MPU_MMFSR->bits.mmarvalid == 0x1);
+	}
+
+	async command void *HplSam3uMpuStatus.getFaultAddress()
+	{
+		return (void *) MPU_MMFAR->bits.address;
 	}
 }
