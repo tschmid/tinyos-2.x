@@ -20,12 +20,33 @@
  */
 
 /**
- * Controle interface for the NVIC.
+ * Control interface for the NVIC.
  *
  * @author Thomas Schmid
+ * @author wanja@cs.fau.de
  */
 
 interface HplNVICCntl
 {
     command void setPriorityGrouping(uint32_t priority_grouping);
+
+	async command void enableUsageFault();
+	async command void disableUsageFault();
+	async command void enableBusFault();
+	async command void disableBusFault();
+	async command void enableMemoryProtectionFault();
+	async command void disableMemoryProtectionFault();
+
+	async command bool isSVCallPended();
+	async command bool isUsageFaultPended();
+	async command bool isBusFaultPended();
+	async command bool isMemoryProtectionFaultPended();
+
+	async command bool isSysTickActive();
+	async command bool isPendSVActive();
+	async command bool isMonitorActive();
+	async command bool isSVCallActive();
+	async command bool isUsageFaultActive();
+	async command bool isBusFaultActive();
+	async command bool isMemoryProtectionFaultActive();
 }

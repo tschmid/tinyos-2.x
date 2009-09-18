@@ -29,15 +29,27 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @author wanja@cs.fau.de
+ */
+
 #include "sam3umpuhardware.h"
 
 module HplSam3uMpuP
 {
 	provides interface HplSam3uMpu;
 	provides interface HplSam3uMpuStatus;
+	provides interface Init;
+	uses interface HplNVICCntl;
 }
 implementation
 {
+	command error_t Init.init()
+	{
+		call HplNVICCntl.enableMemoryProtectionFault();
+		return SUCCESS;
+	}
+
 	async command void HplSam3uMpu.enableMpu()
 	{
 		MPU_CTRL->bits.enable = 1;
