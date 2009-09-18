@@ -60,9 +60,5 @@ interface HplSam3uMpu
 		uint8_t disabledSubregions // bit = 1: subregion disabled
 		);
 
-	// temporary test routines
-	async command void writeProtect(void *pointer);
-	async command void executeProtect(void *pointer);
-
 	async event void mpuFault();
 }
