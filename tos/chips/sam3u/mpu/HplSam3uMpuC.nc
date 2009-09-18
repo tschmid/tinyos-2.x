@@ -29,6 +29,10 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @author wanja@cs.fau.de
+ */
+
 configuration HplSam3uMpuC
 {
 	provides interface HplSam3uMpu;
@@ -37,4 +41,10 @@ implementation
 {
 	components HplSam3uMpuP;
 	HplSam3uMpu = HplSam3uMpuP.HplSam3uMpu;
+
+	components MainC;
+	MainC.SoftwareInit -> HplSam3uMpuP.Init;
+
+	components HplNVICC;
+	HplSam3uMpuP.HplNVICCntl -> HplNVICC;
 }
