@@ -786,7 +786,7 @@ typedef enum{
     case S_RX_FCF:
       m_state = S_RX_PAYLOAD;
       
-      /*
+      
        * The destination address check here is not completely optimized. If you 
        * are seeing issues with dropped acknowledgements, try removing
        * the address check and decreasing SACK_HEADER_LENGTH to 2.
