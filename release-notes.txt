@@ -1,6 +1,7 @@
 These release notes are as of: $Date$
 
 Current:
+  Refactored AM layer to better support 6lowpan
   Added support for shimmer2 platform
   Improved MSP430 sleep code to default to LPM4
   Added platform-indepdent TOS_SLEEP_NONE for McuPowerOverride
