@@ -23,6 +23,7 @@
  * NVIC Controller
  *
  * @author Thomas Schmid
+ * @author wanja@cs.fau.de
  */
 
 #include "sam3unvichardware.h"
@@ -42,4 +43,91 @@ implementation{
         reg_value  = ((reg_value | NVIC_AIRCR_VECTKEY | (priority_grouping << 8)));                         /* Insert write key and priorty group */
         SCB->AIRCR = reg_value;
     }
+
+	async command void HplNVICCntl.enableUsageFault()
+	{
+		SCB->SHCSR.bits.usgfaultena = 1;
+	}
+
+	async command void HplNVICCntl.disableUsageFault()
+	{
+		SCB->SHCSR.bits.usgfaultena = 0;
+	}
+
+	async command void HplNVICCntl.enableBusFault()
+	{
+		SCB->SHCSR.bits.busfaultena = 1;
+	}
+
+	async command void HplNVICCntl.disableBusFault()
+	{
+		SCB->SHCSR.bits.busfaultena = 0;
+	}
+
+	async command void HplNVICCntl.enableMemoryProtectionFault()
+	{
+		SCB->SHCSR.bits.memfaultena = 1;
+	}
+
+	async command void HplNVICCntl.disableMemoryProtectionFault()
+	{
+		SCB->SHCSR.bits.memfaultena = 0;
+	}
+
+
+	async command bool HplNVICCntl.isSVCallPended()
+	{
+		return (SCB->SHCSR.bits.svcallpended == 0x1);
+	}
+
+	async command bool HplNVICCntl.isUsageFaultPended()
+	{
+		return (SCB->SHCSR.bits.usgfaultpended == 0x1);
+	}
+
+	async command bool HplNVICCntl.isBusFaultPended()
+	{
+		return (SCB->SHCSR.bits.busfaultpended == 0x1);
+	}
+
+	async command bool HplNVICCntl.isMemoryProtectionFaultPended()
+	{
+		return (SCB->SHCSR.bits.memfaultpended == 0x1);
+	}
+
+
+	async command bool HplNVICCntl.isSysTickActive()
+	{
+		return (SCB->SHCSR.bits.systickact == 0x1);
+	}
+
+	async command bool HplNVICCntl.isPendSVActive()
+	{
+		return (SCB->SHCSR.bits.pendsvact == 0x1);
+	}
+
+	async command bool HplNVICCntl.isMonitorActive()
+	{
+		return (SCB->SHCSR.bits.monitoract == 0x1);
+	}
+
+	async command bool HplNVICCntl.isSVCallActive()
+	{
+		return (SCB->SHCSR.bits.svcallact == 0x1);
+	}
+
+	async command bool HplNVICCntl.isUsageFaultActive()
+	{
+		return (SCB->SHCSR.bits.usgfaultact == 0x1);
+	}
+
+	async command bool HplNVICCntl.isBusFaultActive()
+	{
+		return (SCB->SHCSR.bits.busfaultact == 0x1);
+	}
+
+	async command bool HplNVICCntl.isMemoryProtectionFaultActive()
+	{
+		return (SCB->SHCSR.bits.memfaultact == 0x1);
+	}
 }

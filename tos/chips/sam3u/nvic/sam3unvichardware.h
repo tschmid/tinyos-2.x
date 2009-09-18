@@ -23,6 +23,7 @@
  * Header definition for the Nested Vector Interrupt Controller.
  *
  * @author Thomas Schmid
+ * @author wanja@cs.fau.de
  */
 
 #ifndef SAM3UNVICHARDWARE_H
@@ -63,6 +64,32 @@ typedef struct
   volatile uint32_t stir;               // Software Trigger Interrupt
 }  nvic_t;
 
+typedef union
+{
+	uint32_t flat;
+	struct
+	{
+		uint8_t		memfaultact:	1;
+		uint8_t		busfaultact:	1;
+		uint8_t		reserved0:		1;
+		uint8_t		usgfaultact:	1;
+		uint8_t		reserved1:		3;
+		uint8_t		svcallact:		1;
+		uint8_t		monitoract:		1;
+		uint8_t		reserved2:		1;
+		uint8_t		pendsvact:		1;
+		uint8_t		systickact:		1;
+		uint8_t		usgfaultpended:	1;
+		uint8_t		memfaultpended:	1;
+		uint8_t		busfaultpended:	1;
+		uint8_t		svcallpended:	1;
+		uint8_t		memfaultena:	1;
+		uint8_t		busfaultena:	1;
+		uint8_t		usgfaultena:	1;
+		uint16_t	reserved3:		13;
+	} bits;
+} nvic_shcsr_t;
+
 /* memory mapping struct for System Control Block */
 typedef struct
 {
@@ -73,7 +100,7 @@ typedef struct
     __IO uint32_t SCR;                          /*!< System Control Register                                  */
     __IO uint32_t CCR;                          /*!< Configuration Control Register                           */
     __IO uint8_t  SHP[12];                      /*!< System Handlers Priority Registers (4-7, 8-11, 12-15)    */
-    __IO uint32_t SHCSR;                        /*!< System Handler Control and State Register                */
+    __IO nvic_shcsr_t SHCSR;                    /*!< System Handler Control and State Register                */
     __IO uint32_t CFSR;                         /*!< Configurable Fault Status Register                       */
     __IO uint32_t HFSR;                         /*!< Hard Fault Status Register                               */
     __IO uint32_t DFSR;                         /*!< Debug Fault Status Register                              */
