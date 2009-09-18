@@ -79,6 +79,7 @@ implementation
 		bool enableWriteUnprivileged,
 		bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
 		bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+		uint8_t disabledSubregions // bit = 1: subregion disabled
 		)
 	{
 		uint8_t sizeField = 0; // size encoded in 5 bits (definitive guide, p. 209)
@@ -109,7 +110,7 @@ implementation
 		if (sizeIter != size) return FAIL;
 
 		// check alignment of base address to size
-		if (((uint32_t) baseAddress) & (size - 1) != 0) return FAIL;
+		if ((((uint32_t) baseAddress) & (size - 1)) != 0) return FAIL;
 		
 		// program region
 		rbar.flat = (uint32_t) baseAddress;
@@ -118,46 +119,57 @@ implementation
 
 		rasr.flat = 0;
 
-		// TODO
-
-
-		return SUCCESS;
-	}
-
-	async command void HplSam3uMpu.writeProtect(void *pointer)
-	{
-		mpu_rbar_t rbar;
-		mpu_rasr_t rasr;
-
-		// setup IRQ, p. 8-28, MEMFAULTENA = 1
-		uint32_t value = *((volatile uint32_t *) 0xe000ed24);
-		value |= 0x00010000;
-		*((volatile uint32_t *) 0xe000ed24) = value;
-
-
-		// setup MPU
-		call HplSam3uMpu.enableDefaultBackgroundRegion();
-		call HplSam3uMpu.disableMpuDuringHardFaults();
-
-		rbar.flat = (uint32_t) pointer;
-		rbar.bits.region = 0; // define region 0
-		rbar.bits.valid = 1; // region field is valid
-		//rbar.bits.addr = (((uint32_t) pointer) >> 5); // base address (now aligned to the minimum size)
-
-		rasr.bits.xn = 1; // disable instruction fetch
-		rasr.bits.ap = 6; // read only for privileged and user
-		rasr.bits.srd = 0; // no subregions disabled
+		rasr.bits.xn = (enableInstructionFetch == TRUE ? 0 : 1); // 1 = instruction fetch disabled
+		rasr.bits.srd = disabledSubregions;
 		rasr.bits.tex = 0;
-		rasr.bits.s = 1;
-		rasr.bits.c = 1;
-		rasr.bits.b = 1; // p. 211
-		rasr.bits.size = 4; // 32 Byte
+		rasr.bits.s = 1; // shareable
+		rasr.bits.c = (cacheable == TRUE ? 1 : 0); // 1 = cacheable
+		rasr.bits.b = (bufferable == TRUE ? 1 : 0); // 1 = bufferable
+		rasr.bits.size = sizeField;
 		rasr.bits.enable = 1; // region enabled
 
+		// access permissions (see definitive guide, p. 209)
+		// impossible combinations return FAIL
+		if (enableReadPrivileged == FALSE) {
+			// SV no read -> SV no access, user no access
+			rasr.bits.ap = 0x0;
+			if (enableWritePrivileged == TRUE || enableReadUnprivileged == TRUE || enableWriteUnprivileged == TRUE) return FAIL;
+		} else {
+			// SV read
+			if (enableWritePrivileged == FALSE) {
+				// SV read-only
+				if (enableWriteUnprivileged == TRUE) return FAIL;
+				if (enableReadUnprivileged == FALSE) {
+					// SV read-only, user no access
+					rasr.bits.ap = 0x5;
+				} else {
+					// SV read-only, user read-only
+					rasr.bits.ap = 0x6;
+				}
+			} else {
+				// SV read/write
+				if (enableReadUnprivileged == FALSE) {
+					// SV read/write, user no read -> user no access
+					if (enableWriteUnprivileged == TRUE) return FAIL;
+					rasr.bits.ap = 0x1;
+				} else {
+					// SV read/write, user read
+					if (enableWriteUnprivileged == FALSE) {
+						// SV read/write, user read-only
+						rasr.bits.ap = 0x2;
+					} else {
+						// SV read/write, user read/write
+						rasr.bits.ap = 0x3;
+					}
+				}
+			}
+		}
+
+		// write registers
 		*MPU_RBAR = rbar;
 		*MPU_RASR = rasr;
 
-		call HplSam3uMpu.enableMpu();
+		return SUCCESS;
 	}
 
 	async command void HplSam3uMpu.executeProtect(void *pointer)
