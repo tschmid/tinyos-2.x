@@ -10,7 +10,7 @@ typedef struct
 	uint32_t word8;
 } struct32bytes;
 
-struct32bytes __attribute__((aligned(32))) structure; // 32 bytes aligned
+volatile struct32bytes __attribute__((aligned(32))) structure; // 32 bytes aligned
 
 void __attribute__((aligned(32))) protected() @C()
 //void __attribute__((noinline)) protected() @C()
@@ -29,22 +29,40 @@ implementation
 {
 	event void Boot.booted()
 	{
+		// FIXME hack
+		// setup IRQ, p. 8-28, MEMFAULTENA = 1
+		uint32_t value = *((volatile uint32_t *) 0xe000ed24);
+		value |= 0x00010000;
+		*((volatile uint32_t *) 0xe000ed24) = value;
+
+		// setup MPU
+		call HplSam3uMpu.enableDefaultBackgroundRegion();
+		call HplSam3uMpu.disableMpuDuringHardFaults();
 
 		structure.word1 = 13;
-		protected();
+		//protected();
 
 		call Leds.led0On(); // LED 0: successful write
 
 		// activate MPU and write protect structure
-		//call HplSam3uMpu.writeProtect(&structure);
+		if ((call HplSam3uMpu.setupRegion(0, (void *) &structure, 32, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, 0)) == FAIL) {
+			while(1) {
+				volatile int i;
+				call Leds.led0Toggle();
+				for (i = 0; i < 10000; i++);
+			}
+		}
+
 		// activate MPU and execute protect protected()
-		call HplSam3uMpu.executeProtect(&protected);
+		//call HplSam3uMpu.executeProtect(&protected);
+
+		call HplSam3uMpu.enableMpu();
 
 		structure.word1 = 42;
-		protected();
+		//protected();
 
-		//call Leds.led1On(); // LED 1: successful protected write (should not happen)
-		call Leds.led1On(); // LED 1: successful protected execute (should not happen)
+		call Leds.led1On(); // LED 1: successful protected write (should not happen)
+		//call Leds.led1On(); // LED 1: successful protected execute (should not happen)
 
 		while(1);
 	}

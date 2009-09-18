@@ -46,6 +46,21 @@ interface HplSam3uMpu
 	async command void enableDefaultBackgroundRegion();
 	async command void disableDefaultBackgroundRegion();
 
+	async command error_t setupRegion(
+		uint8_t regionNumber,
+		void *baseAddress,
+		uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
+		bool enableInstructionFetch,
+		bool enableReadPrivileged,
+		bool enableWritePrivileged,
+		bool enableReadUnprivileged,
+		bool enableWriteUnprivileged,
+		bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
+		bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+		uint8_t disabledSubregions // bit = 1: subregion disabled
+		);
+
+	// temporary test routines
 	async command void writeProtect(void *pointer);
 	async command void executeProtect(void *pointer);
 
