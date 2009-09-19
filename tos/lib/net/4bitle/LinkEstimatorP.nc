@@ -335,7 +335,7 @@ implementation {
 	  if (totalPkt == 0) {
 	    ne->inquality = (ALPHA * ne->inquality) / 10;
 	  } else {
-	    newEst = (255 * ne->rcvcnt) / totalPkt;
+	    newEst = (255UL * ne->rcvcnt) / totalPkt;
 	    dbg("LI,LITest", "  %hu: %hhu -> %hhu", ne->ll_addr, ne->inquality, (ALPHA * ne->inquality + (10-ALPHA) * newEst + 5)/10);
 	    ne->inquality = (ALPHA * ne->inquality + (10-ALPHA) * newEst + 5)/10;
 	  }
