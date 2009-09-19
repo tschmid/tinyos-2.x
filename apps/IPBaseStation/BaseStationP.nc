@@ -358,7 +358,7 @@ implementation
       call PacketLink.setRetries(msg, 0);
     }
 #ifdef LPL_SLEEP_INTERVAL
-    call LowPowerListening.setRxSleepInterval(msg, LPL_SLEEP_INTERVAL);
+    call LowPowerListening.setRemoteWakeupInterval(msg, LPL_SLEEP_INTERVAL);
 #endif
     dbg("base", "radio send to: 0x%x len: %i\n", addr, len);
     if (call RadioSend.send(addr, msg, len) == SUCCESS)
