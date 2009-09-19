@@ -242,7 +242,6 @@ implementation {
     /* Is this quality measure better than the minimum threshold? */
     // Implemented assuming quality is EETX
     bool passLinkEtxThreshold(uint16_t etx) {
-	return TRUE;
         return (etx < ETX_THRESHOLD);
     }
 
