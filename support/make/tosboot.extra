@@ -34,6 +34,11 @@ ifeq ($(BOOTLOADER),tosboot)
     AVR_FUSE_H ?= 0xda
   endif
 
+  ifeq ($(TARGETS),mulle)
+    CFLAGS += -I$(DELUGE_EXTRA) -I$(DELUGE_EXTRA)/mulle -I$(DELUGE_EXTRA)/m16c62p
+    BOOTLOADER_IMG ?= $(TOSBOOT_DIR)/mulle/main.srec
+  endif
+
   ifeq ($(TARGETS),iris)
     CFLAGS += -I$(DELUGE_EXTRA)/iris -I$(DELUGE_EXTRA)/micaz -I$(DELUGE_EXTRA)/mica2 -I$(DELUGE_EXTRA)/avr -I$(DELUGE_EXTRA)
     BOOTLOADER_IMG ?= $(TOSBOOT_DIR)/iris/main.ihex
