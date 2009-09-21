@@ -808,7 +808,7 @@ implementation {
     command uint16_t      CtpRoutingPacket.getEtx(message_t* msg) {
       return getHeader(msg)->etx;
     }
-    command void          CtpRoutingPacket.setEtx(message_t* msg, uint8_t etx) {
+    command void          CtpRoutingPacket.setEtx(message_t* msg, uint16_t etx) {
       getHeader(msg)->etx = etx;
     }
 

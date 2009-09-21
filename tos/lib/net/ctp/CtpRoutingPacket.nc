@@ -54,5 +54,5 @@ interface CtpRoutingPacket {
   command void          setParent(message_t* ONE msg, am_addr_t addr);
 
   command uint16_t      getEtx(message_t* ONE msg);
-  command void          setEtx(message_t* ONE msg, uint8_t etx);
+  command void          setEtx(message_t* ONE msg, uint16_t etx);
 }
