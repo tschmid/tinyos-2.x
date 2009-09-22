@@ -36,10 +36,10 @@
 module BlinkC {
   uses {
     interface Boot;
-    interface Thread as NullThread;
+//    interface Thread as NullThread;
     interface Thread as TinyThread0;
-    interface Thread as TinyThread1;
-    interface Thread as TinyThread2;
+//    interface Thread as TinyThread1;
+//    interface Thread as TinyThread2;
     interface Leds;
   }
 }
@@ -48,30 +48,36 @@ implementation {
   event void Boot.booted() {
     //call NullThread.start(NULL);
     call TinyThread0.start(NULL);
-    call TinyThread1.start(NULL);
-    call TinyThread2.start(NULL);
+//    call TinyThread1.start(NULL);
+//    call TinyThread2.start(NULL);
   }
 
-  event void NullThread.run(void* arg) {
-    for(;;){
-    }
-  }  
+//  event void NullThread.run(void* arg) {
+//    for(;;){
+//    }
+//  }  
   event void TinyThread0.run(void* arg) {
     for(;;){
+	  volatile int i;
       call Leds.led0Toggle();
-      call TinyThread0.sleep(200);
+	  for (i = 0; i < 100000; i++);
+      //call TinyThread0.sleep(200);
     }
   }
-  event void TinyThread1.run(void* arg) {
-    for(;;){
-      call Leds.led1Toggle();
-      call TinyThread1.sleep(1000);
-    }
-  }
-  event void TinyThread2.run(void* arg) {
-    for(;;){
-      call Leds.led2Toggle();
-      call TinyThread2.sleep(1000);
-    }
-  }
+//  event void TinyThread1.run(void* arg) {
+//    for(;;){
+//	  volatile int i;
+//      call Leds.led1Toggle();
+//	  for (i = 0; i < 100000; i++);
+//      //call TinyThread1.sleep(1000);
+//    }
+//  }
+//  event void TinyThread2.run(void* arg) {
+//    for(;;){
+//	  volatile int i;
+//      call Leds.led2Toggle();
+//	  for (i = 0; i < 100000; i++);
+//      //call TinyThread2.sleep(1000);
+//    }
+//  }
 }
