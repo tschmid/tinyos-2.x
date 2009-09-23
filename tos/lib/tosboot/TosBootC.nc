@@ -1,4 +1,4 @@
-// $Id: HPLUSARTControl.nc,v 1.2 2008/06/11 00:46:25 razvanm Exp $
+// $Id: TosBootC.nc,v 1.1 2009/09/23 18:29:21 razvanm Exp $
 
 /*
  *
@@ -27,20 +27,36 @@
 /**
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
- 
-includes msp430usart;
 
-interface HPLUSARTControl {
+#include <Deluge.h>
+#include <DelugePageTransfer.h>
+#include "TosBoot.h"
 
-  command void disableSPI();
-  command void setModeSPI();
-  command void disableI2C();
-  command void setModeI2C();
-  command error_t isTxEmpty();
-  command error_t isTxIntrPending();
-  command error_t isRxIntrPending();
-  command void tx(uint8_t data);
-  command uint8_t rx();
+configuration TosBootC {
+}
+implementation {
+
+  components
+    TosBootP,
+    ExecC,
+    ExtFlashC,
+    HardwareC,
+    InternalFlashC as IntFlash,
+    LedsC,
+    PluginC,
+    ProgFlashC as ProgFlash,
+    VoltageC;
+
+  TosBootP.SubInit -> ExtFlashC;
+  TosBootP.SubControl -> ExtFlashC.StdControl;
+  TosBootP.SubControl -> PluginC;
+
+  TosBootP.Exec -> ExecC;
+  TosBootP.ExtFlash -> ExtFlashC;
+  TosBootP.Hardware -> HardwareC;
+  TosBootP.IntFlash -> IntFlash;
+  TosBootP.Leds -> LedsC;
+  TosBootP.ProgFlash -> ProgFlash;
+  TosBootP.Voltage -> VoltageC;
 
 }
-

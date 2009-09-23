@@ -1,4 +1,4 @@
-// $Id: TOSBoot.nc,v 1.3 2008/06/11 00:46:25 razvanm Exp $
+// $Id: ProgFlashC.nc,v 1.1 2009/09/23 18:29:22 razvanm Exp $
 
 /*
  *
@@ -28,35 +28,38 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-includes Deluge;
-includes DelugePageTransfer;
-includes TOSBoot;
-
-configuration TOSBoot {
+module ProgFlashC {
+  provides {
+    interface ProgFlash;
+  }
 }
+
 implementation {
 
-  components
-    TOSBootM,
-    ExecC,
-    ExtFlashC,
-    HardwareC,
-    InternalFlashC as IntFlash,
-    LedsC,
-    PluginC,
-    ProgFlashM as ProgFlash,
-    VoltageC;
+#include <avr/boot.h>
 
-  TOSBootM.SubInit -> ExtFlashC;
-  TOSBootM.SubControl -> ExtFlashC.StdControl;
-  TOSBootM.SubControl -> PluginC;
+  command error_t ProgFlash.write(in_flash_addr_t addr, uint8_t* buf, in_flash_addr_t len) {
 
-  TOSBootM.Exec -> ExecC;
-  TOSBootM.ExtFlash -> ExtFlashC;
-  TOSBootM.Hardware -> HardwareC;
-  TOSBootM.IntFlash -> IntFlash;
-  TOSBootM.Leds -> LedsC;
-  TOSBootM.ProgFlash -> ProgFlash;
-  TOSBootM.Voltage -> VoltageC;
+    uint16_t* wordBuf = (uint16_t*)buf;
+    uint32_t i;
+
+    if ( addr + len > TOSBOOT_START )
+      return FAIL;    
+
+    boot_page_erase_safe( addr );
+    while( boot_rww_busy() )
+      boot_rww_enable_safe();
+    
+    for ( i = 0; i < len; i += 2 )
+      boot_page_fill_safe( addr + i, *wordBuf++ );
+
+    boot_page_write_safe( addr );
+    
+    while ( boot_rww_busy() )
+      boot_rww_enable_safe();
+    
+    return SUCCESS;
+    
+  }
 
 }
