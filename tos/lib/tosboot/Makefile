@@ -28,7 +28,7 @@
 # @author Jonathan Hui <jwhui@cs.berkeley.edu>
 #
 
-COMPONENT=TOSBoot
+COMPONENT=TosBootC
 TINYOS_NP=
 
 PFLAGS += -DNESC_BUILD_BINARY

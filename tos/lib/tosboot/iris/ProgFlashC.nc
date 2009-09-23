@@ -3,19 +3,19 @@
 /*
  *
  *
- * "Copyright (c) 2000-2004 The Regents of the University  of California.  
+ * "Copyright (c) 2000-2005 The Regents of the University  of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without written agreement is
  * hereby granted, provided that the above copyright notice, the following
  * two paragraphs and the author appear in all copies of this software.
- * 
+ *
  * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
  * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
  * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
  * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
@@ -27,59 +27,39 @@
 /**
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
+#include <avr/boot.h>
 
-module PowerOffM {
+module ProgFlashC {
   provides {
-    interface Init;
-    interface StdControl;
-  }
-  uses {
-    interface Leds;
-    interface StdControl as SubControl;
+    interface ProgFlash;
   }
 }
 
 implementation {
 
-  void haltsystem() {
 
-    uint16_t _lpmreg;
+  command error_t ProgFlash.write(in_flash_addr_t addr, uint8_t* buf, in_flash_addr_t len) {
 
-    TOSH_SET_PIN_DIRECTIONS();
+    uint16_t* wordBuf = (uint16_t*)buf;
+    uint32_t i;
 
-    call SubControl.stop();
+    if ( addr + len > TOSBOOT_START )
+      return FAIL;
 
-    call Leds.glow(0x7, 0x0);
+    boot_page_erase( addr );
+    while( boot_rww_busy() )
+      boot_rww_enable();
 
-    _lpmreg = LPM4_bits;
-    _lpmreg |= SR_GIE;
+    for ( i = 0; i < len; i += 2 )
+      boot_page_fill( addr + i, *wordBuf++ );
 
-    __asm__ __volatile__( "bis  %0, r2" : : "m" ((uint16_t)_lpmreg) );
+    boot_page_write( addr );
 
-  }
-
-  command error_t Init.init() {
-    return SUCCESS;
-  }
-
-  command error_t StdControl.start() {
-
-    int i;
-
-    // wait a short period for things to stabilize
-    for ( i = 0; i < 4; i++ )
-      wait(0xffff);
-
-    // if user button is pressed, power down
-    if (!TOSH_READ_USERINT_PIN())
-      haltsystem();
+    while ( boot_rww_busy() )
+      boot_rww_enable();
 
     return SUCCESS;
 
-  }
-
-  command error_t StdControl.stop() {
-    return SUCCESS;
   }
 
 }

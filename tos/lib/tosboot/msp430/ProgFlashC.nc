@@ -28,7 +28,7 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-module ProgFlashM {
+module ProgFlashC {
   provides {
     interface ProgFlash;
   }
@@ -36,30 +36,35 @@ module ProgFlashM {
 
 implementation {
 
-#include <avr/boot.h>
+  enum {
+    RESET_ADDR = 0xfffe,
+  };
 
-  command error_t ProgFlash.write(in_flash_addr_t addr, uint8_t* buf, in_flash_addr_t len) {
+  command error_t ProgFlash.write(in_flash_addr_t addr, uint8_t* buf, uint16_t len) {
 
-    uint16_t* wordBuf = (uint16_t*)buf;
-    uint32_t i;
+    volatile uint16_t *flashAddr = (uint16_t*)(uint16_t)addr;
+    uint16_t *wordBuf = (uint16_t*)buf;
+    uint16_t i = 0;
 
-    if ( addr + len > TOSBOOT_START )
-      return FAIL;    
-
-    boot_page_erase_safe( addr );
-    while( boot_rww_busy() )
-      boot_rww_enable_safe();
-    
-    for ( i = 0; i < len; i += 2 )
-      boot_page_fill_safe( addr + i, *wordBuf++ );
-
-    boot_page_write_safe( addr );
-    
-    while ( boot_rww_busy() )
-      boot_rww_enable_safe();
-    
-    return SUCCESS;
-    
+    // len is 16 bits so it can't be larger than 0xffff
+    // make sure we can't wrap around
+    if (addr < (0xffff - (len >> 1))) {
+      FCTL2 = FWKEY + FSSEL1 + FN2;
+      FCTL3 = FWKEY;
+      FCTL1 = FWKEY + ERASE;
+      *flashAddr = 0;
+      FCTL1 = FWKEY + WRT;
+      for (i = 0; i < (len >> 1); i++, flashAddr++) {
+	if ((uint16_t)flashAddr != RESET_ADDR)
+	  *flashAddr = wordBuf[i];
+	else
+	  *flashAddr = TOSBOOT_START;
+      }
+      FCTL1 = FWKEY;
+      FCTL3 = FWKEY + LOCK;
+      return SUCCESS;
+    }
+    return FAIL;
   }
 
 }
