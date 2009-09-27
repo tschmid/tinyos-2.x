@@ -30,5 +30,5 @@ interface HplSam3uSpiControl
     async command void resetSpi();
     async command void enableSpi();
     async command void disableSpi();
-    async command void resetStatusBits();
+    async command void lasttTransfer();
 }

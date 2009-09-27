@@ -29,6 +29,7 @@ interface HplSam3uSpiStatus
 {
     async command uint16_t getReceivedData();
     async command void setDataToTransmit(uint16_t txchr);
+    async command error_t setDataToTransmitCS(uint16_t txchr, uint8_t pcs);
 
     async command bool isRxFull();
     async command bool isTxDataEmpty();

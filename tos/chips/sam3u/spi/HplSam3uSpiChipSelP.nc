@@ -20,67 +20,124 @@
  */
 
 /**
- * Interface to configure the Chip Selects of the SAM3U SPI.
+ * Interface to control the SAM3U SPI.
  *
  * @author Thomas Schmid
  */
 
-interface HplSam3uSpiChipSelConfig
+generic module HplSam3uSpiChipSelP(spi_csr_t csr)
+{
+    provides
+    {
+       interface HplSam3uSpiChipSelConfig;
+    }
+}
+implementation
 {
     /**
      * Set the Clock polarity
      * 0: inactive state is logic zero
      * 1: inactive state is logic one
      */
-    async command error_t setClockPolarity(uint8_t p);
+    async command error_t HplSam3uSpiChipSelConfig.setClockPolarity(uint8_t p)
+    {
+        if(p > 1)
+            return FAIL;
+        csr.cpol = p;
+        return SUCCESS;
+    }
 
     /**
      * Set the Clock Phase
      * 0: changed on leading edge, and captured on following edge
      * 1: captured on leading edge, and changed on following edge
      */
-    async command error_t setClockPhase(uint8_t p);
+    async command error_t HplSam3uSpiChipSelConfig.setClockPhase(uint8_t p)
+    {
+        if(p > 1)
+            return FAIL;
+        csr.ncpha = p;
+        return SUCCESS;
+    }
 
     /**
      * Disable automatic Chip Select rising between consecutive transmits
      * (default)
      */
-    async command error_t disableAutoCS();
+    async command error_t HplSam3uSpiChipSelConfig.disableAutoCS()
+    {
+        csr.csnaat = 0;
+        return SUCCESS;
+    }
 
     /**
      * enable automatic Chip Select rising between consecutive transmits.
      */
-    async command error_t enableAutoCS();
+    async command error_t HplSam3uSpiChipSelConfig.enableAutoCS()
+    {
+        csr.csnaat = 1;
+        return SUCCESS;
+    }
 
     /**
      * Enable Chip Select active after transfer (default).
      */
-    async command error_t enableCSActive();
+    async command error_t HplSam3uSpiChipSelConfig.enableCSActive()
+    {
+        csr.csaat= 0;
+        return SUCCESS;
+    }
 
     /**
      * Disable Chip Select active after transfer.
      */
-    async command error_t disableCSActive();
+    async command error_t HplSam3uSpiChipSelConfig.disableCSActive()
+    {
+        csr.csaat= 1;
+        return SUCCESS;
+    }
 
     /**
      * Set the total amount of bits per transfer. Range is from 8 to 16.
      */
-    async command error_t setBitsPerTransfer(uint8_t b);
+    async command error_t HplSam3uSpiChipSelConfig.setBitsPerTransfer(uint8_t b)
+    {
+        if(b > 8)
+            return FAIL;
+        csr.bits = b;
+        return SUCCESS;
+    }
 
     /**
      * Set the serial clock baud rate by defining the MCK devider, i.e., baud
      * rate = MCK/divider.
      * Acceptable values range from 1 to 255.
      */
-    async command error_t setBaud(uint8_t divider);
+    async command error_t HplSam3uSpiChipSelConfig.setBaud(uint8_t divider)
+    {
+        if(divider == 0)
+            return FAIL;
+        csr.scbr = divider;
+        return SUCCESS;
+    }
 
     /**
      * Set the delay between NPCS ready to first valid SPCK.
      */
-    async command error_t setClkDelay(uint8_t delay);
+    async command error_t HplSam3uSpiChipSelConfig.setClkDelay(uint8_t delay)
+    {
+        csr.dlybs = delay;
+        return SUCCESS;
+    }
 
     /**
      * Set the delay between consecutive transfers.
      */
-    async command error_t setTxDelay(uint8_t delay);
+    async command error_t HplSam3uSpiChipSelConfig.setTxDelay(uint8_t delay)
+    {
+        csr.dlybct = delay;
+        return SUCCESS;
+    }
 }
+
+
