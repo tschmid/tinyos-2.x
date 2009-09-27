@@ -38,6 +38,16 @@ interface HplSam3uSpiConfig
     async command error_t setSlave();
 
     /**
+     * Set fixed peripherel select.
+     */
+    async command error_t setFixedCS();
+
+    /**
+     * Set variable peripheral select.
+     */
+    async command error_t setVariableCS();
+
+    /**
      * Set the Chip Select pins to be directly connected to the chips
      * (default).
      */

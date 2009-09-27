@@ -20,43 +20,46 @@
  */
 
 /**
- * Interface to control and query the SAM3U SPI interrupts.
+ * The hardware presentation layer for the SAM3U SPI.
  *
  * @author Thomas Schmid
  */
 
-interface HplSam3uSpiInterrupts
+#include "hplsam3uspihardware.h"
+
+module HplSam3uSpiP
 {
-    async event void receivedData(uint16_t data);
-
-    async command void disableAllUartIrqs();
-
-    async event void enableRxFullIrq();
-    async event void disableRxFullIrq();
-    async event bool isEnabledRxFullIrq();
-
-    async event void enableTxDataEmptyIrq();
-    async event void disableTxDataEmptyIrq();
-    async event bool isEnabledTxDataEmptyIrq();
-
-    async event void enableModeFaultIrq();
-    async event void disableModeFaultIrq();
-    async event bool isEnabledModeFaultIrq();
-
-    async event void enableOverrunIrq();
-    async event void disableOverrunIrq();
-    async event bool isEnabledOverrunIrq();
-
-    async event void enableNssRisingIrq();
-    async event void disableNssRisingIrq();
-    async event bool isEnabledNssRisingIrq();
-
-    async event void enableTxEmptyIrq();
-    async event void disableTxEmptyIrq();
-    async event bool isEnabledTxEmptyIrq();
-
-    async event void enableUnderrunIrq();
-    async event void disableUnderrunIrq();
-    async event bool isEnabledUnderrunIrq();
+    provides
+    {
+       interface HplSam3uSpiConfig; 
+       interface HplSam3uSpiControl; 
+       interface HplSam3uSpiInterrupts; 
+       interface HplSam3uSpiStatus; 
+       interface HplSam3uSpiChipSelConfig0; 
+       interface HplSam3uSpiChipSelConfig1; 
+       interface HplSam3uSpiChipSelConfig2; 
+       interface HplSam3uSpiChipSelConfig3; 
+    }
 }
+configuration
+{
+    components HplSam3uSpiP;
+
+    HplSam3uSpiConfig = HplSam3uSpiP;
+    HplSam3uSpiControl = HplSam3uSpiP;
+    HplSam3uSpiInterrupts = HplSam3uSpiP;
+    HplSam3uSpiStatus = HplSam3uSpiP;
+
+    components
+        new HplSam3uSpiChipSelP(SPI->csr0) as CS0,
+        new HplSam3uSpiChipSelP(SPI->csr1) as CS1,
+        new HplSam3uSpiChipSelP(SPI->csr2) as CS2,
+        new HplSam3uSpiChipSelP(SPI->csr3) as CS3;
+
+    HplSam3uSpiChipSelConfig0 = CS0;
+    HplSam3uSpiChipSelConfig0 = CS1;
+    HplSam3uSpiChipSelConfig0 = CS2;
+    HplSam3uSpiChipSelConfig0 = CS3;
+}
+
 
