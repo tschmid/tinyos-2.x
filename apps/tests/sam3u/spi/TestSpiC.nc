@@ -20,15 +20,40 @@
  */
 
 /**
- * Interface to control the SAM3U SPI.
- *
  * @author Thomas Schmid
- */
+ **/
 
-interface HplSam3uSpiControl
+module TestSpiC
 {
-    async command void resetSpi();
-    async command void enableSpi();
-    async command void disableSpi();
-    async command void lastTransfer();
+	uses interface Leds;
+	uses interface Boot;
+	uses interface StdControl as SpiControl;
+	uses interface SpiByte;
+    uses interface HplSam3uSpiConfig as SpiConfig;
+}
+implementation
+{
+	task void transferTask()
+	{
+		uint8_t byte;
+        
+        byte = call SpiByte.write(0xCD);
+        if(byte == 0xCD)
+        {
+            call Leds.led0Toggle();
+        } else {
+            call Leds.led1Toggle();
+        }
+        //post transferTask();
+	}
+
+	event void Boot.booted()
+	{
+		call SpiControl.start();
+
+        call SpiConfig.enableLoopBack();
+
+		post transferTask();
+	}
+
 }

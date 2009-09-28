@@ -44,5 +44,6 @@
 #define PLATFORM_BAUDRATE (9600)
 
 #define IRQ_PRIO_UART (0x88)
+#define IRQ_PRIO_SPI (0x87)
 
 #endif // HARDWARE_H

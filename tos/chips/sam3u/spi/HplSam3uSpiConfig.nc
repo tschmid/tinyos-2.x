@@ -92,7 +92,7 @@ interface HplSam3uSpiConfig
     /**
      * Select peripheral chip
      */
-    async command error_t selectChip(uint8_t n);
+    async command error_t selectChip(uint8_t pcs);
 
     /**
      * Set the delay between chip select changes in MCK clock ticks.
