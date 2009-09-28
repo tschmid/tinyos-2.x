@@ -25,7 +25,7 @@
  * @author Thomas Schmid
  */
 
-generic module HplSam3uSpiChipSelP(spi_csr_t csr)
+generic module HplSam3uSpiChipSelP(uint32_t csrp)
 {
     provides
     {
@@ -34,6 +34,8 @@ generic module HplSam3uSpiChipSelP(spi_csr_t csr)
 }
 implementation
 {
+    spi_csr_t *csr = (spi_csr_t*)csrp;
+
     /**
      * Set the Clock polarity
      * 0: inactive state is logic zero
@@ -43,7 +45,7 @@ implementation
     {
         if(p > 1)
             return FAIL;
-        csr.cpol = p;
+        csr->bits.cpol = p;
         return SUCCESS;
     }
 
@@ -56,7 +58,7 @@ implementation
     {
         if(p > 1)
             return FAIL;
-        csr.ncpha = p;
+        csr->bits.ncpha = p;
         return SUCCESS;
     }
 
@@ -66,7 +68,7 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.disableAutoCS()
     {
-        csr.csnaat = 0;
+        csr->bits.csnaat = 0;
         return SUCCESS;
     }
 
@@ -75,7 +77,7 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.enableAutoCS()
     {
-        csr.csnaat = 1;
+        csr->bits.csnaat = 1;
         return SUCCESS;
     }
 
@@ -84,7 +86,7 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.enableCSActive()
     {
-        csr.csaat= 0;
+        csr->bits.csaat= 0;
         return SUCCESS;
     }
 
@@ -93,7 +95,7 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.disableCSActive()
     {
-        csr.csaat= 1;
+        csr->bits.csaat= 1;
         return SUCCESS;
     }
 
@@ -104,7 +106,7 @@ implementation
     {
         if(b > 8)
             return FAIL;
-        csr.bits = b;
+        csr->bits.bits = b;
         return SUCCESS;
     }
 
@@ -117,7 +119,7 @@ implementation
     {
         if(divider == 0)
             return FAIL;
-        csr.scbr = divider;
+        csr->bits.scbr = divider;
         return SUCCESS;
     }
 
@@ -126,7 +128,7 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setClkDelay(uint8_t delay)
     {
-        csr.dlybs = delay;
+        csr->bits.dlybs = delay;
         return SUCCESS;
     }
 
@@ -135,7 +137,7 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setTxDelay(uint8_t delay)
     {
-        csr.dlybct = delay;
+        csr->bits.dlybct = delay;
         return SUCCESS;
     }
 }

@@ -29,34 +29,34 @@ interface HplSam3uSpiInterrupts
 {
     async event void receivedData(uint16_t data);
 
-    async command void disableAllUartIrqs();
+    async command void disableAllSpiIrqs();
 
-    async event void enableRxFullIrq();
-    async event void disableRxFullIrq();
-    async event bool isEnabledRxFullIrq();
+    async command void enableRxFullIrq();
+    async command void disableRxFullIrq();
+    async command bool isEnabledRxFullIrq();
 
-    async event void enableTxDataEmptyIrq();
-    async event void disableTxDataEmptyIrq();
-    async event bool isEnabledTxDataEmptyIrq();
+    async command void enableTxDataEmptyIrq();
+    async command void disableTxDataEmptyIrq();
+    async command bool isEnabledTxDataEmptyIrq();
 
-    async event void enableModeFaultIrq();
-    async event void disableModeFaultIrq();
-    async event bool isEnabledModeFaultIrq();
+    async command void enableModeFaultIrq();
+    async command void disableModeFaultIrq();
+    async command bool isEnabledModeFaultIrq();
 
-    async event void enableOverrunIrq();
-    async event void disableOverrunIrq();
-    async event bool isEnabledOverrunIrq();
+    async command void enableOverrunIrq();
+    async command void disableOverrunIrq();
+    async command bool isEnabledOverrunIrq();
 
-    async event void enableNssRisingIrq();
-    async event void disableNssRisingIrq();
-    async event bool isEnabledNssRisingIrq();
+    async command void enableNssRisingIrq();
+    async command void disableNssRisingIrq();
+    async command bool isEnabledNssRisingIrq();
 
-    async event void enableTxEmptyIrq();
-    async event void disableTxEmptyIrq();
-    async event bool isEnabledTxEmptyIrq();
+    async command void enableTxEmptyIrq();
+    async command void disableTxEmptyIrq();
+    async command bool isEnabledTxEmptyIrq();
 
-    async event void enableUnderrunIrq();
-    async event void disableUnderrunIrq();
-    async event bool isEnabledUnderrunIrq();
+    async command void enableUnderrunIrq();
+    async command void disableUnderrunIrq();
+    async command bool isEnabledUnderrunIrq();
 }
 

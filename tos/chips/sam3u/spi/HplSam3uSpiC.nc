@@ -25,9 +25,9 @@
  * @author Thomas Schmid
  */
 
-#include "hplsam3uspihardware.h"
+#include "sam3uspihardware.h"
 
-module HplSam3uSpiP
+configuration HplSam3uSpiC
 {
     provides
     {
@@ -35,13 +35,13 @@ module HplSam3uSpiP
        interface HplSam3uSpiControl; 
        interface HplSam3uSpiInterrupts; 
        interface HplSam3uSpiStatus; 
-       interface HplSam3uSpiChipSelConfig0; 
-       interface HplSam3uSpiChipSelConfig1; 
-       interface HplSam3uSpiChipSelConfig2; 
-       interface HplSam3uSpiChipSelConfig3; 
+       interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig0;
+       interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig1;
+       interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig2;
+       interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig3;
     }
 }
-configuration
+implementation
 {
     components HplSam3uSpiP;
 
@@ -51,15 +51,15 @@ configuration
     HplSam3uSpiStatus = HplSam3uSpiP;
 
     components
-        new HplSam3uSpiChipSelP(SPI->csr0) as CS0,
-        new HplSam3uSpiChipSelP(SPI->csr1) as CS1,
-        new HplSam3uSpiChipSelP(SPI->csr2) as CS2,
-        new HplSam3uSpiChipSelP(SPI->csr3) as CS3;
+        new HplSam3uSpiChipSelP(0x40008030) as CS0,
+        new HplSam3uSpiChipSelP(0x40008034) as CS1,
+        new HplSam3uSpiChipSelP(0x40008038) as CS2,
+        new HplSam3uSpiChipSelP(0x4000803C) as CS3;
 
     HplSam3uSpiChipSelConfig0 = CS0;
-    HplSam3uSpiChipSelConfig0 = CS1;
-    HplSam3uSpiChipSelConfig0 = CS2;
-    HplSam3uSpiChipSelConfig0 = CS3;
+    HplSam3uSpiChipSelConfig1 = CS1;
+    HplSam3uSpiChipSelConfig2 = CS2;
+    HplSam3uSpiChipSelConfig3 = CS3;
 }
 
 

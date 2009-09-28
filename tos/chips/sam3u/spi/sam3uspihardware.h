@@ -274,7 +274,7 @@ typedef union
  * SPI Register definitions, AT91 ARM Cortex-M3 based Microcontrollers SAM3U
  * Series, Preliminary 9/1/09, p. 620
  */
-typedef struct spi
+typedef struct 
 {
     volatile spi_cr_t cr;     // Control Register
     volatile spi_mr_t mr;     // Mode Register
@@ -284,15 +284,15 @@ typedef struct spi
     volatile spi_ier_t ier;   // Interrupt Enable Register
     volatile spi_idr_t idr;   // Interrupt Disable Register
     volatile spi_imr_t imr;   // Interrupt Mask Register
-    uint32_t reserved[4];
-    volatile spi_csr0_t csr0; // Chip Select Register 0
-    volatile spi_csr1_t csr1; // Chip Select Register 1
-    volatile spi_csr2_t csr2; // Chip Select Register 2
-    volatile spi_csr3_t csr3; // Chip Select Register 3
-    uint32_t reserved[41];
+    uint32_t reserved0[4];
+    volatile spi_csr_t csr0; // Chip Select Register 0
+    volatile spi_csr_t csr1; // Chip Select Register 1
+    volatile spi_csr_t csr2; // Chip Select Register 2
+    volatile spi_csr_t csr3; // Chip Select Register 3
+    uint32_t reserved1[41];
     volatile spi_wpcr_t wpcr; // Write Protection Control Register
     volatile spi_wpsr_t wpsr; // Write Protection Status Register
-    uint32_t reserved[5];
+    uint32_t reserved2[5];
 } spi_t;
 
 /**
