@@ -94,15 +94,29 @@ void DefaultUsageFaultHandler()
  * The handler functions are provided by weak aliases; thus, a regular
  * handler definition will override this.
  */
+#define OWN_FUNCTION_FOR_HANDLERS
+
+#ifdef OWN_FUNCTION_FOR_HANDLERS
+void NmiHandler() {}
+void MpuFaultHandler() {}
+void BusFaultHandler() {}
+void UsageFaultHandler() {}
+void SVCallHandler() {}
+void DebugHandler() {}
+void PendSVHandler() {}
+void SysTickHandler() {}
+#else
 void NmiHandler() __attribute__((weak, alias("DefaultHandler")));
-void HardFaultHandler() __attribute__((weak, alias("DefaultHardFaultHandler")));
-void MpuFaultHandler() __attribute__((weak, alias("DefaultMpuFaultHandler")));
-void BusFaultHandler() __attribute__((weak, alias("DefaultBusFaultHandler")));
-void UsageFaultHandler() __attribute__((weak, alias("DefaultUsageFaultHandler")));
+void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
+void BusFaultHandler() __attribute__((weak, alias("DefaultHandler")));
+void UsageFaultHandler() __attribute__((weak, alias("DefaultHandler")));
 void SVCallHandler() __attribute__((weak, alias("DefaultHandler")));
 void DebugHandler() __attribute__((weak, alias("DefaultHandler")));
 void PendSVHandler() __attribute__((weak, alias("DefaultHandler")));
 void SysTickHandler() __attribute__((weak, alias("DefaultHandler")));
+#endif
+
+void HardFaultHandler() __attribute__((weak, alias("DefaultHardFaultHandler")));
 
 void SupcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
 void RstcIrqHandler() __attribute__((weak, alias("DefaultHandler")));
