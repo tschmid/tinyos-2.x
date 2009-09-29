@@ -242,9 +242,24 @@ configuration HplSam3uGeneralIOC
 implementation
 {
 	components 
-	new HplSam3uGeneralIOPioP(0x400e0c00) as PioA,
-	new HplSam3uGeneralIOPioP(0x400e0e00) as PioB,
-	new HplSam3uGeneralIOPioP(0x400e1000) as PioC;
+	new HplSam3uGeneralIOPioC(0x400e0c00) as PioA,
+	new HplSam3uGeneralIOPioC(0x400e0e00) as PioB,
+	new HplSam3uGeneralIOPioC(0x400e1000) as PioC;
+
+    components HplSam3uGeneralIOP, HilTimerMilliC;
+    PioA.HplPort -> HplSam3uGeneralIOP.HplPortA;
+    PioB.HplPort -> HplSam3uGeneralIOP.HplPortB;
+    PioC.HplPort -> HplSam3uGeneralIOP.HplPortC;
+
+    HplSam3uGeneralIOP.LocalTime -> HilTimerMilliC;
+
+    components HplNVICC, HplSam3uClockC;
+    PioA.PIOIrqControl -> HplNVICC.PIOAInterrupt;
+    PioA.PIOClockControl -> HplSam3uClockC.PIOAPPCntl;
+    PioB.PIOIrqControl -> HplNVICC.PIOBInterrupt;
+    PioB.PIOClockControl -> HplSam3uClockC.PIOBPPCntl;
+    PioC.PIOIrqControl -> HplNVICC.PIOCInterrupt;
+    PioC.PIOClockControl -> HplSam3uClockC.PIOCPPCntl;
 
 	PioA0 = PioA.Pin0;
 	PioA1 = PioA.Pin1;
