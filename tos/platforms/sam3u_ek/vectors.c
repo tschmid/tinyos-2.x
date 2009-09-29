@@ -69,15 +69,36 @@ void DefaultHardFaultHandler()
     while(1) {}
 }
 
+/* Default Mpu Fault Handler
+ */
+void DefaultMpuFaultHandler()
+{
+    while(1) {}
+}
+
+/* Default Bus Fault Handler
+ */
+void DefaultBusFaultHandler()
+{
+    while(1) {}
+}
+
+/* Default Usage Fault Handler
+ */
+void DefaultUsageFaultHandler()
+{
+    while(1) {}
+}
+
 /* By default, every exception and IRQ is handled by the default handler.
  * The handler functions are provided by weak aliases; thus, a regular
  * handler definition will override this.
  */
 void NmiHandler() __attribute__((weak, alias("DefaultHandler")));
 void HardFaultHandler() __attribute__((weak, alias("DefaultHardFaultHandler")));
-void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
-void BusFaultHandler() __attribute__((weak, alias("DefaultHandler")));
-void UsageFaultHandler() __attribute__((weak, alias("DefaultHandler")));
+void MpuFaultHandler() __attribute__((weak, alias("DefaultMpuFaultHandler")));
+void BusFaultHandler() __attribute__((weak, alias("DefaultBusFaultHandler")));
+void UsageFaultHandler() __attribute__((weak, alias("DefaultUsageFaultHandler")));
 void SVCallHandler() __attribute__((weak, alias("DefaultHandler")));
 void DebugHandler() __attribute__((weak, alias("DefaultHandler")));
 void PendSVHandler() __attribute__((weak, alias("DefaultHandler")));
