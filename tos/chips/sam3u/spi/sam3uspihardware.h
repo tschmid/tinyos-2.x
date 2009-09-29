@@ -298,6 +298,6 @@ typedef struct
 /**
  * Memory mapping for the SPI
  */
-volatile spi_t* SPI = (volatile spi_t *) 0x4008000; // SPI Base Address
+volatile spi_t* SPI = (volatile spi_t *) 0x40008000; // SPI Base Address
 
 #endif // _SAM3USPIHARDWARE_H
