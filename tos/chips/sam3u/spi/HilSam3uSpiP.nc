@@ -35,7 +35,7 @@ module HilSam3uSpiP
         interface Init;
         interface StdControl;
         interface SpiByte;
-        //interface SpiPacket; // not supported yet
+        interface SpiPacket; // not supported yet
     }
     uses
     {
@@ -142,6 +142,27 @@ implementation
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
         return byte;
     }
+
+    async command error_t SpiPacket.send( uint8_t* txBuf, uint8_t* rxBuf, uint16_t len)
+    {
+        uint8_t* m_tx_buf = txBuf;
+        uint8_t* m_rx_buf = rxBuf;
+        uint16_t m_len = len;
+        uint16_t m_pos = 0;
+
+        if(len)
+        {
+            while( m_pos < len) 
+            {
+                m_rx_buf[m_pos] = call SpiByte.write(m_tx_buf[m_pos]);
+                m_pos += 1;
+            }
+        }
+        signal SpiPacket.sendDone(m_tx_buf, m_rx_buf, m_len, SUCCESS);
+        return SUCCESS;
+    }
+
+    default async event void SpiPacket.sendDone(uint8_t* tx_buf, uint8_t* rx_buf, uint16_t len, error_t error) {}
 
     async event void HplSam3uSpiInterrupts.receivedData(uint16_t data) {};
     async event void ClockConfig.mainClockChanged() {};

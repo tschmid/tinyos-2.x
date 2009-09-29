@@ -31,7 +31,9 @@ configuration HilSam3uSpiC
     provides
     {
         interface StdControl;
+        interface Resource;
         interface SpiByte;
+        interface SpiPacket;
     }
 }
 implementation
@@ -39,6 +41,8 @@ implementation
     components HilSam3uSpiP;
     StdControl = HilSam3uSpiP;
     SpiByte = HilSam3uSpiP;
+    SpiPacket = HilSam3uSpiP;
+    
 
     components HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiConfig -> HplSam3uSpiC;
@@ -46,6 +50,8 @@ implementation
     HilSam3uSpiP.HplSam3uSpiInterrupts -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiStatus -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiChipSelConfig -> HplSam3uSpiC.HplSam3uSpiChipSelConfig0;
+    Resource = HplSam3uSpiC.ResourceCS0;
+
 
     components MainC;
     MainC.SoftwareInit -> HilSam3uSpiP.Init;
