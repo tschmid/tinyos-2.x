@@ -167,6 +167,9 @@ implementation {
 #ifdef _H_atmega128hardware_H
   int uart_putchar(char c, FILE *stream) __attribute__((noinline)) @C() @spontaneous() {
 #endif
+#ifdef SAM3U_HARDWARE_H
+  int putchar(int c) __attribute__((noinline)) @C() @spontaneous() {
+#endif
     if((state == S_STARTED) && (call Queue.size() >= ((PRINTF_BUFFER_SIZE)/2))) {
       state = S_FLUSHING;
       sendNext();
