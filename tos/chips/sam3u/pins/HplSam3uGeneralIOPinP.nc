@@ -222,6 +222,10 @@ implementation
     async command void HplPin.enableEdgeDetection()
     {
         *((volatile uint32_t *) (pio_addr + 0x0C0)) = 1 << bit;
+        // for precaution, reset additional interrupt modes register
+        // so that we can do just edge detection (rising and falling)
+        *((volatile uint32_t *) (pio_addr + 0x0B4)) = 1 << bit;
+
     }
     async command bool HplPin.isEnabledEdgeDetection()
     {
@@ -231,7 +235,10 @@ implementation
     }
     async command void HplPin.fallingEdgeDetection()
     {
+        // set the bit in falling edge register
         *((volatile uint32_t *) (pio_addr + 0x0D0)) = 1 << bit;
+        // enable additional interrupt modes
+        *((volatile uint32_t *) (pio_addr + 0x0B0)) = 1 << bit;
     }
     async command bool HplPin.isFallingEdgeDetection()
     {
@@ -241,7 +248,10 @@ implementation
     }
     async command void HplPin.risingEdgeDetection()
     {
+        // set the bit in the rising edge detection
 		*((volatile uint32_t *) (pio_addr + 0x0D4)) = 1 << bit;
+        // enable additional interrupt modes
+        *((volatile uint32_t *) (pio_addr + 0x0B0)) = 1 << bit;
     }
 
     async event void HplPort.fired(uint32_t time)
@@ -258,14 +268,14 @@ implementation
     async command error_t Interrupt.enableFallingEdge()
     {
         call HplPin.enableEdgeDetection();
-        call HplPin.risingEdgeDetection();
+        call HplPin.fallingEdgeDetection();
         call HplPin.enableInterrupt();
         return SUCCESS;
     }
     async command error_t Interrupt.enableRisingEdge()
     {
         call HplPin.enableEdgeDetection();
-        call HplPin.fallingEdgeDetection();
+        call HplPin.risingEdgeDetection();
         call HplPin.enableInterrupt();
         return SUCCESS;
     }
