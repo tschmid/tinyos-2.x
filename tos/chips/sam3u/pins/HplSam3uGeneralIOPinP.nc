@@ -41,6 +41,7 @@ generic module HplSam3uGeneralIOPinP(uint32_t pio_addr, uint8_t bit)
 	{
 		interface GeneralIO as IO;
         interface GpioInterrupt as Interrupt;
+        interface GpioCapture as Capture;
 		interface HplSam3uGeneralIOPin as HplPin;
 	}
     uses
@@ -246,6 +247,7 @@ implementation
     async event void HplPort.fired(uint32_t time)
     {
         signal Interrupt.fired();
+        signal Capture.captured((uint16_t)time);
     }
 
     async command error_t Interrupt.disable()
@@ -258,14 +260,30 @@ implementation
         call HplPin.enableEdgeDetection();
         call HplPin.risingEdgeDetection();
         call HplPin.enableInterrupt();
+        return SUCCESS;
     }
     async command error_t Interrupt.enableRisingEdge()
     {
         call HplPin.enableEdgeDetection();
         call HplPin.fallingEdgeDetection();
         call HplPin.enableInterrupt();
+        return SUCCESS;
+    }
+
+    async command error_t Capture.captureRisingEdge()
+    {
+        return call Interrupt.enableRisingEdge();
+    }
+    async command error_t Capture.captureFallingEdge()
+    {
+        return call Interrupt.enableFallingEdge();
+    }
+    async command void Capture.disable()
+    {
+        call Interrupt.disable();
     }
 
     default async event void Interrupt.fired() {}
+    default async event void Capture.captured(uint16_t time) {}
 }
 
