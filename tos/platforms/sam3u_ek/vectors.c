@@ -79,14 +79,22 @@ void DefaultHardFaultHandler()
 #define OWN_FUNCTION_FOR_HANDLERS
 
 #ifdef OWN_FUNCTION_FOR_HANDLERS
-void NmiHandler() __attribute__((weak)) {}
-void MpuFaultHandler() __attribute__((weak)) {}
-void BusFaultHandler() __attribute__((weak)) {}
-void UsageFaultHandler() __attribute__((weak)) {}
-void SVCallHandler() __attribute__((weak)) {}
-void DebugHandler() __attribute__((weak)) {}
-void PendSVHandler() __attribute__((weak)) {}
-void SysTickHandler() __attribute__((weak)) {}
+void NmiHandler() __attribute__((weak));
+void MpuFaultHandler() __attribute__((weak));
+void BusFaultHandler() __attribute__((weak));
+void UsageFaultHandler() __attribute__((weak));
+void SVCallHandler() __attribute__((weak));
+void DebugHandler() __attribute__((weak));
+void PendSVHandler() __attribute__((weak));
+void SysTickHandler() __attribute__((weak));
+void NmiHandler() {}
+void MpuFaultHandler() {}
+void BusFaultHandler() {}
+void UsageFaultHandler() {}
+void SVCallHandler() {}
+void DebugHandler() {}
+void PendSVHandler() {}
+void SysTickHandler() {}
 #else
 void NmiHandler() __attribute__((weak, alias("DefaultHandler")));
 void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
