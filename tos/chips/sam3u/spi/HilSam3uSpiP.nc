@@ -154,6 +154,11 @@ implementation
         {
             while( m_pos < len) 
             {
+                if(m_pos == len-1)
+                {
+                    // last transfer, deassert CS after this transfer.
+                    call HplSam3uSpiControl.lastTransfer();
+                }
                 m_rx_buf[m_pos] = call SpiByte.write(m_tx_buf[m_pos]);
                 m_pos += 1;
             }
