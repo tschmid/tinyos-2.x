@@ -44,7 +44,13 @@ generic module ThreadInfoP(uint16_t stack_size, uint8_t thread_id) {
   }
 }
 implementation {
+#ifdef PLATFORM_SAM3U_EK
+  // the stack has to be word-aligned on SAM3U,
+  // otherwise we'll get bus faults
+  uint8_t stack[stack_size] __attribute__((aligned(4)));
+#else
   uint8_t stack[stack_size];
+#endif
   thread_t thread_info;
   
   void run_thread(void* arg) __attribute__((noinline)) {
