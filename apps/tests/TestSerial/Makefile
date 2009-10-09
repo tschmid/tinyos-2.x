@@ -9,6 +9,8 @@ TestSerial.class: $(wildcard *.java) TestSerialMsg.java
 
 TestSerialMsg.java:
 	mig java -target=null $(CFLAGS) -java-classname=TestSerialMsg TestSerial.h test_serial_msg -o $@
+	# does not work with SAM3U CFLAGS, so omit that when compiling for SAM3U
+	mig java -target=null -java-classname=TestSerialMsg TestSerial.h test_serial_msg -o $@
 
 
 include $(MAKERULES)
