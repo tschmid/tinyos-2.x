@@ -24,6 +24,7 @@
  * @author Thomas Schmid
  **/
 #include <sam3usmchardware.h>
+#include "lcd.h"
 #include "color.h"
 #include "font.h"
 #include "font10x14.h"
@@ -71,8 +72,6 @@ implementation
         ((color >> 5) & 0x7E0) | \
         ((color >> 3) & 0x1F))
 #define BOARD_LCD_BASE   0x62000000
-#define BOARD_LCD_HEIGHT 320
-#define BOARD_LCD_WIDTH  240
 
     const Font gFont = {10, 14};
 
@@ -208,7 +207,7 @@ implementation
     //------------------------------------------------------------------------------
     command void Lcd.setBacklight (uint8_t level)
     {
-        uint32_t i;
+        uint32_t i,j;
 
         // Enable pins
         call Backlight.makeOutput();
@@ -223,12 +222,12 @@ implementation
 
 
             call Backlight.clr();
-            call Backlight.clr();
-            call Backlight.clr();
+            j = 48;
+            while(j--);
 
             call Backlight.set();
-            call Backlight.set();
-            call Backlight.set();
+            j = 48;
+            while(j--);
 
         }
     }

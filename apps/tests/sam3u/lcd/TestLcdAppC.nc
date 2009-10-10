@@ -42,4 +42,7 @@ implementation
     components new TimerMilliC() as T0;
     TestLcdC.ChangeTimer -> T0;
 
+    components RandomC;
+    TestLcdC.Random -> RandomC;
+
 }
