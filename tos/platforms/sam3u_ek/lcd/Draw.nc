@@ -53,6 +53,21 @@ interface Draw
             uint32_t fontColor,
             uint32_t bgColor);
 
+    command void drawInt(
+            uint32_t x,
+            uint32_t y,
+            uint32_t n,
+            int8_t sign,
+            uint32_t fontColor);
+
+    command void drawIntWithBGColor(
+            uint32_t x,
+            uint32_t y,
+            uint32_t n,
+            int8_t sign,
+            uint32_t fontColor,
+            uint32_t bgColor);
+
     command void getStringSize(
             const char *pString,
             uint32_t *pWidth,

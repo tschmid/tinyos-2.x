@@ -48,7 +48,6 @@ implementation
         BLUE,
         WHITE,
         STRING,
-        BACK,
         RAND,
     };
     uint8_t state;
@@ -119,21 +118,12 @@ implementation
                     call Draw.drawString(10, 110, l3, COLOR_NAVY);
                     call Draw.drawString(10, 170, l4, COLOR_BLACK);
                     call Draw.drawString(10, 190, l5, COLOR_BLACK);
+                    call Draw.drawInt(BOARD_LCD_WIDTH-20, 210, 123456789L, 1, COLOR_BLACK);
+                    call Draw.drawInt(BOARD_LCD_WIDTH-20, 230, 987654321L, -1, COLOR_BLACK);
 
                     call ChangeTimer.startOneShot(10000);
 
-                    state = BACK;
-                    break;
-                }
-
-            case BACK:
-                {
-                    call ChangeTimer.startPeriodic(50);
-                    call Lcd.setBacklight(backgrnd%32);
-                    backgrnd++;
-
-                    if(backgrnd >= 64)
-                        state = RAND;
+                    state = RAND;
                     break;
                 }
             case RAND:
