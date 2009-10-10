@@ -80,7 +80,7 @@ implementation
     /// Initializes the LCD controller.
     /// \param pLcdBase   LCD base address.
     //------------------------------------------------------------------------------
-    async command void Lcd.initialize(void)
+    command void Lcd.initialize(void)
     {
         // Enable pins
         call DB0.disablePioControl();
@@ -174,7 +174,7 @@ implementation
 
     }
 
-    async event void Hx8347.initializeDone(error_t err)
+    event void Hx8347.initializeDone(error_t err)
     {
         if(err == SUCCESS)
             call Lcd.setBacklight(25);
@@ -184,12 +184,12 @@ implementation
     //------------------------------------------------------------------------------
     /// Turn on the LCD
     //------------------------------------------------------------------------------
-    async command void Lcd.start(void)
+    command void Lcd.start(void)
     {
         call Hx8347.on((void *)BOARD_LCD_BASE);
     }
 
-    async event void Hx8347.onDone()
+    event void Hx8347.onDone()
     {
         signal Lcd.startDone();
     }
@@ -197,7 +197,7 @@ implementation
     //------------------------------------------------------------------------------
     /// Turn off the LCD
     //------------------------------------------------------------------------------
-    async command void Lcd.stop(void)
+    command void Lcd.stop(void)
     {
         call Hx8347.off((void *)BOARD_LCD_BASE);
     }
@@ -206,7 +206,7 @@ implementation
     /// Set the backlight of the LCD.
     /// \param level   Backlight brightness level [1..32], 32 is maximum level.
     //------------------------------------------------------------------------------
-    async command void Lcd.setBacklight (uint8_t level)
+    command void Lcd.setBacklight (uint8_t level)
     {
         uint32_t i;
 
@@ -233,7 +233,7 @@ implementation
         }
     }
 
-    async command void* Lcd.displayBuffer(void* pBuffer)
+    command void* Lcd.displayBuffer(void* pBuffer)
     {
         return (void *) BOARD_LCD_BASE;
     }
@@ -243,7 +243,7 @@ implementation
     ///// Only works in 24-bits packed mode for now.
     ///// \param color  Fill color.
     ////------------------------------------------------------------------------------
-    async command void Draw.fill(uint32_t color)
+    command void Draw.fill(uint32_t color)
     {
         uint32_t i;
         unsigned short color16 = RGB24ToRGB16(color);
@@ -264,7 +264,7 @@ implementation
     /// \param y  Y-coordinate of pixel.
     /// \param color  Pixel color.
     //------------------------------------------------------------------------------
-    async command void Draw.drawPixel(
+    command void Draw.drawPixel(
             uint32_t x,
             uint32_t y,
             uint32_t color)
@@ -285,7 +285,7 @@ implementation
     /// \param height  Rectangle height in pixels.
     /// \param color  Rectangle color.
     //------------------------------------------------------------------------------
-    async command void Draw.drawRectangle(
+    command void Draw.drawRectangle(
             uint32_t x,
             uint32_t y,
             uint32_t width,
@@ -310,7 +310,7 @@ implementation
     /// \param pString  String to display.
     /// \param color  String color.
     //------------------------------------------------------------------------------
-    async command void Draw.drawString(
+    command void Draw.drawString(
             uint32_t x,
             uint32_t y,
             const char *pString,
@@ -341,7 +341,7 @@ implementation
     /// \param pString  String to display.
     /// \param color  String color.
     //------------------------------------------------------------------------------
-    async command void Draw.drawStringWithBGColor(
+    command void Draw.drawStringWithBGColor(
             uint32_t x,
             uint32_t y,
             const char *pString,
@@ -374,7 +374,7 @@ implementation
     /// \param pHeight  Pointer for storing the string height (optional).
     /// \return String width in pixels.
     //------------------------------------------------------------------------------
-    async command void Draw.getStringSize(
+    command void Draw.getStringSize(
             const char *pString,
             uint32_t *pWidth,
             uint32_t *pHeight)
@@ -408,7 +408,7 @@ implementation
     /// \param c  Character to output.
     /// \param color  Character color.
     //------------------------------------------------------------------------------
-    async command void Draw.drawChar(
+    command void Draw.drawChar(
             uint32_t x,
             uint32_t y,
             char c,
@@ -448,7 +448,7 @@ implementation
     /// \param fontColor  Character foreground color.
     /// \param bgColor Background color of character
     //------------------------------------------------------------------------------
-    async command void Draw.drawCharWithBGColor(
+    command void Draw.drawCharWithBGColor(
             uint32_t x,
             uint32_t y,
             char c,

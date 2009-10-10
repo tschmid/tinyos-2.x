@@ -53,7 +53,7 @@ implementation
         call Lcd.initialize();
 	}
 
-    async event void Lcd.initializeDone(error_t err)
+    event void Lcd.initializeDone(error_t err)
     {
         if(err != SUCCESS)
         {
@@ -66,7 +66,7 @@ implementation
         }
     }
 
-    async event void Lcd.startDone()
+    event void Lcd.startDone()
     {
         call Leds.led0On();
         call ChangeTimer.startPeriodic(1024);

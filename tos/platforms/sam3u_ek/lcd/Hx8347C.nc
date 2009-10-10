@@ -168,7 +168,7 @@ implementation
     /// \param reg        Register address.
     /// \param data       Data to be written.
     //------------------------------------------------------------------------------
-    async command void Hx8347.writeReg(void *pLcdBase, uint8_t reg, uint16_t data)
+    command void Hx8347.writeReg(void *pLcdBase, uint8_t reg, uint16_t data)
     {
         LCD_IR(pLcdBase) = reg;
         LCD_D(pLcdBase)  = data;
@@ -180,7 +180,7 @@ implementation
     /// \param reg        Register address.
     /// \return data      Data to be read.
     //------------------------------------------------------------------------------
-    async command uint16_t Hx8347.readReg(void *pLcdBase, uint8_t reg)
+    command uint16_t Hx8347.readReg(void *pLcdBase, uint8_t reg)
     {
         LCD_IR(pLcdBase) = reg;
         return LCD_D(pLcdBase);
@@ -192,7 +192,7 @@ implementation
     /// \param reg        Register address.
     /// \return data      Status Data.
     //------------------------------------------------------------------------------
-    async command uint16_t Hx8347.readStatus(void *pLcdBase)
+    command uint16_t Hx8347.readStatus(void *pLcdBase)
     {
         return LCD_SR(pLcdBase);
     }
@@ -201,7 +201,7 @@ implementation
     /// Prepare to write GRAM data.
     /// \param pLcdBase   LCD base address.
     //------------------------------------------------------------------------------
-    async command void Hx8347.writeRAM_Prepare(void *pLcdBase)
+    command void Hx8347.writeRAM_Prepare(void *pLcdBase)
     {
         LCD_IR(pLcdBase) = HX8347_R22H;
     }
@@ -211,7 +211,7 @@ implementation
     /// \param pLcdBase   LCD base address.
     /// \param color      16-bits RGB color.
     //------------------------------------------------------------------------------
-    async command void Hx8347.writeRAM(void *pLcdBase, uint16_t color)
+    command void Hx8347.writeRAM(void *pLcdBase, uint16_t color)
     {
         // Write 16-bit GRAM Reg
         LCD_D(pLcdBase) = color;
@@ -222,7 +222,7 @@ implementation
     /// \param pLcdBase   LCD base address.
     /// \return           16-bits RGB color.
     //------------------------------------------------------------------------------
-    async command uint16_t Hx8347.readRAM(void *pLcdBase)
+    command uint16_t Hx8347.readRAM(void *pLcdBase)
     {
         // Read 16-bit GRAM Reg
         return LCD_D(pLcdBase);
@@ -238,7 +238,7 @@ implementation
     /// Initialize the LCD controller.
     /// \param pLcdBase   LCD base address.
     //------------------------------------------------------------------------------
-    async command void Hx8347.initialize(void *pLcdBase)
+    command void Hx8347.initialize(void *pLcdBase)
     {
         uint16_t chipid;
 
@@ -341,7 +341,7 @@ implementation
     /// Turn on the LCD.
     /// \param pLcdBase   LCD base address.
     //------------------------------------------------------------------------------
-    async command void Hx8347.on(void *pLcdBase)
+    command void Hx8347.on(void *pLcdBase)
     {
         switch(onState)
         {
@@ -373,7 +373,7 @@ implementation
     /// Turn off the LCD.
     /// \param pLcdBase   LCD base address.
     //------------------------------------------------------------------------------
-    async command void Hx8347.off(void *pLcdBase)
+    command void Hx8347.off(void *pLcdBase)
     {
         call Hx8347.writeReg(pLcdBase, HX8347_R90H, 0x00); // SAP=0000 0000
         call Hx8347.writeReg(pLcdBase, HX8347_R26H, 0x00); // GON=0, DTE=0, D=00
@@ -385,7 +385,7 @@ implementation
     /// \param x          X-coordinate of upper-left corner on LCD.
     /// \param y          Y-coordinate of upper-left corner on LCD.
     //------------------------------------------------------------------------------
-    async command void Hx8347.setCursor(void *pLcdBase, uint16_t x, uint16_t y)
+    command void Hx8347.setCursor(void *pLcdBase, uint16_t x, uint16_t y)
     {
         uint8_t x1, x2, y1l, y2;
 
@@ -399,6 +399,6 @@ implementation
         call Hx8347.writeReg(pLcdBase, HX8347_R07H, y1l); // row low
     }
 
-    default async event void Hx8347.initializeDone(error_t err) {};
-    default async event void Hx8347.onDone() {};
+    default event void Hx8347.initializeDone(error_t err) {};
+    default event void Hx8347.onDone() {};
 }

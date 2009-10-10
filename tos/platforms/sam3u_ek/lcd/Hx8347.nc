@@ -26,16 +26,16 @@
 
 interface Hx8347
 {
-    async command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
-    async command uint16_t readReg(void *pLcdBase, uint8_t reg);
-    async command uint16_t readStatus(void *pLcdBase);
-    async command void writeRAM_Prepare(void *pLcdBase);
-    async command void writeRAM(void *pLcdBase, uint16_t color);
-    async command uint16_t readRAM(void *pLcdBase);
-    async command void initialize(void *pLcdBase);
-    async event void initializeDone(error_t err);
-    async command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
-    async command void on(void *pLcdBase);
-    async event void onDone();
-    async command void off(void *pLcdBase);
+    command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
+    command uint16_t readReg(void *pLcdBase, uint8_t reg);
+    command uint16_t readStatus(void *pLcdBase);
+    command void writeRAM_Prepare(void *pLcdBase);
+    command void writeRAM(void *pLcdBase, uint16_t color);
+    command uint16_t readRAM(void *pLcdBase);
+    command void initialize(void *pLcdBase);
+    event void initializeDone(error_t err);
+    command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
+    command void on(void *pLcdBase);
+    event void onDone();
+    command void off(void *pLcdBase);
 }
