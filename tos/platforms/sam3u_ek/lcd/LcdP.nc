@@ -75,10 +75,10 @@ implementation
 
     const Font gFont = {10, 14};
 
-    //------------------------------------------------------------------------------
-    /// Initializes the LCD controller.
-    /// \param pLcdBase   LCD base address.
-    //------------------------------------------------------------------------------
+    /**
+     * Initializes the LCD controller.
+     * \param pLcdBase   LCD base address.
+     */
     command void Lcd.initialize(void)
     {
         // Enable pins
@@ -146,6 +146,9 @@ implementation
         // Enable peripheral clock
         call HSMC4ClockControl.enable();
 
+        // Enable pins
+        call Backlight.makeOutput();
+
         // EBI SMC Configuration
         SMC_CS2->setup.flat              = 0;
         SMC_CS2->setup.bits.nwe_setup    = 4;
@@ -180,9 +183,9 @@ implementation
         signal Lcd.initializeDone(err);
     }
 
-    //------------------------------------------------------------------------------
-    /// Turn on the LCD
-    //------------------------------------------------------------------------------
+    /**
+     * Turn on the LCD
+     */
     command void Lcd.start(void)
     {
         call Hx8347.on((void *)BOARD_LCD_BASE);
@@ -193,40 +196,36 @@ implementation
         signal Lcd.startDone();
     }
 
-    //------------------------------------------------------------------------------
-    /// Turn off the LCD
-    //------------------------------------------------------------------------------
+    /**
+     * Turn off the LCD
+     */
     command void Lcd.stop(void)
     {
         call Hx8347.off((void *)BOARD_LCD_BASE);
     }
 
-    //------------------------------------------------------------------------------
-    /// Set the backlight of the LCD.
-    /// \param level   Backlight brightness level [1..32], 32 is maximum level.
-    //------------------------------------------------------------------------------
+    /**
+     * Set the backlight of the LCD.
+     * \param level   Backlight brightness level [1..32], 32 is maximum level.
+     */
     command void Lcd.setBacklight (uint8_t level)
     {
         uint32_t i,j;
 
-        // Enable pins
-        call Backlight.makeOutput();
-
         // Switch off backlight
         call Backlight.clr();
-        i = 600 * (48000000 / 1000000);    // wait for at least 500us
+        i = 800 * (48000000 / 1000000);    // wait for at least 500us
         while(i--);
 
         // Set new backlight level
         for (i = 0; i < level; i++) {
 
-
             call Backlight.clr();
-            j = 48;
+            j = 10;
             while(j--);
 
             call Backlight.set();
-            j = 48;
+            j = 10;
             while(j--);
 
         }
@@ -237,11 +236,11 @@ implementation
         return (void *) BOARD_LCD_BASE;
     }
 
-    //------------------------------------------------------------------------------
-    ///// Fills the given LCD buffer with a particular color.
-    ///// Only works in 24-bits packed mode for now.
-    ///// \param color  Fill color.
-    ////------------------------------------------------------------------------------
+    /**
+     * Fills the given LCD buffer with a particular color.
+     * Only works in 24-bits packed mode for now.
+     * \param color  Fill color.
+     */
     command void Draw.fill(uint32_t color)
     {
         uint32_t i;
@@ -256,13 +255,13 @@ implementation
         }
     }
 
-    //------------------------------------------------------------------------------
-    /// Sets the specified pixel to the given color.
-    /// !!! Only works in 24-bits packed mode for now. !!!
-    /// \param x  X-coordinate of pixel.
-    /// \param y  Y-coordinate of pixel.
-    /// \param color  Pixel color.
-    //------------------------------------------------------------------------------
+    /**
+     * Sets the specified pixel to the given color.
+     * !!! Only works in 24-bits packed mode for now. !!!
+     * \param x  X-coordinate of pixel.
+     * \param y  Y-coordinate of pixel.
+     * \param color  Pixel color.
+     */
     command void Draw.drawPixel(
             uint32_t x,
             uint32_t y,
@@ -276,14 +275,14 @@ implementation
         call Hx8347.writeRAM(pBuffer, color16);
     }
 
-    //------------------------------------------------------------------------------
-    /// Draws a rectangle inside a LCD buffer, at the given coordinates.
-    /// \param x  X-coordinate of upper-left rectangle corner.
-    /// \param y  Y-coordinate of upper-left rectangle corner.
-    /// \param width  Rectangle width in pixels.
-    /// \param height  Rectangle height in pixels.
-    /// \param color  Rectangle color.
-    //------------------------------------------------------------------------------
+    /**
+     * Draws a rectangle inside a LCD buffer, at the given coordinates.
+     * \param x  X-coordinate of upper-left rectangle corner.
+     * \param y  Y-coordinate of upper-left rectangle corner.
+     * \param width  Rectangle width in pixels.
+     * \param height  Rectangle height in pixels.
+     * \param color  Rectangle color.
+     */
     command void Draw.drawRectangle(
             uint32_t x,
             uint32_t y,
@@ -301,21 +300,21 @@ implementation
             }
         }
     }
-    //------------------------------------------------------------------------------
-    /// Draws a string inside a LCD buffer, at the given coordinates. Line breaks
-    /// will be honored.
-    /// \param x  X-coordinate of string top-left corner.
-    /// \param y  Y-coordinate of string top-left corner.
-    /// \param pString  String to display.
-    /// \param color  String color.
-    //------------------------------------------------------------------------------
+    /**
+     * Draws a string inside a LCD buffer, at the given coordinates. Line breaks
+     * will be honored.
+     * \param x  X-coordinate of string top-left corner.
+     * \param y  Y-coordinate of string top-left corner.
+     * \param pString  String to display.
+     * \param color  String color.
+     */
     command void Draw.drawString(
             uint32_t x,
             uint32_t y,
             const char *pString,
             uint32_t color)
     {
-        unsigned xorg = x;
+        uint32_t xorg = x;
 
         while (*pString != 0) {
             if (*pString == '\n') {
@@ -332,14 +331,14 @@ implementation
         }
     }
 
-    //------------------------------------------------------------------------------
-    /// Draws a string inside a LCD buffer, at the given coordinates. Line breaks
-    /// will be honored.
-    /// \param x  X-coordinate of string top-left corner.
-    /// \param y  Y-coordinate of string top-left corner.
-    /// \param pString  String to display.
-    /// \param color  String color.
-    //------------------------------------------------------------------------------
+    /**
+     * Draws a string inside a LCD buffer, at the given coordinates. Line breaks
+     * will be honored.
+     * \param x  X-coordinate of string top-left corner.
+     * \param y  Y-coordinate of string top-left corner.
+     * \param pString  String to display.
+     * \param color  String color.
+     */
     command void Draw.drawStringWithBGColor(
             uint32_t x,
             uint32_t y,
@@ -347,7 +346,7 @@ implementation
             uint32_t fontColor,
             uint32_t bgColor)
     {
-        unsigned xorg = x;
+        uint32_t xorg = x;
         void* pBuffer = (void*)BOARD_LCD_BASE;
 
         while (*pString != 0) {
@@ -365,14 +364,68 @@ implementation
         }
     }
 
-    //------------------------------------------------------------------------------
-    /// Returns the width & height in pixels that a string will occupy on the screen
-    /// if drawn using Draw.drawString.
-    /// \param pString  String.
-    /// \param pWidth  Pointer for storing the string width (optional).
-    /// \param pHeight  Pointer for storing the string height (optional).
-    /// \return String width in pixels.
-    //------------------------------------------------------------------------------
+    /**
+     * Draws an integer inside the LCD buffer
+     * \param x X-Coordinate of the integers top-right corner.
+     * \param y Y-Coordinate of the integers top-right corner.
+     * \param n Number to be printed on the screen
+     * \param sign <0 if negative number, >=0 if positive
+     * \param fontColor Integer color.
+     */
+    command void Draw.drawInt(
+            uint32_t x,
+            uint32_t y,
+            uint32_t n,
+            int8_t sign,
+            uint32_t fontColor)
+    {
+        uint8_t i;
+        i = 0;
+        do {       /* generate digits in reverse order */
+            char c = n % 10 + '0';   /* get next digit */
+            call Draw.drawChar(x, y, c, fontColor);
+            x -= (gFont.width + 2);
+        } while ((n /= 10) > 0);     /* delete it */
+        if (sign < 0)
+            call Draw.drawChar(x, y, '-', fontColor);
+    }
+
+    /**
+     * Draws an integer inside the LCD buffer
+     * \param x X-Coordinate of the integers top-right corner.
+     * \param y Y-Coordinate of the integers top-right corner.
+     * \param n Number to be printed on the screen
+     * \param sign <0 if negative number, >=0 if positive
+     * \param color Integer color.
+     * \param bgColor Color of the background.
+     */
+    command void Draw.drawIntWithBGColor(
+            uint32_t x,
+            uint32_t y,
+            uint32_t n,
+            int8_t sign,
+            uint32_t fontColor,
+            uint32_t bgColor)
+    {
+        uint8_t i;
+        i = 0;
+        do {       /* generate digits in reverse order */
+            char c = n % 10 + '0';   /* get next digit */
+            call Draw.drawCharWithBGColor(x, y, c, fontColor, bgColor);
+            x -= (gFont.width + 2);
+        } while ((n /= 10) > 0);     /* delete it */
+        if (sign < 0)
+            call Draw.drawCharWithBGColor(x, y, '-', fontColor, bgColor);
+    }
+
+    /**
+     * Returns the width & height in pixels that a string will occupy on the screen
+     * if drawn using Draw.drawString.
+     * \param pString  String.
+     * \param pWidth  Pointer for storing the string width (optional).
+     * \param pHeight  Pointer for storing the string height (optional).
+     * \return String width in pixels.
+     */
     command void Draw.getStringSize(
             const char *pString,
             uint32_t *pWidth,
@@ -400,13 +453,13 @@ implementation
         if (pHeight) *pHeight = height;
     }
 
-    //------------------------------------------------------------------------------
-    /// Draws an ASCII character on the given LCD buffer.
-    /// \param x  X-coordinate of character upper-left corner.
-    /// \param y  Y-coordinate of character upper-left corner.
-    /// \param c  Character to output.
-    /// \param color  Character color.
-    //------------------------------------------------------------------------------
+    /**
+     * Draws an ASCII character on the given LCD buffer.
+     * \param x  X-coordinate of character upper-left corner.
+     * \param y  Y-coordinate of character upper-left corner.
+     * \param c  Character to output.
+     * \param color  Character color.
+     */
     command void Draw.drawChar(
             uint32_t x,
             uint32_t y,
@@ -439,14 +492,14 @@ implementation
         }
     }
 
-    //------------------------------------------------------------------------------
-    /// Draws an ASCII character on the given LCD buffer.
-    /// \param x  X-coordinate of character upper-left corner.
-    /// \param y  Y-coordinate of character upper-left corner.
-    /// \param c  Character to output.
-    /// \param fontColor  Character foreground color.
-    /// \param bgColor Background color of character
-    //------------------------------------------------------------------------------
+    /**
+     * Draws an ASCII character on the given LCD buffer.
+     * \param x  X-coordinate of character upper-left corner.
+     * \param y  Y-coordinate of character upper-left corner.
+     * \param c  Character to output.
+     * \param fontColor  Character foreground color.
+     * \param bgColor Background color of character
+     */
     command void Draw.drawCharWithBGColor(
             uint32_t x,
             uint32_t y,
@@ -483,6 +536,5 @@ implementation
             }
         }
     }
-
 
 }

@@ -37,9 +37,6 @@ module Hx8347C
 implementation
 {
 
-    //------------------------------------------------------------------------------
-    //         Types
-    //------------------------------------------------------------------------------
     typedef volatile uint16_t REG16;
 
     enum {
@@ -59,21 +56,18 @@ implementation
 
     void* spLcdBase;
 
-    //------------------------------------------------------------------------------
-    //         Definitions
-    //------------------------------------------------------------------------------
 #define BOARD_LCD_RS     (1 << 1)
-    /// LCD index register address
+    // LCD index register address
 #define LCD_IR(baseAddr) (*((REG16 *)(baseAddr)))
-    /// LCD status register address
+    // LCD status register address
 #define LCD_SR(baseAddr) (*((REG16 *)(baseAddr)))
-    /// LCD data address
+    // LCD data address
 #define LCD_D(baseAddr)  (*((REG16 *)((uint32_t)(baseAddr) + BOARD_LCD_RS)))
 
-    /// HX8347 ID code
+    // HX8347 ID code
 #define HX8347_HIMAXID_CODE    0x47
 
-    /// HX8347 LCD Registers
+    // HX8347 LCD Registers
 #define HX8347_R00H        0x00
 #define HX8347_R01H        0x01
 #define HX8347_R02H        0x02
@@ -158,70 +152,66 @@ implementation
 #define HX8347_R94H        0x94
 #define HX8347_R95H        0x95
 
-    //------------------------------------------------------------------------------
-    //         Global functions
-    //------------------------------------------------------------------------------
-
-    //------------------------------------------------------------------------------
-    /// Write data to LCD Register.
-    /// \param pLcdBase   LCD base address.
-    /// \param reg        Register address.
-    /// \param data       Data to be written.
-    //------------------------------------------------------------------------------
+    /**
+     * Write data to LCD Register.
+     * \param pLcdBase   LCD base address.
+     * \param reg        Register address.
+     * \param data       Data to be written.
+     */
     command void Hx8347.writeReg(void *pLcdBase, uint8_t reg, uint16_t data)
     {
         LCD_IR(pLcdBase) = reg;
         LCD_D(pLcdBase)  = data;
     }
 
-    //------------------------------------------------------------------------------
-    /// Read data from LCD Register.
-    /// \param pLcdBase   LCD base address.
-    /// \param reg        Register address.
-    /// \return data      Data to be read.
-    //------------------------------------------------------------------------------
+    /**
+     * Read data from LCD Register.
+     * \param pLcdBase   LCD base address.
+     * \param reg        Register address.
+     * \return data      Data to be read.
+     */
     command uint16_t Hx8347.readReg(void *pLcdBase, uint8_t reg)
     {
         LCD_IR(pLcdBase) = reg;
         return LCD_D(pLcdBase);
     }
 
-    //------------------------------------------------------------------------------
-    /// Read LCD status Register.
-    /// \param pLcdBase   LCD base address.
-    /// \param reg        Register address.
-    /// \return data      Status Data.
-    //------------------------------------------------------------------------------
+    /**
+     * Read LCD status Register.
+     * \param pLcdBase   LCD base address.
+     * \param reg        Register address.
+     * \return data      Status Data.
+     */
     command uint16_t Hx8347.readStatus(void *pLcdBase)
     {
         return LCD_SR(pLcdBase);
     }
 
-    //------------------------------------------------------------------------------
-    /// Prepare to write GRAM data.
-    /// \param pLcdBase   LCD base address.
-    //------------------------------------------------------------------------------
+    /**
+     * Prepare to write GRAM data.
+     * \param pLcdBase   LCD base address.
+     */
     command void Hx8347.writeRAM_Prepare(void *pLcdBase)
     {
         LCD_IR(pLcdBase) = HX8347_R22H;
     }
 
-    //------------------------------------------------------------------------------
-    /// Write data to LCD GRAM.
-    /// \param pLcdBase   LCD base address.
-    /// \param color      16-bits RGB color.
-    //------------------------------------------------------------------------------
+    /**
+     * Write data to LCD GRAM.
+     * \param pLcdBase   LCD base address.
+     * \param color      16-bits RGB color.
+     */
     command void Hx8347.writeRAM(void *pLcdBase, uint16_t color)
     {
         // Write 16-bit GRAM Reg
         LCD_D(pLcdBase) = color;
     }
 
-    //------------------------------------------------------------------------------
-    /// Read GRAM data.
-    /// \param pLcdBase   LCD base address.
-    /// \return           16-bits RGB color.
-    //------------------------------------------------------------------------------
+    /**
+     * Read GRAM data.
+     * \param pLcdBase   LCD base address.
+     * \return           16-bits RGB color.
+     */
     command uint16_t Hx8347.readRAM(void *pLcdBase)
     {
         // Read 16-bit GRAM Reg
@@ -234,10 +224,10 @@ implementation
         call Hx8347.initialize(spLcdBase);
     }
 
-    //------------------------------------------------------------------------------
-    /// Initialize the LCD controller.
-    /// \param pLcdBase   LCD base address.
-    //------------------------------------------------------------------------------
+    /**
+     * Initialize the LCD controller.
+     * \param pLcdBase   LCD base address.
+     */
     command void Hx8347.initialize(void *pLcdBase)
     {
         uint16_t chipid;
@@ -337,10 +327,10 @@ implementation
     {
         call Hx8347.on(spLcdBase);
     }
-    //------------------------------------------------------------------------------
-    /// Turn on the LCD.
-    /// \param pLcdBase   LCD base address.
-    //------------------------------------------------------------------------------
+    /**
+     * Turn on the LCD.
+     * \param pLcdBase   LCD base address.
+     */
     command void Hx8347.on(void *pLcdBase)
     {
         switch(onState)
@@ -353,7 +343,7 @@ implementation
                 call OnTimer.startOneShot(100);
                 onState = ON1;
                 break;
-                
+
             case ON1:
                 call Hx8347.writeReg(pLcdBase, HX8347_R26H, 0x24); // GON=1, DTE=0, D=01
                 call Hx8347.writeReg(pLcdBase, HX8347_R26H, 0x2C); // GON=1, DTE=0, D=11
@@ -369,22 +359,22 @@ implementation
         }
     }
 
-    //------------------------------------------------------------------------------
-    /// Turn off the LCD.
-    /// \param pLcdBase   LCD base address.
-    //------------------------------------------------------------------------------
+    /**
+     * Turn off the LCD.
+     * \param pLcdBase   LCD base address.
+     */
     command void Hx8347.off(void *pLcdBase)
     {
         call Hx8347.writeReg(pLcdBase, HX8347_R90H, 0x00); // SAP=0000 0000
         call Hx8347.writeReg(pLcdBase, HX8347_R26H, 0x00); // GON=0, DTE=0, D=00
     }
 
-    //------------------------------------------------------------------------------
-    /// Set cursor of LCD srceen.
-    /// \param pLcdBase   LCD base address.
-    /// \param x          X-coordinate of upper-left corner on LCD.
-    /// \param y          Y-coordinate of upper-left corner on LCD.
-    //------------------------------------------------------------------------------
+    /**
+     * Set cursor of LCD srceen.
+     * \param pLcdBase   LCD base address.
+     * \param x          X-coordinate of upper-left corner on LCD.
+     * \param y          Y-coordinate of upper-left corner on LCD.
+     */
     command void Hx8347.setCursor(void *pLcdBase, uint16_t x, uint16_t y)
     {
         uint8_t x1, x2, y1l, y2;
