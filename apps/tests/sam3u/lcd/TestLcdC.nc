@@ -24,6 +24,8 @@
  **/
 
 #include <color.h>
+#include <lcd.h>
+
 module TestLcdC
 {
 	uses
@@ -31,6 +33,8 @@ module TestLcdC
         interface Timer<TMilli> as ChangeTimer;
         interface Leds;
         interface Boot;
+
+        interface Random;
 
         interface Lcd;
         interface Draw;
@@ -43,12 +47,17 @@ implementation
         GREEN,
         BLUE,
         WHITE,
+        STRING,
+        BACK,
+        RAND,
     };
     uint8_t state;
+    uint8_t backgrnd;
 
 	event void Boot.booted()
 	{
         state = RED;
+        backgrnd = 0;
 
         call Lcd.initialize();
 	}
@@ -90,8 +99,60 @@ implementation
                 break;
             case WHITE:
                 call Draw.fill(COLOR_WHITE);
-                state = RED;
+                state = STRING;
                 break;
+            case STRING: 
+                {
+                    const char *hi = "Hello World";
+                    const char *l1 = "I am running";
+                    const char *l2 = "the SAM3U port";
+                    const char *l3 = "of TinyOS!";
+                    const char *l4 = "wiki.github.com/";
+                    const char *l5 = "tschmid/tinyos-2.x";
+
+                    call ChangeTimer.stop();
+                    call Draw.fill(COLOR_WHITE);
+                
+                    call Draw.drawString(10, 50, hi, COLOR_RED);
+                    call Draw.drawString(10, 70, l1, COLOR_ORANGE);
+                    call Draw.drawString(10, 90, l2, COLOR_BLUE);
+                    call Draw.drawString(10, 110, l3, COLOR_NAVY);
+                    call Draw.drawString(10, 170, l4, COLOR_BLACK);
+                    call Draw.drawString(10, 190, l5, COLOR_BLACK);
+
+                    call ChangeTimer.startOneShot(10000);
+
+                    state = BACK;
+                    break;
+                }
+
+            case BACK:
+                {
+                    call ChangeTimer.startPeriodic(50);
+                    call Lcd.setBacklight(backgrnd%32);
+                    backgrnd++;
+
+                    if(backgrnd >= 64)
+                        state = RAND;
+                    break;
+                }
+            case RAND:
+                {
+                    uint32_t x;
+
+
+                    for (x=0; x<10*BOARD_LCD_WIDTH*BOARD_LCD_HEIGHT; x++)
+                    {
+                        uint32_t r = call Random.rand32();
+
+                        call Draw.drawPixel((r & 0x0000FFFF)%BOARD_LCD_WIDTH, ((r >> 16) & 0x0000FFFF)%BOARD_LCD_HEIGHT, r%COLOR_WHITE);
+                    }
+                    call ChangeTimer.startPeriodic(1024);
+
+                    state = RED;
+                    break;
+
+                }
         }
 
     }
