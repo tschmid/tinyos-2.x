@@ -26,18 +26,18 @@
 
 interface Lcd
 {
-    async command void initialize();
+    command void initialize();
 
-    async event void initializeDone(error_t err);
+    event void initializeDone(error_t err);
 
-    async command void * displayBuffer(void *pBuffer);
+    command void * displayBuffer(void *pBuffer);
     
-    async command void start();
+    command void start();
 
-    async event void startDone();
+    event void startDone();
     
-    async command void stop();
+    command void stop();
 
-    async command void setBacklight (uint8_t step);
+    command void setBacklight (uint8_t step);
 }
 
