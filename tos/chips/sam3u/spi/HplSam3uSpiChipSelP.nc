@@ -34,7 +34,7 @@ generic module HplSam3uSpiChipSelP(uint32_t csrp)
 }
 implementation
 {
-    spi_csr_t *csr = (spi_csr_t*)csrp;
+    volatile spi_csr_t *csr = (volatile spi_csr_t*)csrp;
 
     /**
      * Set the Clock polarity
@@ -117,9 +117,12 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setBaud(uint8_t divider)
     {
+        spi_csr_t tcsr = *csr;
         if(divider == 0)
             return FAIL;
-        csr->bits.scbr = divider;
+        // for some reason, setting the baud only resets other fields too.
+        tcsr.bits.scbr = divider;
+        *csr = tcsr;
         return SUCCESS;
     }
 
@@ -128,7 +131,10 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setClkDelay(uint8_t delay)
     {
-        csr->bits.dlybs = delay;
+        // for some reason, setting the NPCS only resets other fields too.
+        spi_csr_t tcsr = *csr;
+        tcsr.bits.dlybs = delay;
+        *csr = tcsr;
         return SUCCESS;
     }
 
@@ -137,7 +143,10 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setTxDelay(uint8_t delay)
     {
-        csr->bits.dlybct = delay;
+        // for some reason, setting the tx delay only resets other fields too.
+        spi_csr_t tcsr = *csr;
+        tcsr.bits.dlybct = delay;
+        *csr = tcsr;
         return SUCCESS;
     }
 }
