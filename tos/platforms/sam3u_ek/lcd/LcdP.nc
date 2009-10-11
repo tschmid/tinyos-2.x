@@ -347,7 +347,6 @@ implementation
             uint32_t bgColor)
     {
         uint32_t xorg = x;
-        void* pBuffer = (void*)BOARD_LCD_BASE;
 
         while (*pString != 0) {
             if (*pString == '\n') {
