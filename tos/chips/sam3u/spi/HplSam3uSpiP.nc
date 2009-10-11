@@ -338,8 +338,10 @@ implementation
         return SPI->rdr.bits.rd;
     }
 
-    async command error_t HplSam3uSpiStatus.setDataToTransmitCS(uint16_t txchr, uint8_t pcs)
+    async command error_t HplSam3uSpiStatus.setDataToTransmitCS(uint16_t txchr, uint8_t pcs, bool lastXfer)
     {
+        spi_tdr_t tdr;
+
         if(SPI->mr.bits.ps == 1)
         {
             if(SPI->mr.bits.pcsdec == 0)
@@ -347,16 +349,16 @@ implementation
                 switch(pcs)
                 {
                     case 0:
-                        SPI->tdr.bits.pcs = 0;
+                        tdr.bits.pcs = 0;
                         break;
                     case 1:
-                        SPI->tdr.bits.pcs = 1;
+                        tdr.bits.pcs = 1;
                         break;
                     case 2:
-                        SPI->tdr.bits.pcs = 3;
+                        tdr.bits.pcs = 3;
                         break;
                     case 3:
-                        SPI->tdr.bits.pcs = 7;
+                        tdr.bits.pcs = 7;
                         break;
                     default:
                         return EINVAL;
@@ -364,14 +366,16 @@ implementation
             } else {
                 if(pcs > 15)
                     return EINVAL;
-                SPI->tdr.bits.pcs = pcs;
+                tdr.bits.pcs = pcs;
             }
+            tdr.bits.td = txchr;
+            tdr.bits.lastxfer = lastXfer;
+            SPI->tdr = tdr;
         } else {
             if(call HplSam3uSpiConfig.selectChip(pcs) != SUCCESS)
                 return EINVAL;
+            call HplSam3uSpiStatus.setDataToTransmit(txchr);
         }
-                
-        call HplSam3uSpiStatus.setDataToTransmit(txchr);
         return SUCCESS;
     }
 

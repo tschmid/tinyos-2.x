@@ -87,23 +87,28 @@ implementation
         call SpiPinMosi.selectPeripheralA();
         call SpiPinSpck.disablePioControl();
         call SpiPinSpck.selectPeripheralA();
-
+        call SpiPinNPCS.enablePullUpResistor();
         call SpiPinNPCS.disablePioControl();
         call SpiPinNPCS.selectPeripheralA(); // FIXME: this only works for NPCS0! Others are peripheralB!!!
+
+        call HplSam3uSpiControl.resetSpi();
 
         // configure for master
         call HplSam3uSpiConfig.setMaster();
 
         // chip select options
-        call HplSam3uSpiConfig.setFixedCS(); // CS needs to be configured through chip select register!
+        call HplSam3uSpiConfig.setVariableCS(); // CS needs to be configured for each message sent!
         call HplSam3uSpiConfig.setDirectCS(); // CS pins are not multiplexed
 
         // configure clock
-        call HplSam3uSpiChipSelConfig.setClockPolarity(0); // logic zero is inactive
-        call HplSam3uSpiChipSelConfig.setClockPhase(0);    // out on rising, in on falling
-        call HplSam3uSpiChipSelConfig.disableAutoCS();
-        call HplSam3uSpiChipSelConfig.setBitsPerTransfer(SPI_CSR_BITS_8);
         setClockDivisor();
+        call HplSam3uSpiChipSelConfig.setClockPolarity(1); // logic zero is inactive
+        call HplSam3uSpiChipSelConfig.setClockPhase(0);    // out on rising, in on falling
+        call HplSam3uSpiChipSelConfig.disableAutoCS();     // disable automatic rising of CS after each transfer
+        call HplSam3uSpiChipSelConfig.enableCSActive();    // if the CS line is not risen automatically after the last tx. The lastxfer bit has to be used.
+        call HplSam3uSpiChipSelConfig.setBitsPerTransfer(SPI_CSR_BITS_8);
+        call HplSam3uSpiChipSelConfig.setTxDelay(0);
+        call HplSam3uSpiChipSelConfig.setClkDelay(9);
 
         return SUCCESS;
     }
@@ -137,7 +142,8 @@ implementation
     {
         uint8_t byte;
 
-        call HplSam3uSpiStatus.setDataToTransmit(tx);
+        call HplSam3uSpiChipSelConfig.enableCSActive();
+        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 0, TRUE);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
         return byte;
@@ -145,8 +151,6 @@ implementation
 
     async command error_t SpiPacket.send( uint8_t* txBuf, uint8_t* rxBuf, uint16_t len)
     {
-        uint8_t* m_tx_buf = txBuf;
-        uint8_t* m_rx_buf = rxBuf;
         uint16_t m_len = len;
         uint16_t m_pos = 0;
 
@@ -154,16 +158,14 @@ implementation
         {
             while( m_pos < len) 
             {
-                if(m_pos == len-1)
-                {
-                    // last transfer, deassert CS after this transfer.
-                    call HplSam3uSpiControl.lastTransfer();
-                }
-                m_rx_buf[m_pos] = call SpiByte.write(m_tx_buf[m_pos]);
+                //call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, TRUE);
+                call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, FALSE);
+                while(!call HplSam3uSpiStatus.isRxFull());
+                rxBuf[m_pos] = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
                 m_pos += 1;
             }
         }
-        signal SpiPacket.sendDone(m_tx_buf, m_rx_buf, m_len, SUCCESS);
+        signal SpiPacket.sendDone(txBuf, rxBuf, m_len, SUCCESS);
         return SUCCESS;
     }
 
