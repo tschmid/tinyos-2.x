@@ -66,7 +66,7 @@ implementation
         // Can be set up to 8MHz. We use 4MHz for now
         // clock speed = mck / cd
         // here, cd = mck/speed
-        cd = (uint8_t) (mck / 4000); // mck is in kHz!
+        cd = (uint8_t) (mck / 1000); // mck is in kHz!
 
         call HplSam3uSpiChipSelConfig.setBaud(cd);
     }

@@ -210,7 +210,7 @@ implementation
      */
     command void Lcd.setBacklight (uint8_t level)
     {
-        uint32_t i,j;
+        uint32_t i;
 
         // Switch off backlight
         call Backlight.clr();
@@ -220,14 +220,14 @@ implementation
         // Set new backlight level
         for (i = 0; i < level; i++) {
 
+
             call Backlight.clr();
-            j = 10;
-            while(j--);
+            call Backlight.clr();
+            call Backlight.clr();
 
             call Backlight.set();
-            j = 10;
-            while(j--);
-
+            call Backlight.set();
+            call Backlight.set();
         }
     }
 
@@ -382,8 +382,14 @@ implementation
         i = 0;
         do {       /* generate digits in reverse order */
             char c = n % 10 + '0';   /* get next digit */
+            if (i%3 == 0 && i>0)
+            {
+                call Draw.drawChar(x, y, '\'', fontColor);
+                x -= (gFont.width + 2);
+            }
             call Draw.drawChar(x, y, c, fontColor);
             x -= (gFont.width + 2);
+            i++;
         } while ((n /= 10) > 0);     /* delete it */
         if (sign < 0)
             call Draw.drawChar(x, y, '-', fontColor);
@@ -410,8 +416,14 @@ implementation
         i = 0;
         do {       /* generate digits in reverse order */
             char c = n % 10 + '0';   /* get next digit */
+            if (i%3 == 0 && i>0)
+            {
+                call Draw.drawChar(x, y, '\'', fontColor);
+                x -= (gFont.width + 2);
+            }
             call Draw.drawCharWithBGColor(x, y, c, fontColor, bgColor);
             x -= (gFont.width + 2);
+            i++;
         } while ((n /= 10) > 0);     /* delete it */
         if (sign < 0)
             call Draw.drawCharWithBGColor(x, y, '-', fontColor, bgColor);
