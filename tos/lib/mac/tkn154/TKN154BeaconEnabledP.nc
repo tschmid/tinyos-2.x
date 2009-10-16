@@ -318,6 +318,7 @@ implementation
   DisassociateP.TxFramePool -> TxFramePoolP;
   DisassociateP.TxControlPool -> TxControlPoolP;
   DisassociateP.MLME_GET -> PibP;
+  DisassociateP.MLME_SET -> PibP;
   DisassociateP.FrameUtility -> PibP;
   DisassociateP.Frame -> PibP;
   DisassociateP.LocalExtendedAddress -> PibP.GetLocalExtendedAddress;
