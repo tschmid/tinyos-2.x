@@ -84,9 +84,37 @@ implementation {
   void switchThreads() __attribute__((noinline)) {
     SWITCH_CONTEXTS(yielding_thread, current_thread);
   }
+
   void restoreThread() __attribute__((noinline)) {
     RESTORE_TCB(current_thread);
   }
+
+/**
+ * On the Cortex-M3, context switching needs to be done in a special
+ * exception because we need to distinguish between a context switch
+ * being invoked from within an IRQ handler (preemption timer) or from
+ * within the thread itself. The former sets a PendSV exception pending,
+ * which will then execute after all other IRQ handlers have executed.
+ * The latter synchronously invokes a SVCall exception, which has the
+ * same handler aliased. For this distinction, see the macro
+ * SWITCH_CONTEXTS() in chip_thread.h.
+ */
+#ifdef PLATFORM_SAM3U_EK
+  void PendSVHandler() @C() @spontaneous()
+  {
+  atomic {
+	  asm volatile("mrs r0, msp");
+	  asm volatile("stmdb r0!, {r4-r11}");
+	  asm volatile("str r0, %0" : "=m" ((yielding_thread)->stack_ptr));
+	  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
+	  asm volatile("ldmia r0!, {r4-r11}");
+	  asm volatile("msr msp, r0");
+	  asm volatile("bx lr");
+  }
+  }
+
+  void SVCallHandler() @C() @spontaneous() __attribute__((alias("PendSVHandler")));
+#endif
   
   /* sleepWhileIdle() 
    * This routine is responsible for putting the mcu to sleep as 
