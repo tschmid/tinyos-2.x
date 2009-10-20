@@ -283,7 +283,12 @@ module CC2420TKN154P
   task void configSyncTask()
   {
     if (call SpiResource.immediateRequest() == SUCCESS) {
-      call CC2420Config.sync(); /* put PIB changes into operation */
+      call CC2420Config.sync(); 
+      if (m_state == S_RECEIVING) {
+        // need to toggle radio state to make changes effective now
+        call CC2420Power.rfOff();
+        call CC2420Power.rxOn();
+      }
       call SpiResource.release();
     } else
       post configSyncTask(); // spin (should be short time, until packet is received)
