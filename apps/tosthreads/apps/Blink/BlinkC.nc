@@ -59,13 +59,13 @@ implementation {
   event void TinyThread0.run(void* arg) {
     for(;;){
       call Leds.led0Toggle();
-      call TinyThread0.sleep(200);
+      call TinyThread0.sleep(250);
     }
   }
   event void TinyThread1.run(void* arg) {
     for(;;){
       call Leds.led1Toggle();
-      call TinyThread1.sleep(1000);
+      call TinyThread1.sleep(500);
     }
   }
   event void TinyThread2.run(void* arg) {
