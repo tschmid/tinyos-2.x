@@ -37,16 +37,16 @@ configuration BlinkAppC {
 }
 implementation {
   components MainC, BlinkC,  LedsC;
-//  components new ThreadC(100) as NullThread;
+  components new ThreadC(100) as NullThread;
   components new ThreadC(100) as TinyThread0;
-//  components new ThreadC(100) as TinyThread1;
-//  components new ThreadC(100) as TinyThread2;
+  components new ThreadC(100) as TinyThread1;
+  components new ThreadC(100) as TinyThread2;
 
   MainC.Boot <- BlinkC;
-  //BlinkC.NullThread -> NullThread;
+  BlinkC.NullThread -> NullThread;
   BlinkC.TinyThread0 -> TinyThread0;
-//  BlinkC.TinyThread1 -> TinyThread1; 
-//  BlinkC.TinyThread2 -> TinyThread2;
+  BlinkC.TinyThread1 -> TinyThread1; 
+  BlinkC.TinyThread2 -> TinyThread2;
 
   BlinkC.Leds -> LedsC;
 }
