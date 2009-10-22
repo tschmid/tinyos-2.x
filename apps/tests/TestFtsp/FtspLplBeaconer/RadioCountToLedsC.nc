@@ -101,7 +101,7 @@ implementation {
 
       rcm->counter = counter;
 #ifdef LOW_POWER_LISTENING
-      call LowPowerListening.setRxSleepInterval(&packet, LPL_INTERVAL);
+      call LowPowerListening.setRemoteWakeupInterval(&packet, LPL_INTERVAL);
 #endif
       
       if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(radio_count_msg_t), time) == SUCCESS) {
