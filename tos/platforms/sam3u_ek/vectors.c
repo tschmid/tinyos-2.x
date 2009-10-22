@@ -108,14 +108,14 @@ void SVCallHandler() __attribute__((weak));
 void DebugHandler() __attribute__((weak));
 void PendSVHandler() __attribute__((weak));
 void SysTickHandler() __attribute__((weak));
-void NmiHandler() {}
-void MpuFaultHandler() {}
-void BusFaultHandler() {}
-void UsageFaultHandler() {}
-void SVCallHandler() {}
-void DebugHandler() {}
-void PendSVHandler() {}
-void SysTickHandler() {}
+void NmiHandler() { while(1) {} }
+void MpuFaultHandler() { while(1) {} }
+void BusFaultHandler() { while(1) {} }
+void UsageFaultHandler() { while(1) {} }
+void SVCallHandler() { while(1) {} }
+void DebugHandler() { while(1) {} }
+void PendSVHandler() { while(1) {} }
+void SysTickHandler() { while(1) {} }
 #else
 void NmiHandler() __attribute__((weak, alias("DefaultHandler")));
 void MpuFaultHandler() __attribute__((weak, alias("DefaultHandler")));
