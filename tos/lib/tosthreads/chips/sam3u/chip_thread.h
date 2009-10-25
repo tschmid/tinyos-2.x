@@ -40,6 +40,16 @@ typedef uint32_t* stack_ptr_t;
 #define STACK_TOP(stack, size) \
 	(&(((uint8_t*)stack)[size - sizeof(stack_ptr_t)]))
 
+/*
+ * Stack-frame layout from bottom to top:
+ * - Initial PSW: 0x01000000
+ * - Program counter PC: pointer to thread function (i.e., thread wrapper)
+ * - Link register LR: invalid value 0xffffffff, because the outer thread
+ *   function (i.e., the wrapper) is never supposed to return!
+ * - r0 to r3, r12: would be saved by the corresponding exception (SVCall
+ *   or PendSV)
+ * - r4 to r11: saved by context-switch routine (see TinyThreadSchedulerP)
+ */
 #define PREPARE_THREAD(t, thread_ptr) \
 *((t)->stack_ptr) = (uint32_t)(0x01000000); \
 \
@@ -87,7 +97,7 @@ if (vectactive != 0) { \
  * On entering an exception, the processor saves the combined information from the three
  * status registers on the stack.
  *
- * CM TR, p. 5-9:
+ * CM3 TR, p. 5-9:
  * Only one stack, the process stack or the main stack, is visible at any time. After pushing
  * the eight registers, the ISR uses the main stack, and all subsequent interrupt
  * pre-emptions use the main stack. The stack that saves context is as follows:
@@ -104,7 +114,7 @@ if (vectactive != 0) { \
  * Control Block (TCB). If the processor saved the context on the main stack, the kernel
  * would have to copy the 16 registers to the TCB.
  *
- * CM TR, p. 5-11:
+ * CM3 TR, p. 5-11:
  * When the processor invokes an exception, it automatically pushes the following eight
  * registers to the SP in the following order:
  * - Program Counter (PC)
