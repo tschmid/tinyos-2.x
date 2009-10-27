@@ -55,6 +55,11 @@ implementation
 	HilSam3uUartP.HplSam3uUartControl -> HplSam3uUartC;
 	HilSam3uUartP.HplSam3uUartConfig -> HplSam3uUartC;
 
+#ifdef THREADS
+	components PlatformInterruptC;
+	HplSam3uUartC.PlatformInterrupt -> PlatformInterruptC;
+#endif
+
 	components MainC;
 	MainC.SoftwareInit -> HilSam3uUartP.Init;
 
