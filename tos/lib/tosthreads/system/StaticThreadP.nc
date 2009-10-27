@@ -59,6 +59,42 @@ implementation {
     r2 = call ThreadScheduler.initThread(id);
     return ecombine(r1, r2);
   }
+
+#ifdef MPU_PROTECTION
+  command error_t Thread.setupMpuRegion[uint8_t id](
+    uint8_t regionNumber,
+    bool enable,
+    void *baseAddress,
+    uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
+    bool enableInstructionFetch,
+    bool enableReadPrivileged,
+    bool enableWritePrivileged,
+    bool enableReadUnprivileged,
+    bool enableWriteUnprivileged,
+    bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
+    bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+    uint8_t disabledSubregions // bit = 1: subregion disabled
+  ) {
+    thread_t* thread_info;
+    if (regionNumber > 7) return FAIL;
+
+	// setup region info for context switch to deploy
+    thread_info = call ThreadInfo.get[id]();
+    thread_info->regions[regionNumber].enable = enable;
+    thread_info->regions[regionNumber].baseAddress = baseAddress;
+    thread_info->regions[regionNumber].size = size;
+    thread_info->regions[regionNumber].enableInstructionFetch = enableInstructionFetch;
+    thread_info->regions[regionNumber].enableReadPrivileged = enableReadPrivileged;
+    thread_info->regions[regionNumber].enableWritePrivileged = enableWritePrivileged;
+    thread_info->regions[regionNumber].enableReadUnprivileged = enableReadUnprivileged;
+    thread_info->regions[regionNumber].enableWriteUnprivileged = enableWriteUnprivileged;
+    thread_info->regions[regionNumber].cacheable = cacheable;
+    thread_info->regions[regionNumber].bufferable = bufferable;
+    thread_info->regions[regionNumber].disabledSubregions = disabledSubregions;
+
+	return SUCCESS;
+  }
+#endif
   
   command error_t Thread.start[uint8_t id](void* arg) {
     atomic {

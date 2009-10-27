@@ -82,6 +82,7 @@ implementation
 
 	async command error_t HplSam3uMpu.setupRegion(
 		uint8_t regionNumber,
+		bool enable,
 		void *baseAddress,
 		uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
 		bool enableInstructionFetch,
@@ -138,7 +139,7 @@ implementation
 		rasr.bits.c = (cacheable == TRUE ? 1 : 0); // 1 = cacheable
 		rasr.bits.b = (bufferable == TRUE ? 1 : 0); // 1 = bufferable
 		rasr.bits.size = sizeField;
-		rasr.bits.enable = 1; // region enabled
+		rasr.bits.enable = enable; // region enabled or disabled
 
 		// access permissions (see definitive guide, p. 209)
 		// impossible combinations return FAIL

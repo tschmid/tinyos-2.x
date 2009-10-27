@@ -47,6 +47,9 @@ module TinyThreadSchedulerP {
     interface McuSleep;
     interface Leds;
     interface Timer<TMilli> as PreemptionAlarm;
+#ifdef MPU_PROTECTION
+    interface HplSam3uMpu;
+#endif
   }
 }
 implementation {
@@ -95,22 +98,74 @@ implementation {
  * being invoked from within an IRQ handler (preemption timer) or from
  * within the thread itself. The former sets a PendSV exception pending,
  * which will then execute after all other IRQ handlers have executed.
- * The latter synchronously invokes a SVCall exception, which has the
+ * The latter synchronously invokes an SVCall exception, which has the
  * same handler aliased. For this distinction, see the macro
  * SWITCH_CONTEXTS() in chip_thread.h.
  */
-#ifdef PLATFORM_SAM3U_EK
-  void PendSVHandler() @C() @spontaneous()
+#ifdef MPU_PROTECTION
+  void switchMpuContexts() __attribute__((noinline))
   {
-  atomic {
-	  asm volatile("mrs r0, msp");
-	  asm volatile("stmdb r0!, {r4-r11}");
-	  asm volatile("str r0, %0" : "=m" ((yielding_thread)->stack_ptr));
-	  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
-	  asm volatile("ldmia r0!, {r4-r11}");
-	  asm volatile("msr msp, r0");
-	  asm volatile("bx lr");
+	  // deactivate MPU
+	  call HplSam3uMpu.disableMpu();
+
+	  if (current_thread->id != TOSTHREAD_TOS_THREAD_ID) {
+		  // deploy MPU settings of current_thread (if not kernel thread)
+		  uint8_t reg;
+		  for (reg = 0; reg < 8; reg++) {
+			thread_t *t = current_thread;
+			// optimize later (packed MPU-like structure)
+			call HplSam3uMpu.setupRegion(
+				reg,
+				t->regions[reg].enable,
+				t->regions[reg].baseAddress,
+				t->regions[reg].size,
+				t->regions[reg].enableInstructionFetch,
+				t->regions[reg].enableReadPrivileged,
+				t->regions[reg].enableWritePrivileged,
+				t->regions[reg].enableReadUnprivileged,
+				t->regions[reg].enableWriteUnprivileged,
+				t->regions[reg].cacheable,
+				t->regions[reg].bufferable,
+				t->regions[reg].disabledSubregions
+			);
+		  }
+
+		  // reactivate MPU (if not kernel thread)
+		  //call HplSam3uMpu.enableMpu();
+	  }
   }
+
+// FIXME for now this is OK
+  async event void HplSam3uMpu.mpuFault()
+  {
+	  call Leds.led2On(); // LED 2 (red): MPU fault
+	  while (1); // wait
+  }
+#endif
+#ifdef PLATFORM_SAM3U_EK
+/**
+ * The two context switch exception handlers are naked to keep the compiler
+ * from using the stack. We need a manually defined stack layout here, which
+ * we artificially create using PREPARE_THREAD() (see chip_thread.h). That is
+ * why we need to manually save volatile (caller-save) registers before calling
+ * another (non-inlined) function.
+ */
+  void PendSVHandler() @C() @spontaneous() __attribute((naked))
+  {
+	  atomic {
+		  asm volatile("mrs r0, msp");
+		  asm volatile("stmdb r0!, {r4-r11}");
+		  asm volatile("str r0, %0" : "=m" ((yielding_thread)->stack_ptr));
+		  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
+		  asm volatile("ldmia r0!, {r4-r11}");
+		  asm volatile("msr msp, r0");
+#ifdef MPU_PROTECTION
+		  asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
+		  switchMpuContexts();
+		  asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
+#endif
+	  }
+	  asm volatile("bx lr"); // important because this is a naked function
   }
 
   void SVCallHandler() @C() @spontaneous() __attribute__((alias("PendSVHandler")));

@@ -41,4 +41,20 @@ interface Thread {
   command error_t sleep(uint32_t milli);
   event void run(void* arg);
   command error_t join();
+#ifdef MPU_PROTECTION
+  command error_t setupMpuRegion(
+    uint8_t regionNumber,
+    bool enable,
+    void *baseAddress,
+    uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
+    bool enableInstructionFetch,
+    bool enableReadPrivileged,
+    bool enableWritePrivileged,
+    bool enableReadUnprivileged,
+    bool enableWriteUnprivileged,
+    bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
+    bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+    uint8_t disabledSubregions // bit = 1: subregion disabled
+  );
+#endif
 }  

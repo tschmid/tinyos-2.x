@@ -35,6 +35,25 @@ implementation
 
 	event void Boot.booted()
 	{
+#ifdef MPU_PROTECTION
+		call Thread1.setupMpuRegion(0, FALSE, 0x00000000, 32, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 0x00);
+		call Thread1.setupMpuRegion(1, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(2, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(3, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(4, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(5, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(6, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(7, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+                                              
+		call Thread2.setupMpuRegion(0, FALSE, 0x00000000, 32, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 0x00);
+		call Thread2.setupMpuRegion(1, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread2.setupMpuRegion(2, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread2.setupMpuRegion(3, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread2.setupMpuRegion(4, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread2.setupMpuRegion(5, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread2.setupMpuRegion(6, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread2.setupMpuRegion(7, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+#endif
 		call Thread1.start(NULL);
 		call Thread2.start(NULL);
 	}
@@ -88,7 +107,7 @@ implementation
 	async event void HplSam3uMpu.mpuFault()
 	{
 		call Leds.led2On(); // LED 2 (red): MPU fault
-		while(1); // wait
+		while (1); // wait
 	}
 #endif
 }

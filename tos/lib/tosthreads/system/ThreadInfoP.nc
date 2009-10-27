@@ -67,6 +67,15 @@ implementation {
     thread_info.start_ptr = run_thread;
     thread_info.start_arg_ptr = NULL;
     thread_info.syscall = NULL;
+#ifdef MPU_PROTECTION
+	{
+		uint8_t i;
+		// mark all regions as disabled for now
+		for (i = 0; i < 8; i++) {
+			thread_info.regions[i].enable = FALSE;
+		}
+	}
+#endif
     return SUCCESS;
   }
   
