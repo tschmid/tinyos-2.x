@@ -68,6 +68,11 @@ implementation {
   
   components LedsC;
   Sched.Leds -> LedsC;
+
+#ifdef MPU_PROTECTION
+  components HplSam3uMpuC;
+  Sched.HplSam3uMpu -> HplSam3uMpuC;
+#endif
 }
 
 

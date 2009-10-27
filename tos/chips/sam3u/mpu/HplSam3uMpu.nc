@@ -48,6 +48,7 @@ interface HplSam3uMpu
 
 	async command error_t setupRegion(
 		uint8_t regionNumber,
+		bool enable,
 		void *baseAddress,
 		uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
 		bool enableInstructionFetch,

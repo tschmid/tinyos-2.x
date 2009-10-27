@@ -10,8 +10,8 @@ configuration TestMpuProtectionAppC
 implementation
 {
 	components MainC, TestMpuProtectionC, LedsC;
-	components new ThreadC(200) as Thread1;
-	components new ThreadC(200) as Thread2;
+	components new ThreadC(400) as Thread1;
+	components new ThreadC(400) as Thread2;
 
 	TestMpuProtectionC -> MainC.Boot;
 	TestMpuProtectionC.Leds -> LedsC;
