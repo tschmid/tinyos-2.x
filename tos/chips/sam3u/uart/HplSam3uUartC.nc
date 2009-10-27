@@ -46,6 +46,9 @@ module HplSam3uUartC
 		interface HplSam3uUartInterrupts;
 		interface HplSam3uUartStatus;
 	}
+#ifdef THREADS
+	uses interface PlatformInterrupt;
+#endif
 }
 implementation
 {
@@ -141,6 +144,9 @@ implementation
 				(call HplSam3uUartStatus.isTransmitterReady() == TRUE)) {
 			signal HplSam3uUartInterrupts.transmitterReady();
 		}
+#ifdef THREADS
+		call PlatformInterrupt.postAmble();
+#endif
 	}
 
 	// Rxrdy
