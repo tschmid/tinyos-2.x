@@ -31,11 +31,16 @@ implementation {
   }
   
   task void readTask() {
+#ifdef PLATFORM_SAM3U_EK
+    // no libc for SAM3U, thus constant value of 42
+	uint16_t val = 42;
+#else
     float val = (float)counter;
     val = val / 20.0;
     val = sin(val) * 32768.0;
     val += 32768.0;
     counter++;
+#endif
     signal Read.readDone(SUCCESS, (uint16_t)val);
   }
   command error_t Read.read() {
