@@ -113,7 +113,7 @@ implementation {
 		  uint8_t reg;
 		  for (reg = 0; reg < 8; reg++) {
 			thread_t *t = current_thread;
-			// optimize later (packed MPU-like structure)
+			// FIXME: optimize later (packed MPU-like structure)
 			call HplSam3uMpu.setupRegion(
 				reg,
 				t->regions[reg].enable,
@@ -130,9 +130,29 @@ implementation {
 			);
 		  }
 
+		  // switch to unprivileged mode in thread mode (if not kernel thread)
+		  {
+			  uint32_t newState = 0x1; // MSP, user mode
+			  asm volatile(
+				  "msr control, %0"
+				  : // output
+				  : "r" (newState) // input
+			  );
+		  }
+
 		  // reactivate MPU (if not kernel thread)
 		  call HplSam3uMpu.enableMpu();
-	  }
+	  } else {
+		  // switch to privileged mode in thread mode (if kernel thread)
+		  {
+			  uint32_t newState = 0x0; // MSP, privileged mode
+			  asm volatile(
+				  "msr control, %0"
+				  : // output
+				  : "r" (newState) // input
+			  );
+		  }
+      }
   }
 
 // FIXME for now this is OK
