@@ -41,7 +41,7 @@
 
 typedef uint32_t __nesc_atomic_t;
 
-inline __nesc_atomic_t __nesc_atomic_start() @spontaneous()
+inline __nesc_atomic_t __nesc_atomic_start() @spontaneous() __attribute__((always_inline))
 {
 	__nesc_atomic_t oldState = 0;
 	__nesc_atomic_t newState = 0;
@@ -58,7 +58,7 @@ inline __nesc_atomic_t __nesc_atomic_start() @spontaneous()
 	return oldState;
 }
 
-inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous()
+inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous() __attribute__((always_inline))
 {
 	asm volatile("" : : : "memory"); // memory barrier
 
@@ -71,7 +71,7 @@ inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous()
 
 // See definitive guide to Cortex-M3, p. 141, 142
 // Enables all exceptions except hard fault and NMI
-inline void __nesc_enable_interrupt()
+inline void __nesc_enable_interrupt() __attribute__((always_inline))
 {
 	__nesc_atomic_t newState = 0;
 
@@ -84,7 +84,7 @@ inline void __nesc_enable_interrupt()
 
 // See definitive guide to Cortex-M3, p. 141, 142
 // Disables all exceptions except hard fault and NMI
-inline void __nesc_disable_interrupt()
+inline void __nesc_disable_interrupt() __attribute__((always_inline))
 {
 	__nesc_atomic_t newState = 1;
 
