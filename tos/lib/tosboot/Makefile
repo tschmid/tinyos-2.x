@@ -79,6 +79,13 @@ ifeq ($(MAKECMDGOALS),epic)
   POST_BUILD_EXTRA_DEPS += strip_iv
 endif
 
+ifeq ($(MAKECMDGOALS),mulle)
+  CFLAGS += -DTOSBOOT_START=0xe0000 -DTOSBOOT_END=0xeffff
+  CFLAGS += -Iat45db -Imulle -Im16c62p -Ilib
+  CFLAGS += -I../net/Deluge -I../net/Deluge/extra/mulle
+  CFLAGS += -I../net/Deluge/extra/m16c62p
+endif
+
 strip_iv: FORCE
 	@echo "    removing interrupt vector from binary"
 	msp430-objcopy -j .text -j .data -O ihex $(BUILDDIR)/main.exe $(BUILDDIR)/main.ihex
