@@ -131,7 +131,7 @@ implementation {
 		  }
 
 		  // reactivate MPU (if not kernel thread)
-		  //call HplSam3uMpu.enableMpu();
+		  call HplSam3uMpu.enableMpu();
 	  }
   }
 
