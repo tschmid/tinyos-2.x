@@ -16,6 +16,9 @@ module TestMpuProtectionC
 	uses interface Boot;
 	uses interface Thread as Thread1;
 	uses interface Thread as Thread2;
+#ifdef MPU_PROTECTION
+	uses interface HplSam3uMpu;
+#endif
 }
 implementation
 {
@@ -35,27 +38,62 @@ implementation
 
 	event void Boot.booted()
 	{
-#ifdef MPU_PROTECTION
-		call Thread1.setupMpuRegion(0, FALSE, 0x00000000, 32, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 0x00);
-		call Thread1.setupMpuRegion(1, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread1.setupMpuRegion(2, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread1.setupMpuRegion(3, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread1.setupMpuRegion(4, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread1.setupMpuRegion(5, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread1.setupMpuRegion(6, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread1.setupMpuRegion(7, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-                                              
-		call Thread2.setupMpuRegion(0, FALSE, 0x00000000, 32, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 0x00);
-		call Thread2.setupMpuRegion(1, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread2.setupMpuRegion(2, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread2.setupMpuRegion(3, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread2.setupMpuRegion(4, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread2.setupMpuRegion(5, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread2.setupMpuRegion(6, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread2.setupMpuRegion(7, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-#endif
 		call Thread1.start(NULL);
 		call Thread2.start(NULL);
+
+#ifdef MPU_PROTECTION
+		// MPU region setup has to be *after* thread start because init() sets all regions to disabled
+
+		/*
+		SAM3U Manual, p. 225:
+		Flash memory b000 1 0 0 Normal memory, Non-shareable, write-through
+		Internal SRAM b000 1 0 1 Normal memory, Shareable, write-through
+		External SRAM b000 1 1 1 Normal memory, Shareable, write-back, write-allocate
+		Peripherals b000 0 1 1 Device memory, Shareable
+
+		SAM3U Manual, p. 72: Memory map
+
+		command error_t setupMpuRegion(
+			uint8_t regionNumber,
+			bool enable,
+			void *baseAddress,
+			uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
+			bool enableInstructionFetch,
+			bool enableReadPrivileged,
+			bool enableWritePrivileged,
+			bool enableReadUnprivileged,
+			bool enableWriteUnprivileged,
+			bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
+			bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+			uint8_t disabledSubregions // bit = 1: subregion disabled
+		);
+
+		TRUE == 1; FALSE == 0;
+		*/
+
+		//call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
+		call HplSam3uMpu.disableMpuDuringHardFaults();
+
+		call Thread1.setupMpuRegion(0, TRUE, (void *) 0x00000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread1.setupMpuRegion(1, TRUE, (void *) 0x20000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x40000000, 536870912, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
+		call Thread1.setupMpuRegion(3, TRUE, (void *) 0x60000000, 1073741824, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. RAM
+		call Thread1.setupMpuRegion(4, TRUE, (void *) 0xa0000000, 1073741824, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. devices
+		call Thread1.setupMpuRegion(5, TRUE, (void *) 0xe0000000, 1048576, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ FALSE, 0x00); // 1 MB, sys control
+		call Thread1.setupMpuRegion(6, TRUE, (void *) 0xe0100000, 535822336, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 511 MB, reserved
+		call Thread1.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		// default: call Thread1.setupMpuRegion(7, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+                                              
+		call Thread2.setupMpuRegion(0, TRUE, (void *) 0x00000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread2.setupMpuRegion(1, TRUE, (void *) 0x20000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread2.setupMpuRegion(2, TRUE, (void *) 0x40000000, 536870912, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
+		call Thread2.setupMpuRegion(3, TRUE, (void *) 0x60000000, 1073741824, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. RAM
+		call Thread2.setupMpuRegion(4, TRUE, (void *) 0xa0000000, 1073741824, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. devices
+		call Thread2.setupMpuRegion(5, TRUE, (void *) 0xe0000000, 1048576, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ FALSE, 0x00); // 1 MB, sys control
+		call Thread2.setupMpuRegion(6, TRUE, (void *) 0xe0100000, 535822336, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 511 MB, reserved
+		call Thread2.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		// default: call Thread2.setupMpuRegion(7, FALSE, 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+#endif
 	}
 
 	event void Thread1.run(void* arg)
@@ -103,7 +141,7 @@ implementation
 		}
 	}
 
-#if 0
+#ifdef MPU_PROTECTION
 	async event void HplSam3uMpu.mpuFault()
 	{
 		call Leds.led2On(); // LED 2 (red): MPU fault
