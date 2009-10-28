@@ -393,7 +393,7 @@ implementation {
   }
 
   event void RssiResource.granted() { 
-    uint16_t data;
+    uint16_t data = 0;
     call CSN.clr();
     call RSSI.read(&data);
     call CSN.set();
