@@ -468,9 +468,9 @@ implementation {
 
 	  call CSN.clr();
 #ifndef TFRAMES_ENABLED
-	  atomic call SECCTRL1.write(skip+11+sizeof(security_header_t))+((skip+11+sizeof(security_header_t))<<8);
+	  atomic call SECCTRL1.write(skip+11+sizeof(security_header_t)+((skip+11+sizeof(security_header_t))<<8));
 #else
-	  atomic call SECCTRL1.write(skip+10+sizeof(security_header_t))+((skip+10+sizeof(security_header_t))<<8);
+	  atomic call SECCTRL1.write(skip+10+sizeof(security_header_t)+((skip+10+sizeof(security_header_t))<<8));
 #endif
 	  call CSN.set();
 
