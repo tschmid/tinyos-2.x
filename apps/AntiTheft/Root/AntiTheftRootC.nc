@@ -55,7 +55,7 @@ implementation
        tree */
     if (error == SUCCESS)
       {
-	call LowPowerListening.setLocalDutyCycle(200);
+	call LowPowerListening.setLocalWakeupInterval(512);
 	call DisseminationControl.start();
 	call CollectionControl.start();
 	call RootControl.setRoot();

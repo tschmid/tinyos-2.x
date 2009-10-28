@@ -138,13 +138,13 @@ implementation
   }
 
   /* Radio started. Now start the collection protocol and set the
-     radio to a 2% low-power-listening duty cycle */
+     wakeup interval for low-power-listening wakeup to half a second. */
   event void RadioControl.startDone(error_t ok) {
     if (ok == SUCCESS)
       {
 	call DisseminationControl.start();
 	call CollectionControl.start();
-	call LowPowerListening.setLocalDutyCycle(200);
+	call LowPowerListening.setLocalWakeupInterval(512);
       }
     else
       errorLed();
