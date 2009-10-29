@@ -114,7 +114,7 @@ implementation {
 		  for (reg = 0; reg < 8; reg++) {
 			thread_t *t = current_thread;
 			// FIXME: optimize later (packed MPU-like structure)
-			call HplSam3uMpu.setupRegion(
+			if (call HplSam3uMpu.setupRegion(
 				reg,
 				t->regions[reg].enable,
 				t->regions[reg].baseAddress,
@@ -127,7 +127,10 @@ implementation {
 				t->regions[reg].cacheable,
 				t->regions[reg].bufferable,
 				t->regions[reg].disabledSubregions
-			);
+			) == FAIL) {
+				// FIXME check at configuration time, not at deployment
+				while(1);
+			}
 		  }
 
 		  // switch to unprivileged mode in thread mode (if not kernel thread)
