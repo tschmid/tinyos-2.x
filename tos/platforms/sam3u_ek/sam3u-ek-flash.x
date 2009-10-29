@@ -69,6 +69,28 @@ SECTIONS
 		. = ALIGN(4);
 		_stext = .;
 		KEEP(*(.vectors))
+
+		. = ALIGN(0x200);
+		PROVIDE(_scommon = .);
+		*(.text.TinyThreadSchedulerP$threadWrapper)
+		*(.text.StaticThreadP$ThreadFunction$signalThreadRun)
+		. = ALIGN(0x200);
+		PROVIDE(_ecommon = .);
+
+		. = ALIGN(0x200);
+		PROVIDE(_sthread0 = .);
+		*(.text.ThreadInfoP$0$run_thread)
+		*(.text.TestMpuProtectionC$Thread0$run)
+		. = ALIGN(0x200);
+		PROVIDE(_ethread0 = .);
+
+		. = ALIGN(0x200);
+		PROVIDE(_sthread1 = .);
+		*(.text.ThreadInfoP$1$run_thread)
+		*(.text.TestMpuProtectionC$Thread1$run)
+		. = ALIGN(0x200);
+		PROVIDE(_ethread1 = .);
+
 		*(.text*)
 		*(.rodata*)
 		*(.glue_7) /* ARM/Thumb interworking code */
