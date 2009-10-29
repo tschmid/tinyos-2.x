@@ -78,6 +78,8 @@ implementation {
     thread_t* thread_info;
     if (regionNumber > 7) return FAIL;
 
+	// FIXME: all checks should be done here instead of at deployment time
+
 	// setup region info for context switch to deploy
     thread_info = call ThreadInfo.get[id]();
     thread_info->regions[regionNumber].enable = enable;
