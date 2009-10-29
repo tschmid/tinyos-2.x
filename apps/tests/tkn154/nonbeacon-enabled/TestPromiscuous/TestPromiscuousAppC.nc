@@ -37,7 +37,7 @@ configuration TestPromiscuousAppC
 {
 } implementation {
  components MainC, TestPromiscuousC as App, LedsC, 
-            Ieee802154BeaconEnabledC as MAC;
+            Ieee802154NonBeaconEnabledC as MAC;
 
   MainC.Boot <- App;
   App.Leds -> LedsC;
