@@ -10,12 +10,19 @@ typedef struct
 	uint32_t word8;
 } struct32bytes;
 
+extern unsigned int _scommon;
+extern unsigned int _ecommon;
+extern unsigned int _sthread0;
+extern unsigned int _ethread0;
+extern unsigned int _sthread1;
+extern unsigned int _ethread1;
+
 module TestMpuProtectionC
 {
 	uses interface Leds;
 	uses interface Boot;
+	uses interface Thread as Thread0;
 	uses interface Thread as Thread1;
-	uses interface Thread as Thread2;
 #ifdef MPU_PROTECTION
 	uses interface HplSam3uMpu;
 #endif
@@ -25,9 +32,9 @@ implementation
 	// does not normally have to be volatile, but here it does
 	// so that the compiler does not optimize the artificial check
 	// for manipulation in the test case
-	volatile struct32bytes data1; // belongs to thread 1
+	volatile struct32bytes data1; // belongs to thread 0
 
-	volatile struct32bytes data2; // belongs to thread 2
+	volatile struct32bytes data2; // belongs to thread 1
 
 	void fatal();
 
@@ -38,8 +45,8 @@ implementation
 
 	event void Boot.booted()
 	{
+		call Thread0.start(NULL);
 		call Thread1.start(NULL);
-		call Thread2.start(NULL);
 
 #ifdef MPU_PROTECTION
 		// MPU region setup has to be *after* thread start because init() sets all regions to disabled
@@ -72,63 +79,55 @@ implementation
 		*/
 #if 0
 		// Memory map setup (SAM3U Manual, p. 72)
-		call Thread1.setupMpuRegion(0, TRUE, (void *) 0x00000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		call Thread1.setupMpuRegion(1, TRUE, (void *) 0x20000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x40000000, 536870912, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
-		call Thread1.setupMpuRegion(3, TRUE, (void *) 0x60000000, 1073741824, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. RAM
-		call Thread1.setupMpuRegion(4, TRUE, (void *) 0xa0000000, 1073741824, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. devices
-		call Thread1.setupMpuRegion(5, TRUE, (void *) 0xe0000000, 1048576, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ FALSE, 0x00); // 1 MB, sys control
-		call Thread1.setupMpuRegion(6, TRUE, (void *) 0xe0100000, 535822336, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 511 MB, reserved
-		call Thread1.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread0.setupMpuRegion(0, TRUE, (void *) 0x00000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread0.setupMpuRegion(1, TRUE, (void *) 0x20000000, 536870912, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x40000000, 536870912, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
+		call Thread0.setupMpuRegion(3, TRUE, (void *) 0x60000000, 1073741824, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. RAM
+		call Thread0.setupMpuRegion(4, TRUE, (void *) 0xa0000000, 1073741824, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 1 GB, ext. devices
+		call Thread0.setupMpuRegion(5, TRUE, (void *) 0xe0000000, 1048576, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ FALSE, 0x00); // 1 MB, sys control
+		call Thread0.setupMpuRegion(6, TRUE, (void *) 0xe0100000, 535822336, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 511 MB, reserved
+		call Thread0.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 #endif
 
 		call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
 		call HplSam3uMpu.disableMpuDuringHardFaults();
 
-		// needed for code
-		// TinyThreadSchedulerP$threadWrapper()
-		call Thread1.setupMpuRegion(0, TRUE, (void *) 0x00080800, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// ThreadInfoP$0$run_thread()
-		call Thread1.setupMpuRegion(1, TRUE, (void *) 0x000807e0, 0x20, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// StaticThreadP$ThreadFunction$signalThreadRun()
-		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x000807c0, 0x40, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// TestMpuProtectionC$Thread1$run()
-		call Thread1.setupMpuRegion(3, TRUE, (void *) 0x00080700, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
+		call Thread0.setupMpuRegion(0, TRUE, (void *) &_scommon, (((uint32_t) &_ecommon) - ((uint32_t) &_scommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		// thread-specific code: ThreadInfoP$0$run_thread(), TestMpuProtectionC$Thread0$run()
+		call Thread0.setupMpuRegion(1, TRUE, (void *) &_sthread0, (((uint32_t) &_ethread0) - ((uint32_t) &_sthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// needed for data
 		// ThreadInfoP$0$stack
-		call Thread1.setupMpuRegion(4, TRUE, (void *) 0x20000000, 0x800, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x20000000, 0x800, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
 		// needed for LED
 		// 0x400e0e34
-		call Thread1.setupMpuRegion(5, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
-		// PendSV handler
-		call Thread1.setupMpuRegion(6, TRUE, (void *) 0x00080a00, 0x80, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread0.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
 		// data1: 0x200006b8 + 0x20
-		call Thread1.setupMpuRegion(7, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread0.setupMpuRegion(4, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread0.setupMpuRegion(5, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread0.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread0.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
                                               
-		// needed for code
-		// TinyThreadSchedulerP$threadWrapper()
-		call Thread2.setupMpuRegion(0, TRUE, (void *) 0x00080800, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// ThreadInfoP$1$run_thread()
-		call Thread2.setupMpuRegion(1, TRUE, (void *) 0x000807e0, 0x20, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// StaticThreadP$ThreadFunction$signalThreadRun()
-		call Thread2.setupMpuRegion(2, TRUE, (void *) 0x000807c0, 0x40, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// TestMpuProtectionC$Thread2$run()
-		call Thread2.setupMpuRegion(3, TRUE, (void *) 0x00080700, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
+		call Thread1.setupMpuRegion(0, TRUE, (void *) &_scommon, (((uint32_t) &_ecommon) - ((uint32_t) &_scommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		// thread-specific code: ThreadInfoP$1$run_thread(), TestMpuProtectionC$Thread1$run()
+		call Thread1.setupMpuRegion(1, TRUE, (void *) &_sthread1, (((uint32_t) &_ethread1) - ((uint32_t) &_sthread1)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// needed for data
 		// ThreadInfoP$1$stack
-		call Thread2.setupMpuRegion(4, TRUE, (void *) 0x20000000, 0x1000, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x20000000, 0x1000, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
 		// needed for LED
 		// 0x400e0e34
-		call Thread2.setupMpuRegion(5, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
-		// PendSV handler
-		call Thread2.setupMpuRegion(6, TRUE, (void *) 0x00080a00, 0x80, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread1.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
 		// foreign data1: allow or disallow
-		call Thread2.setupMpuRegion(7, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ FALSE, /*WP*/ FALSE, /*RU*/ FALSE, /*WU*/ FALSE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		//call Thread2.setupMpuRegion(7, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread1.setupMpuRegion(4, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ FALSE, /*WP*/ FALSE, /*RU*/ FALSE, /*WU*/ FALSE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		//call Thread1.setupMpuRegion(4, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread1.setupMpuRegion(5, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		call Thread1.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 #endif
 	}
 
-	event void Thread1.run(void* arg) __attribute__((noinline))
+	event void Thread0.run(void* arg) __attribute__((noinline))
 	{
 		// initialize own data
 		data1.word1 = 1;
@@ -148,7 +147,7 @@ implementation
 		}
 	}
 
-	event void Thread2.run(void* arg) __attribute__((noinline))
+	event void Thread1.run(void* arg) __attribute__((noinline))
 	{
 		volatile uint32_t i;
 

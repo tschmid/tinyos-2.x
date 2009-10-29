@@ -1,2 +1,3 @@
-#Set up flag for MPU protection to be used (conditional compilation)
-PFLAGS += -DMPU_PROTECTION
+# Set up flag for MPU protection to be used (conditional compilation)
+# Put functions in sections of their own so that linker script can group and align them
+PFLAGS += -DMPU_PROTECTION -ffunction-sections
