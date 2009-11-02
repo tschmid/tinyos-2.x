@@ -71,25 +71,25 @@ SECTIONS
 		KEEP(*(.vectors))
 
 		. = ALIGN(0x200);
-		PROVIDE(_stextcommon = .);
+		_stextcommon = .;
 		*(.text.TinyThreadSchedulerP$threadWrapper)
 		*(.text.StaticThreadP$ThreadFunction$signalThreadRun)
 		. = ALIGN(0x200);
-		PROVIDE(_etextcommon = .);
+		_etextcommon = .;
 
 		. = ALIGN(0x200);
-		PROVIDE(_stextthread0 = .);
+		_stextthread0 = .;
 		*(.text.ThreadInfoP$0$run_thread)
 		*(.text.TestMpuProtectionC$Thread0$run)
 		. = ALIGN(0x200);
-		PROVIDE(_etextthread0 = .);
+		_etextthread0 = .;
 
 		. = ALIGN(0x200);
-		PROVIDE(_stextthread1 = .);
+		_stextthread1 = .;
 		*(.text.ThreadInfoP$1$run_thread)
 		*(.text.TestMpuProtectionC$Thread1$run)
 		. = ALIGN(0x200);
-		PROVIDE(_etextthread1 = .);
+		_etextthread1 = .;
 
 		*(.text*)
 		*(.rodata*)
@@ -104,6 +104,19 @@ SECTIONS
 	{
 		. = ALIGN(4);
 		_sdata = .;
+
+		. = ALIGN(0x200);
+		_sdatathread0 = .;
+		*(.datathread0*)
+		. = ALIGN(0x200);
+		_edatathread0 = .;
+
+		. = ALIGN(0x200);
+		_sdatathread1 = .;
+		*(.datathread1*)
+		. = ALIGN(0x200);
+		_edatathread1 = .;
+
 		*(.ramfunc) /* functions linked into RAM */
 		*(.data)
 		. = ALIGN(4);
@@ -114,6 +127,19 @@ SECTIONS
 	.bss (NOLOAD) : {
 		. = ALIGN(4);
 		_sbss = .;
+
+		. = ALIGN(0x200);
+		_sbssthread0 = .;
+		*(.bssthread0*)
+		. = ALIGN(0x200);
+		_ebssthread0 = .;
+
+		. = ALIGN(0x200);
+		_sbssthread1 = .;
+		*(.bssthread1*)
+		. = ALIGN(0x200);
+		_ebssthread1 = .;
+
 		*(.bss)
 		. = ALIGN(4);
 	} > sram0

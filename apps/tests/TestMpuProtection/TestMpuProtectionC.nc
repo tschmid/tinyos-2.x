@@ -16,6 +16,14 @@ extern unsigned int _stextthread0;
 extern unsigned int _etextthread0;
 extern unsigned int _stextthread1;
 extern unsigned int _etextthread1;
+extern unsigned int _sbssthread0;
+extern unsigned int _ebssthread0;
+extern unsigned int _sbssthread1;
+extern unsigned int _ebssthread1;
+extern unsigned int _sdatathread0;
+extern unsigned int _edatathread0;
+extern unsigned int _sdatathread1;
+extern unsigned int _edatathread1;
 
 module TestMpuProtectionC
 {
@@ -32,9 +40,9 @@ implementation
 	// does not normally have to be volatile, but here it does
 	// so that the compiler does not optimize the artificial check
 	// for manipulation in the test case
-	volatile struct32bytes data1; // belongs to thread 0
+	volatile struct32bytes data1 __attribute__((section(".bssthread0"))); // belongs to thread 0
 
-	volatile struct32bytes data2; // belongs to thread 1
+	volatile struct32bytes data2 __attribute__((section(".bssthread1"))); // belongs to thread 1
 
 	void fatal();
 
@@ -96,15 +104,22 @@ implementation
 		call Thread0.setupMpuRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// thread-specific code: ThreadInfoP$0$run_thread(), TestMpuProtectionC$Thread0$run()
 		call Thread0.setupMpuRegion(1, TRUE, (void *) &_stextthread0, (((uint32_t) &_etextthread0) - ((uint32_t) &_stextthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// needed for data
 		// ThreadInfoP$0$stack
-		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x20000000, 0x800, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		// needed for LED
-		// 0x400e0e34
+		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x20000000, 0x1000, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		// needed for LED: 0x400e0e34
 		call Thread0.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
-		// data1: 0x200006b8 + 0x20
-		call Thread0.setupMpuRegion(4, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		call Thread0.setupMpuRegion(5, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		// thread-specific BSS: data1
+		if (&_sbssthread0 != &_ebssthread0) {
+			call Thread0.setupMpuRegion(4, TRUE, (void *) &_sbssthread0, (((uint32_t) &_ebssthread0) - ((uint32_t) &_sbssthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		} else {
+			call Thread0.setupMpuRegion(4, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		}
+		// thread-specific data: n/a
+		if (&_sdatathread0 != &_edatathread0) {
+			call Thread0.setupMpuRegion(5, TRUE, (void *) &_sdatathread0, (((uint32_t) &_edatathread0) - ((uint32_t) &_sdatathread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		} else {
+			call Thread0.setupMpuRegion(5, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		}
 		call Thread0.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 		call Thread0.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
                                               
@@ -112,17 +127,29 @@ implementation
 		call Thread1.setupMpuRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// thread-specific code: ThreadInfoP$1$run_thread(), TestMpuProtectionC$Thread1$run()
 		call Thread1.setupMpuRegion(1, TRUE, (void *) &_stextthread1, (((uint32_t) &_etextthread1) - ((uint32_t) &_stextthread1)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
-		// needed for data
 		// ThreadInfoP$1$stack
 		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x20000000, 0x1000, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		// needed for LED
-		// 0x400e0e34
+		// needed for LED: 0x400e0e34
 		call Thread1.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
-		// foreign data1: allow or disallow
-		call Thread1.setupMpuRegion(4, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ FALSE, /*WP*/ FALSE, /*RU*/ FALSE, /*WU*/ FALSE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		//call Thread1.setupMpuRegion(4, TRUE, (void *) 0x20000600, 0x100, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		call Thread1.setupMpuRegion(5, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-		call Thread1.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		// thread-specific BSS: data2
+		if (&_sbssthread1 != &_ebssthread1) {
+			call Thread1.setupMpuRegion(4, TRUE, (void *) &_sbssthread1, (((uint32_t) &_ebssthread1) - ((uint32_t) &_sbssthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		} else {
+			call Thread1.setupMpuRegion(4, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		}
+		// thread-specific data: n/a
+		if (&_sdatathread1 != &_edatathread1) {
+			call Thread1.setupMpuRegion(5, TRUE, (void *) &_sdatathread1, (((uint32_t) &_edatathread1) - ((uint32_t) &_sdatathread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		} else {
+			call Thread1.setupMpuRegion(5, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		}
+		// other thread's data1
+		if (&_sbssthread0 != &_ebssthread0) {
+			call Thread1.setupMpuRegion(6, TRUE, (void *) &_sbssthread0, (((uint32_t) &_ebssthread0) - ((uint32_t) &_sbssthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+			//call Thread1.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		} else {
+			call Thread1.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		}
 		call Thread1.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 #endif
 	}
