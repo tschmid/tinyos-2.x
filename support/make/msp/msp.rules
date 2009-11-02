@@ -39,6 +39,11 @@ SET_ID = tos-set-symbols
 NCC = ncc
 LIBS = -lm
 
+# Use __ as the separator - requires nesC 1.2.9 or later
+ifneq ($(filter sim,$(GOALS)),sim)
+        PFLAGS += -fnesc-separator=__
+endif
+
 AMADDR = ActiveMessageAddressC\$$addr
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
