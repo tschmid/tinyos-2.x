@@ -71,25 +71,25 @@ SECTIONS
 		KEEP(*(.vectors))
 
 		. = ALIGN(0x200);
-		PROVIDE(_scommon = .);
+		PROVIDE(_stextcommon = .);
 		*(.text.TinyThreadSchedulerP$threadWrapper)
 		*(.text.StaticThreadP$ThreadFunction$signalThreadRun)
 		. = ALIGN(0x200);
-		PROVIDE(_ecommon = .);
+		PROVIDE(_etextcommon = .);
 
 		. = ALIGN(0x200);
-		PROVIDE(_sthread0 = .);
+		PROVIDE(_stextthread0 = .);
 		*(.text.ThreadInfoP$0$run_thread)
 		*(.text.TestMpuProtectionC$Thread0$run)
 		. = ALIGN(0x200);
-		PROVIDE(_ethread0 = .);
+		PROVIDE(_etextthread0 = .);
 
 		. = ALIGN(0x200);
-		PROVIDE(_sthread1 = .);
+		PROVIDE(_stextthread1 = .);
 		*(.text.ThreadInfoP$1$run_thread)
 		*(.text.TestMpuProtectionC$Thread1$run)
 		. = ALIGN(0x200);
-		PROVIDE(_ethread1 = .);
+		PROVIDE(_etextthread1 = .);
 
 		*(.text*)
 		*(.rodata*)
