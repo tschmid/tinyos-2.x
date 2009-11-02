@@ -10,12 +10,12 @@ typedef struct
 	uint32_t word8;
 } struct32bytes;
 
-extern unsigned int _scommon;
-extern unsigned int _ecommon;
-extern unsigned int _sthread0;
-extern unsigned int _ethread0;
-extern unsigned int _sthread1;
-extern unsigned int _ethread1;
+extern unsigned int _stextcommon;
+extern unsigned int _etextcommon;
+extern unsigned int _stextthread0;
+extern unsigned int _etextthread0;
+extern unsigned int _stextthread1;
+extern unsigned int _etextthread1;
 
 module TestMpuProtectionC
 {
@@ -93,9 +93,9 @@ implementation
 		call HplSam3uMpu.disableMpuDuringHardFaults();
 
 		// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
-		call Thread0.setupMpuRegion(0, TRUE, (void *) &_scommon, (((uint32_t) &_ecommon) - ((uint32_t) &_scommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread0.setupMpuRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// thread-specific code: ThreadInfoP$0$run_thread(), TestMpuProtectionC$Thread0$run()
-		call Thread0.setupMpuRegion(1, TRUE, (void *) &_sthread0, (((uint32_t) &_ethread0) - ((uint32_t) &_sthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread0.setupMpuRegion(1, TRUE, (void *) &_stextthread0, (((uint32_t) &_etextthread0) - ((uint32_t) &_stextthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// needed for data
 		// ThreadInfoP$0$stack
 		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x20000000, 0x800, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
@@ -109,9 +109,9 @@ implementation
 		call Thread0.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
                                               
 		// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
-		call Thread1.setupMpuRegion(0, TRUE, (void *) &_scommon, (((uint32_t) &_ecommon) - ((uint32_t) &_scommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread1.setupMpuRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// thread-specific code: ThreadInfoP$1$run_thread(), TestMpuProtectionC$Thread1$run()
-		call Thread1.setupMpuRegion(1, TRUE, (void *) &_sthread1, (((uint32_t) &_ethread1) - ((uint32_t) &_sthread1)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
+		call Thread1.setupMpuRegion(1, TRUE, (void *) &_stextthread1, (((uint32_t) &_etextthread1) - ((uint32_t) &_stextthread1)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// needed for data
 		// ThreadInfoP$1$stack
 		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x20000000, 0x1000, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
