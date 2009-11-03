@@ -81,6 +81,7 @@ SECTIONS
 		_stextthread0 = .;
 		*(.text.ThreadInfoP$0$run_thread)
 		*(.text.TestMpuProtectionC$Thread0$run)
+		*(.text.TestMpuProtectionSyscallC$Thread0$run)
 		. = ALIGN(0x200);
 		_etextthread0 = .;
 
@@ -88,6 +89,7 @@ SECTIONS
 		_stextthread1 = .;
 		*(.text.ThreadInfoP$1$run_thread)
 		*(.text.TestMpuProtectionC$Thread1$run)
+		*(.text.TestMpuProtectionSyscallC$Thread1$run)
 		. = ALIGN(0x200);
 		_etextthread1 = .;
 
