@@ -140,6 +140,18 @@ SECTIONS
 		. = ALIGN(0x200);
 		_ebssthread1 = .;
 
+		. = ALIGN(0x200);
+		_sbssstacks = .;
+		*(.bssstacks)
+		. = ALIGN(0x200);
+		_ebssstacks = .;
+
+		. = ALIGN(0x200);
+		_sbsscommon = .;
+		*(.bsscommon)
+		. = ALIGN(0x200);
+		_ebsscommon = .;
+
 		*(.bss)
 		. = ALIGN(4);
 	} > sram0

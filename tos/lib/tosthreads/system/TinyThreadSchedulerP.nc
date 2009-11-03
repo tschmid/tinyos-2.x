@@ -54,7 +54,7 @@ module TinyThreadSchedulerP {
 }
 implementation {
   //Pointer to currently running thread
-  thread_t* current_thread;
+  thread_t* current_thread __attribute((section(".bsscommon")));
   //Pointer to the tos thread
   thread_t* tos_thread;
   //Pointer to yielding thread
