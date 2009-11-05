@@ -48,6 +48,9 @@
 #ifdef _H_atmega128hardware_H
   #include "avr_stdio.h"
 #endif
+#ifdef __M16C62PHARDWARE_H__ 
+#include "m16c62p_printf.h"
+#endif
 #include "message.h"
 int printfflush();
 
