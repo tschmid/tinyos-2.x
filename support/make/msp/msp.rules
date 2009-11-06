@@ -44,7 +44,7 @@ ifneq ($(filter sim,$(GOALS)),sim)
         PFLAGS += -fnesc-separator=__
 endif
 
-AMADDR = ActiveMessageAddressC\$$addr
+AMADDR = ActiveMessageAddressC__addr
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_IHEX = $(BUILDDIR)/main.ihex
