@@ -54,15 +54,15 @@ module TinyThreadSchedulerP {
 }
 implementation {
   //Pointer to currently running thread
-  thread_t* current_thread __attribute((section(".bsscommon")));
+  thread_t* current_thread __attribute__((section(".bsscommon")));
   //Pointer to the tos thread
-  thread_t* tos_thread;
+  thread_t* tos_thread __attribute__((section(".bsscommon")));
   //Pointer to yielding thread
-  thread_t* yielding_thread;
+  thread_t* yielding_thread __attribute__((section(".bsscommon")));
   //Number of threads started, and currently capable of running if given the chance
   uint8_t num_runnable_threads;
   //Thread queue for keeping track of threads waiting to run
-  thread_queue_t ready_queue;
+  thread_queue_t ready_queue __attribute__((section(".bsscommon")));
   
   void task alarmTask() {
     uint8_t temp;
@@ -84,7 +84,7 @@ implementation {
    * compiler, causing obvious problems with the stack switching
    * thats going on....
    */
-  void switchThreads() __attribute__((noinline)) {
+  void switchThreads() __attribute__((noinline, section(".textcommon"))) {
     SWITCH_CONTEXTS(yielding_thread, current_thread);
   }
 
@@ -135,12 +135,13 @@ implementation {
 
 		  // switch to unprivileged mode in thread mode (if not kernel thread)
 		  {
-			  uint32_t newState = 0x1; // MSP, user mode
-			  asm volatile(
-				  "msr control, %0"
-				  : // output
-				  : "r" (newState) // input
-			  );
+			  //uint32_t newState = 0x1; // MSP, user mode
+			  //asm volatile(
+			  //    "msr control, %0"
+			  //    : // output
+			  //    : "r" (newState) // input
+			  //);
+			  ; // FIXME: commented out for now, since syscalls disable IRQs
 		  }
 
 		  // reactivate MPU (if not kernel thread)
@@ -214,7 +215,7 @@ implementation {
    * Should be complete as is.  Add functionality to getNextThreadId() 
    * if you need to change the actual scheduling policy.
    */
-  void scheduleNextThread() {
+  void scheduleNextThread() __attribute__((section(".textcommon"))) {
     if(tos_thread->state == TOSTHREAD_STATE_READY)
       current_thread = tos_thread;
     else
@@ -227,7 +228,7 @@ implementation {
    * This routine figures out what thread should run next
    * and then switches to it.
    */
-  void interrupt(thread_t* thread) {
+  void interrupt(thread_t* thread) __attribute__((section(".textcommon"))) {
     yielding_thread = thread;
     scheduleNextThread();
     if(current_thread != yielding_thread) {
@@ -394,7 +395,7 @@ implementation {
     return EALREADY;
   }
   
-  async command error_t ThreadScheduler.wakeupThread(uint8_t id) {
+  async command error_t ThreadScheduler.wakeupThread(uint8_t id) __attribute__((section(".textcommon"))) {
     thread_t* t = call ThreadInfo.get[id]();
     if((t->state) == TOSTHREAD_STATE_SUSPENDED) {
       t->state = TOSTHREAD_STATE_READY;

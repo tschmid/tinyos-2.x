@@ -52,7 +52,7 @@ implementation {
     error_t   error;
   } read_params_t;
 
-  syscall_queue_t read_queue;
+  syscall_queue_t read_queue __attribute__((section(".bsscommon")));
   
   command error_t Init.init() {
     call SystemCallQueue.init(&read_queue);

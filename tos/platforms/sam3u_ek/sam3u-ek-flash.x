@@ -70,11 +70,12 @@ SECTIONS
 		_stext = .;
 		KEEP(*(.vectors))
 
-		. = ALIGN(0x200);
+		. = ALIGN(0x400);
 		_stextcommon = .;
 		*(.text.TinyThreadSchedulerP$threadWrapper)
 		*(.text.StaticThreadP$ThreadFunction$signalThreadRun)
-		. = ALIGN(0x200);
+		*(.textcommon*)
+		. = ALIGN(0x400);
 		_etextcommon = .;
 
 		. = ALIGN(0x200);
@@ -126,7 +127,8 @@ SECTIONS
 	} > sram0
 
 	/* BSS will be zeroed by start-up code */
-	.bss (NOLOAD) : {
+	.bss (NOLOAD) :
+	{
 		. = ALIGN(4);
 		_sbss = .;
 
@@ -144,13 +146,13 @@ SECTIONS
 
 		. = ALIGN(0x200);
 		_sbssstacks = .;
-		*(.bssstacks)
+		*(.bssstacks*)
 		. = ALIGN(0x200);
 		_ebssstacks = .;
 
 		. = ALIGN(0x200);
 		_sbsscommon = .;
-		*(.bsscommon)
+		*(.bsscommon*)
 		. = ALIGN(0x200);
 		_ebsscommon = .;
 
