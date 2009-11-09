@@ -21,6 +21,7 @@ push ( @includes, qw(
   %T/chips/sam3u/mpu
   %T/chips/sam3u/spi
   %T/chips/sam3u/smc
+  %T/chips/sam3u/adc12b
   %T/lib/timer
   %T/lib/serial
 
