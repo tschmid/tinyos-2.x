@@ -62,7 +62,7 @@ module TinyOSMainP {
   }
 }
 implementation {
-  thread_t thread_info;
+  thread_t thread_info __attribute__((section(".bsscommon")));
 
   event void TinyOSBoot.booted() {
     atomic {

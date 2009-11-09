@@ -70,13 +70,13 @@ implementation
 
 	event void Thread0.run(void* arg) __attribute__((noinline))
 	{
-		//uint16_t* var = NULL;
+		uint16_t* var = NULL;
 		//message_t msg;
 		//var = call Packet.getPayload(&msg, sizeof(uint16_t));
 
 		//while( call AMControl.start() != SUCCESS );    
 		for(;;){
-			//while( call BlockingRead.read(var) != SUCCESS );
+			while( call BlockingRead.read(var) != SUCCESS );
 			//while( call BlockingAMSend.send(AM_BROADCAST_ADDR, &msg, sizeof(uint16_t)) != SUCCESS );
 			call Leds.led0Toggle();
 			wait();

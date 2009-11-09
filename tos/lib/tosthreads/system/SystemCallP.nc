@@ -43,7 +43,7 @@ module SystemCallP {
 }
 implementation {
 
-  syscall_t* current_call = NULL;
+  syscall_t* current_call __attribute__((section(".bsscommon"))) = NULL;
   
   task void threadTask() {
     (*(current_call->syscall_ptr))(current_call);
