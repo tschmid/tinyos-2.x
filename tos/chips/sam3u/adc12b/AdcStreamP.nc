@@ -25,6 +25,11 @@
  * @author JeongGil Ko
  */
 
+/*
+ * TODOs: At the read commmand, the input parameter should be set to a 
+ *        microsecond alarm. Currently, a millisecond timer is used.
+*/
+
 #include "sa3uadc12bhardware.h"
 module AdcStreamP {
   provides {
@@ -188,7 +193,9 @@ implementation {
 
     //period = usPeriod / 1000; // msp implementation
     //periodModified = TRUE;
-    period = usPeriod;
+    period = usPeriod; 
+    // THIS IS CURRENTLY IN MILLISECONDS!
+    // SHOULD BE CHANGED TO MICROSECONDS!
     periodModified = FALSE;
     client = c;
     now = call Alarm.getNow();
