@@ -159,7 +159,8 @@ implementation
 
   void task readDoneNow()
   {
-    signal Read.readDone[setClient](SUCCESS, adcResult);
+    call Leds.led1Toggle(); //dbg
+    signal ReadNow.readDone[setClient](SUCCESS, adcResult);
   }
 
   /************************************************/
@@ -167,7 +168,6 @@ implementation
   /** Data is ready! **/
   async event error_t GetAdc.dataReady[uint8_t client](uint16_t data)
   {
-    call Leds.led1Toggle(); //dbg
     atomic setClient = client;
     atomic adcResult = data;
 
