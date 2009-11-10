@@ -184,9 +184,11 @@ implementation {
 
   command error_t ReadStream.read[uint8_t c](uint32_t usPeriod)
   {
-     //period = usPeriod / 1000;
-    period = usPeriod;
+    /*TODO: Modify definition of period*/
+
+    //period = usPeriod / 1000; // msp implementation
     //periodModified = TRUE;
+    period = usPeriod;
     periodModified = FALSE;
     client = c;
     now = call Alarm.getNow();
