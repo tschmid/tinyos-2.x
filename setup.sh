@@ -5,3 +5,4 @@ export MAKERULES="$TOSROOT/support/make/Makerules"
 export PATH=$TOSROOT/tools/mni/scripts:$PATH
 export PYTHONPATH=$TOSROOT/support/sdk/python
 
+export PATH=$TOSROOT/tools/platforms/sam3u:$PATH
