@@ -37,7 +37,7 @@ generic configuration AdcReadNowClientC()
 implementation {
   components AdcP;
   components new Sam3uAdc12bClientC();
-  components LedsC;
+  components LedsC, NoLedsC;
 
   enum {
     CLIENT = unique(ADCC_SERVICE),
@@ -49,6 +49,5 @@ implementation {
 
   AdcP.GetAdc[CLIENT] -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
   AdcP.SubResourceReadNow[CLIENT] -> Sam3uAdc12bClientC.Resource;
-  AdcP.Leds -> LedsC;
-  //AdcConfigure -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
+  AdcP.Leds -> NoLedsC;
 }

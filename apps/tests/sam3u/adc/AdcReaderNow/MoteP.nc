@@ -46,6 +46,9 @@ module MoteP
 
 implementation
 {
+  norace error_t resultError;
+  norace uint16_t resultValue;
+
   event void Boot.booted()
   {
     while (call SerialSplitControl.start() != SUCCESS);
@@ -81,30 +84,35 @@ implementation
   task void sample()
   {
     const char *start = "Start Sampling";
-    call Draw.fill(COLOR_BLUE);
-    call Draw.drawString(10,50,start,COLOR_RED);
+    //call Draw.fill(COLOR_BLUE);
+    call Draw.drawString(10,50,start,COLOR_BLACK);
     call Resource.request();
   }
 
   event void Resource.granted(){
-    call ReadNow.read();
+     call ReadNow.read();
   }
-  
-  async event void ReadNow.readDone(error_t result, uint16_t value)
-  {
+
+  task void drawResult(){
     const char *fail = "Read done error";
     const char *good = "Read done success";
-    if (result != SUCCESS) {
-      call Draw.drawString(10,70,fail,COLOR_BLACK);
+    call Draw.fill(COLOR_GREEN);
+    if (resultError != SUCCESS) {
+      atomic call Draw.drawString(10,70,fail,COLOR_BLACK);
     }else{
       call Draw.drawString(10,70,good,COLOR_BLACK);
-      call Draw.drawInt(100,100,value,1,COLOR_BLACK);
+      call Draw.drawInt(100,100,resultValue,1,COLOR_BLACK);
     }
+  }
+
+  async event void ReadNow.readDone(error_t error, uint16_t value)
+  {
+    atomic resultError = error;
+    atomic resultValue = value;
+    post drawResult();
   }
   
   event void Timer.fired() {
-    call Leds.led0Toggle();
-    call Leds.led2Off();
     post sample();
   }
 }
