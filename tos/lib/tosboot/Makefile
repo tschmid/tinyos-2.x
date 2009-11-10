@@ -86,6 +86,15 @@ ifeq ($(MAKECMDGOALS),mulle)
   CFLAGS += -I../net/Deluge/extra/m16c62p
 endif
 
+ifeq ($(MAKECMDGOALS),tinynode)
+  CFLAGS += -DTOSBOOT_START=0x4000 -DTOSBOOT_END=0x4a00
+  CFLAGS += -Itinynode -Imsp430 -Imsp430f1611 -Iat45db -Ilib
+  CFLAGS += -I../net/Deluge
+  POST_BUILD_EXTRA_DEPS += strip_iv 
+endif
+
+
+
 strip_iv: FORCE
 	@echo "    removing interrupt vector from binary"
 	msp430-objcopy -j .text -j .data -O ihex $(BUILDDIR)/main.exe $(BUILDDIR)/main.ihex
