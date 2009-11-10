@@ -6,5 +6,5 @@ The implementation is based on the preliminary specifications
 
 ToDos:
 
-- Validate using real voltage on pins
 - Change memory accessing method
+- ReadStream should be based on TC (microsecond timer)

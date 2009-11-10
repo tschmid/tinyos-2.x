@@ -30,7 +30,7 @@
  *        microsecond alarm. Currently, a millisecond timer is used.
 */
 
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
 module AdcStreamP {
   provides {
     interface Init @atleastonce();
