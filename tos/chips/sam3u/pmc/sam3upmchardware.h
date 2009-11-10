@@ -361,7 +361,7 @@ typedef union
         uint8_t reserved2 :  8;
         uint16_t reserved3: 16;
     } __attribute__((__packed__)) bits;
-} pmc_pckx_t;
+} pmc_pck_t;
 
 #define PMC_PCKX_CSS_SLOW_CLOCK   0
 #define PMC_PCKX_CSS_MAIN_CLOCK   1
@@ -584,9 +584,9 @@ typedef struct pmc
     uint32_t reserved1;
     volatile pmc_mckr_t   mckr;  // Master Clock Register
     uint32_t reserved2[3];
-    volatile pmc_pckx_t   pck0;  // Programmable Clock 0 Register
-    volatile pmc_pckx_t   pck1;  // Programmable Clock 1 Register
-    volatile pmc_pckx_t   pck2;  // Programmable Clock 2 Register
+    volatile pmc_pck_t   pck0;  // Programmable Clock 0 Register
+    volatile pmc_pck_t   pck1;  // Programmable Clock 1 Register
+    volatile pmc_pck_t   pck2;  // Programmable Clock 2 Register
     uint32_t reserved3[5];
     volatile pmc_ier_t    ier;   // Interrupt Enable Register
     volatile pmc_idr_t    idr;   // Interrupt Disable Register
