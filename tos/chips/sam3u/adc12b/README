@@ -1,0 +1,10 @@
+12 bit ADC implementation for SAM3U 
+
+@author JeongGil Ko <jgko@cs.jhu.edu>
+
+The implementation is based on the preliminary specifications
+
+ToDos:
+
+- Validate using real voltage on pins
+- Change memory accessing method
