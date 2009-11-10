@@ -27,6 +27,7 @@
  */
 
 #include "sam3upmchardware.h"
+#include "sam3usupchardware.h"
 
 #define CLOCK_TIMEOUT 0xFFFFFFFF
 
