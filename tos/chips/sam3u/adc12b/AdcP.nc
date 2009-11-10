@@ -24,6 +24,8 @@
  * @author JeongGil Ko
  */
 
+#include "sam3uadc12bhardware.h"
+
 module AdcP {
   provides {
     interface Read<uint16_t> as Read[uint8_t client];

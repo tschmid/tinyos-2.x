@@ -1,6 +1,6 @@
 // introduce interfaces for Hpl
 
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
 
 interface HplAdc12b{
 

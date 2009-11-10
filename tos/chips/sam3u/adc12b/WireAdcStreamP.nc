@@ -24,7 +24,8 @@
  * @author JeongGil Ko
  */
 
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
+
 configuration WireAdcStreamP {
   provides interface ReadStream<uint16_t>[uint8_t client];
   uses {
