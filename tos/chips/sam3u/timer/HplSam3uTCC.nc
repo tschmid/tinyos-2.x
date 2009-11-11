@@ -29,6 +29,8 @@ configuration HplSam3uTCC
 
     provides
     {
+        interface Init;
+
         interface HplSam3uTCChannel  as TC0;
         interface HplSam3uTCChannel  as TC1;
         interface HplSam3uTCChannel  as TC2;
@@ -88,4 +90,7 @@ implementation
     TC2CCompareA = TCCH2.CompareA;
     TC2CCompareB = TCCH2.CompareB;
     TC2CCompareC = TCCH2.CompareC;
+
+    components HplSam3uTCP;
+    Init = HplSam3uTCP;
 }

@@ -1,5 +1,4 @@
-/**
- * "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -20,22 +19,26 @@
  */
 
 /**
- * SAM3U TC compare interface.
- *
+ * Alarm32khzC is the alarm for async 32khz alarms
  * @author Thomas Schmid
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
  */
 
-interface HplSam3uTCCompare
+generic configuration Alarm32khz16C()
 {
-    async command void enable();
-    async command void disable();
-    async command bool isEnabled();
-    async command void clearPendingEvent();
-    async command uint16_t getEvent();
-    async command void setEvent( uint16_t time );
-    async command void setEventFromPrev( uint16_t delta );
-    async command void setEventFromNow( uint16_t delta );
-
-    async event void fired();
-
+  provides interface Init;
+  provides interface Alarm<T32khz,uint16_t>;
 }
+implementation
+{
+  components new HplSam3uTC32khzC() as HplSam3uTCChannel;
+  components new HilSam3uTCAlarmC(T32khz) as HilSam3uTCAlarm;
+
+  Init = HplSam3uTCAlarm;
+  Alarm = HplSam3uTCAlarm;
+
+  HilSam3uTCAlarm.HplSam3uTCChannel -> HplSam3TCChannel;
+  HilSam3uTCAlarm.Compare -> HplSam3uTCChannel;
+}
+

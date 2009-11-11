@@ -1,5 +1,4 @@
-/**
- * "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -20,22 +19,21 @@
  */
 
 /**
- * SAM3U TC compare interface.
+ * Counter32khz16C provides at 16-bit counter at 32768 ticks per second.
  *
  * @author Thomas Schmid
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
  */
 
-interface HplSam3uTCCompare
+configuration Counter32khz16C
 {
-    async command void enable();
-    async command void disable();
-    async command bool isEnabled();
-    async command void clearPendingEvent();
-    async command uint16_t getEvent();
-    async command void setEvent( uint16_t time );
-    async command void setEventFromPrev( uint16_t delta );
-    async command void setEventFromNow( uint16_t delta );
-
-    async event void fired();
-
+  provides interface Counter<T32khz,uint16_t>;
 }
+implementation
+{
+  components HilSam3uTCCounter32khzC as CounterFrom;
+
+  Counter = CounterFrom;
+}
+
