@@ -6,5 +6,4 @@ The implementation is based on the preliminary specifications
 
 ToDos:
 
-- Change memory accessing method
 - ReadStream should be based on TC (microsecond timer)
