@@ -28,6 +28,16 @@
 interface HplSam3uTCCapture
 {
     /**
+     * Enable the capture event interrupt.
+     */
+    async command void enable();
+
+    /**
+     * Disable the capture event interrupt.
+     */
+    async command void disable();
+
+    /**
      * Reads the value of the last capture event 
      */
     async command uint16_t getEvent();

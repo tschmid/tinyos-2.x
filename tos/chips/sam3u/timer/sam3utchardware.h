@@ -196,6 +196,17 @@ typedef union
 #define TC_CMR_ETRGEDG_FALLING  2
 #define TC_CMR_ETRGEDG_EACH     3
 
+#define TC_CMR_CAPTURE          0
+#define TC_CMR_WAVE             1
+
+#define TC_CMR_CLK_TC1          0
+#define TC_CMR_CLK_TC2          1
+#define TC_CMR_CLK_TC3          2
+#define TC_CMR_CLK_TC4          3
+#define TC_CMR_CLK_SLOW         4
+#define TC_CMR_CLK_XC0          5
+#define TC_CMR_CLK_XC1          6
+#define TC_CMR_CLK_XC2          7
 /**
  *  TC Channel Mode Register Waveform Mode, AT91 ARM Cortex-M3 based Microcontrollers
  *  SAM3U Series, Preliminary 9/1/09, p. 838
@@ -375,12 +386,12 @@ typedef union
 } tc_imr_t;
 
 /**
- * Channel definition
+ * Channel definition capture mode
  */
 typedef struct
 {
     volatile tc_ccr_t ccr;
-    volatile tc_cmr_t cmr;
+    volatile tc_cmr_capture_t cmr;
     volatile uint32_t reserved[2];
     volatile tc_cv_t cv;
     volatile tc_ra_t ra;
@@ -390,18 +401,36 @@ typedef struct
     volatile tc_ier_t ier;
     volatile tc_idr_t idr;
     volatile tc_imr_t imr;
-} tc_channel_t;
+} tc_channel_capture_t;
 
 /**
- * TC definition
+ * Channel definition wave mode
  */
 typedef struct
 {
-    volatile tc_channel_t ch0;
+    volatile tc_ccr_t ccr;
+    volatile tc_cmr_wave_t cmr;
+    volatile uint32_t reserved[2];
+    volatile tc_cv_t cv;
+    volatile tc_ra_t ra;
+    volatile tc_rb_t rb;
+    volatile tc_rc_t rc;
+    volatile tc_sr_t sr;
+    volatile tc_ier_t ier;
+    volatile tc_idr_t idr;
+    volatile tc_imr_t imr;
+} tc_channel_wave_t;
+
+/**
+ * TC definition capture mode
+ */
+typedef struct
+{
+    volatile tc_channel_capture_t ch0;
     uint32_t reserved0[4];
-    volatile tc_channel_t ch1;
+    volatile tc_channel__capture_t ch1;
     uint32_t reserved1[4];
-    volatile tc_channel_t ch2;
+    volatile tc_channel_capture_t ch2;
     uint32_t reserved2[4];
     volatile tc_bcr_t bcr;
     volatile tc_bmr_t bmr;

@@ -29,9 +29,27 @@ configuration HplSam3uTCC
 
     provides
     {
-        interface HplSam3uTCChannel as TC0;
-        interface HplSam3uTCChannel as TC1;
-        interface HplSam3uTCChannel as TC2;
+        interface HplSam3uTCChannel  as TC0;
+        interface HplSam3uTCChannel  as TC1;
+        interface HplSam3uTCChannel  as TC2;
+
+        interface HplSam3uTCCapture  as TC0CaptureA;
+        interface HplSam3uTCCapture  as TC0CaptureB;
+        interface HplSam3uTCCcompare as TC0CCompareA;
+        interface HplSam3uTCCcompare as TC0CCompareB;
+        interface HplSam3uTCCcompare as TC0CCompareC;
+
+        interface HplSam3uTCCapture  as TC1CaptureA;
+        interface HplSam3uTCCapture  as TC1CaptureB;
+        interface HplSam3uTCCcompare as TC1CCompareA;
+        interface HplSam3uTCCcompare as TC1CCompareB;
+        interface HplSam3uTCCcompare as TC1CCompareC;
+        
+        interface HplSam3uTCCapture  as TC2CaptureA;
+        interface HplSam3uTCCapture  as TC2CaptureB;
+        interface HplSam3uTCCcompare as TC2CCompareA;
+        interface HplSam3uTCCcompare as TC2CCompareB;
+        interface HplSam3uTCCcompare as TC2CCompareC;
     }
 }
 
@@ -47,12 +65,27 @@ implementation
     TC1 = TCCH1;
     TC2 = TCCH2;
 
-    TCCH0.Overflow -> TCCH0.Event[0]; 
     TCCH0.NVICTCInterrupt -> HplNVICC.TC0Interrupt;
 
-    TCCH1.Overflow -> TCCH1.Event[0]; 
     TCCH1.NVICTCInterrupt -> HplNVICC.TC1Interrupt;
 
-    TCCH2.Overflow -> TCCH2.Event[0]; 
     TCCH2.NVICTCInterrupt -> HplNVICC.TC2Interrupt;
+
+    TC0CaptureA  = TCCH0.CaptureA; 
+    TC0CaptureB  = TCCH0.CaptureB;
+    TC0CCompareA = TCCH0.CompareA;
+    TC0CCompareB = TCCH0.CompareB;
+    TC0CCompareC = TCCH0.CompareC;
+
+    TC1CaptureA  = TCCH1.CaptureA; 
+    TC1CaptureB  = TCCH1.CaptureB;
+    TC1CCompareA = TCCH1.CompareA;
+    TC1CCompareB = TCCH1.CompareB;
+    TC1CCompareC = TCCH1.CompareC;
+
+    TC2CaptureA  = TCCH2.CaptureA; 
+    TC2CaptureB  = TCCH2.CaptureB;
+    TC2CCompareA = TCCH2.CompareA;
+    TC2CCompareB = TCCH2.CompareB;
+    TC2CCompareC = TCCH2.CompareC;
 }
