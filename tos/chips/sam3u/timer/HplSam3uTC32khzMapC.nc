@@ -1,5 +1,4 @@
-/**
- * "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -20,22 +19,27 @@
  */
 
 /**
- * SAM3U TC compare interface.
+ * HplSam3uTC32khzMapC presents as paramaterized interfaces all of the 32khz
+ * channels on the SAM3U that are available for compile time allocation
+ * by "new Alarm32khz16C()", "new AlarmMilli32C()", and so on.
+ *
+ * Platforms based on the SAM3U are encouraged to copy in and override this
+ * file, presenting only the hardware timers that are available for allocation
+ * on that platform.
  *
  * @author Thomas Schmid
  */
 
-interface HplSam3uTCCompare
+configuration HplSam3uTC32khzMapC
 {
-    async command void enable();
-    async command void disable();
-    async command bool isEnabled();
-    async command void clearPendingEvent();
-    async command uint16_t getEvent();
-    async command void setEvent( uint16_t time );
-    async command void setEventFromPrev( uint16_t delta );
-    async command void setEventFromNow( uint16_t delta );
-
-    async event void fired();
-
+  provides interface HplSam3uTCChannel[ uint8_t id ];
+  provides interface HplSam3uTCCompare[ uint8_t id ];
 }
+implementation
+{
+  components HplSam3uTCC;
+
+  HplSam3uTCChannel[0] = HplSam3uTCC.TC0;
+  HplSam3uTCCompare[0] = HplSam3uTCC.CompareC;
+}
+

@@ -20,7 +20,8 @@
  */
 
 /**
- * Provides the functionality of the SAM3U TC.
+ * Provides the functionality of the SAM3U TC. It enables and disables the
+ * whole unit and initializes the default configuration.
  *
  * @author Thomas Schmid
  */
@@ -31,20 +32,36 @@ module HplSam3uTCP @safe()
 {
     provides {
         interface Init;
+        interface StdControl;
     }
     uses {
-        interface HplNVICCntl;
-        interface HplNVICInterruptCntl as NVICTCInterrupt;
+        interface HplSam3uTCChannel as TC0;
+
+        interface HplSam3uPeripheralClockCntl as TCClockControl;
+
     }
 }
 implementation
 {
     command error_t Init.init()
     {
-        call NVICRTTInterrupt.configure(0);
-        // now enable the IRQ
-        call NVICRTTInterrupt.enable();
+        // configure channel 0 to be clocked from the SLOW clokc (32kHz)
+        call TC0.setMode(TC_CMR_CAPTURE);
+        call TC0.setClockSource(TC_CMR_CLK_SLOW);
+
         return SUCCESS;
+    }
+
+    command error_t StdControl.start()
+    {
+        call TCClockControl.enable(); 
+        call TC0.enableEvents();
+    }
+
+    command error_t StdControl.stop()
+    {
+        call TCClockControl.disable(); 
+        call TC0.disableEvents();
     }
 }
 

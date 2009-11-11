@@ -1,5 +1,4 @@
-/**
- * "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -20,22 +19,20 @@
  */
 
 /**
- * SAM3U TC compare interface.
- *
  * @author Thomas Schmid
  */
 
-interface HplSam3uTCCompare
+configuration HplSam3uTC32khzC
 {
-    async command void enable();
-    async command void disable();
-    async command bool isEnabled();
-    async command void clearPendingEvent();
-    async command uint16_t getEvent();
-    async command void setEvent( uint16_t time );
-    async command void setEventFromPrev( uint16_t delta );
-    async command void setEventFromNow( uint16_t delta );
-
-    async event void fired();
-
+  provides interface HplSam3uTCChannel;
+  provides interface HplSam3uTCCompare;
 }
+implementation
+{
+  components HplSam3uTC32khzMapC as Map;
+
+  enum { ALARM_ID = unique("Sam3uTC32khzMapC") };
+  HplSam3uTCChannel = Map.HplSam3uTCChannel[ ALARM_ID ];
+  HplSam3uTCCompare = Map.HplSam3uTCCompare[ ALARM_ID ];
+}
+

@@ -32,9 +32,34 @@ interface HplSam3uTCChannel
     async command void clearOverflow();
     async event void overflow();
 
+    /**
+     * FIXME: this currently only selects between wave mode or non-wave mode.
+     * This should be extended to all the different posibilities of modes!
+     *
+     * allowed arguments:
+     *   TC_CMR_WAVE: selects wave mode. Allows compare on A, B, and C or wave
+     *                generation
+     *   TC_CMR_CAPTURE: selects capture mode (disables wave mode!). Allows
+     *                   capture on A, B, and compare on C. (DEFAULT)
+     */
     async command void setMode(uint8_t mode);
+
     async command uint8_t getMode();
+
     async command void enableEvents();
     async command void disableEvents();
+
+    /**
+     * Allowed clock sources:
+     * TC_CMR_CLK_TC1: selects MCK/2 
+     * TC_CMR_CLK_TC2: selects MCK/8
+     * TC_CMR_CLK_TC3: selects MCK/32
+     * TC_CMR_CLK_TC4: selects MCK/128
+     * TC_CMR_CLK_SLOW: selects SLCK. if MCK=SLCK, then this clock will be
+     *                  modified by PRES and MDIV!
+     * TC_CMR_CLK_XC0: selects external clock input 0
+     * TC_CMR_CLK_XC1: selects external clock input 1
+     * TC_CMR_CLK_XC2: selects external clock input 2
+     */
     async command void setClockSource(uint8_t clockSource);
 }

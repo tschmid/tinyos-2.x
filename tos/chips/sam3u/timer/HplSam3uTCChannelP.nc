@@ -308,6 +308,17 @@ implementation
         CH_WAVE->idr = idr;
     }
 
+    async command bool CompareA.isEnabled()
+    {
+        return (CH_WAVE->imr.bits.cpas & 0x01);
+    }
+
+    async command void CompareA.clearPendingEvent()
+    {
+        sr.flat |= CH_WAVE->sr.flat;
+        sr.bits.cpas = 0;
+    }
+
     async command uint16_t CompareA.getEvent()
     {
         return CH_WAVE->ra.bits.ra;
@@ -335,5 +346,119 @@ implementation
     }
 
     default async event void CompareA.fired() { }
+
+
+    /******************************************
+     * Compare B
+     ******************************************/
+    async command void CompareB.enable()
+    {
+        tc_ier_t ier = CH_WAVE->ier;
+        ier.bits.cpbs = 1;
+        CH_WAVE->ier = ier;
+    }
+
+    async command void CompareB.disable()
+    {
+        tc_idr_t idr = CH_WAVE->idr;
+        idr.bits.cpbs = 1;
+        CH_WAVE->idr = idr;
+    }
+
+    async command bool CompareB.isEnabled()
+    {
+        return (CH_WAVE->imr.bits.cpbs & 0x01);
+    }
+
+    async command void CompareB.clearPendingEvent()
+    {
+        sr.flat |= CH_WAVE->sr.flat;
+        sr.bits.cpbs = 0;
+    }
+
+    async command uint16_t CompareB.getEvent()
+    {
+        return CH_WAVE->rb.bits.rb;
+    }
+
+    async command void CompareB.setEvent( uint16_t time )
+    {
+        tc_rb_t rb = CH_WAVE->rb;
+        rb.bits.rb = time;
+        CH_WAVE->rb = rb;
+    }
+
+    async command void CompareB.setEventFromPrev( uint16_t delta )
+    {
+        tc_rb_t rb = CH_WAVE->rb;
+        rb.bits.rb += time;
+        CH_WAVE->rb = rb;
+    }
+
+    async command void CompareB.setEventFromNow( uint16_t delta )
+    {
+        tc_rb_t rb = CH_WAVE->rb;
+        rb.bits.rb = CH_WAVE->tc.bits.cv + time;
+        CH_WAVE->rb = rb;
+    }
+
+    default async event void CompareB.fired() { }
+
+
+    /******************************************
+     * Compare C
+     ******************************************/
+    async command void CompareC.enable()
+    {
+        tc_ier_t ier = CH_WAVE->ier;
+        ier.bits.cpcs = 1;
+        CH_WAVE->ier = ier;
+    }
+
+    async command void CompareC.disable()
+    {
+        tc_idr_t idr = CH_WAVE->idr;
+        idr.bits.cpcs = 1;
+        CH_WAVE->idr = idr;
+    }
+
+    async command bool CompareC.isEnabled()
+    {
+        return (CH_WAVE->imr.bits.cpcs & 0x01);
+    }
+
+    async command void CompareC.clearPendingEvent()
+    {
+        sr.flat |= CH_WAVE->sr.flat;
+        sr.bits.cpcs = 0;
+    }
+
+    async command uint16_t CompareC.getEvent()
+    {
+        return CH_WAVE->rc.bits.rc;
+    }
+
+    async command void CompareC.setEvent( uint16_t time )
+    {
+        tc_rc_t rc = CH_WAVE->rc;
+        rc.bits.rc = time;
+        CH_WAVE->rc = rc;
+    }
+
+    async command void CompareC.setEventFromPrev( uint16_t delta )
+    {
+        tc_rc_t rc = CH_WAVE->rc;
+        rc.bits.rc += time;
+        CH_WAVE->rc = rc;
+    }
+
+    async command void CompareC.setEventFromNow( uint16_t delta )
+    {
+        tc_rc_t rc = CH_WAVE->rc;
+        rc.bits.rc = CH_WAVE->tc.bits.cv + time;
+        CH_WAVE->rc = rc;
+    }
+
+    default async event void CompareC.fired() { }
 }
 
