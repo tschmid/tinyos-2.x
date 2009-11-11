@@ -27,6 +27,8 @@
 
 interface HplSam3uTCCompare
 {
+    async command void enable();
+    async command void disable();
     async command uint16_t getEvent();
     async command void setEvent( uint16_t time );
     async command void setEventFromPrev( uint16_t delta );
