@@ -370,10 +370,53 @@ typedef union
 } tc_imr_t;
 
 /**
+ * Channel definition
+ */
+typedef struct
+{
+    volatile tc_ccr_t ccr;
+    volatile tc_cmr_t cmr;
+    volatile uint32_t reserved[2];
+    volatile tc_cv_t cv;
+    volatile tc_ra_t ra;
+    volatile tc_rb_t rb;
+    volatile tc_rc_t rc;
+    volatile tc_sr_t sr;
+    volatile tc_ier_t ier;
+    volatile tc_idr_t idr;
+    volatile tc_imr_t imr;
+} tc_channel_t;
+
+/**
+ * TC definition
+ */
+typedef struct
+{
+    volatile tc_channel_t ch0;
+    uint32_t reserved0[4];
+    volatile tc_channel_t ch1;
+    uint32_t reserved1[4];
+    volatile tc_channel_t ch2;
+    uint32_t reserved2[4];
+    volatile tc_bcr_t bcr;
+    volatile tc_bmr_t bmr;
+    volatile tc_qier_t qier;
+    volatile tc_qidr_t qidr;
+    volatile tc_qimr_t qimr;
+    volatile tc_qisr_t qisr;
+} tc_t;
+
+/**
  * TC Register definitions, AT91 ARM Cortex-M3 based Microcontrollers SAM3U
  * Series, Preliminary 9/1/09, p. 827
  */
 volatile uint32_t* TC_BASE = (volatile uint32_t*)   0x40080000;
+volatile uint32_t* TC_CH0_BASE = (volatile uint32_t*) 0x40080000;
+volatile uint32_t* TC_CH1_BASE = (volatile uint32_t*) 0x40080040;
+volatile uint32_t* TC_CH2_BASE = (volatile uint32_t*) 0x40080080;
+
+volatile tc_t* TC = (volatile tc_t*)TC_BASE;
+
 // Channel 0
 volatile tc_ccr_t*    TC_CCR0 = (volatile tc_ccr_t*)  0x40080000;
 volatile tc_cmr_t*    TC_CMR0 = (volatile tc_cmr_t*)  0x40080004;
