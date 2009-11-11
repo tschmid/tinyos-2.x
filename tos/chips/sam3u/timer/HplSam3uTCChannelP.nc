@@ -32,6 +32,11 @@ generic module HplSam3uTCP(
 {
     provides {
         interface HplSam3uTCChannel;
+        interface HplSam3uTCCapture as CaptureA;
+        interface HplSam3uTCCapture as CaptureB;
+        interface HplSam3uTCCompare as CompareA;
+        interface HplSam3uTCCompare as CompareB;
+        interface HplSam3uTCCompare as CompareC;
         interface HplSam3uTCEvent as Event[uint8_t n];
     }
     uses {
@@ -41,14 +46,15 @@ generic module HplSam3uTCP(
 }
 implementation
 {
-
     volatile tc_channel_t *CH = (volatile tc_channel_t*)tc_channel_base;
 
     // interrupt status
     tc_sr_t sr;
 
-        return SUCCESS;
-    }
+
+    /******************************************
+     * General TC Channel functions
+     ******************************************/
 
     async command uint16_t HplSam3uTCChannel.get()
     {
@@ -115,5 +121,53 @@ implementation
     {
 
     }
+
+    /******************************************
+     * Capture A
+     ******************************************/
+
+    async command uint16_t CaptureA.getEvent()
+    {
+    }
+
+    async command void CaputreA.setEdge(uint8_t cm)
+    {
+    }
+
+    async command bool CaputreA.isOverrunPending()
+    {
+    }
+
+    async command void CaputreA.clearOverrun()
+    {
+    }
+
+    async event void CaptureA.captured(uint16_t time)
+    {
+    }
+
+    /******************************************
+     * Compare A
+     ******************************************/
+    async command uint16_t CompareA.getEvent()
+    {
+    }
+
+    async command void CompareA.setEvent( uint16_t time )
+    {
+    }
+
+    async command void CompareA.setEventFromPrev( uint16_t delta )
+    {
+    }
+
+    async command void CompareA.setEventFromNow( uint16_t delta )
+    {
+    }
+
+    async event void CompareA.fired()
+    {
+    }
+
 }
 

@@ -191,6 +191,11 @@ typedef union
     } bits;
 } tc_cmr_capture_t;
 
+#define TC_CMR_ETRGEDG_NONE     0 
+#define TC_CMR_ETRGEDG_RISING   1
+#define TC_CMR_ETRGEDG_FALLING  2
+#define TC_CMR_ETRGEDG_EACH     3
+
 /**
  *  TC Channel Mode Register Waveform Mode, AT91 ARM Cortex-M3 based Microcontrollers
  *  SAM3U Series, Preliminary 9/1/09, p. 838
