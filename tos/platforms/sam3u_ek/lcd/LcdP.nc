@@ -241,7 +241,7 @@ implementation
      * Only works in 24-bits packed mode for now.
      * \param color  Fill color.
      */
-    command void Draw.fill(uint32_t color)
+    async command void Draw.fill(uint32_t color)
     {
         uint32_t i;
         unsigned short color16 = RGB24ToRGB16(color);
@@ -262,7 +262,7 @@ implementation
      * \param y  Y-coordinate of pixel.
      * \param color  Pixel color.
      */
-    command void Draw.drawPixel(
+    async command void Draw.drawPixel(
             uint32_t x,
             uint32_t y,
             uint32_t color)
@@ -283,7 +283,7 @@ implementation
      * \param height  Rectangle height in pixels.
      * \param color  Rectangle color.
      */
-    command void Draw.drawRectangle(
+    async command void Draw.drawRectangle(
             uint32_t x,
             uint32_t y,
             uint32_t width,
@@ -308,7 +308,7 @@ implementation
      * \param pString  String to display.
      * \param color  String color.
      */
-    command void Draw.drawString(
+    async command void Draw.drawString(
             uint32_t x,
             uint32_t y,
             const char *pString,
@@ -339,7 +339,7 @@ implementation
      * \param pString  String to display.
      * \param color  String color.
      */
-    command void Draw.drawStringWithBGColor(
+    async command void Draw.drawStringWithBGColor(
             uint32_t x,
             uint32_t y,
             const char *pString,
@@ -371,7 +371,7 @@ implementation
      * \param sign <0 if negative number, >=0 if positive
      * \param fontColor Integer color.
      */
-    command void Draw.drawInt(
+    async command void Draw.drawInt(
             uint32_t x,
             uint32_t y,
             uint32_t n,
@@ -404,7 +404,7 @@ implementation
      * \param color Integer color.
      * \param bgColor Color of the background.
      */
-    command void Draw.drawIntWithBGColor(
+    async command void Draw.drawIntWithBGColor(
             uint32_t x,
             uint32_t y,
             uint32_t n,
@@ -437,7 +437,7 @@ implementation
      * \param pHeight  Pointer for storing the string height (optional).
      * \return String width in pixels.
      */
-    command void Draw.getStringSize(
+    async command void Draw.getStringSize(
             const char *pString,
             uint32_t *pWidth,
             uint32_t *pHeight)
@@ -471,7 +471,7 @@ implementation
      * \param c  Character to output.
      * \param color  Character color.
      */
-    command void Draw.drawChar(
+    async command void Draw.drawChar(
             uint32_t x,
             uint32_t y,
             char c,
@@ -511,7 +511,7 @@ implementation
      * \param fontColor  Character foreground color.
      * \param bgColor Background color of character
      */
-    command void Draw.drawCharWithBGColor(
+    async command void Draw.drawCharWithBGColor(
             uint32_t x,
             uint32_t y,
             char c,
