@@ -20,7 +20,7 @@
  */
 
 /**
- * Provides a bare bone interface to the SAM3U TC.
+ * Provides the functionality of the SAM3U TC.
  *
  * @author Thomas Schmid
  */
