@@ -1,5 +1,4 @@
-/**
- * "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -20,22 +19,23 @@
  */
 
 /**
- * Heavily inspired by the at91 library.
+ * HilSam3uTCCounter32khC provides the standard 32khz counter for the SAM3U.
+ *
  * @author Thomas Schmid
- **/
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
+ */
 
-interface Hx8347
+configuration HilSam3uTCCounter32khzC
 {
-    async command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
-    async command uint16_t readReg(void *pLcdBase, uint8_t reg);
-    async command uint16_t readStatus(void *pLcdBase);
-    async command void writeRAM_Prepare(void *pLcdBase);
-    async command void writeRAM(void *pLcdBase, uint16_t color);
-    async command uint16_t readRAM(void *pLcdBase);
-    command void initialize(void *pLcdBase);
-    event void initializeDone(error_t err);
-    async command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
-    command void on(void *pLcdBase);
-    event void onDone();
-    async command void off(void *pLcdBase);
+  provides interface Counter<T32khz,uint16_t> as HilSam3uTCCounter32khz;
 }
+implementation
+{
+  components HplSam3uTCC;
+  components new HilSam3uTCCounterC(T32khz) as Counter;
+
+  HilSam3uTCCounter32khz = Counter;
+  Counter.HplSam3uTCChannel -> HplSam3uTCC.TC0;
+}
+

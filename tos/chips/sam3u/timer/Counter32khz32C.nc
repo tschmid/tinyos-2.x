@@ -1,5 +1,4 @@
-/**
- * "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -20,22 +19,24 @@
  */
 
 /**
- * Heavily inspired by the at91 library.
+ * Counter32khz32C provides at 32-bit counter at 32768 ticks per second.
+ *
  * @author Thomas Schmid
- **/
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
+ */
 
-interface Hx8347
+configuration Counter32khz32C
 {
-    async command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
-    async command uint16_t readReg(void *pLcdBase, uint8_t reg);
-    async command uint16_t readStatus(void *pLcdBase);
-    async command void writeRAM_Prepare(void *pLcdBase);
-    async command void writeRAM(void *pLcdBase, uint16_t color);
-    async command uint16_t readRAM(void *pLcdBase);
-    command void initialize(void *pLcdBase);
-    event void initializeDone(error_t err);
-    async command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
-    command void on(void *pLcdBase);
-    event void onDone();
-    async command void off(void *pLcdBase);
+  provides interface Counter<T32khz,uint32_t>;
 }
+implementation
+{
+  components HilSam3uTCCounter32khzC as CounterFrom;
+  components new TransformCounterC(T32khz,uint32_t,T32khz,uint16_t,0,uint16_t) as Transform;
+
+  Counter = Transform;
+
+  Transform.CounterFrom -> CounterFrom;
+}
+

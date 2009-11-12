@@ -1,5 +1,4 @@
-/**
- * "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -20,22 +19,27 @@
  */
 
 /**
- * Heavily inspired by the at91 library.
+ * HplSam3uTC32khzMapC presents as paramaterized interfaces all of the 32khz
+ * channels on the SAM3U that are available for compile time allocation
+ * by "new Alarm32khz16C()", "new AlarmMilli32C()", and so on.
+ *
+ * Platforms based on the SAM3U are encouraged to copy in and override this
+ * file, presenting only the hardware timers that are available for allocation
+ * on that platform.
+ *
  * @author Thomas Schmid
- **/
+ */
 
-interface Hx8347
+configuration HplSam3uTC32khzMapC
 {
-    async command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
-    async command uint16_t readReg(void *pLcdBase, uint8_t reg);
-    async command uint16_t readStatus(void *pLcdBase);
-    async command void writeRAM_Prepare(void *pLcdBase);
-    async command void writeRAM(void *pLcdBase, uint16_t color);
-    async command uint16_t readRAM(void *pLcdBase);
-    command void initialize(void *pLcdBase);
-    event void initializeDone(error_t err);
-    async command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
-    command void on(void *pLcdBase);
-    event void onDone();
-    async command void off(void *pLcdBase);
+  provides interface HplSam3uTCChannel[ uint8_t id ];
+  provides interface HplSam3uTCCompare[ uint8_t id ];
 }
+implementation
+{
+  components HplSam3uTCC;
+
+  HplSam3uTCChannel[0] = HplSam3uTCC.TC0;
+  HplSam3uTCCompare[0] = HplSam3uTCC.TC0CompareC;
+}
+

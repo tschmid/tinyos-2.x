@@ -20,22 +20,22 @@
  */
 
 /**
- * Heavily inspired by the at91 library.
+ * SAM3U TC compare interface.
+ *
  * @author Thomas Schmid
- **/
+ */
 
-interface Hx8347
+interface HplSam3uTCCompare
 {
-    async command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
-    async command uint16_t readReg(void *pLcdBase, uint8_t reg);
-    async command uint16_t readStatus(void *pLcdBase);
-    async command void writeRAM_Prepare(void *pLcdBase);
-    async command void writeRAM(void *pLcdBase, uint16_t color);
-    async command uint16_t readRAM(void *pLcdBase);
-    command void initialize(void *pLcdBase);
-    event void initializeDone(error_t err);
-    async command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
-    command void on(void *pLcdBase);
-    event void onDone();
-    async command void off(void *pLcdBase);
+    async command void enable();
+    async command void disable();
+    async command bool isEnabled();
+    async command void clearPendingEvent();
+    async command uint16_t getEvent();
+    async command void setEvent( uint16_t time );
+    async command void setEventFromPrev( uint16_t delta );
+    async command void setEventFromNow( uint16_t delta );
+
+    async event void fired();
+
 }

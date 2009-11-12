@@ -20,22 +20,12 @@
  */
 
 /**
- * Heavily inspired by the at91 library.
+ * SAM3U TC general event interface.
+ *
  * @author Thomas Schmid
- **/
+ */
 
-interface Hx8347
+interface HplSam3uTCEvent
 {
-    async command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
-    async command uint16_t readReg(void *pLcdBase, uint8_t reg);
-    async command uint16_t readStatus(void *pLcdBase);
-    async command void writeRAM_Prepare(void *pLcdBase);
-    async command void writeRAM(void *pLcdBase, uint16_t color);
-    async command uint16_t readRAM(void *pLcdBase);
-    command void initialize(void *pLcdBase);
-    event void initializeDone(error_t err);
-    async command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
-    command void on(void *pLcdBase);
-    event void onDone();
-    async command void off(void *pLcdBase);
+    async event void fired();
 }

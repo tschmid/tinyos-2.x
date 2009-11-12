@@ -26,41 +26,41 @@
 
 interface Draw
 {
-    command void fill(uint32_t color);
+    async command void fill(uint32_t color);
 
-    command void drawPixel(
+    async command void drawPixel(
             uint32_t x,
             uint32_t y,
             uint32_t c);
 
-    command void drawRectangle(
+    async command void drawRectangle(
             uint32_t x,
             uint32_t y,
             uint32_t width,
             uint32_t height,
             uint32_t color);
 
-    command void drawString(
+    async command void drawString(
             uint32_t x,
             uint32_t y,
             const char *pString,
             uint32_t color);
 
-    command void drawStringWithBGColor(
+    async command void drawStringWithBGColor(
             uint32_t x,
             uint32_t y,
             const char *pString,
             uint32_t fontColor,
             uint32_t bgColor);
 
-    command void drawInt(
+    async command void drawInt(
             uint32_t x,
             uint32_t y,
             uint32_t n,
             int8_t sign,
             uint32_t fontColor);
 
-    command void drawIntWithBGColor(
+    async command void drawIntWithBGColor(
             uint32_t x,
             uint32_t y,
             uint32_t n,
@@ -68,22 +68,21 @@ interface Draw
             uint32_t fontColor,
             uint32_t bgColor);
 
-    command void getStringSize(
+    async command void getStringSize(
             const char *pString,
             uint32_t *pWidth,
             uint32_t *pHeight);
 
-    command void drawChar(
+    async command void drawChar(
             uint32_t x,
             uint32_t y,
             char c,
             uint32_t color);
 
-    command void drawCharWithBGColor(
+    async command void drawCharWithBGColor(
             uint32_t x,
             uint32_t y,
             char c,
             uint32_t fontColor,
             uint32_t bgColor);
-
 }
