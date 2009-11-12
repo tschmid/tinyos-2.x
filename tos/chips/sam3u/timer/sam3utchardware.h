@@ -207,6 +207,10 @@ typedef union
 #define TC_CMR_CLK_XC0          5
 #define TC_CMR_CLK_XC1          6
 #define TC_CMR_CLK_XC2          7
+
+#define TC_CMR_ABETRG_TIOA      0
+#define TC_CMR_ABETRG_TIOB      1
+
 /**
  *  TC Channel Mode Register Waveform Mode, AT91 ARM Cortex-M3 based Microcontrollers
  *  SAM3U Series, Preliminary 9/1/09, p. 838

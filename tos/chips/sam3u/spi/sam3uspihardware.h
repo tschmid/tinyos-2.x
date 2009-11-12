@@ -28,6 +28,8 @@
 #ifndef _SAM3USPIHARDWARE_H
 #define _SAM3USPIHARDWARE_H
 
+#define SAM3U_HPLSPI_RESOURCE "Sam3uHplSpi.Resource"
+
 /**
  *  SPI Control Register, AT91 ARM Cortex-M3 based Microcontrollers
  *  SAM3U Series, Preliminary 9/1/09, p. 621

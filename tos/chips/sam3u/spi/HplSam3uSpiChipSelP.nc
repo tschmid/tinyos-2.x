@@ -30,6 +30,7 @@ generic module HplSam3uSpiChipSelP(uint32_t csrp)
     provides
     {
        interface HplSam3uSpiChipSelConfig;
+       interface GeneralIO as PinCS;
     }
 }
 implementation
@@ -149,6 +150,19 @@ implementation
         *csr = tcsr;
         return SUCCESS;
     }
+
+    // these are just dummy variables to make the SAM3U compatible with chips
+    // that don't have auto CS
+    async command void PinCS.set() {}
+    async command void PinCS.clr() {}
+    async command void PinCS.toggle() {}
+    async command bool PinCS.get() {}
+    async command void PinCS.makeInput() {}
+    async command bool PinCS.isInput() {}
+    async command void PinCS.makeOutput() {}
+    async command bool PinCS.isOutput() {}
+
+
 }
 
 
