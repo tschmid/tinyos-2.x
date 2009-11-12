@@ -38,6 +38,8 @@ generic module HplSam3uTCChannelP(uint32_t tc_channel_base) @safe()
         interface HplSam3uTCCompare as CompareC;
     }
     uses {
+        interface HplSam3uClock as ClockConfig;
+
         interface HplSam3uTCEvent as TimerEvent;
         interface HplNVICInterruptCntl as NVICTCInterrupt;
         interface HplSam3uPeripheralClockCntl as TCPClockCntl;
@@ -209,6 +211,22 @@ implementation
                 sr.bits.ldrbs = 0;
             }
         }
+    }
+
+    async command uint32_t HplSam3uTCChannel.getTimerFrequency()
+    {
+        uint32_t mck;
+
+        if(CH_CAPTURE->cmr.bits.tcclks == TC_CMR_CLK_SLOW)
+            return 32;
+
+        mck = call ClockConfig.getMainClockSpeed();
+        return mck >> ((CH_CAPTURE->cmr.bits.tcclks* 2) + 1);
+    }
+
+    async event void ClockConfig.mainClockChanged()
+    {
+        // in the best case, we would now inform the user!
     }
 
     default async event void HplSam3uTCChannel.overflow(){ }

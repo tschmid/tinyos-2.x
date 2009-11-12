@@ -74,14 +74,17 @@ implementation
     TCCH0.NVICTCInterrupt -> HplNVICC.TC0Interrupt;
     TCCH0.TimerEvent -> HplSam3uTCEventP.TC0Event;
     TCCH0.TCPClockCntl -> HplSam3uClockC.TC0PPCntl;
+    TCCH0.ClockConfig -> HplSam3uClockC;
 
     TCCH1.NVICTCInterrupt -> HplNVICC.TC1Interrupt;
     TCCH1.TimerEvent -> HplSam3uTCEventP.TC1Event;
     TCCH1.TCPClockCntl -> HplSam3uClockC.TC1PPCntl;
+    TCCH1.ClockConfig -> HplSam3uClockC;
 
     TCCH2.NVICTCInterrupt -> HplNVICC.TC2Interrupt;
     TCCH2.TimerEvent -> HplSam3uTCEventP.TC2Event;
     TCCH2.TCPClockCntl -> HplSam3uClockC.TC2PPCntl;
+    TCCH2.ClockConfig -> HplSam3uClockC;
 
     TC0CaptureA = TCCH0.CaptureA; 
     TC0CaptureB = TCCH0.CaptureB;
@@ -103,5 +106,7 @@ implementation
 
     components HplSam3uTCP;
     Init = HplSam3uTCP;
+    HplSam3uTCP.ClockConfig -> HplSam3uClockC;
     HplSam3uTCP.TC0 -> TCCH0;
+    HplSam3uTCP.TC2 -> TCCH2;
 }
