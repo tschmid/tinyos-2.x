@@ -43,6 +43,11 @@ interface HplSam3uTCCapture
     async command uint16_t getEvent();
 
     /**
+     * Clear any pending event.
+     */
+    async command void clearPendingEvent();
+
+    /**
      * Set the edge that the capture should occur
      *
      * @param cm Capture Mode for edge capture.
@@ -53,6 +58,13 @@ interface HplSam3uTCCapture
      *   TC_CMR_ETRGEDG_EACH captures on both rising and falling edges.
      */
     async command void setEdge(uint8_t cm);
+
+    /**
+     * Select the external trigger source. Allowed values:
+     *   TC_CMR_ABETRG_TIOA
+     *   TC_CMR_ABETRG_TIOB
+     */
+    async command void setExternalTrigger(uint8_t cm );
 
     /**
      * Determine if a capture load overrun is pending.

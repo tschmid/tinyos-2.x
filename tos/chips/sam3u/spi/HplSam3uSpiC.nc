@@ -43,6 +43,9 @@ configuration HplSam3uSpiC
        interface Resource as ResourceCS2;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig3;
        interface Resource as ResourceCS3;
+
+       // provide a dummy chip select
+       interface GeneralIO as PinCS0;
     }
 }
 implementation
@@ -54,11 +57,11 @@ implementation
     HplSam3uSpiInterrupts = HplSam3uSpiP;
     HplSam3uSpiStatus = HplSam3uSpiP;
     
-    components new ArbiterP(0) as Arbiter;
-    ResourceCS0 = Arbiter.Resource[0];
-    ResourceCS1 = Arbiter.Resource[1];
-    ResourceCS2 = Arbiter.Resource[2];
-    ResourceCS3 = Arbiter.Resource[3];
+    components new FcfsArbiterC( SAM3U_HPLSPI_RESOURCE ) as ArbiterC;
+    ResourceCS0 = ArbiterC.Resource[0];
+    ResourceCS1 = ArbiterC.Resource[1];
+    ResourceCS2 = ArbiterC.Resource[2];
+    ResourceCS3 = ArbiterC.Resource[3];
 
     components
         new HplSam3uSpiChipSelP(0x40008030) as CS0,
@@ -67,6 +70,7 @@ implementation
         new HplSam3uSpiChipSelP(0x4000803C) as CS3;
 
     HplSam3uSpiChipSelConfig0 = CS0;
+    PinCS0 = CS0;
     HplSam3uSpiChipSelConfig1 = CS1;
     HplSam3uSpiChipSelConfig2 = CS2;
     HplSam3uSpiChipSelConfig3 = CS3;
