@@ -27,8 +27,7 @@
 
 #include "sam3utchardware.h"
 
-generic module HplSam3uTCP(
-        uint32_t tc_channel_base ) @safe()
+generic module HplSam3uTCChannelP(uint32_t tc_channel_base) @safe()
 {
     provides {
         interface HplSam3uTCChannel;
@@ -39,7 +38,9 @@ generic module HplSam3uTCP(
         interface HplSam3uTCCompare as CompareC;
     }
     uses {
+        interface HplSam3uTCEvent as TimerEvent;
         interface HplNVICInterruptCntl as NVICTCInterrupt;
+        interface HplSam3uPeripheralClockCntl as TCPClockCntl;
     }
 }
 implementation
@@ -57,7 +58,7 @@ implementation
 
     async command uint16_t HplSam3uTCChannel.get()
     {
-        return CH_CAPTURE->cv.cv;
+        return CH_CAPTURE->cv.bits.cv;
     }
 
     async command bool HplSam3uTCChannel.isOverflowPending()
@@ -66,7 +67,7 @@ implementation
         return (sr.bits.covfs && 1);
     }
 
-    async command void HplSam3uTCChannel.clearOverflow();
+    async command void HplSam3uTCChannel.clearOverflow()
     {
         // read the sr register to clear it
         sr.flat |= CH_CAPTURE->sr.flat;
@@ -89,34 +90,52 @@ implementation
         switch(mode)
         {
             case TC_CMR_WAVE:
-                tc_cmr_wave_t cmr = CH_WAVE->cmr;
-                cmr.bits.wave = (mode & 0x01);
-                CH_WAVE->cmr = cmr;
+                {
+                    tc_cmr_wave_t cmr = CH_WAVE->cmr;
+                    cmr.bits.wave = (mode & 0x01);
+                    CH_WAVE->cmr = cmr;
+                }
             case TC_CMR_CAPTURE:
-                tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
-                cmr.bits.wave = (mode & 0x01);
-                CH_CAPTURE->cmr = cmr;
+                {
+                    tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
+                    cmr.bits.wave = (mode & 0x01);
+                    CH_CAPTURE->cmr = cmr;
+                }
         }
     }
 
     async command uint8_t HplSam3uTCChannel.getMode()
     {
         // the wave field is the same in capture and wave mode!
-        return CH_CAPTURE->cmr.wave;
+        return CH_CAPTURE->cmr.bits.wave;
     }
 
+    /**
+     * This enables the events for this channel and the peripheral clock!
+     */
     async command void HplSam3uTCChannel.enableEvents()
     {
         tc_ier_t ier;
+        tc_ccr_t ccr;
         ier.flat = 0;
+        ccr.flat = 0;
+
+        // enable the peripheral clock to this channel
+        call TCPClockCntl.enable();
 
         call NVICTCInterrupt.configure(0);
         // now enable the IRQ
         call NVICTCInterrupt.enable();
-
+        
         // by default, we enable at least overflows
         ier.bits.covfs = 1;
         CH_CAPTURE->ier = ier;
+
+        // enable the clock
+        ccr.bits.clken = 1;
+        // start the clock!
+        ccr.bits.swtrg = 1;
+        CH_CAPTURE->ccr = ccr;
     }
 
     async command void HplSam3uTCChannel.disableEvents()
@@ -125,9 +144,10 @@ implementation
         idr.flat = 0;
 
         call NVICTCInterrupt.disable();
+        call TCPClockCntl.disable();
 
         // disable overruns
-        idr.bits.covs = 1;
+        idr.bits.covfs = 1;
         CH_CAPTURE->idr = idr;
     }
 
@@ -143,7 +163,7 @@ implementation
      * TC_CMR_CLK_XC1: selects external clock input 1
      * TC_CMR_CLK_XC2: selects external clock input 2
      */
-    async command uint16_t HplSam3uTCChannel.setClockSource(uint8_t clockSource)
+    async command void HplSam3uTCChannel.setClockSource(uint8_t clockSource)
     {
         // the tcclks is the same in capture and wave!
         tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
@@ -153,39 +173,41 @@ implementation
 
     async event void TimerEvent.fired()
     {
-        sr.flat |= CH_CAPTURE->sr.flat; // combine the current state for everyone to;
+        atomic{
+            sr.flat |= CH_CAPTURE->sr.flat; // combine the current state for everyone to;
 
-        if(sr.bits.covfs){
-            signal HplSam3uTCChannel.overflow();
-            sr.bits.covfs = 0;
-        }
-        if(sr.bits.lovrs){
-            // only signal if the corresponding capture is enabled
-            if(CH_CAPTURE->imr.bits.ldras)
-                signal CaptureA.overrun();
-            if(CH_CAPTURE->imr.bits.ldrbs)
-                signal CaptureB.overrun();
-            sr.bits.lovrs = 0;
-        }
-        if(sr.bits.cpas){
-            signal CompareA.fired();
-            sr.bits.cpas = 0;
-        }
-        if(sr.bits.cpbs){
-            signal CompareB.fired();
-            sr.bits.cpbs = 0;
-        }
-        if(sr.bits.cpcs){
-            signal CompareC.fired();
-            sr.bits.cpcs = 0;
-        }
-        if(sr.bits.ldrsa){
-            signal CaptureA.capture(call CaptureA.getEvent());
-            sr.bits.ldrsa = 0;
-        }
-        if(sr.bits.ldrsb){
-            signal CaptureB.capture(call CaptureB.getEvent());
-            sr.bits.ldrsb = 0;
+            if(sr.bits.covfs){
+                signal HplSam3uTCChannel.overflow();
+                sr.bits.covfs = 0;
+            }
+            if(sr.bits.lovrs){
+                // only signal if the corresponding capture is enabled
+                if(CH_CAPTURE->imr.bits.ldras)
+                    signal CaptureA.overrun();
+                if(CH_CAPTURE->imr.bits.ldrbs)
+                    signal CaptureB.overrun();
+                sr.bits.lovrs = 0;
+            }
+            if(sr.bits.cpas){
+                signal CompareA.fired();
+                sr.bits.cpas = 0;
+            }
+            if(sr.bits.cpbs){
+                signal CompareB.fired();
+                sr.bits.cpbs = 0;
+            }
+            if(sr.bits.cpcs){
+                signal CompareC.fired();
+                sr.bits.cpcs = 0;
+            }
+            if(sr.bits.ldras){
+                signal CaptureA.captured(call CaptureA.getEvent());
+                sr.bits.ldras = 0;
+            }
+            if(sr.bits.ldrbs){
+                signal CaptureB.captured(call CaptureB.getEvent());
+                sr.bits.ldrbs = 0;
+            }
         }
     }
 
@@ -219,20 +241,20 @@ implementation
         return CH_CAPTURE->ra.bits.ra;
     }
 
-    async command void CaputreA.setEdge(uint8_t cm)
+    async command void CaptureA.setEdge(uint8_t cm)
     {
         tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
         cmr.bits.ldra = (cm & 0x3);
         CH_CAPTURE->cmr = cmr;
     }
 
-    async command bool CaputreA.isOverrunPending()
+    async command bool CaptureA.isOverrunPending()
     {
         sr.flat |= CH_CAPTURE->sr.flat;
         return (sr.bits.lovrs & 0x01);
     }
 
-    async command void CaputreA.clearOverrun()
+    async command void CaptureA.clearOverrun()
     {
         sr.flat |= CH_CAPTURE->sr.flat;
         sr.bits.lovrs = 0;
@@ -269,27 +291,27 @@ implementation
         return CH_CAPTURE->rb.bits.rb;
     }
 
-    async command void CaputreB.setEdge(uint8_t cm)
+    async command void CaptureB.setEdge(uint8_t cm)
     {
         tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
-        cmr.bits.ldba = (cm & 0x3);
+        cmr.bits.ldrb = (cm & 0x3);
         CH_CAPTURE->cmr = cmr;
     }
 
-    async command bool CaputreA.isOverrunPending()
+    async command bool CaptureB.isOverrunPending()
     {
         sr.flat |= CH_CAPTURE->sr.flat;
         return (sr.bits.lovrs & 0x01);
     }
 
-    async command void CaputreA.clearOverrun()
+    async command void CaptureB.clearOverrun()
     {
         sr.flat |= CH_CAPTURE->sr.flat;
         sr.bits.lovrs = 0;
     }
 
-    default async event void CaptureA.overrun() { }
-    default async event void CaptureA.captured(uint16_t time) { }
+    default async event void CaptureB.overrun() { }
+    default async event void CaptureB.captured(uint16_t time) { }
 
     /******************************************
      * Compare A
@@ -334,14 +356,14 @@ implementation
     async command void CompareA.setEventFromPrev( uint16_t delta )
     {
         tc_ra_t ra = CH_WAVE->ra;
-        ra.bits.ra += time;
+        ra.bits.ra += delta;
         CH_WAVE->ra = ra;
     }
 
     async command void CompareA.setEventFromNow( uint16_t delta )
     {
         tc_ra_t ra = CH_WAVE->ra;
-        ra.bits.ra = CH_WAVE->tc.bits.cv + time;
+        ra.bits.ra = CH_WAVE->cv.bits.cv + delta;
         CH_WAVE->ra = ra;
     }
 
@@ -391,14 +413,14 @@ implementation
     async command void CompareB.setEventFromPrev( uint16_t delta )
     {
         tc_rb_t rb = CH_WAVE->rb;
-        rb.bits.rb += time;
+        rb.bits.rb += delta;
         CH_WAVE->rb = rb;
     }
 
     async command void CompareB.setEventFromNow( uint16_t delta )
     {
         tc_rb_t rb = CH_WAVE->rb;
-        rb.bits.rb = CH_WAVE->tc.bits.cv + time;
+        rb.bits.rb = CH_WAVE->cv.bits.cv + delta;
         CH_WAVE->rb = rb;
     }
 
@@ -448,14 +470,14 @@ implementation
     async command void CompareC.setEventFromPrev( uint16_t delta )
     {
         tc_rc_t rc = CH_WAVE->rc;
-        rc.bits.rc += time;
+        rc.bits.rc += delta;
         CH_WAVE->rc = rc;
     }
 
     async command void CompareC.setEventFromNow( uint16_t delta )
     {
         tc_rc_t rc = CH_WAVE->rc;
-        rc.bits.rc = CH_WAVE->tc.bits.cv + time;
+        rc.bits.rc = CH_WAVE->cv.bits.cv + delta;
         CH_WAVE->rc = rc;
     }
 

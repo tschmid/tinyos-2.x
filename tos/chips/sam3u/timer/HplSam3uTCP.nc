@@ -32,13 +32,9 @@ module HplSam3uTCP @safe()
 {
     provides {
         interface Init;
-        interface StdControl;
     }
     uses {
         interface HplSam3uTCChannel as TC0;
-
-        interface HplSam3uPeripheralClockCntl as TCClockControl;
-
     }
 }
 implementation
@@ -49,19 +45,12 @@ implementation
         call TC0.setMode(TC_CMR_CAPTURE);
         call TC0.setClockSource(TC_CMR_CLK_SLOW);
 
+        call TC0.enableEvents();
+
         return SUCCESS;
     }
 
-    command error_t StdControl.start()
-    {
-        call TCClockControl.enable(); 
-        call TC0.enableEvents();
-    }
-
-    command error_t StdControl.stop()
-    {
-        call TCClockControl.disable(); 
-        call TC0.disableEvents();
-    }
+    async event void TC0.overflow() {};
 }
+
 

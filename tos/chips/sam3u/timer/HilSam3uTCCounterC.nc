@@ -28,7 +28,7 @@
  *          intended use.
  */
  
-generic module HplSam3uTCCounterC( typedef frequency_tag ) @safe()
+generic module HilSam3uTCCounterC( typedef frequency_tag ) @safe()
 {
   provides interface Counter<frequency_tag,uint16_t> as Counter;
   uses interface HplSam3uTCChannel;

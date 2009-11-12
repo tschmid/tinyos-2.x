@@ -73,5 +73,9 @@ interface HplSam3uTCCapture
      */
     async event void captured(uint16_t time);
 
+    /**
+     * Signalled when an overrun occures.
+     */
+    async event void overrun();
 }
 
