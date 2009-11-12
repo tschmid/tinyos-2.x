@@ -38,12 +38,16 @@ implementation
 {
     async command void Cntl.enable()
     {
-        PMC->pcer.flat |= ( 1 << pid );
+        pmc_pcer_t pcer = PMC->pcer;
+        pcer.flat |= ( 1 << pid );
+        PMC->pcer = pcer;
     }
 
     async command void Cntl.disable()
     {
-        PMC->pcdr.flat |= ( 1 << pid );
+        pmc_pcdr_t pcdr = PMC->pcdr;
+        pcdr.flat |= ( 1 << pid );
+        PMC->pcdr = pcdr;
 
     }
 

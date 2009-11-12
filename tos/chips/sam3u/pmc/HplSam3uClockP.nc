@@ -27,6 +27,7 @@
  */
 
 #include "sam3upmchardware.h"
+#include "sam3usupchardware.h"
 
 #define CLOCK_TIMEOUT 0xFFFFFFFF
 
@@ -84,6 +85,7 @@ implementation
     async command error_t HplSam3uClock.mckInit48()
     {
         pmc_mor_t mor;
+        pmc_mckr_t mckr;
         pmc_pllar_t pllar;
         uint32_t timeout = 0;
 
@@ -112,7 +114,9 @@ implementation
         PMC->mor = mor;
         timeout = 0;
         while (!(PMC->sr.bits.moscsels) && (timeout++ < CLOCK_TIMEOUT));
-        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        mckr = PMC->mckr;
+        mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        PMC->mckr = mckr;
         timeout = 0;
         while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
@@ -128,12 +132,14 @@ implementation
         while (!(PMC->sr.bits.locka) && (timeout++ < CLOCK_TIMEOUT));
 
         // Switch to fast clock
-        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        PMC->mckr = mckr;
         timeout = 0;
         while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
-        PMC->mckr.bits.pres = PMC_MCKR_PRES_DIV_1;
-        PMC->mckr.bits.css = PMC_MCKR_CSS_PLLA_CLOCK;
+        mckr.bits.pres = PMC_MCKR_PRES_DIV_1;
+        mckr.bits.css = PMC_MCKR_CSS_PLLA_CLOCK;
+        PMC->mckr = mckr;
         timeout = 0;
         while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
@@ -145,6 +151,7 @@ implementation
     async command error_t HplSam3uClock.mckInit84()
     {
         pmc_mor_t mor;
+        pmc_mckr_t mckr;
         pmc_pllar_t pllar;
         uint32_t timeout = 0;
 
@@ -173,7 +180,9 @@ implementation
         PMC->mor = mor;
         timeout = 0;
         while (!(PMC->sr.bits.moscsels) && (timeout++ < CLOCK_TIMEOUT));
-        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        mckr = PMC->mckr;
+        mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        PMC->mckr = mckr;
         timeout = 0;
         while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
@@ -189,12 +198,14 @@ implementation
         while (!(PMC->sr.bits.locka) && (timeout++ < CLOCK_TIMEOUT));
 
         // Switch to fast clock
-        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        PMC->mckr = mckr;
         timeout = 0;
         while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
-        PMC->mckr.bits.pres = PMC_MCKR_PRES_DIV_1;
-        PMC->mckr.bits.css = PMC_MCKR_CSS_PLLA_CLOCK;
+        mckr.bits.pres = PMC_MCKR_PRES_DIV_1;
+        mckr.bits.css = PMC_MCKR_CSS_PLLA_CLOCK;
+        PMC->mckr = mckr;
         timeout = 0;
         while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
@@ -205,6 +216,7 @@ implementation
     async command error_t HplSam3uClock.mckInit12RC()
     {
         pmc_mor_t mor;
+        pmc_mckr_t mckr;
         pmc_pllar_t pllar;
         uint32_t timeout = 0;
 
@@ -233,8 +245,10 @@ implementation
         PMC->mor = mor;
         timeout = 0;
         while (!(PMC->sr.bits.moscsels) && (timeout++ < CLOCK_TIMEOUT));
-        PMC->mckr.bits.pres = PMC_MCKR_PRES_DIV_1;
-        PMC->mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        mckr = PMC->mckr;
+        mckr.bits.pres = PMC_MCKR_PRES_DIV_1;
+        mckr.bits.css = PMC_MCKR_CSS_MAIN_CLOCK;
+        PMC->mckr = mckr;
         timeout = 0;
         while (!(PMC->sr.bits.mckrdy) && (timeout++ < CLOCK_TIMEOUT));
 
@@ -261,13 +275,16 @@ implementation
                 break;
 
             case PMC_MCKR_CSS_MAIN_CLOCK:
-                speed = PMC->mcfr.bits.mainf*1000/488; // 0.48828 corresponds to 16 clock ticks of a 32kHz crystal.
+                speed = PMC->mcfr.bits.mainf*2048/1000; // 0.48828 corresponds to 16 clock ticks of a 32kHz crystal.
                 break;
 
             case PMC_MCKR_CSS_PLLA_CLOCK:
                 if(PMC->pllar.bits.diva != 0)
-                    speed = PMC->mcfr.bits.mainf*1000/488 * PMC->pllar.bits.mula / PMC->pllar.bits.diva;
-                else
+                {
+                    // note, the PLL multiplier is (mula + 1)
+                    speed = PMC->mcfr.bits.mainf*2048/1000 * (PMC->pllar.bits.mula + 1) / PMC->pllar.bits.diva;
+                    //speed = PMC->mcfr.bits.mainf*1000/488 * (PMC->pllar.bits.mula + 1) / PMC->pllar.bits.diva;
+                } else
                     speed = 0;
                 break;
             default:
