@@ -83,8 +83,8 @@ implementation
 		// here: cd = mck / 16 * 1000 / baudrate
 		cd = (uint16_t) (((mck / 16) * 1000) / PLATFORM_BAUDRATE);
 
-		call HplSam3uUartConfig.setClockDivisor(312); // 9,600 baud with MCK = 48 MHz
-		//call HplSam3uUartConfig.setClockDivisor(cd); // FIXME currently bug in getMCSpeed()
+		//call HplSam3uUartConfig.setClockDivisor(312); // 9,600 baud with MCK = 48 MHz
+		call HplSam3uUartConfig.setClockDivisor(cd);
 	}
 
 	command error_t Init.init()
