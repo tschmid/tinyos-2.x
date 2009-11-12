@@ -96,7 +96,7 @@ implementation
         call Draw.drawString(10, 90, "Next: ", COLOR_BLACK);
         call Draw.drawInt(BOARD_LCD_WIDTH-20, 90, now+delta, 1, COLOR_BLACK);
    
-        call Alarm.start(now + delta);
+        call Alarm.startAt(now, delta);
     }
 
 }
