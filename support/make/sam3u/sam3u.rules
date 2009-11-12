@@ -23,8 +23,8 @@ EXTRA_MODULES = $(TOSDIR)/platforms/sam3u_ek/vectors.c
 
 OPTFLAGS ?= -O3 -g
 CFLAGS += -mcpu=cortex-m3 -mthumb
-CFLAGS += -I$(INCLUDE_DIRS)
-CFLAGS += $(EXTRA_MODULES)
+PFLAGS += $(EXTRA_MODULES)
+PFLAGS += -I$(INCLUDE_DIRS)
 PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
 PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c
 PFLAGS += -finline-limit=100000
