@@ -94,6 +94,11 @@ SECTIONS
 		_sbss = .;
 		*(.bss)
 		. = ALIGN(4);
-		_ebss = .;
 	} > sram0
+       /* _ebss should be inside .bss, but for some reason, it then is not defined
+        * at the end of the BSS section. This leads to non-zeroed BSS data, since the
+        * start-up code uses that symbol. For now, this workaround is OK and does no
+        * harm.
+        */
+       _ebss = .;
 }
