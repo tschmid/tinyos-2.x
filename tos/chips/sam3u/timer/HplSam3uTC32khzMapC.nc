@@ -40,6 +40,6 @@ implementation
   components HplSam3uTCC;
 
   HplSam3uTCChannel[0] = HplSam3uTCC.TC0;
-  HplSam3uTCCompare[0] = HplSam3uTCC.CompareC;
+  HplSam3uTCCompare[0] = HplSam3uTCC.TC0CompareC;
 }
 

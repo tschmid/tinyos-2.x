@@ -32,13 +32,13 @@ generic configuration Alarm32khz16C()
 }
 implementation
 {
-  components new HplSam3uTC32khzC() as HplSam3uTCChannel;
+  components HplSam3uTC32khzC as HplSam3uTCChannel;
   components new HilSam3uTCAlarmC(T32khz) as HilSam3uTCAlarm;
 
-  Init = HplSam3uTCAlarm;
-  Alarm = HplSam3uTCAlarm;
+  Init = HilSam3uTCAlarm;
+  Alarm = HilSam3uTCAlarm;
 
-  HilSam3uTCAlarm.HplSam3uTCChannel -> HplSam3TCChannel;
-  HilSam3uTCAlarm.Compare -> HplSam3uTCChannel;
+  HilSam3uTCAlarm.HplSam3uTCChannel -> HplSam3uTCChannel;
+  HilSam3uTCAlarm.HplSam3uTCCompare -> HplSam3uTCChannel;
 }
 

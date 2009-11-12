@@ -87,7 +87,7 @@ implementation
         else
           call HplSam3uTCCompare.setEvent( now+remaining );
       }
-      call HplSam3uTCCompare.clearPendingInterrupt();
+      call HplSam3uTCCompare.clearPendingEvent();
       call HplSam3uTCCompare.enable();
     }
   }

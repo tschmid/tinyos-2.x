@@ -41,6 +41,7 @@ module PlatformP
 	{
 		interface Init as LedsInit;
         interface Init as MoteClockInit;
+        interface Init as MoteTimerInit;
 	}
 }
 
@@ -52,6 +53,7 @@ implementation
 		 * (see TEP 107)
 		 */
         call MoteClockInit.init();
+        call MoteTimerInit.init();
 		call LedsInit.init();
 
 		return SUCCESS;

@@ -24,6 +24,9 @@
  *
  * @author Thomas Schmid
  */
+
+#include <sam3utchardware.h>
+
 configuration HplSam3uTCC
 {
 
@@ -31,66 +34,74 @@ configuration HplSam3uTCC
     {
         interface Init;
 
-        interface HplSam3uTCChannel  as TC0;
-        interface HplSam3uTCChannel  as TC1;
-        interface HplSam3uTCChannel  as TC2;
+        interface HplSam3uTCChannel as TC0;
+        interface HplSam3uTCChannel as TC1;
+        interface HplSam3uTCChannel as TC2;
 
-        interface HplSam3uTCCapture  as TC0CaptureA;
-        interface HplSam3uTCCapture  as TC0CaptureB;
-        interface HplSam3uTCCcompare as TC0CCompareA;
-        interface HplSam3uTCCcompare as TC0CCompareB;
-        interface HplSam3uTCCcompare as TC0CCompareC;
+        interface HplSam3uTCCapture as TC0CaptureA;
+        interface HplSam3uTCCapture as TC0CaptureB;
+        interface HplSam3uTCCompare as TC0CompareA;
+        interface HplSam3uTCCompare as TC0CompareB;
+        interface HplSam3uTCCompare as TC0CompareC;
 
-        interface HplSam3uTCCapture  as TC1CaptureA;
-        interface HplSam3uTCCapture  as TC1CaptureB;
-        interface HplSam3uTCCcompare as TC1CCompareA;
-        interface HplSam3uTCCcompare as TC1CCompareB;
-        interface HplSam3uTCCcompare as TC1CCompareC;
+        interface HplSam3uTCCapture as TC1CaptureA;
+        interface HplSam3uTCCapture as TC1CaptureB;
+        interface HplSam3uTCCompare as TC1CompareA;
+        interface HplSam3uTCCompare as TC1CompareB;
+        interface HplSam3uTCCompare as TC1CompareC;
         
-        interface HplSam3uTCCapture  as TC2CaptureA;
-        interface HplSam3uTCCapture  as TC2CaptureB;
-        interface HplSam3uTCCcompare as TC2CCompareA;
-        interface HplSam3uTCCcompare as TC2CCompareB;
-        interface HplSam3uTCCcompare as TC2CCompareC;
+        interface HplSam3uTCCapture as TC2CaptureA;
+        interface HplSam3uTCCapture as TC2CaptureB;
+        interface HplSam3uTCCompare as TC2CompareA;
+        interface HplSam3uTCCompare as TC2CompareB;
+        interface HplSam3uTCCompare as TC2CompareC;
     }
 }
 
 implementation
 {
-    components 
-        new HplSam3uTCChannelP(TC_CH0_BASE) as TCCH0,
-        new HplSam3uTCChannelP(TC_CH1_BASE) as TCCH1,
-        new HplSam3uTCChannelP(TC_CH2_BASE) as TCCH2,
-        new HplNVICC;
+    components HplNVICC,
+               HplSam3uTCEventP,
+               HplSam3uClockC,
+               new HplSam3uTCChannelP( TC_CH0_BASE ) as TCCH0,
+               new HplSam3uTCChannelP( TC_CH1_BASE ) as TCCH1,
+               new HplSam3uTCChannelP( TC_CH2_BASE ) as TCCH2;
 
     TC0 = TCCH0;
     TC1 = TCCH1;
     TC2 = TCCH2;
 
     TCCH0.NVICTCInterrupt -> HplNVICC.TC0Interrupt;
+    TCCH0.TimerEvent -> HplSam3uTCEventP.TC0Event;
+    TCCH0.TCPClockCntl -> HplSam3uClockC.TC0PPCntl;
 
     TCCH1.NVICTCInterrupt -> HplNVICC.TC1Interrupt;
+    TCCH1.TimerEvent -> HplSam3uTCEventP.TC1Event;
+    TCCH1.TCPClockCntl -> HplSam3uClockC.TC1PPCntl;
 
     TCCH2.NVICTCInterrupt -> HplNVICC.TC2Interrupt;
+    TCCH2.TimerEvent -> HplSam3uTCEventP.TC2Event;
+    TCCH2.TCPClockCntl -> HplSam3uClockC.TC2PPCntl;
 
-    TC0CaptureA  = TCCH0.CaptureA; 
-    TC0CaptureB  = TCCH0.CaptureB;
-    TC0CCompareA = TCCH0.CompareA;
-    TC0CCompareB = TCCH0.CompareB;
-    TC0CCompareC = TCCH0.CompareC;
+    TC0CaptureA = TCCH0.CaptureA; 
+    TC0CaptureB = TCCH0.CaptureB;
+    TC0CompareA = TCCH0.CompareA;
+    TC0CompareB = TCCH0.CompareB;
+    TC0CompareC = TCCH0.CompareC;
 
-    TC1CaptureA  = TCCH1.CaptureA; 
-    TC1CaptureB  = TCCH1.CaptureB;
-    TC1CCompareA = TCCH1.CompareA;
-    TC1CCompareB = TCCH1.CompareB;
-    TC1CCompareC = TCCH1.CompareC;
+    TC1CaptureA = TCCH1.CaptureA; 
+    TC1CaptureB = TCCH1.CaptureB;
+    TC1CompareA = TCCH1.CompareA;
+    TC1CompareB = TCCH1.CompareB;
+    TC1CompareC = TCCH1.CompareC;
 
-    TC2CaptureA  = TCCH2.CaptureA; 
-    TC2CaptureB  = TCCH2.CaptureB;
-    TC2CCompareA = TCCH2.CompareA;
-    TC2CCompareB = TCCH2.CompareB;
-    TC2CCompareC = TCCH2.CompareC;
+    TC2CaptureA = TCCH2.CaptureA; 
+    TC2CaptureB = TCCH2.CaptureB;
+    TC2CompareA = TCCH2.CompareA;
+    TC2CompareB = TCCH2.CompareB;
+    TC2CompareC = TCCH2.CompareC;
 
     components HplSam3uTCP;
     Init = HplSam3uTCP;
+    HplSam3uTCP.TC0 -> TCCH0;
 }

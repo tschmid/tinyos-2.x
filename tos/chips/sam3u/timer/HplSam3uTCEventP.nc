@@ -27,14 +27,12 @@
 
 #include "sam3utchardware.h"
 
-module HplSam3uTCP @safe()
+module HplSam3uTCEventP @safe()
 {
     provides {
         interface HplSam3uTCEvent as TC0Event;
         interface HplSam3uTCEvent as TC1Event;
         interface HplSam3uTCEvent as TC2Event;
-    }
-    uses {
     }
 }
 implementation
