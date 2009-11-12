@@ -35,22 +35,48 @@ module HplSam3uTCP @safe()
     }
     uses {
         interface HplSam3uTCChannel as TC0;
+        interface HplSam3uTCChannel as TC2;
+
+        interface HplSam3uClock as ClockConfig;
     }
 }
 implementation
 {
     command error_t Init.init()
     {
-        // configure channel 0 to be clocked from the SLOW clokc (32kHz)
+        uint32_t mck;
+
+        // configure channel 0 to be clocked from the SLOW clock (32kHz)
         call TC0.setMode(TC_CMR_CAPTURE);
         call TC0.setClockSource(TC_CMR_CLK_SLOW);
 
         call TC0.enableEvents();
 
+        call TC2.setMode(TC_CMR_CAPTURE);
+
+        // check the speed of the master clock
+        mck = call ClockConfig.getMainClockSpeed(); // in kHz
+        // convert to MHz to find the right divider
+        mck = mck / 1000;
+
+        if(mck >= 128)
+            call TC2.setClockSource(TC_CMR_CLK_TC4);
+        else if (mck >= 32)
+            call TC2.setClockSource(TC_CMR_CLK_TC3);
+        else if (mck >= 8)
+            call TC2.setClockSource(TC_CMR_CLK_TC2);
+        else if (mck >= 2)
+            call TC2.setClockSource(TC_CMR_CLK_TC1);
+        else
+            call TC2.setClockSource(TC_CMR_CLK_SLOW);
+
+        call TC2.enableEvents();
         return SUCCESS;
     }
 
+    async event void ClockConfig.mainClockChanged() {};
     async event void TC0.overflow() {};
+    async event void TC2.overflow() {};
 }
 
 

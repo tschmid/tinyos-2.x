@@ -62,4 +62,9 @@ interface HplSam3uTCChannel
      * TC_CMR_CLK_XC2: selects external clock input 2
      */
     async command void setClockSource(uint8_t clockSource);
+
+    /**
+     * Returns the current timer frequency in kHz.
+     */
+    async command uint32_t getTimerFrequency();
 }
