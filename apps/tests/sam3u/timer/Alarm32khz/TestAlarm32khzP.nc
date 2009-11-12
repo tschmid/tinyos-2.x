@@ -79,7 +79,7 @@ implementation
         call Draw.drawString(10, 70, "Alarm: ", COLOR_BLACK);
         call Draw.drawInt(BOARD_LCD_WIDTH-20, 70, now+delta, 1, COLOR_BLACK);
    
-        call Alarm.start(now + delta);
+        call Alarm.startAt(now, delta);
     }
 
 
