@@ -30,6 +30,7 @@ module TestSpiC
 	uses interface StdControl as SpiControl;
 	uses interface SpiByte;
     uses interface SpiPacket;
+    uses interface GeneralIO as CSN;
     uses interface HplSam3uSpiConfig as SpiConfig;
 }
 implementation
@@ -48,6 +49,7 @@ implementation
 
         call SpiControl.start();
 
+        call CSN.clr();
         call SpiPacket.send(tx_buf, rx_buf, 10);
     }
 
@@ -56,6 +58,7 @@ implementation
 		uint8_t byte;
 
 		call SpiControl.start();
+        call CSN.clr();
         
         byte = call SpiByte.write(0xCD);
         if(byte == 0xCD)
@@ -64,6 +67,14 @@ implementation
         } else {
             call Leds.led1Toggle();
         }
+        byte = call SpiByte.write(0xAB);
+        if(byte == 0xAB)
+        {
+            call Leds.led0Toggle();
+        } else {
+            call Leds.led1Toggle();
+        }
+        call CSN.set();
 
         call SpiControl.stop();
 
@@ -75,6 +86,7 @@ implementation
 	{
 
         call SpiConfig.enableLoopBack();
+        call CSN.makeOutput();
 
 		post transferTask();
 	}
@@ -99,5 +111,6 @@ implementation
             }
         }
         call Leds.led1Toggle();
+        //call CSN.set();
     }
 }

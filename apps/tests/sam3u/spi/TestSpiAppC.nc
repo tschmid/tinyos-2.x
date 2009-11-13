@@ -39,6 +39,9 @@ implementation
 	TestSpiC.SpiControl -> HilSam3uSpiC;
 	TestSpiC.SpiByte -> HilSam3uSpiC;
     TestSpiC.SpiPacket -> HilSam3uSpiC;
+    TestSpiC.CSN -> HilSam3uSpiC;
+    //components HplSam3uGeneralIOC;
+    //TestSpiC.CSN -> HplSam3uGeneralIOC.PioA16;
 
     components HplSam3uSpiC;
     TestSpiC.SpiConfig -> HplSam3uSpiC;
