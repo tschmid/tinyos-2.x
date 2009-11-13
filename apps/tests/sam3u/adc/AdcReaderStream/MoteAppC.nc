@@ -39,7 +39,7 @@ implementation
     MoteP;
              
   MoteP.Boot -> MainC;
-  MoteP.Leds -> NoLedsC;
+  MoteP.Leds -> LedsC;
   MoteP.ReadStream -> AdcReaderC;
   MoteP.SerialSplitControl -> SerialActiveMessageC;
   MoteP.Packet -> SerialActiveMessageC;

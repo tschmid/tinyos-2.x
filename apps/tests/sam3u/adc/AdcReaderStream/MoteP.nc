@@ -29,7 +29,7 @@
 #include <color.h>
 #include <lcd.h>
 
-#define SAMPLE_BUFFER_SIZE 200
+#define SAMPLE_BUFFER_SIZE 10000
 #define NUM_SAMPLES_PER_PACKET (TOSH_DATA_LENGTH / sizeof(uint16_t))
 
 module MoteP
@@ -49,14 +49,20 @@ module MoteP
 implementation
 {
   uint16_t buf[SAMPLE_BUFFER_SIZE];
-  
-  event void Boot.booted()
-  {
+
+  task void clear(){
+    /* Reset the target buffer for the ReadStream interface */
     uint32_t i;
     for (i = 0; i < SAMPLE_BUFFER_SIZE; i++) {
       buf[i] = 0xFFFF;
     }
+  }
+
+  event void Boot.booted()
+  {
+    post clear();
     while (call SerialSplitControl.start() != SUCCESS);
+    call Lcd.initialize();
   }
 
   event void Lcd.initializeDone(error_t err)
@@ -79,44 +85,46 @@ implementation
     if (error != SUCCESS) {
       while (call SerialSplitControl.start() != SUCCESS);
     }else{
-      call Timer.startPeriodic(30*1024U);
+      call Timer.startPeriodic(5*1024U);
     }
   }
   
   event void SerialSplitControl.stopDone(error_t error) {}
-  
+
   task void sample()
   {
     const char *start = "Start Sampling";
-    call Leds.led0Toggle();
     call Draw.fill(COLOR_BLUE);
     call Draw.drawString(10,50,start,COLOR_RED);
  
     call ReadStream.postBuffer(buf, SAMPLE_BUFFER_SIZE);
-    call ReadStream.read(68);
+    call ReadStream.read(100);
   }
-  
+
   event void ReadStream.readDone(error_t result, uint32_t usActualPeriod)
   {
     if (result != SUCCESS) {
     }else{
     }
   }
-  
+
   event void ReadStream.bufferDone(error_t result, uint16_t* buffer, uint16_t count) {
     const char *fail = "Read done error";
     const char *good = "Read done success";
+    call Leds.led1Toggle();
     call Draw.fill(COLOR_GREEN);
     if (result != SUCCESS) {
       call Draw.drawString(10,70,fail,COLOR_BLACK);
     }else{
       call Draw.drawString(10,70,good,COLOR_BLACK);
       call Draw.drawInt(100,100,buffer[0],1,COLOR_BLACK);
-      call Draw.drawInt(100,100,count,1,COLOR_BLACK);
+      call Draw.drawInt(100,160,count,1,COLOR_BLACK);
     }
   }
 
   event void Timer.fired() {
+    call Leds.led0Toggle();
+    post clear();
     post sample();
   }
 }
