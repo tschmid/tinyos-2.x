@@ -56,6 +56,9 @@ module HilSam3uSpiP
 implementation
 {
 
+    void signalDone();
+    task void signalDone_task();
+
     void setClockDivisor()
     {
         uint32_t mck;
@@ -104,11 +107,19 @@ implementation
         setClockDivisor();
         call HplSam3uSpiChipSelConfig.setClockPolarity(1); // logic zero is inactive
         call HplSam3uSpiChipSelConfig.setClockPhase(0);    // out on rising, in on falling
-        call HplSam3uSpiChipSelConfig.disableAutoCS();     // disable automatic rising of CS after each transfer
-        call HplSam3uSpiChipSelConfig.enableCSActive();    // if the CS line is not risen automatically after the last tx. The lastxfer bit has to be used.
+        //call HplSam3uSpiChipSelConfig.disableAutoCS();     // disable automatic rising of CS after each transfer
+        call HplSam3uSpiChipSelConfig.enableAutoCS();
+
+        //call HplSam3uSpiChipSelConfig.enableCSActive();    // if the CS line is not risen automatically after the last tx. The lastxfer bit has to be used.
+        call HplSam3uSpiChipSelConfig.disableCSActive(); 
+
         call HplSam3uSpiChipSelConfig.setBitsPerTransfer(SPI_CSR_BITS_8);
         call HplSam3uSpiChipSelConfig.setTxDelay(0);
         call HplSam3uSpiChipSelConfig.setClkDelay(9);
+
+        // do we really have to start it??? It seems that the CC2420 driver
+        // doesn't do that!
+        call StdControl.start();
 
         return SUCCESS;
     }
@@ -142,7 +153,7 @@ implementation
     {
         uint8_t byte;
 
-        call HplSam3uSpiChipSelConfig.enableCSActive();
+        //call HplSam3uSpiChipSelConfig.enableCSActive();
         call HplSam3uSpiStatus.setDataToTransmitCS(tx, 0, TRUE);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
@@ -158,16 +169,29 @@ implementation
         {
             while( m_pos < len) 
             {
-                //call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, TRUE);
-                call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, FALSE);
+                if(m_pos == len-1)
+                    call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, TRUE);
+                else
+                    call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, FALSE);
                 while(!call HplSam3uSpiStatus.isRxFull());
                 rxBuf[m_pos] = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
                 m_pos += 1;
             }
         }
-        signal SpiPacket.sendDone(txBuf, rxBuf, m_len, SUCCESS);
+        atomic signal SpiPacket.sendDone(txBuf, rxBuf, m_len, SUCCESS);
         return SUCCESS;
     }
+
+    task void signalDone_task() {
+        atomic signalDone();
+    }
+
+
+    void signalDone() {
+    //    signal SpiPacket.sendDone[ m_client ]( m_tx_buf, m_rx_buf, m_len,
+    //            SUCCESS );
+    }
+
 
     default async event void SpiPacket.sendDone(uint8_t* tx_buf, uint8_t* rx_buf, uint16_t len, error_t error) {}
 

@@ -65,6 +65,7 @@ implementation {
 
   // dummy connection for CSN
   components HplSam3uSpiC;
+  // CSN = GeneralIOC.PioA16;
   CSN = HplSam3uSpiC.PinCS0;
   
 }
