@@ -24,6 +24,8 @@
  * @author JeongGil Ko
  */
 
+#include "sam3uadc12bhardware.h"
+
 module AdcP {
   provides {
     interface Read<uint16_t> as Read[uint8_t client];
@@ -157,7 +159,8 @@ implementation
 
   void task readDoneNow()
   {
-    signal Read.readDone[setClient](SUCCESS, adcResult);
+    call Leds.led1Toggle(); //dbg
+    signal ReadNow.readDone[setClient](SUCCESS, adcResult);
   }
 
   /************************************************/
@@ -165,7 +168,6 @@ implementation
   /** Data is ready! **/
   async event error_t GetAdc.dataReady[uint8_t client](uint16_t data)
   {
-    call Leds.led1Toggle(); //dbg
     atomic setClient = client;
     atomic adcResult = data;
 

@@ -24,7 +24,7 @@
  * @author JeongGil Ko
  */
 
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
 generic configuration AdcReadStreamClientC()
 { 
   provides {
@@ -37,8 +37,8 @@ implementation {
 
   components AdcStreamP;
   components new Sam3uAdc12bClientC();
-  components new AlarmMilliC() as Alarm;
-  components LedsC;
+  //components new AlarmMilliC() as Alarm;
+  components LedsC, NoLedsC;
   components WireAdcStreamP;
 
   enum {
@@ -50,5 +50,5 @@ implementation {
 
   WireAdcStreamP.Resource[CLIENT] -> Sam3uAdc12bClientC.Resource;
   WireAdcStreamP.Sam3uGetAdc12b[CLIENT] -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
-  AdcStreamP.Leds -> LedsC;
+  AdcStreamP.Leds -> NoLedsC;
 }

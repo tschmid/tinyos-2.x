@@ -4,7 +4,7 @@
 
 The implementation is based on the preliminary specifications
 
-ToDos:
 
-- Validate using real voltage on pins
-- Change memory accessing method
+Read Interface
+ReadNow Interface
+ReadStream Interface

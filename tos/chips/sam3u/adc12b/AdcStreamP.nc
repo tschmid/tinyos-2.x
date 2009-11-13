@@ -21,16 +21,12 @@
 */
 
 /**
- * Implementation for ReadStream interface in Sam3u (Coverted msp430 code)
+ * Implementation for ReadStream interface in Sam3u
+ * (Coverted msp430 and atm128 code)
  * @author JeongGil Ko
  */
 
-/*
- * TODOs: At the read commmand, the input parameter should be set to a 
- *        microsecond alarm. Currently, a millisecond timer is used.
-*/
-
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
 module AdcStreamP {
   provides {
     interface Init @atleastonce();
@@ -39,7 +35,7 @@ module AdcStreamP {
   uses {
     interface Sam3uGetAdc12b as GetAdc[uint8_t client];
     interface AdcConfigure<const sam3u_adc12_channel_config_t*> as Config[uint8_t client];
-    interface Alarm<TMilli, uint32_t>;
+    interface Alarm<TMicro, uint32_t>;
     interface Leds;
   }
 }
@@ -62,7 +58,6 @@ implementation {
   norace uint16_t * COUNT_NOK(count) buffer; 
   norace uint16_t * BND_NOK(buffer, buffer+count) pos;
   norace uint32_t now, period;
-  norace bool periodModified;
 
   command error_t Init.init() {
     uint8_t i;
@@ -104,8 +99,6 @@ implementation {
   task void readStreamDone() {
     uint8_t c = client;
     uint32_t actualPeriod = period;
-    if (periodModified)
-      actualPeriod = period - (period % 1000);
 
     atomic
     {
@@ -118,7 +111,6 @@ implementation {
   }
 
   task void readStreamFail() {
-    /* By now, the pending bufferDone has been signaled (see readStream). */
     struct list_entry_t *entry;
     uint8_t c = client;
 
@@ -189,14 +181,9 @@ implementation {
 
   command error_t ReadStream.read[uint8_t c](uint32_t usPeriod)
   {
-    /*TODO: Modify definition of period*/
-
-    //period = usPeriod / 1000; // msp implementation
-    //periodModified = TRUE;
+    /* not exactly microseconds                 */
+    /* ADC is currently based on a 1.5MHz clock */
     period = usPeriod; 
-    // THIS IS CURRENTLY IN MILLISECONDS!
-    // SHOULD BE CHANGED TO MICROSECONDS!
-    periodModified = FALSE;
     client = c;
     now = call Alarm.getNow();
     call GetAdc.configureAdc[c](call Config.getConfiguration[c]());
