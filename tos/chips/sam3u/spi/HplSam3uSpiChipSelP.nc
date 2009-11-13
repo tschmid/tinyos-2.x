@@ -37,6 +37,8 @@ implementation
 {
     volatile spi_csr_t *csr = (volatile spi_csr_t*)csrp;
 
+    bool cs;
+
     /**
      * Set the Clock polarity
      * 0: inactive state is logic zero
@@ -135,7 +137,6 @@ implementation
         spi_csr_t tcsr = *csr;
         if(divider == 0)
             return FAIL;
-        // for some reason, setting the baud only resets other fields too.
         tcsr.bits.scbr = divider;
         *csr = tcsr;
         return SUCCESS;
@@ -146,7 +147,6 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setClkDelay(uint8_t delay)
     {
-        // for some reason, setting the NPCS only resets other fields too.
         spi_csr_t tcsr = *csr;
         tcsr.bits.dlybs = delay;
         *csr = tcsr;
@@ -158,17 +158,24 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setTxDelay(uint8_t delay)
     {
-        // for some reason, setting the tx delay only resets other fields too.
         spi_csr_t tcsr = *csr;
         tcsr.bits.dlybct = delay;
         *csr = tcsr;
         return SUCCESS;
     }
 
-    // these are just dummy variables to make the SAM3U compatible with chips
-    // that don't have auto CS
-    async command void PinCS.set() {}
-    async command void PinCS.clr() {}
+    async command void PinCS.set() {
+        atomic cs = FALSE;
+        // enable automatic rising of CS pin after transfer
+        call HplSam3uSpiChipSelConfig.enableCSActive();
+    }
+
+    async command void PinCS.clr() {
+        atomic cs = TRUE;
+        // disable automatic rising of CS pin after transfer
+        call HplSam3uSpiChipSelConfig.disableCSActive();
+    }
+
     async command void PinCS.toggle() {}
     async command bool PinCS.get() {}
     async command void PinCS.makeInput() {}

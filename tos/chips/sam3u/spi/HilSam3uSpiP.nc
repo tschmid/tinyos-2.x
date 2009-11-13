@@ -92,7 +92,7 @@ implementation
         call SpiPinSpck.selectPeripheralA();
         call SpiPinNPCS.enablePullUpResistor();
         call SpiPinNPCS.disablePioControl();
-        call SpiPinNPCS.selectPeripheralA(); // FIXME: this only works for NPCS0! Others are peripheralB!!!
+        call SpiPinNPCS.selectPeripheralB();
 
         call HplSam3uSpiControl.resetSpi();
 
@@ -100,6 +100,7 @@ implementation
         call HplSam3uSpiConfig.setMaster();
 
         // chip select options
+        call HplSam3uSpiConfig.setFixedCS(); // CS needs to be configured for each message sent!
         call HplSam3uSpiConfig.setVariableCS(); // CS needs to be configured for each message sent!
         call HplSam3uSpiConfig.setDirectCS(); // CS pins are not multiplexed
 
@@ -107,14 +108,14 @@ implementation
         setClockDivisor();
         call HplSam3uSpiChipSelConfig.setClockPolarity(1); // logic zero is inactive
         call HplSam3uSpiChipSelConfig.setClockPhase(0);    // out on rising, in on falling
-        //call HplSam3uSpiChipSelConfig.disableAutoCS();     // disable automatic rising of CS after each transfer
-        call HplSam3uSpiChipSelConfig.enableAutoCS();
+        call HplSam3uSpiChipSelConfig.disableAutoCS();     // disable automatic rising of CS after each transfer
+        //call HplSam3uSpiChipSelConfig.enableAutoCS();
 
-        //call HplSam3uSpiChipSelConfig.enableCSActive();    // if the CS line is not risen automatically after the last tx. The lastxfer bit has to be used.
-        call HplSam3uSpiChipSelConfig.disableCSActive(); 
+        call HplSam3uSpiChipSelConfig.enableCSActive();    // if the CS line is not risen automatically after the last tx. The lastxfer bit has to be used.
+        //call HplSam3uSpiChipSelConfig.disableCSActive(); 
 
         call HplSam3uSpiChipSelConfig.setBitsPerTransfer(SPI_CSR_BITS_8);
-        call HplSam3uSpiChipSelConfig.setTxDelay(0);
+        call HplSam3uSpiChipSelConfig.setTxDelay(2);
         call HplSam3uSpiChipSelConfig.setClkDelay(9);
 
         // do we really have to start it??? It seems that the CC2420 driver
@@ -154,7 +155,7 @@ implementation
         uint8_t byte;
 
         //call HplSam3uSpiChipSelConfig.enableCSActive();
-        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 0, TRUE);
+        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 3, FALSE);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
         return byte;
@@ -169,10 +170,16 @@ implementation
         {
             while( m_pos < len) 
             {
+                /**
+                 * FIXME: in order to be compatible with the general TinyOS
+                 * Spi Interface, we can't do automatic CS control!!!
                 if(m_pos == len-1)
-                    call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, TRUE);
+                    call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 3, TRUE);
                 else
-                    call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 0, FALSE);
+                    call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 3, FALSE);
+                    */
+                call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 3, FALSE);
+
                 while(!call HplSam3uSpiStatus.isRxFull());
                 rxBuf[m_pos] = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
                 m_pos += 1;

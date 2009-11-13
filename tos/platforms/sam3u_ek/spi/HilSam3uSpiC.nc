@@ -34,6 +34,7 @@ configuration HilSam3uSpiC
         interface Resource;
         interface SpiByte;
         interface SpiPacket;
+        interface GeneralIO as CSN;
     }
 }
 implementation
@@ -49,8 +50,9 @@ implementation
     HilSam3uSpiP.HplSam3uSpiControl -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiInterrupts -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiStatus -> HplSam3uSpiC;
-    HilSam3uSpiP.HplSam3uSpiChipSelConfig -> HplSam3uSpiC.HplSam3uSpiChipSelConfig0;
-    Resource = HplSam3uSpiC.ResourceCS0;
+    HilSam3uSpiP.HplSam3uSpiChipSelConfig -> HplSam3uSpiC.HplSam3uSpiChipSelConfig3;
+    Resource = HplSam3uSpiC.ResourceCS3;
+    CSN = HplSam3uSpiC.CSN3;
 
 
     components MainC;
@@ -63,7 +65,7 @@ implementation
     HilSam3uSpiP.SpiPinMiso -> HplSam3uGeneralIOC.HplPioA13;
     HilSam3uSpiP.SpiPinMosi -> HplSam3uGeneralIOC.HplPioA14;
     HilSam3uSpiP.SpiPinSpck -> HplSam3uGeneralIOC.HplPioA15;
-    HilSam3uSpiP.SpiPinNPCS -> HplSam3uGeneralIOC.HplPioA16;
+    HilSam3uSpiP.SpiPinNPCS -> HplSam3uGeneralIOC.HplPioA19;
 
     components HplSam3uClockC;
     HilSam3uSpiP.SpiClockControl -> HplSam3uClockC.SPI0PPCntl;
