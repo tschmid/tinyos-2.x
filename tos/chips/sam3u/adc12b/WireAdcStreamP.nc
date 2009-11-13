@@ -35,7 +35,7 @@ configuration WireAdcStreamP {
   }
 }
 implementation {
-  components AdcStreamP, MainC, new AlarmMilliC() as Alarm, 
+  components AdcStreamP, MainC, new AlarmTMicro32C() as Alarm,
     new ArbitratedReadStreamC(uniqueCount(ADCC_READ_STREAM_SERVICE), uint16_t) as ArbitrateReadStream;
 
   ReadStream = ArbitrateReadStream;
