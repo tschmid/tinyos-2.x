@@ -14,10 +14,14 @@ push( @includes, qw(
 
 @opts = qw(
 
-  -gcc=gcc
   -fnesc-target=pc
   -fnesc-no-debug
 
 );
 
+if (defined($ENV{"GCC"})) {
+  push @opts, "-gcc=$ENV{'GCC'}";
+} else {
+  push @opts, "-gcc=gcc";
+}
 push @opts, "-fnesc-scheduler=TinySchedulerC,TinySchedulerC.TaskBasic,TaskBasic,TaskBasic,runTask,postTask" if !$with_scheduler_flag;
