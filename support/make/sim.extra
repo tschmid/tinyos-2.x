@@ -1,11 +1,11 @@
 #-*-Makefile-*- vim:syntax=make
 #$Id$
 
-GCC=gcc
+export GCC=gcc
 GPP=g++
 OPTFLAGS = -g -O0
 LIBS = -lm -lstdc++ 
-PFLAGS += -tossim -fnesc-nido-tosnodes=1000 -fnesc-simulate -fnesc-nido-motenumber=sim_node\(\)  
+PFLAGS += -tossim -fnesc-nido-tosnodes=1000 -fnesc-simulate -fnesc-nido-motenumber=sim_node\(\) -fnesc-gcc=$(GCC)
 WFLAGS = -Wno-nesc-data-race
 PYTHON_VERSION=2.5
 

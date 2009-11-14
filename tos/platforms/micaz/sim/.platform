@@ -28,11 +28,15 @@ push( @includes, qw(
 
 @opts = qw(
 
-  -gcc=gcc
   -fnesc-no-debug
   -fnesc-scheduler=TinySchedulerC,TinySchedulerC.TaskBasic,TaskBasic,TaskBasic,runTask,postTask
 
 );
 
+if (defined($ENV{"GCC"})) {
+  push @opts, "-gcc=$ENV{'GCC'}";
+} else {
+  push @opts, "-gcc=gcc";
+}
 push @opts, "-mingw-gcc" if $cygwin;
 
