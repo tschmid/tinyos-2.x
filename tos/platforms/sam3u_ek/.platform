@@ -23,6 +23,7 @@ push ( @includes, qw(
   %T/chips/sam3u/spi
   %T/chips/sam3u/smc
   %T/chips/sam3u/adc12b
+  %T/chips/sam3u/dma
   %T/chips/cc2420
   %T/chips/cc2420/alarm
   %T/chips/cc2420/control

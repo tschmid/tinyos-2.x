@@ -29,6 +29,6 @@
 interface HplSam3uDmaControl {
   async command error_t init();
   async command error_t setRoundRobin();
-  async command error_t setFizedPriority();
+  async command error_t setFixedPriority();
   async command void reset();
 }

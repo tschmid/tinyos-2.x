@@ -29,20 +29,20 @@
 interface Sam3uDmaChannel {
 
 
-  async command error_t setupTransfer( dma_transfer_mode_t transfer_mode, /* tx type -- check header file */
+  async command error_t setupTransfer( /*dma_transfer_mode_t transfer_mode,*/ /* tx type -- check header file */
 				       uint8_t channel,
 				       void *src_addr, /* Source Address */
 				       void *dst_addr, /* Destination Address */
 				       uint16_t btsize, /* Size of buffer transfer */
-				       dma_chunk_t scsize, /* Source chunk transfer size -- details in header file */
-				       dma_chunk_t dcsize, /* Destination chunk transfer size -- details in header file */
-				       dma_width_t src_width, /* details in header file */
-				       dma_width_t dst_width, /* details in header file */
-				       dma_fc_t fc, /* Flow Controller -- deatils in header file */
-				       dma_dscr_t src_dscr, /* Source address descripter method */
-				       dma_dscr_t dst_dscr, /* Destination address descripter method */
-				       dma_inc_t src_inc, /* Source addressing mode */
-				       dma_inc_t dst_inc, /* Source addressing mode */ 
+				       dmac_chunk_t scsize, /* Source chunk transfer size -- details in header file */
+				       dmac_chunk_t dcsize, /* Destination chunk transfer size -- details in header file */
+				       dmac_width_t src_width, /* details in header file */
+				       dmac_width_t dst_width, /* details in header file */
+				       dmac_fc_t fc, /* Flow Controller -- deatils in header file */
+				       dmac_dscr_t src_dscr, /* Source address descripter method */
+				       dmac_dscr_t dst_dscr, /* Destination address descripter method */
+				       dmac_inc_t src_inc, /* Source addressing mode */
+				       dmac_inc_t dst_inc, /* Source addressing mode */ 
 				       uint8_t src_per, /* Handshake peripheral, for HW handshakes -- 4 bits */
 				       uint8_t dst_per, /* Handshake peripheral, for HW handshakes -- 4 bits */
 				       bool srcSwHandshake, /* select sw handshake for source */
@@ -50,15 +50,15 @@ interface Sam3uDmaChannel {
 				       bool stopOnDone, /* DMAC disable upon done signal */
 				       bool lockIF, /* Interface lock capability */
 				       bool lockB, /* AHB Bus lock capability */
-				       dma_IFL_t lockIFL, /* Master interface locked by channel for chunk/buffer trasfer -- details in header file */
-				       dma_ahbprot_t ahbprot, /* Additional info on bus access -- deatils in header file */
-				       dma_fifocfg_t fifocfg /* Configure FIFO -- Details in header file */ 
+				       dmac_IFL_t lockIFL, /* Master interface locked by channel for chunk/buffer trasfer -- details in header file */
+				       dmac_ahbprot_t ahbprot, /* Additional info on bus access -- deatils in header file */
+				       dmac_fifocfg_t fifocfg /* Configure FIFO -- Details in header file */ 
 				       );
 
   async command error_t startTransfer(uint8_t channel); /* set enable bit */
 
   async command error_t repeatTransfer( void *src_addr, void *dst_addr, 
-					uint16_t size ); /* repeat trasfer with the previous settings */
+					uint16_t size, uint8_t channel ); /* repeat trasfer with the previous settings */
 
   async command error_t swTrigger(uint8_t channel); /* set SW trigger high */
 

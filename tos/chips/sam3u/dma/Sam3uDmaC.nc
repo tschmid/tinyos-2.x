@@ -33,32 +33,28 @@ configuration Sam3uDmaC {
 }
 
 implementation {
-
-  new components Sam3uDmaChannelP() as Channel0P;
-  new components Sam3uDmaChannelP() as Channel1P;
-  new components Sam3uDmaChannelP() as Channel2P;
-  new components Sam3uDmaChannelP() as Channel3P;
+  components new Sam3uDmaChannelP() as Channel0P;
+  components new Sam3uDmaChannelP() as Channel1P;
+  components new Sam3uDmaChannelP() as Channel2P;
+  components new Sam3uDmaChannelP() as Channel3P;
   components Sam3uDmaControlP as ControlP;
   components HplSam3uDmaC as DmaC;
 
   Control = ControlP;
-  ControlP.DmaControl -> DmaC;
-  ControlP.Channel0 -> DmaC.Channel0;
-  ControlP.Channel1 -> DmaC.Channel1;
-  ControlP.Channel2 -> DmaC.Channel2;
-  ControlP.Channel3 -> DmaC.Channel3;
-  //ControlP.Interrupt -> DmaC;
-
-  Channal0 = Channel1P;
-  Channel0P.DmaChannel -> DmaC.Channel0;
-
+  Channel0 = Channel0P;
   Channel1 = Channel1P;
-  Channel1P.DmaChannel -> DmaC.Channel1;
-
   Channel2 = Channel2P;
-  Channel2P.DmaChannel -> DmaC.Channel2;
-
   Channel3 = Channel3P;
+
+  ControlP.DmaControl -> DmaC;
+  ControlP.DmaChannel0 -> DmaC.Channel0;
+  ControlP.DmaChannel1 -> DmaC.Channel1;
+  ControlP.DmaChannel2 -> DmaC.Channel2;
+  ControlP.DmaChannel3 -> DmaC.Channel3;
+
+  Channel0P.DmaChannel -> DmaC.Channel0;
+  Channel1P.DmaChannel -> DmaC.Channel1;
+  Channel2P.DmaChannel -> DmaC.Channel2;
   Channel3P.DmaChannel -> DmaC.Channel3;
 
 }

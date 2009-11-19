@@ -41,6 +41,7 @@ implementation {
   components new HplSam3uDmaXP(2) as Dma2;
   components new HplSam3uDmaXP(3) as Dma3;
   components HplNVICC;
+  components LedsC;
 
   Control = HplSam3uDmaP;
   Channel0 = Dma0;
@@ -53,5 +54,11 @@ implementation {
   Dma1.Interrupt -> HplSam3uDmaP;
   Dma2.Interrupt -> HplSam3uDmaP;
   Dma3.Interrupt -> HplSam3uDmaP;
+  Dma0.Leds -> LedsC;
+  Dma1.Leds -> LedsC;
+  Dma2.Leds -> LedsC;
+  Dma3.Leds -> LedsC;
+
   HplSam3uDmaP.HDMAInterrupt -> HplNVICC.HDMAInterrupt;
+  HplSam3uDmaP.Leds -> LedsC;
 }

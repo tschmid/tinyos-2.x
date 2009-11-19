@@ -31,15 +31,15 @@ interface HplSam3uDmaChannel {
   async command void setSrcAddr(void* src_addr);
   async command void setDstAddr(void* dst_addr);
   async command void setBtsize(uint16_t btsize);
-  async command void setScsize(dma_chunk_t scsize);
-  async command void setDcsize(dma_chunk_t dcsize);
-  async command void setSrcWidth(dma_width_t src_width);
-  async command void setDstWidth(dma_width_t dst_width);
-  async command void setFc(dma_fc_t fc);
-  async command void setSrcDscr(dma_dscr_t src_dscr);
-  async command void setDstDscr(dma_dscr_t dst_dscr);
-  async command void setSrcInc(dma_inc_t src_inc);
-  async command void setDstInc(dma_inc_t dst_inc);
+  async command void setScsize(dmac_chunk_t scsize);
+  async command void setDcsize(dmac_chunk_t dcsize);
+  async command void setSrcWidth(dmac_width_t src_width);
+  async command void setDstWidth(dmac_width_t dst_width);
+  async command void setFc(dmac_fc_t fc);
+  async command void setSrcDscr(dmac_dscr_t src_dscr);
+  async command void setDstDscr(dmac_dscr_t dst_dscr);
+  async command void setSrcInc(dmac_inc_t src_inc);
+  async command void setDstInc(dmac_inc_t dst_inc);
   async command void setSrcPer(uint8_t src_per);
   async command void setDstPer(uint8_t dst_per);
   async command void setSrcHandshake(bool handshake);
@@ -50,14 +50,16 @@ interface HplSam3uDmaChannel {
   async command void clrLockIF();
   async command void setLockB();
   async command void clrLockB();
-  async command void setLockIFL(dma_IFL_t lockIFL);
-  async command void setAhbprot(dma_ahbprot_t ahbprot);
-  async command void setFifoCfg(dma_fifocfg_t fifocfg);
+  async command void setLockIFL(dmac_IFL_t lockIFL);
+  async command void setAhbprot(dmac_ahbprot_t ahbprot);
+  async command void setFifoCfg(dmac_fifocfg_t fifocfg);
   
   async command void enable();
-  async command void disable();
+  async command void disable(uint8_t channel);
   async command void enableChannel(uint8_t channel);
   async command void enableChannelInterrupt(uint8_t channel);
+
+  async command void reset();
 
   async event void transferDone(error_t success);
 

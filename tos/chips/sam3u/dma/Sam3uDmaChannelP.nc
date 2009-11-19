@@ -26,7 +26,7 @@
 
 #include "sam3uDmahardware.h"
 
-module Sam3uDmaChannelP {
+generic module Sam3uDmaChannelP() {
 
   provides interface Sam3uDmaChannel as Channel;
   uses interface HplSam3uDmaChannel as DmaChannel;
@@ -34,20 +34,20 @@ module Sam3uDmaChannelP {
 
 implementation {
 
-  async command error_t Channel.setupTransfer( dma_transfer_mode_t transfer_mode,
+  async command error_t Channel.setupTransfer( /*dma_transfer_mode_t transfer_mode,*/
 					       uint8_t channel,
 					       void *src_addr,
 					       void *dst_addr,
 					       uint16_t btsize,
-					       dma_chunk_t scsize,
-					       dma_chunk_t dcsize,
-					       dma_width_t src_width,
-					       dma_width_t dst_width,
-					       dma_fc_t fc,
-					       dma_dscr_t src_dscr,
-					       dma_dscr_t dst_dscr,
-					       dma_inc_t src_inc,
-					       dma_inc_t dst_inc,
+					       dmac_chunk_t scsize,
+					       dmac_chunk_t dcsize,
+					       dmac_width_t src_width,
+					       dmac_width_t dst_width,
+					       dmac_fc_t fc,
+					       dmac_dscr_t src_dscr,
+					       dmac_dscr_t dst_dscr,
+					       dmac_inc_t src_inc,
+					       dmac_inc_t dst_inc,
 					       uint8_t src_per,
 					       uint8_t dst_per,
 					       bool srcSwHandshake,
@@ -55,9 +55,9 @@ implementation {
 					       bool stopOnDone,
 					       bool lockIF,
 					       bool lockB,
-					       dma_IFL_t lockIFL,
-					       dma_ahbprot_t ahbprot,
-					       dma_fifocfg_t fifocfg)
+					       dmac_IFL_t lockIFL,
+					       dmac_ahbprot_t ahbprot,
+					       dmac_fifocfg_t fifocfg)
   {
     call DmaChannel.setSrcAddr(src_addr);
     call DmaChannel.setDstAddr(dst_addr);
@@ -114,17 +114,18 @@ implementation {
 
   async command error_t Channel.startTransfer(uint8_t channel)
   {
-    call DmaChannel.enable();
     call DmaChannel.enableChannelInterrupt(channel);
-    return call Channel.swTrigger(channel);
+    call Channel.swTrigger(channel);
+    call DmaChannel.enable();
+    return SUCCESS;
   }
 
-  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size)
+  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel)
   {
     call DmaChannel.setSrcAddr(src_addr);
     call DmaChannel.setDstAddr(dst_addr);
     call DmaChannel.setBtsize(size);    
-    return call Channel.startTransfer();
+    return call Channel.startTransfer(channel);
   }
 
   async command error_t Channel.swTrigger(uint8_t channel)
@@ -166,6 +167,11 @@ implementation {
     call DmaChannel.setFifoCfg(0);
 
     return SUCCESS;
+  }
+
+
+  async event void DmaChannel.transferDone(error_t success){
+    signal Channel.transferDone(success);
   }
 
   default async event void Channel.transferDone(error_t success){
