@@ -374,7 +374,7 @@ typedef union
   struct
   {
     uint16_t btsize     : 12;
-    uint8_t sczize      :  1;
+    uint8_t scsize      :  1;
     uint8_t reserved0   :  3;
     uint8_t dcsize      :  1;
     uint8_t reserved1   :  3;
@@ -418,29 +418,6 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint16_t reserved0     : 16;
-    uint8_t src_dscr       :  1;
-    uint8_t reserved1      :  3;
-    uint8_t dst_dscr       :  1;
-    uint8_t fc             :  2;
-    uint8_t reserved2      :  1;
-    uint8_t src_incr       :  2;
-    uint8_t reserved3      :  2;
-    uint8_t dst_incr       :  2;
-    uint8_t ien            :  1;
-    uint8_t reserved3      :  1;
-  } __attribute__((__packed__)) bits;
-} dmac_ctrlbx_t;
-
-/**
- *  DMAC Channal x Configuration Register, AT91 ARM Cortex-M3 based Microcontrollers
- *  SAM3U Series, Preliminary, p. 1090
- */
-typedef union
-{
-  uint32_t flat;
-  struct
-  {
     uint8_t src_per      :  4;
     uint8_t dst_per      :  4;
     uint8_t reserved0    :  1;
@@ -465,9 +442,10 @@ typedef union
  * DMAC Register definitions, AT91 ARM Cortex-M3 based Microcontrollers SAM3U
  * Series, Preliminary, p. 1072
  */
+
 typedef struct dmac
 {
-  volatile dmac_gcgf_t gcgf;
+  volatile dmac_gcfg_t gcfg;
   volatile dmac_en_t en;
   volatile dmac_sreq_t sreq;
   volatile dmac_creq_t creq;
@@ -522,7 +500,7 @@ typedef struct dmac
   uint32_t reserved16;
   uint32_t reserved17;
   uint32_t reserved18;
-} dmac_t
+} dmac_t;
 
 volatile dmac_t* DMAC = (volatile dmac_t *) 0x400B0000; // DMAC Base Address
 /*
@@ -539,35 +517,35 @@ typedef enum {
 typedef enum {
   ONE_DATA_TRANSFERRED  = 0x0,
   FOUR_DATA_TRANSFERRED = 0x1
-} dma_chunk_t;
+} dmac_chunk_t;
 
 typedef enum {
   SINGLE_TRANSFER_SIZE_BYTE      = 0x0,
   SINGLE_TRANSFER_SIZE_HALF_WORD = 0x1,
   SINGLE_TRANSFER_SIZE_WORD      = 0x2
-} dma_width_t;
+} dmac_width_t;
 
 typedef enum {
   MEMORY_TO_MEMORY         = 0x0,
   MEMORY_TO_PERIPHERAL     = 0x1,
   PERIPHERAL_TO_MEMORY     = 0x2,
   PERIPHERAL_TO_PERIPHERAL = 0x3
-} dma_fc_t;
+} dmac_fc_t;
 
 typedef enum {
   ADDRESS_UPDATE_MEMORY   = 0x0,
   ADDRESS_UPDATE_DISABLED = 0x1
-} dma_dscr_t;
+} dmac_dscr_t;
 
 typedef enum {
   INCREMENTING_ADDRESS  = 0x0,
   FIXED_ADDRESS         = 0x1
-} dma_inc_t;
+} dmac_inc_t;
 
 typedef enum {
   LOCK_MASTER_ARBITOR_CHUNK  = 0x0,
   LOCK_MASTER_ABRITOR_BUFFER = 0x1
-} dma_IFL_t;
+} dmac_IFL_t;
 
 typedef enum {
   DATA_ACCESS_USER_ACCESS_NO_BUFFER_NO_CACHE = 0x1,
@@ -578,12 +556,12 @@ typedef enum {
   DATA_ACCESS_PRIV_ACCESS_NO_BUFFER_CACHE    = 0xB,
   DATA_ACCESS_USER_ACCESS_BUFFER_CACHE       = 0xD,
   DATA_ACCESS_PRIV_ACCESS_BUFFER_CACHE       = 0xF
-} dma_ahbprot_t;
+} dmac_ahbprot_t;
 
 typedef enum {
   LARGEST_LENGTH_AHB_BURST_DST = 0x0,
   SERV_HALF_FIFO               = 0x1,
   SERV_ENOUGH_FIFO             = 0x2
-} dma_fifocfg_t;
+} dmac_fifocfg_t;
 
 #endif

@@ -59,9 +59,9 @@ implementation {
   }
   */
 
-  event void DmaChannel0.transferDone(error_t err){}
-  event void DmaChannel1.transferDone(error_t err){}
-  event void DmaChannel2.transferDone(error_t err){}
-  event void DmaChannel3.transferDone(error_t err){}
+  async event void DmaChannel0.transferDone(error_t err){}
+  async event void DmaChannel1.transferDone(error_t err){}
+  async event void DmaChannel2.transferDone(error_t err){}
+  async event void DmaChannel3.transferDone(error_t err){}
 
 }

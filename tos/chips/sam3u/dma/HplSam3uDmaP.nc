@@ -31,7 +31,7 @@ module HplSam3uDmaP {
   provides interface HplSam3uDmaControl as DmaControl;
   provides interface HplSam3uDmaInterrupt as Interrupt;
   uses interface HplNVICInterruptCntl as HDMAInterrupt;
-
+  uses interface Leds;
 }
 
 implementation {
@@ -39,19 +39,20 @@ implementation {
   async command error_t DmaControl.init(){
     call HDMAInterrupt.configure(IRQ_PRIO_DMAC);
     call HDMAInterrupt.enable();
+    return SUCCESS;
   }
 
   async command error_t DmaControl.setRoundRobin(){
-    volatile dma_gcfg_t *GCFG = (volatile dma_gcfg_t *) 0x400B0000;
-    dma_gcfg_t gcfg = *GCFG;
+    volatile dmac_gcfg_t *GCFG = (volatile dmac_gcfg_t *) 0x400B0000;
+    dmac_gcfg_t gcfg = *GCFG;
     gcfg.bits.arb_cfg = 1;
     *GCFG = gcfg;
     return SUCCESS;
   }
 
-  async command error_t DmaControl.setFizedPriority(){
-    volatile dma_gcfg_t *GCFG = (volatile dma_gcfg_t *) 0x400B0000;
-    dma_gcfg_t gcfg = *GCFG;
+  async command error_t DmaControl.setFixedPriority(){
+    volatile dmac_gcfg_t *GCFG = (volatile dmac_gcfg_t *) 0x400B0000;
+    dmac_gcfg_t gcfg = *GCFG;
     gcfg.bits.arb_cfg = 0;
     *GCFG = gcfg;
     return SUCCESS;
@@ -61,8 +62,8 @@ implementation {
     
   }
 
-
   void DmacIrqHandler() @C() @spontaneous() {
+    call Leds.led0Toggle();
     signal Interrupt.fired();
   }
 
