@@ -59,6 +59,7 @@ implementation {
 					       dmac_ahbprot_t ahbprot,
 					       dmac_fifocfg_t fifocfg)
   {
+
     call DmaChannel.setSrcAddr(src_addr);
     call DmaChannel.setDstAddr(dst_addr);
     call DmaChannel.setBtsize(btsize);
@@ -71,6 +72,7 @@ implementation {
     call DmaChannel.setDstDscr(dst_dscr);
     call DmaChannel.setSrcInc(src_inc);
     call DmaChannel.setDstInc(dst_inc);
+
     call DmaChannel.setSrcPer(src_per);
     call DmaChannel.setDstPer(dst_per);
 
@@ -112,25 +114,25 @@ implementation {
 
   }
 
-  async command error_t Channel.startTransfer(uint8_t channel)
+  async command error_t Channel.startTransfer(uint8_t channel, bool s2d)
   {
     call DmaChannel.enableChannelInterrupt(channel);
-    call Channel.swTrigger(channel);
     call DmaChannel.enable();
+    call DmaChannel.enableChannel(channel, s2d);
     return SUCCESS;
   }
 
-  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel)
+  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel, bool s2d)
   {
     call DmaChannel.setSrcAddr(src_addr);
     call DmaChannel.setDstAddr(dst_addr);
     call DmaChannel.setBtsize(size);    
-    return call Channel.startTransfer(channel);
+    return call Channel.startTransfer(channel, s2d);
   }
 
-  async command error_t Channel.swTrigger(uint8_t channel)
+  async command error_t Channel.swTrigger(uint8_t channel, bool s2d)
   {
-    call DmaChannel.enableChannel(channel); // start tx!
+    // call DmaChannel.enableChannel(channel, s2d); // start tx!
     return SUCCESS;
   }
 
@@ -143,6 +145,7 @@ implementation {
 
   async command error_t Channel.resetAll()
   {
+    /*
     call DmaChannel.setSrcAddr(0);
     call DmaChannel.setDstAddr(0);
     call DmaChannel.setBtsize(0);
@@ -165,7 +168,7 @@ implementation {
     call DmaChannel.setLockIFL(0);
     call DmaChannel.setAhbprot(1);
     call DmaChannel.setFifoCfg(0);
-
+    */
     return SUCCESS;
   }
 

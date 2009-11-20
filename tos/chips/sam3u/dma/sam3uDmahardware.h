@@ -82,7 +82,7 @@ typedef union
     uint16_t reserved0    : 16;
     uint8_t reserved1     :  8;
   } __attribute__((__packed__)) bits;
-} dmac_sreq_t;
+} dmac_sreq_t; 
 
 /**
  *  DMAC Software Chunk Request Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -104,7 +104,7 @@ typedef union
     uint16_t reserved0    : 16;
     uint8_t reserved1     :  8;
   } __attribute__((__packed__)) bits;
-} dmac_creq_t;
+} dmac_creq_t; 
 
 /**
  *  DMAC Software Last Transfer Flag Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -118,7 +118,7 @@ typedef union
     uint8_t slast0        :  1;
     uint8_t dlast0        :  1;
     uint8_t slast1        :  1;
-    uint8_t dlsat1        :  1;
+    uint8_t dlast1        :  1;
     uint8_t slast2        :  1;
     uint8_t dlast2        :  1;
     uint8_t slast3        :  1;
@@ -126,7 +126,7 @@ typedef union
     uint16_t reserved0    : 16;
     uint8_t reserved1     :  8;
   } __attribute__((__packed__)) bits;
-} dmac_last_t;
+} dmac_last_t; 
 
 /**
  *  DMAC Error, Buffer Transfer and Chained Buffer Transfer Interrupt Enable Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -154,7 +154,7 @@ typedef union
     uint8_t reserved2   :  4;
     uint8_t reserved3   :  8;
   } __attribute__((__packed__)) bits;
-} dmac_ebcier_t;
+} dmac_ebcier_t; 
 
 /**
  *  DMAC Error, Buffer Transfer and Chained Buffer Transfer Interrupt Disable Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -182,7 +182,7 @@ typedef union
     uint8_t reserved2   :  4;
     uint8_t reserved3   :  8;
   } __attribute__((__packed__)) bits;
-} dmac_ebcidr_t;
+} dmac_ebcidr_t; 
 
 /**
  *  DMAC Error, Buffer Transfer and Chained Buffer Transfer Interrupt Mask Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -333,7 +333,7 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint32_t saddrx        : 32;
+    uint32_t saddrx;
   } __attribute__((__packed__)) bits;
 } dmac_saddrx_t;
 
@@ -346,7 +346,7 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint32_t daddrx        : 32;
+    uint32_t daddrx;
   } __attribute__((__packed__)) bits;
 } dmac_daddrx_t;
 
@@ -374,8 +374,8 @@ typedef union
   struct
   {
     uint16_t btsize     : 12;
-    uint8_t scsize      :  1;
-    uint8_t reserved0   :  3;
+    uint16_t scsize     :  1;
+    uint16_t reserved0  :  3;
     uint8_t dcsize      :  1;
     uint8_t reserved1   :  3;
     uint8_t src_width   :  2;
@@ -395,17 +395,18 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint16_t reserved0     : 16;
+    uint8_t reserved0      :  8;
+    uint8_t resetved1      :  8;
     uint8_t src_dscr       :  1;
-    uint8_t reserved1      :  3;
+    uint8_t reserved2      :  3;
     uint8_t dst_dscr       :  1;
     uint8_t fc             :  2;
-    uint8_t reserved2      :  1;
+    uint8_t reserved3      :  1;
     uint8_t src_incr       :  2;
-    uint8_t reserved3      :  2;
+    uint8_t reserved4      :  2;
     uint8_t dst_incr       :  2;
     uint8_t ien            :  1;
-    uint8_t reserved4      :  1;
+    uint8_t reserved5      :  1;
   } __attribute__((__packed__)) bits;
 } dmac_ctrlbx_t;
 
@@ -433,7 +434,7 @@ typedef union
     uint8_t reserved4    :  1;
     uint8_t ahb_prot     :  3;
     uint8_t reserved5    :  1;
-    uint8_t fifocfg      :  1;
+    uint8_t fifocfg      :  2;
     uint8_t reserved6    :  2;
   } __attribute__((__packed__)) bits;
 } dmac_cfgx_t;
@@ -496,22 +497,25 @@ typedef struct dmac
   volatile dmac_ctrlax_t ctrla3;
   volatile dmac_ctrlbx_t ctrlb3;
   volatile dmac_cfgx_t cfg3;
-  uint32_t reserved15;
-  uint32_t reserved16;
-  uint32_t reserved17;
-  uint32_t reserved18;
-} dmac_t;
+}  __attribute__((__packed__)) dmac_t;
 
 volatile dmac_t* DMAC = (volatile dmac_t *) 0x400B0000; // DMAC Base Address
+//volatile dmac_gcfg_t* SREQ = (volatile dmac_gcfg_t *) 0x400B0008;
+
+/*
+
+*/
+
+
 /*
 typedef enum {
-  DMA_SINGLE_TRANSFER               = 0x0,
-  DMA_BLOCK_TRANSFER                = 0x1,
-  DMA_BURST_BLOCK_TRANSFER          = 0x2,
-  DMA_REPEATED_SINGLE_TRANSFER      = 0x4,
-  DMA_REPEATED_BLOCK_TRANSFER       = 0x5,
-  DMA_REPEATED_BURST_BLOCK_TRANSFER = 0x7
-} dma_transfer_mode_t;
+  DMAC_SINGLE_TRANSFER               = 0x0,
+  DMAC_BLOCK_TRANSFER                = 0x1,
+  DMAC_BURST_BLOCK_TRANSFER          = 0x2,
+  DMAC_REPEATED_SINGLE_TRANSFER      = 0x4,
+  DMAC_REPEATED_BLOCK_TRANSFER       = 0x5,
+  DMAC_REPEATED_BURST_BLOCK_TRANSFER = 0x7
+} dmac_transfer_mode_t;
 */
 
 typedef enum {

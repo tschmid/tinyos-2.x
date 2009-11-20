@@ -56,7 +56,7 @@ interface HplSam3uDmaChannel {
   
   async command void enable();
   async command void disable(uint8_t channel);
-  async command void enableChannel(uint8_t channel);
+  async command void enableChannel(uint8_t channel, bool s2d);
   async command void enableChannelInterrupt(uint8_t channel);
 
   async command void reset();

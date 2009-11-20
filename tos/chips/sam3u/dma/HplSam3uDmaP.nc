@@ -25,6 +25,8 @@
  */
 
 #include "sam3uDmahardware.h"
+#include <color.h>
+#include <lcd.h>
 
 module HplSam3uDmaP {
 
@@ -32,11 +34,30 @@ module HplSam3uDmaP {
   provides interface HplSam3uDmaInterrupt as Interrupt;
   uses interface HplNVICInterruptCntl as HDMAInterrupt;
   uses interface Leds;
+  uses interface Lcd;
+  uses interface Draw;
 }
 
 implementation {
 
+  event void Lcd.initializeDone(error_t err)
+  {
+    /*
+    call Draw.fill(COLOR_GREEN);
+    call Lcd.start();
+    */
+  }
+
+  event void Lcd.startDone(){}
+
+  task void draw(){
+    volatile uint32_t *temp = (volatile uint32_t *) 0x400B0000;
+    call Draw.fill(COLOR_BLUE);
+    call Draw.drawInt(100,100,*temp,1,COLOR_BLACK);
+  }
+
   async command error_t DmaControl.init(){
+    call HDMAInterrupt.disable();
     call HDMAInterrupt.configure(IRQ_PRIO_DMAC);
     call HDMAInterrupt.enable();
     return SUCCESS;
@@ -47,6 +68,7 @@ implementation {
     dmac_gcfg_t gcfg = *GCFG;
     gcfg.bits.arb_cfg = 1;
     *GCFG = gcfg;
+    //post draw();
     return SUCCESS;
   }
 
@@ -55,6 +77,7 @@ implementation {
     dmac_gcfg_t gcfg = *GCFG;
     gcfg.bits.arb_cfg = 0;
     *GCFG = gcfg;
+    //post draw();
     return SUCCESS;
   }
 
