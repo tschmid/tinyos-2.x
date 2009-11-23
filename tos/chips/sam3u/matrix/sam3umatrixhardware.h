@@ -121,6 +121,37 @@ typedef union
     }__attribute__((__packed__)) bits;
 } matrix_mrcr_t;
 
+/**
+ * Bus Matrix Write Protection Mode Register, AT91 ARM Cortex-M3 based Microcontrollers
+ * SAM3U Series, Preliminary, p. 350
+ */
+typedef union
+{
+    uint32_t flat;
+    struct
+    {
+      uint32_t wpen       :  1;
+      uint32_t reserved0  :  7;
+      uint32_t wpkey      : 24;
+    }__attribute__((__packed__)) bits;
+} matrix_wpmr_t;
+
+/**
+ * Bus Matrix Write Protection Mode Register, AT91 ARM Cortex-M3 based Microcontrollers
+ * SAM3U Series, Preliminary, p. 350
+ */
+typedef union
+{
+    uint32_t flat;
+    struct
+    {
+      uint8_t wpvs       :  1;
+      uint8_t reserved0  :  7;
+      uint16_t wpkey     : 16;
+      uint8_t reserved1  :  8;
+    }__attribute__((__packed__)) bits;
+} matrix_wpsr_t;
+
 
 /**
  * Bus Matrix Register definitions,  AT91 ARM Cortex-M3 based Microcontrollers
