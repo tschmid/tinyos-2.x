@@ -176,7 +176,7 @@ implementation {
  */
   void PendSVHandler() @C() @spontaneous() __attribute((naked))
   {
-	  atomic {
+	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("mrs r0, msp");
 		  asm volatile("stmdb r0!, {r4-r11}");
 		  asm volatile("str r0, %0" : "=m" ((yielding_thread)->stack_ptr));
@@ -192,7 +192,12 @@ implementation {
 	  asm volatile("bx lr"); // important because this is a naked function
   }
 
-  void SVCallHandler() @C() @spontaneous() __attribute__((alias("PendSVHandler")));
+  void SVCallHandler() @C() @spontaneous()
+  {
+    atomic { // disable interrupts
+      *((volatile uint32_t *) 0xe000ed04) = 0x10000000; // set PendSV request
+	} // enable interrupts, letting the PendSV IRQ come through
+  }
 #endif
   
   /* sleepWhileIdle() 
