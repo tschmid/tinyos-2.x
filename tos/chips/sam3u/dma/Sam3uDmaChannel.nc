@@ -37,9 +37,9 @@ interface Sam3uDmaChannel {
 				       dmac_chunk_t dcsize, /* Destination chunk transfer size -- details in header file */
 				       dmac_width_t src_width, /* details in header file */
 				       dmac_width_t dst_width, /* details in header file */
-				       dmac_fc_t fc, /* Flow Controller -- deatils in header file */
 				       dmac_dscr_t src_dscr, /* Source address descripter method */
 				       dmac_dscr_t dst_dscr, /* Destination address descripter method */
+				       dmac_fc_t fc, /* Flow Controller -- deatils in header file */
 				       dmac_inc_t src_inc, /* Source addressing mode */
 				       dmac_inc_t dst_inc, /* Source addressing mode */ 
 				       uint8_t src_per, /* Handshake peripheral, for HW handshakes -- 4 bits */
