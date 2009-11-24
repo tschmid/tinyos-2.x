@@ -33,33 +33,18 @@ module HplSam3uDmaP {
   provides interface HplSam3uDmaControl as DmaControl;
   provides interface HplSam3uDmaInterrupt as Interrupt;
   uses interface HplNVICInterruptCntl as HDMAInterrupt;
+  uses interface HplSam3uPeripheralClockCntl as HDMAClockControl;
   uses interface Leds;
-  uses interface Lcd;
   uses interface Draw;
 }
 
 implementation {
 
-  event void Lcd.initializeDone(error_t err)
-  {
-    /*
-    call Draw.fill(COLOR_GREEN);
-    call Lcd.start();
-    */
-  }
-
-  event void Lcd.startDone(){}
-
-  task void draw(){
-    volatile uint32_t *temp = (volatile uint32_t *) 0x400B0000;
-    call Draw.fill(COLOR_BLUE);
-    call Draw.drawInt(100,100,*temp,1,COLOR_BLACK);
-  }
-
   async command error_t DmaControl.init(){
     call HDMAInterrupt.disable();
     call HDMAInterrupt.configure(IRQ_PRIO_DMAC);
     call HDMAInterrupt.enable();
+    call HDMAClockControl.enable();
     return SUCCESS;
   }
 
@@ -68,7 +53,6 @@ implementation {
     dmac_gcfg_t gcfg = *GCFG;
     gcfg.bits.arb_cfg = 1;
     *GCFG = gcfg;
-    //post draw();
     return SUCCESS;
   }
 
@@ -77,7 +61,6 @@ implementation {
     dmac_gcfg_t gcfg = *GCFG;
     gcfg.bits.arb_cfg = 0;
     *GCFG = gcfg;
-    //post draw();
     return SUCCESS;
   }
 
@@ -85,8 +68,21 @@ implementation {
     
   }
 
+
   void DmacIrqHandler() @C() @spontaneous() {
-    call Leds.led0Toggle();
+    volatile dmac_chdr_t* CHDR = (volatile dmac_chdr_t *) 0x400B002C;
+    dmac_chdr_t chdr;
+    volatile dmac_en_t* EN = (volatile dmac_en_t *) 0x400B0004;
+    dmac_en_t en;
+    volatile dmac_ebcidr_t* EBCIDR = (volatile dmac_ebcidr_t *) 0x400B001C;
+    dmac_ebcidr_t ebcidr;
+    chdr.bits.dis0 = 1;
+    ebcidr.bits.btc0 = 1;
+    en.bits.enable = 0;
+    *EN = en;
+    *CHDR = chdr;
+    *EBCIDR = ebcidr;
+    //call Leds.led0Toggle();
     signal Interrupt.fired();
   }
 
