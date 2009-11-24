@@ -68,8 +68,8 @@ typedef uint32_t* stack_ptr_t;
  * asynchronously from within an IRQ handler (timer interrupt) or
  * synchronously from within a thread (yield / end of thread). It
  * then either requests a PendSV exception to be executed after the
- * IRQ handler returns, or it invokes an SVCall, which is executed
- * promptly.
+ * IRQ handler returns, or it invokes an SVCall with parameter 0,
+ * which is executed promptly.
  *
  * The corresponding register addresses are hard-coded because
  * wiring in the target component (TinyThreadSchedulerP) is not
