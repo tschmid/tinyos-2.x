@@ -82,10 +82,11 @@ implementation {
 
   async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel)
   {
-    call DmaChannel.setSrcAddr(src_addr);
-    call DmaChannel.setDstAddr(dst_addr);
-    call DmaChannel.setBtsize(size);    
-    return call Channel.startTransfer(channel);
+    call DmaChannel.setBtsize(size);
+    call DmaChannel.enable();
+    call DmaChannel.enableChannelInterrupt(channel);
+    call DmaChannel.enableChannel(channel);
+    return SUCCESS;
   }
 
   async command error_t Channel.swTransferRequest(uint8_t channel, bool s2d)
