@@ -132,7 +132,7 @@ implementation {
     return call ThreadScheduler.joinThread(id);
   }
   
-  event void ThreadFunction.signalThreadRun[uint8_t id](void *arg) {
+  event void ThreadFunction.signalThreadRun[uint8_t id](void *arg) __attribute__((section(".textcommon"))) {
     signal Thread.run[id](arg);
   }
   

@@ -72,8 +72,6 @@ SECTIONS
 
 		. = ALIGN(0x400);
 		_stextcommon = .;
-		*(.text.TinyThreadSchedulerP$threadWrapper)
-		*(.text.StaticThreadP$ThreadFunction$signalThreadRun)
 		*(.textcommon*)
 		. = ALIGN(0x400);
 		_etextcommon = .;
@@ -81,16 +79,16 @@ SECTIONS
 		. = ALIGN(0x200);
 		_stextthread0 = .;
 		*(.text.ThreadInfoP$0$run_thread)
-		*(.text.TestMpuProtectionC$Thread0$run)
-		*(.text.TestMpuProtectionSyscallC$Thread0$run)
+		/* this will collect the definition of the thread's run() event in the app component */
+		*(.text.*$Thread0$run)
 		. = ALIGN(0x200);
 		_etextthread0 = .;
 
 		. = ALIGN(0x200);
 		_stextthread1 = .;
 		*(.text.ThreadInfoP$1$run_thread)
-		*(.text.TestMpuProtectionC$Thread1$run)
-		*(.text.TestMpuProtectionSyscallC$Thread1$run)
+		/* this will collect the definition of the thread's run() event in the app component */
+		*(.text.*$Thread1$run)
 		. = ALIGN(0x200);
 		_etextthread1 = .;
 
