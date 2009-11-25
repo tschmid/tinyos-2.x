@@ -4,6 +4,3 @@ DMA Controller Implementation for SAM3U
 
 The implementations are based on the preliminary specifications.
 
-- ToDos
-: Not yet tested on actual application file
-: The register writing is not working therefore cannot proceed at this point
