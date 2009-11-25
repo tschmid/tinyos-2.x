@@ -295,7 +295,7 @@ implementation {
   
   /* This executes and cleans up a thread
    */
-  void threadWrapper() __attribute__((naked, noinline)) {
+  void threadWrapper() __attribute__((naked, noinline, section(".textcommon"))) {
     thread_t* t;
     atomic t = current_thread;
     
