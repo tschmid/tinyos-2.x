@@ -48,13 +48,13 @@ implementation
     __attribute__((interrupt)) void PioBIrqHandler() @C() @spontaneous()
     {
         uint32_t time = call LocalTime.get();
-        signal HplPortA.fired(time);
+        signal HplPortB.fired(time);
     }
 
     __attribute__((interrupt)) void PioCIrqHandler() @C() @spontaneous()
     {
         uint32_t time = call LocalTime.get();
-        signal HplPortA.fired(time);
+        signal HplPortC.fired(time);
     }
 
     /**
