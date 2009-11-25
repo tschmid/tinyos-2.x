@@ -62,7 +62,7 @@ interface Sam3uDmaChannel {
 
   async command error_t stopTransfer(uint8_t channel); /* Perform all fuctions needed to disable/stop transfer*/
 
-  async command error_t resetAll();
+  async command error_t resetAll(uint8_t channel);
 
   async event void transferDone(error_t success);
 
