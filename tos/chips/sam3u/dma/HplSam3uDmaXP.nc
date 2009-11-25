@@ -135,14 +135,19 @@ implementation {
     switch(DMACHANNEL){
     case 0:
       cher.bits.ena0 = 1;
+      break;
     case 1:
       cher.bits.ena1 = 1;
+      break;
     case 2:
       cher.bits.ena2 = 1;
+      break;
     case 3:
       cher.bits.ena3 = 1;
+      break;
     default:
       cher.bits.ena0 = 1;
+      break;
     }
     *CHER = cher;
   }
@@ -154,14 +159,19 @@ implementation {
     switch(DMACHANNEL){
     case 0:
       chdr.bits.dis0 = 1;
+      break;
     case 1:
       chdr.bits.dis1 = 1;
+      break;
     case 2:
       chdr.bits.dis2 = 1;
+      break;
     case 3:
       chdr.bits.dis3 = 1;
+      break;
     default:
       chdr.bits.dis0 = 1;
+      break;
     }
     *CHDR = chdr;
   }
@@ -184,6 +194,7 @@ implementation {
 	last.bits.dlast0 = 1;
 	sreq.bits.dsreq0 = 1;
       }
+      break;
     case 1:
       if(s2d){
 	sreq.bits.ssreq1 = 1;
@@ -192,6 +203,7 @@ implementation {
 	sreq.bits.dsreq1 = 1;
 	last.bits.dlast1 = 1;
       }
+      break;
     case 2:
       if(s2d){
 	sreq.bits.ssreq2dash = 1;
@@ -200,6 +212,7 @@ implementation {
 	sreq.bits.dsreq2dash = 1;
 	last.bits.dlast2 = 1;
       }
+      break;
     case 3:
       if(s2d){
 	sreq.bits.ssreq3 = 1;
@@ -208,6 +221,7 @@ implementation {
 	sreq.bits.dsreq3 = 1;
 	last.bits.slast3 = 1;
       }
+      break;
     default:
       if(s2d){
 	sreq.bits.ssreq0 = 1;
@@ -216,6 +230,7 @@ implementation {
 	sreq.bits.dsreq0 = 1;
 	last.bits.dlast0 = 1;
       }
+      break;
     }
     *LAST = last;
     *CREQ = creq;
@@ -230,15 +245,19 @@ implementation {
     case 0:    
       ebcier.bits.btc0 = 1;
       //ebcier.bits.err0 = 1;
+      break;
     case 1:    
       ebcier.bits.btc1 = 1;
       //ebcier.bits.err1 = 1;
+      break;
     case 2:    
       ebcier.bits.btc2 = 1;
       //ebcier.bits.err2 = 1;
+      break;
     case 3:    
       ebcier.bits.btc3 = 1;
       //ebcier.bits.err3 = 1;
+      break;
     }
     *EBCIER = ebcier;
   }
@@ -251,20 +270,61 @@ implementation {
     case 0:
       ebcidr.bits.btc0 = 1;
       //ebcier.bits.err0 = 1;
+      break;
     case 1:
       ebcidr.bits.btc1 = 1;
       //ebcier.bits.err1 = 1;
+      break;
     case 2:
       ebcidr.bits.btc2 = 1;
       //ebcier.bits.err2 = 1;
+      break;
     case 3:
       ebcidr.bits.btc3 = 1;
       //ebcier.bits.err3 = 1;
+      break;
     }
     *EBCIDR = ebcidr;
   }
 
+  async command bool Dma.getChannelStatus(uint8_t channel){
+    volatile dmac_chsr_t *CHSR = (volatile dmac_chsr_t *) 0x400B0030;
 
-  async command void Dma.reset(){
+    switch(DMACHANNEL){
+    case 0:
+      return CHSR->bits.ena0;
+    case 1:
+      return CHSR->bits.ena1;
+    case 2:
+      return CHSR->bits.ena2;
+    case 3:
+      return CHSR->bits.ena3;
+    default:
+      return CHSR->bits.ena0;
+    }
+  }
+
+  async command void Dma.suspendChannel(uint8_t channel){
+    volatile dmac_cher_t *CHER = (volatile dmac_cher_t *) 0x400B0028;
+    dmac_cher_t cher;
+
+    switch(DMACHANNEL){
+    case 0:
+      cher.bits.susp0 = 1;
+      break;
+    case 1:
+      cher.bits.susp1 = 1;
+      break;
+    case 2:
+      cher.bits.susp2 = 1;
+      break;
+    case 3:
+      cher.bits.susp3 = 1;
+      break;
+    default:
+      cher.bits.susp0 = 1;
+      break;
+    }
+    *CHER = cher;
   }
 }

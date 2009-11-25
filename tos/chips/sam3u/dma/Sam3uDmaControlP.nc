@@ -28,20 +28,16 @@ module Sam3uDmaControlP {
 
   provides interface Sam3uDmaControl as Control;
   uses interface HplSam3uDmaControl as DmaControl;
-  uses interface HplSam3uDmaChannel as DmaChannel0;
-  uses interface HplSam3uDmaChannel as DmaChannel1;
-  uses interface HplSam3uDmaChannel as DmaChannel2;
-  uses interface HplSam3uDmaChannel as DmaChannel3;
+  //uses interface HplSam3uDmaChannel as DmaChannel0;
+  //uses interface HplSam3uDmaChannel as DmaChannel1;
+  //uses interface HplSam3uDmaChannel as DmaChannel2;
+  //uses interface HplSam3uDmaChannel as DmaChannel3;
   //uses interface HplSam3uDmaInterrupt as Interrupt;
 }
 
 implementation {
 
   async command error_t Control.init(){
-    call DmaChannel0.reset();
-    call DmaChannel1.reset();
-    call DmaChannel2.reset();
-    call DmaChannel3.reset();
     call DmaControl.init();
     return SUCCESS;
   }
@@ -53,15 +49,10 @@ implementation {
       return call DmaControl.setFixedPriority();
     }
   }
-
   /*
-  event void Interrupt.fired(){
-  }
-  */
-
   async event void DmaChannel0.transferDone(error_t err){}
   async event void DmaChannel1.transferDone(error_t err){}
   async event void DmaChannel2.transferDone(error_t err){}
   async event void DmaChannel3.transferDone(error_t err){}
-
+  */
 }
