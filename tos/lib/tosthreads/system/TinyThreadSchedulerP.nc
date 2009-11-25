@@ -135,12 +135,12 @@ implementation {
 
 		  // switch to unprivileged mode in thread mode (if not kernel thread)
 		  {
-			  //uint32_t newState = 0x1; // MSP, user mode
-			  //asm volatile(
-			  //    "msr control, %0"
-			  //    : // output
-			  //    : "r" (newState) // input
-			  //);
+			  uint32_t newState = 0x1; // MSP, user mode
+			  asm volatile(
+			      "msr control, %0"
+			      : // output
+			      : "r" (newState) // input
+			  );
 			  ; // FIXME: commented out for now, since syscalls disable IRQs
 		  }
 
