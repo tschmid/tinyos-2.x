@@ -47,10 +47,10 @@ implementation {
   Channel3 = Channel3P;
 
   ControlP.DmaControl -> DmaC;
-  ControlP.DmaChannel0 -> DmaC.Channel0;
-  ControlP.DmaChannel1 -> DmaC.Channel1;
-  ControlP.DmaChannel2 -> DmaC.Channel2;
-  ControlP.DmaChannel3 -> DmaC.Channel3;
+  //ControlP.DmaChannel0 -> DmaC.Channel0;
+  //ControlP.DmaChannel1 -> DmaC.Channel1;
+  //ControlP.DmaChannel2 -> DmaC.Channel2;
+  //ControlP.DmaChannel3 -> DmaC.Channel3;
 
   Channel0P.DmaChannel -> DmaC.Channel0;
   Channel1P.DmaChannel -> DmaC.Channel1;

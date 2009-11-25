@@ -47,7 +47,8 @@ interface HplSam3uDmaChannel {
   async command void enableChannelInterrupt(uint8_t channel);
   async command void disableChannelInterrupt(uint8_t channel);
   async command void enableTransferRequest(uint8_t channel, bool s2d);
-  async command void reset();
+  async command bool getChannelStatus(uint8_t channel);
+  async command void suspendChannel(uint8_t channel);
 
   async event void transferDone(error_t success);
 
