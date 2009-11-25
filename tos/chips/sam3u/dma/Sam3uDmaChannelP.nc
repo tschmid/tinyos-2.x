@@ -91,6 +91,7 @@ implementation {
 
   async command error_t Channel.swTransferRequest(uint8_t channel, bool s2d)
   {
+    // Only used for peripheral transmissions
     call DmaChannel.enableTransferRequest(channel, s2d);
     return SUCCESS;
   }
@@ -102,8 +103,17 @@ implementation {
 
   }
 
-  async command error_t Channel.resetAll()
+  async command error_t Channel.resetAll(uint8_t channel)
   {
+    call DmaChannel.enable();
+    call DmaChannel.disableChannelInterrupt(channel);
+    call DmaChannel.setSrcAddr(0);
+    call DmaChannel.setDstAddr(0);
+    call DmaChannel.setCtrlA(0, 0, 0, 0, 0);
+    call DmaChannel.setCtrlB(0, 0, 0, 0, 0);
+    call DmaChannel.setCfg(0, 0, 0, 0, 0,
+			   0, 0, 0, 1, 0);
+    call DmaChannel.disable();
     return SUCCESS;
   }
 
