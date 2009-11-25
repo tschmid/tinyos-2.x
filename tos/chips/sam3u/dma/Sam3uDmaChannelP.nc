@@ -60,14 +60,7 @@ implementation {
   {
 
     call DmaChannel.enable();
-    call DmaChannel.setSrcAddr(src_addr);
-    call DmaChannel.setDstAddr(dst_addr);
-    call DmaChannel.setCtrlA(1, 0, 0, 0, 0);
-    call DmaChannel.setCtrlB(1, 1, 0, 2, 2);
-    call DmaChannel.setCfg(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-    /*
-    call DmaChannel.enable();
+    call DmaChannel.disableChannelInterrupt(channel);
     call DmaChannel.setSrcAddr(src_addr);
     call DmaChannel.setDstAddr(dst_addr);
     call DmaChannel.setCtrlA(btsize, scsize, dcsize, src_width, dst_width);
@@ -76,29 +69,28 @@ implementation {
 			   dstSwHandshake, stopOnDone, lockIF,
 			   lockB, lockIFL, ahbprot,
 			   fifocfg);
-    */
     return SUCCESS;
   }
 
-  async command error_t Channel.startTransfer(uint8_t channel, bool s2d)
+  async command error_t Channel.startTransfer(uint8_t channel)
   {
     call DmaChannel.enable();
     call DmaChannel.enableChannelInterrupt(channel);
-    call DmaChannel.enableChannel(channel, s2d);
+    call DmaChannel.enableChannel(channel);
     return SUCCESS;
   }
 
-  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel, bool s2d)
+  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel)
   {
     call DmaChannel.setSrcAddr(src_addr);
     call DmaChannel.setDstAddr(dst_addr);
     call DmaChannel.setBtsize(size);    
-    return call Channel.startTransfer(channel, s2d);
+    return call Channel.startTransfer(channel);
   }
 
-  async command error_t Channel.swTrigger(uint8_t channel, bool s2d)
+  async command error_t Channel.swTransferRequest(uint8_t channel, bool s2d)
   {
-    // call DmaChannel.enableChannel(channel, s2d); // start tx!
+    call DmaChannel.enableTransferRequest(channel, s2d);
     return SUCCESS;
   }
 

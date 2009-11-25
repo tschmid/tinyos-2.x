@@ -68,21 +68,7 @@ implementation {
     
   }
 
-
   void DmacIrqHandler() @C() @spontaneous() {
-    volatile dmac_chdr_t* CHDR = (volatile dmac_chdr_t *) 0x400B002C;
-    dmac_chdr_t chdr;
-    volatile dmac_en_t* EN = (volatile dmac_en_t *) 0x400B0004;
-    dmac_en_t en;
-    volatile dmac_ebcidr_t* EBCIDR = (volatile dmac_ebcidr_t *) 0x400B001C;
-    dmac_ebcidr_t ebcidr;
-    chdr.bits.dis0 = 1;
-    ebcidr.bits.btc0 = 1;
-    en.bits.enable = 0;
-    *EN = en;
-    *CHDR = chdr;
-    *EBCIDR = ebcidr;
-    //call Leds.led0Toggle();
     signal Interrupt.fired();
   }
 

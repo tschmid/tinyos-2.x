@@ -21,7 +21,7 @@
 */
 
 /**
- * DMA Controller register definitions.
+ * 4 Channel DMA Controller register definitions.
  *
  * @author JeongGil Ko
  */

@@ -56,39 +56,21 @@ implementation{
   task void setup();
   task void tx();
 
-  event void Boot.booted()
-  {
+  event void Boot.booted(){
     call Lcd.initialize();
     call DMAControl.init();
     call DMAControl.setArbitor(TRUE);
-    call Timer.startPeriodic(2*1024u);
+    call Timer.startPeriodic(1024);
   }
 
-  event void Lcd.initializeDone(error_t err)
-  {
-    if(err != SUCCESS)
-      {
-      }
-    else
-      {
-	call Draw.fill(COLOR_GREEN);
-	call Lcd.start();
-      }
-  }
-
-  event void Lcd.startDone(){
-  }
-
-  event void SerialSplitControl.startDone(error_t error)
-  {
-    if (error != SUCCESS) {
-      while (call SerialSplitControl.start() != SUCCESS);
+  event void Lcd.initializeDone(error_t err){
+    if(err != SUCCESS){
     }else{
-      //call Timer.startPeriodic(3*1024U);
+      call Draw.fill(COLOR_GREEN);
+      call Lcd.start();
     }
   }
   
-  event void SerialSplitControl.stopDone(error_t error) {}
 
   uint8_t tmp_s = 88;
   uint8_t tmp_d = 0;
@@ -98,18 +80,17 @@ implementation{
     call Draw.drawInt(100,80,tmp_s,1,COLOR_RED);
     call Draw.drawInt(150,80,tmp_d,1,COLOR_RED);
 
+    tmp_d = 0;
+
     call Leds.led1Toggle();
-
     call Dma.setupTransfer(0, (uint32_t*)&tmp_s, (uint32_t*)&tmp_d, 1 , 0, 0, 0, 0, 1, 1, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
     post tx();
     call Draw.drawInt(100,100,tmp_s,1,COLOR_RED);
     call Draw.drawInt(150,100,tmp_d,1,COLOR_RED);
   }
 
-  task void tx()
-  {
-    call Dma.startTransfer(0, 1);
+  task void tx(){
+    call Dma.startTransfer(0);
   }
 
   async event void Dma.transferDone(error_t success){
@@ -119,5 +100,10 @@ implementation{
   event void Timer.fired() {
     post setup();
   }
+
+  event void Lcd.startDone(){}
+  event void SerialSplitControl.startDone(error_t error){}
+  event void SerialSplitControl.stopDone(error_t error) {}
+
 
 }

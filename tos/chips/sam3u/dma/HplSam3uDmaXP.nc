@@ -40,6 +40,9 @@ implementation {
 
   async event void Interrupt.fired(){
     // Disable channel and send signal up
+    call Dma.disableChannel(DMACHANNEL);
+    call Dma.disableChannelInterrupt(DMACHANNEL);
+    call Dma.disable();
     signal Dma.transferDone(SUCCESS);
   }
 
@@ -118,41 +121,59 @@ implementation {
     *EN = en;
   }
 
-  async command void Dma.disable(uint8_t channel){
-    
+  async command void Dma.disable(){
     volatile dmac_en_t *EN = (volatile dmac_en_t *) 0x400B0004;
     dmac_en_t en = *EN;
-    volatile dmac_chdr_t *CHDR = (volatile dmac_chdr_t *) 0x400B002C;
-    dmac_chdr_t chdr = *CHDR;
-    switch(DMACHANNEL){
-    case 0:
-      chdr.bits.dis0 = 0;
-    case 1:
-      chdr.bits.dis1 = 0;
-    case 2:
-      chdr.bits.dis2 = 0;
-    case 3:
-      chdr.bits.dis3 = 0;
-    default:
-      chdr.bits.dis0 = 0;      
-    }
-
     en.bits.enable = 0;
-
-    *CHDR = chdr;
     *EN = en;
-    
   }
 
-  async command void Dma.enableChannel(uint8_t channel, bool s2d){
+  async command void Dma.enableChannel(uint8_t channel){
+    volatile dmac_cher_t *CHER = (volatile dmac_cher_t *) 0x400B0028;
+    dmac_cher_t cher;
+
+    switch(DMACHANNEL){
+    case 0:
+      cher.bits.ena0 = 1;
+    case 1:
+      cher.bits.ena1 = 1;
+    case 2:
+      cher.bits.ena2 = 1;
+    case 3:
+      cher.bits.ena3 = 1;
+    default:
+      cher.bits.ena0 = 1;
+    }
+    *CHER = cher;
+  }
+
+  async command void Dma.disableChannel(uint8_t channel){
+    volatile dmac_chdr_t *CHDR = (volatile dmac_chdr_t *) 0x400B002C;
+    dmac_chdr_t chdr;
+
+    switch(DMACHANNEL){
+    case 0:
+      chdr.bits.dis0 = 1;
+    case 1:
+      chdr.bits.dis1 = 1;
+    case 2:
+      chdr.bits.dis2 = 1;
+    case 3:
+      chdr.bits.dis3 = 1;
+    default:
+      chdr.bits.dis0 = 1;
+    }
+    *CHDR = chdr;
+  }
+
+
+  async command void Dma.enableTransferRequest(uint8_t channel, bool s2d){
     volatile dmac_sreq_t *SREQ = (volatile dmac_sreq_t *) 0x400B0008;
     dmac_sreq_t sreq = *SREQ;
     volatile dmac_last_t *LAST = (volatile dmac_last_t *) 0x400B0010;
     dmac_last_t last = *LAST;
     volatile dmac_creq_t *CREQ = (volatile dmac_creq_t *) 0x400B000C;
     dmac_creq_t creq = *CREQ;
-    volatile dmac_cher_t *CHER = (volatile dmac_cher_t *) 0x400B0028;
-    dmac_cher_t cher;// = *CHER;
 
     switch(DMACHANNEL){
     case 0:
@@ -163,7 +184,6 @@ implementation {
 	last.bits.dlast0 = 1;
 	sreq.bits.dsreq0 = 1;
       }
-      cher.bits.ena0 = 1;
     case 1:
       if(s2d){
 	sreq.bits.ssreq1 = 1;
@@ -172,7 +192,6 @@ implementation {
 	sreq.bits.dsreq1 = 1;
 	last.bits.dlast1 = 1;
       }
-      cher.bits.ena1 = 1;
     case 2:
       if(s2d){
 	sreq.bits.ssreq2dash = 1;
@@ -181,7 +200,6 @@ implementation {
 	sreq.bits.dsreq2dash = 1;
 	last.bits.dlast2 = 1;
       }
-      cher.bits.ena2 = 1;
     case 3:
       if(s2d){
 	sreq.bits.ssreq3 = 1;
@@ -190,7 +208,6 @@ implementation {
 	sreq.bits.dsreq3 = 1;
 	last.bits.slast3 = 1;
       }
-      cher.bits.ena3 = 1;
     default:
       if(s2d){
 	sreq.bits.ssreq0 = 1;
@@ -199,13 +216,12 @@ implementation {
 	sreq.bits.dsreq0 = 1;
 	last.bits.dlast0 = 1;
       }
-      cher.bits.ena0 = 1;
     }
     *LAST = last;
     *CREQ = creq;
     *SREQ = sreq;
-    *CHER = cher;
   }
+
 
   async command void Dma.enableChannelInterrupt(uint8_t channel){
     volatile dmac_ebcier_t *EBCIER = (volatile dmac_ebcier_t *) 0x400B0018;
@@ -213,19 +229,41 @@ implementation {
     switch(DMACHANNEL){
     case 0:    
       ebcier.bits.btc0 = 1;
-      ebcier.bits.err0 = 1;
+      //ebcier.bits.err0 = 1;
     case 1:    
       ebcier.bits.btc1 = 1;
-      ebcier.bits.err1 = 1;
+      //ebcier.bits.err1 = 1;
     case 2:    
       ebcier.bits.btc2 = 1;
-      ebcier.bits.err2 = 1;
+      //ebcier.bits.err2 = 1;
     case 3:    
       ebcier.bits.btc3 = 1;
-      ebcier.bits.err3 = 1;
+      //ebcier.bits.err3 = 1;
     }
     *EBCIER = ebcier;
   }
+
+
+  async command void Dma.disableChannelInterrupt(uint8_t channel){
+    volatile dmac_ebcidr_t *EBCIDR = (volatile dmac_ebcidr_t *) 0x400B001C;
+    dmac_ebcidr_t ebcidr;// = *EBCIER;
+    switch(DMACHANNEL){
+    case 0:
+      ebcidr.bits.btc0 = 1;
+      //ebcier.bits.err0 = 1;
+    case 1:
+      ebcidr.bits.btc1 = 1;
+      //ebcier.bits.err1 = 1;
+    case 2:
+      ebcidr.bits.btc2 = 1;
+      //ebcier.bits.err2 = 1;
+    case 3:
+      ebcidr.bits.btc3 = 1;
+      //ebcier.bits.err3 = 1;
+    }
+    *EBCIDR = ebcidr;
+  }
+
 
   async command void Dma.reset(){
   }
