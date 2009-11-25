@@ -150,10 +150,10 @@ SECTIONS
 		. = ALIGN(0x200);
 		_ebssstacks = .;
 
-		. = ALIGN(0x200);
+		. = ALIGN(0x400);
 		_sbsscommon = .;
 		*(.bsscommon*)
-		. = ALIGN(0x200);
+		. = ALIGN(0x400);
 		_ebsscommon = .;
 
 		*(.bss)
