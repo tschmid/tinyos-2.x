@@ -59,6 +59,10 @@ implementation
     void signalDone();
     task void signalDone_task();
 
+    uint8_t* globalTxBuf;
+    uint8_t* globalRxBuf;
+    uint16_t globalLen;
+
     void setClockDivisor()
     {
         uint32_t mck;
@@ -66,10 +70,10 @@ implementation
 
         mck = call ClockConfig.getMainClockSpeed(); // in kHz (e.g., 48,000)
 
-        // Can be set up to 8MHz. We use 4MHz for now
+        // Can be set up to 8MHz.
         // clock speed = mck / cd
         // here, cd = mck/speed
-        cd = (uint8_t) (mck / 1000); // mck is in kHz!
+        cd = (uint8_t) (mck / 500); // mck is in kHz!
 
         call HplSam3uSpiChipSelConfig.setBaud(cd);
     }
@@ -90,9 +94,12 @@ implementation
         call SpiPinMosi.selectPeripheralA();
         call SpiPinSpck.disablePioControl();
         call SpiPinSpck.selectPeripheralA();
+        /*
         call SpiPinNPCS.enablePullUpResistor();
         call SpiPinNPCS.disablePioControl();
         call SpiPinNPCS.selectPeripheralB();
+        call SpiPinNPCS.disableInterrupt();
+        */
 
         call HplSam3uSpiControl.resetSpi();
 
@@ -101,13 +108,13 @@ implementation
 
         // chip select options
         call HplSam3uSpiConfig.setFixedCS(); // CS needs to be configured for each message sent!
-        call HplSam3uSpiConfig.setVariableCS(); // CS needs to be configured for each message sent!
+        //call HplSam3uSpiConfig.setVariableCS(); // CS needs to be configured for each message sent!
         call HplSam3uSpiConfig.setDirectCS(); // CS pins are not multiplexed
 
         // configure clock
         setClockDivisor();
-        call HplSam3uSpiChipSelConfig.setClockPolarity(1); // logic zero is inactive
-        call HplSam3uSpiChipSelConfig.setClockPhase(0);    // out on rising, in on falling
+        call HplSam3uSpiChipSelConfig.setClockPolarity(0); // logic zero is inactive
+        call HplSam3uSpiChipSelConfig.setClockPhase(1);    // out on rising, in on falling
         call HplSam3uSpiChipSelConfig.disableAutoCS();     // disable automatic rising of CS after each transfer
         //call HplSam3uSpiChipSelConfig.enableAutoCS();
 
@@ -115,8 +122,8 @@ implementation
         //call HplSam3uSpiChipSelConfig.disableCSActive(); 
 
         call HplSam3uSpiChipSelConfig.setBitsPerTransfer(SPI_CSR_BITS_8);
-        call HplSam3uSpiChipSelConfig.setTxDelay(2);
-        call HplSam3uSpiChipSelConfig.setClkDelay(9);
+        call HplSam3uSpiChipSelConfig.setTxDelay(20);
+        call HplSam3uSpiChipSelConfig.setClkDelay(20);
 
         // do we really have to start it??? It seems that the CC2420 driver
         // doesn't do that!
@@ -185,7 +192,13 @@ implementation
                 m_pos += 1;
             }
         }
-        atomic signal SpiPacket.sendDone(txBuf, rxBuf, m_len, SUCCESS);
+        atomic {
+            globalRxBuf = rxBuf;
+            globalTxBuf = txBuf;
+            globalLen = m_len;
+        }
+        post signalDone_task();
+        //atomic signal SpiPacket.sendDone(txBuf, rxBuf, m_len, SUCCESS);
         return SUCCESS;
     }
 
@@ -195,8 +208,7 @@ implementation
 
 
     void signalDone() {
-    //    signal SpiPacket.sendDone[ m_client ]( m_tx_buf, m_rx_buf, m_len,
-    //            SUCCESS );
+        signal SpiPacket.sendDone( globalTxBuf, globalRxBuf, globalLen, SUCCESS );
     }
 
 

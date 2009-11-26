@@ -56,16 +56,17 @@ implementation {
 
   components HplSam3uGeneralIOC as GeneralIOC;
 
-  CCA = GeneralIOC.PioA17;
+  CCA = GeneralIOC.PioC26;
   FIFO = GeneralIOC.PioA2;
   FIFOP = GeneralIOC.PioA1;
   RSTN = GeneralIOC.PioC27;
   SFD = GeneralIOC.PioA0;
-  VREN = GeneralIOC.PioC26;
+  VREN = GeneralIOC.PioA17;
+  CSN  = GeneralIOC.PioA19;
 
   // dummy connection for CSN
-  components HilSam3uSpiC;
-  CSN = HilSam3uSpiC.CSN;
+  //components HilSam3uSpiC;
+  //CSN = HilSam3uSpiC.CSN;
   
 }
 

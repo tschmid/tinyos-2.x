@@ -48,6 +48,16 @@ configuration HplSam3uSpiC
        interface Resource as ResourceCS3;
        interface GeneralIO as CSN3;
     }
+    /*
+    uses
+    {
+        // hack to make the SPI interface TinyOS compatible...
+       interface GeneralIO as CS0;
+       interface GeneralIO as CS1;
+       interface GeneralIO as CS2;
+       interface GeneralIO as CS3;
+    }
+    */
 }
 implementation
 {
@@ -69,14 +79,19 @@ implementation
         new HplSam3uSpiChipSelP(0x40008034) as CS1,
         new HplSam3uSpiChipSelP(0x40008038) as CS2,
         new HplSam3uSpiChipSelP(0x4000803C) as CS3;
+    components LedsC;
 
     HplSam3uSpiChipSelConfig0 = CS0;
+    CS0.Leds -> LedsC;
     CSN0 = CS0;
     HplSam3uSpiChipSelConfig1 = CS1;
+    CS1.Leds -> LedsC;
     CSN1 = CS1;
     HplSam3uSpiChipSelConfig2 = CS2;
+    CS2.Leds -> LedsC;
     CSN2 = CS2;
     HplSam3uSpiChipSelConfig3 = CS3;
+    CS3.Leds -> LedsC;
     CSN3 = CS3;
 }
 
