@@ -62,7 +62,7 @@ implementation {
     */
 
   CaptureSFD = CaptureSFDC.Capture;
-  InterruptCCA = GeneralIOC.InterruptPioA17;
+  InterruptCCA = GeneralIOC.InterruptPioC26;
   InterruptFIFOP = GeneralIOC.InterruptPioA1;
 
 }
