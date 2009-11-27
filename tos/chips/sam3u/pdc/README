@@ -1,0 +1,12 @@
+Generic PDC implementation for SAM3U 
+
+@author JeongGil Ko <jgko@cs.jhu.edu>
+
+The implementation is based on the preliminary specifications and the
+MSP430 implementations.
+
+- Each PDC supporting user interface (uart, usart, twi, etc.) should
+  wire to the PDC component for the user interface. 
+
+- Be sure to enable the peripheral clock for each peripheral's user
+  interface before writing to the PDC registers.
