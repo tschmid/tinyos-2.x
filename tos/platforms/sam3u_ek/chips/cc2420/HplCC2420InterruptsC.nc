@@ -51,8 +51,8 @@ implementation {
   components HplSam3uTCC;
   components new GpioCaptureC() as CaptureSFDC;
 
-  CaptureSFDC.TCCapture -> HplSam3uTCC.TC0CaptureA;
-  CaptureSFDC.GeneralIO -> GeneralIOC.HplPioA0;
+  CaptureSFDC.TCCapture -> HplSam3uTCC.TC0Capture;
+  CaptureSFDC.GeneralIO -> GeneralIOC.HplPioA1;
 
   /**
     components new Msp430InterruptC() as InterruptCCAC;
@@ -63,6 +63,6 @@ implementation {
 
   CaptureSFD = CaptureSFDC.Capture;
   InterruptCCA = GeneralIOC.InterruptPioC26;
-  InterruptFIFOP = GeneralIOC.InterruptPioA1;
+  InterruptFIFOP = GeneralIOC.InterruptPioA0;
 
 }

@@ -58,9 +58,9 @@ implementation {
 
   CCA = GeneralIOC.PioC26;
   FIFO = GeneralIOC.PioA2;
-  FIFOP = GeneralIOC.PioA1;
+  FIFOP = GeneralIOC.PioA0;
   RSTN = GeneralIOC.PioC27;
-  SFD = GeneralIOC.PioA0;
+  SFD = GeneralIOC.PioA1;
   VREN = GeneralIOC.PioA17;
   CSN  = GeneralIOC.PioA19;
 
