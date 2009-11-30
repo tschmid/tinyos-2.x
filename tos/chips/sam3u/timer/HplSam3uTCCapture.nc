@@ -38,9 +38,14 @@ interface HplSam3uTCCapture
     async command void disable();
 
     /**
-     * Reads the value of the last capture event 
+     * Reads the value of the last capture event in RA 
      */
-    async command uint16_t getEvent();
+    async command uint16_t getEventRA();
+
+    /**
+     * Reads the value of the last capture event in RB 
+     */
+    async command uint16_t getEventRB();
 
     /**
      * Clear any pending event.
@@ -64,7 +69,12 @@ interface HplSam3uTCCapture
      *   TC_CMR_ABETRG_TIOA
      *   TC_CMR_ABETRG_TIOB
      */
-    async command void setExternalTrigger(uint8_t cm );
+    async command void setExternalTrigger(uint8_t cm);
+
+    /**
+     * Set external trigger edge.
+     */
+    async command void setExternalTriggerEdge(uint8_t cm);
 
     /**
      * Determine if a capture load overrun is pending.

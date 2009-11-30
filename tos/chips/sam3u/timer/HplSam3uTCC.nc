@@ -38,20 +38,17 @@ configuration HplSam3uTCC
         interface HplSam3uTCChannel as TC1;
         interface HplSam3uTCChannel as TC2;
 
-        interface HplSam3uTCCapture as TC0CaptureA;
-        interface HplSam3uTCCapture as TC0CaptureB;
+        interface HplSam3uTCCapture as TC0Capture;
         interface HplSam3uTCCompare as TC0CompareA;
         interface HplSam3uTCCompare as TC0CompareB;
         interface HplSam3uTCCompare as TC0CompareC;
 
-        interface HplSam3uTCCapture as TC1CaptureA;
-        interface HplSam3uTCCapture as TC1CaptureB;
+        interface HplSam3uTCCapture as TC1Capture;
         interface HplSam3uTCCompare as TC1CompareA;
         interface HplSam3uTCCompare as TC1CompareB;
         interface HplSam3uTCCompare as TC1CompareC;
         
-        interface HplSam3uTCCapture as TC2CaptureA;
-        interface HplSam3uTCCapture as TC2CaptureB;
+        interface HplSam3uTCCapture as TC2Capture;
         interface HplSam3uTCCompare as TC2CompareA;
         interface HplSam3uTCCompare as TC2CompareB;
         interface HplSam3uTCCompare as TC2CompareC;
@@ -86,20 +83,17 @@ implementation
     TCCH2.TCPClockCntl -> HplSam3uClockC.TC2PPCntl;
     TCCH2.ClockConfig -> HplSam3uClockC;
 
-    TC0CaptureA = TCCH0.CaptureA; 
-    TC0CaptureB = TCCH0.CaptureB;
+    TC0Capture = TCCH0.Capture; 
     TC0CompareA = TCCH0.CompareA;
     TC0CompareB = TCCH0.CompareB;
     TC0CompareC = TCCH0.CompareC;
 
-    TC1CaptureA = TCCH1.CaptureA; 
-    TC1CaptureB = TCCH1.CaptureB;
+    TC1Capture = TCCH1.Capture; 
     TC1CompareA = TCCH1.CompareA;
     TC1CompareB = TCCH1.CompareB;
     TC1CompareC = TCCH1.CompareC;
 
-    TC2CaptureA = TCCH2.CaptureA; 
-    TC2CaptureB = TCCH2.CaptureB;
+    TC2Capture = TCCH2.Capture; 
     TC2CompareA = TCCH2.CompareA;
     TC2CompareB = TCCH2.CompareB;
     TC2CompareC = TCCH2.CompareC;
