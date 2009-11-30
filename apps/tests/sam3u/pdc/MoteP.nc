@@ -21,6 +21,8 @@
 */
 
 /**
+ * This example validates that the values for the PDC registers are correctly written
+ *
  * @author JeongGil Ko
  */
 
@@ -43,7 +45,7 @@ module MoteP
     interface Lcd;
     interface Draw;
     interface HplSam3uPdc as PDC;
-    interface HplSam3uPeripheralClockCntl as UartClockControl;
+    interface HplSam3uPeripheralClockCntl as ClockControl;
   }
 }
 
@@ -52,23 +54,16 @@ implementation{
   uint16_t msg = 48;
   uint16_t msg2 = 0;
   uint8_t channel = 0;
+  uint32_t addr = 0;
 
   task void setup();
   task void tx();
 
   event void Boot.booted()
   {
-    //while (call SerialSplitControl.start() != SUCCESS);
     call Lcd.initialize();
-    call UartClockControl.enable();
-    //call HDMAInterrupt.disable();
-    //call HDMAInterrupt.configure(IRQ_PRIO_DMAC);
-    //call HDMAInterrupt.enable();
-    //call DMAControl.init();
-    //call DMAControl.setArbitor(TRUE);
+    call ClockControl.enable();
     call Timer.startPeriodic(1024);
-    //post setup();
-    //tx();
   }
 
   event void Lcd.initializeDone(error_t err)
@@ -91,7 +86,6 @@ implementation{
     if (error != SUCCESS) {
       while (call SerialSplitControl.start() != SUCCESS);
     }else{
-      //call Timer.startPeriodic(3*1024U);
     }
   }
   
@@ -107,14 +101,25 @@ implementation{
   uint8_t temp_d = 0;
   bool status;
 
+  enum {
+    UART_BASE = 0x400E0600,
+    USART0_BASE = 0x40090000,
+    USART1_BASE = 0x40094000,
+    USART2_BASE = 0x40098000,
+    USART3_BASE = 0x4009C000,
+    TWI0_BASE = 0x40084000,
+    TWI1_BASE = 0x40088000,
+    PWM_BASE = 0x4008C000
+  };
+
   task void tx()
   {
-    volatile periph_rpr_t* RPR = (volatile periph_rpr_t*) 0x400E0700;
-    volatile periph_rcr_t* RCR = (volatile periph_rcr_t*) 0x400E0704;
-    volatile periph_tpr_t* TPR = (volatile periph_tpr_t*) 0x400E0708;
-    volatile periph_tcr_t* TCR = (volatile periph_tcr_t*) 0x400E070C;
-    volatile periph_ptcr_t* PTCR = (volatile periph_ptcr_t*) 0x400E0720;
-    volatile periph_ptsr_t* PTSR = (volatile periph_ptsr_t*) 0x400E0724;
+    volatile periph_rpr_t* RPR = (volatile periph_rpr_t*) (TWI0_BASE + 0x100);
+    volatile periph_rcr_t* RCR = (volatile periph_rcr_t*) (TWI0_BASE + 0x104);
+    volatile periph_tpr_t* TPR = (volatile periph_tpr_t*)  (TWI0_BASE + 0x108);
+    volatile periph_tcr_t* TCR = (volatile periph_tcr_t*)  (TWI0_BASE + 0x10C);
+    volatile periph_ptcr_t* PTCR = (volatile periph_ptcr_t*) (TWI0_BASE + 0x120);
+    volatile periph_ptsr_t* PTSR = (volatile periph_ptsr_t*)  (TWI0_BASE + 0x124);
 
     call PDC.setRxPtr((uint32_t*)&temp);
     call PDC.setTxPtr((uint32_t*)&temp_d);

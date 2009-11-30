@@ -29,7 +29,6 @@
 generic module HplSam3uPdcP(uint32_t BASE_ADDR){
   provides interface HplSam3uPdc as Pdc;
 }
-
 implementation{
 
   uint32_t PDC_BASE_ADDR = (BASE_ADDR + 0x100);
@@ -68,6 +67,7 @@ implementation{
     rcr.bits.rxctr = counter;
     *RCR = rcr;
   }
+
   command void Pdc.setTxCounter(uint16_t counter){
     volatile periph_tcr_t* TCR = (volatile periph_tcr_t*) (PDC_BASE_ADDR + 0xC);
     periph_tcr_t tcr;
@@ -102,12 +102,14 @@ implementation{
     ptcr.bits.txten = 1;
     *PTCR = ptcr;
   }
+
   command void Pdc.disablePdcRx(){
     volatile periph_ptcr_t* PTCR = (volatile periph_ptcr_t*) (PDC_BASE_ADDR + 0x20);
     periph_ptcr_t ptcr;
     ptcr.bits.rxtdis = 1;
     *PTCR = ptcr;
   }
+
   command void Pdc.disablePdcTx(){
     volatile periph_ptcr_t* PTCR = (volatile periph_ptcr_t*) (PDC_BASE_ADDR + 0x20);
     periph_ptcr_t ptcr;

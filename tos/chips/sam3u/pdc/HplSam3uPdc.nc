@@ -44,7 +44,7 @@ interface HplSam3uPdc {
   command void disablePdcRx();
   command void disablePdcTx();
 
-  /* Status Registers */
+  /* Status Registers  - Checks status */
   command bool rxEnabled();
   command bool txEnabled();
 

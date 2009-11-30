@@ -40,18 +40,18 @@ implementation
     HplSam3uClockC,
     HplSam3uPdcC,
     MoteP;
-             
+
   MoteP.Boot -> MainC;
   MoteP.Leds -> LedsC;
   MoteP.SerialSplitControl -> SerialActiveMessageC;
   MoteP.Packet -> SerialActiveMessageC;
   MoteP.Timer -> TimerC;
 
-  //MoteP.Dma -> Sam3uDmaC.Channel0;
-  //MoteP.DMAControl -> Sam3uDmaC;
-  MoteP.UartClockControl -> HplSam3uClockC.DBGUPPCntl;
-  //MoteP.HDMAInterrupt -> HplNVICC.HDMAInterrupt;
-  MoteP.PDC -> HplSam3uPdcC.UartPdcControl;
+  //MoteP.ClockControl -> HplSam3uClockC.DBGUPPCntl;
+  //MoteP.PDC -> HplSam3uPdcC.UartPdcControl;
+
+  MoteP.ClockControl -> HplSam3uClockC.TWI0PPCntl;
+  MoteP.PDC -> HplSam3uPdcC.Twi0PdcControl;
 
   MoteP.Lcd -> LcdC;
   MoteP.Draw -> LcdC;
