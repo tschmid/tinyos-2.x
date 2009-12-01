@@ -21,7 +21,7 @@
 */
 
 /**
- * DMA Controller register definitions.
+ * 4 Channel DMA Controller register definitions.
  *
  * @author JeongGil Ko
  */
@@ -333,7 +333,7 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint32_t saddrx;
+    uint32_t saddrx         : 32;
   } __attribute__((__packed__)) bits;
 } dmac_saddrx_t;
 
@@ -346,7 +346,7 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint32_t daddrx;
+    uint32_t daddrx         : 32;
   } __attribute__((__packed__)) bits;
 } dmac_daddrx_t;
 
