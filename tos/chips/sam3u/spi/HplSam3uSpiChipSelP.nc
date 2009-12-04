@@ -25,12 +25,18 @@
  * @author Thomas Schmid
  */
 
+#include "sam3uspihardware.h"
+
 generic module HplSam3uSpiChipSelP(uint32_t csrp)
 {
     provides
     {
        interface HplSam3uSpiChipSelConfig;
        interface GeneralIO as PinCS;
+    }
+    uses
+    {
+        interface Leds;
     }
 }
 implementation
@@ -165,15 +171,22 @@ implementation
     }
 
     async command void PinCS.set() {
+        spi_mr_t mr = SPI->mr;
         atomic cs = FALSE;
         // enable automatic rising of CS pin after transfer
         call HplSam3uSpiChipSelConfig.enableCSActive();
+        // force the CS pin high by deasserting the chip select.
+        mr.bits.pcs = 0x0F;
+        SPI->mr = mr;
+        call Leds.led0Off();
+        //call CS.set();
     }
 
     async command void PinCS.clr() {
         atomic cs = TRUE;
         // disable automatic rising of CS pin after transfer
         call HplSam3uSpiChipSelConfig.disableCSActive();
+        call Leds.led0On();
     }
 
     async command void PinCS.toggle() {}
