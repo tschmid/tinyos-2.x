@@ -370,11 +370,6 @@ implementation {
     if (packetGap > 0) {
       NeighborTable[idx].failcnt += packetGap - 1;
     }
-    if (packetGap > MAX_PKT_GAP) {
-      NeighborTable[idx].failcnt = 0;
-      NeighborTable[idx].rcvcnt = 1;
-      NeighborTable[idx].inquality = 0;
-    }
 
     // The or with packetGap >= BLQ_PKT_WINDOW is needed in case
     // failcnt gets reset above
@@ -384,6 +379,11 @@ implementation {
       updateNeighborTableEst(NeighborTable[idx].ll_addr);
     }
 
+    if (packetGap > MAX_PKT_GAP) {
+      initNeighborIdx(idx, NeighborTable[idx].ll_addr);
+      NeighborTable[idx].lastseq = seq;
+      NeighborTable[idx].rcvcnt = 1;
+    }
   }
 
 
