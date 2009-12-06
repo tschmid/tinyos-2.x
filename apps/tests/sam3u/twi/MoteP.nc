@@ -93,7 +93,7 @@ implementation
 
   uint8_t temp;
   event void Resource.granted(){
-    call TWI.read(0, 0, 0, &temp);
+    call TWI.read(0, 0x48, 2, &temp);
   }
 
   task void drawResult(){
