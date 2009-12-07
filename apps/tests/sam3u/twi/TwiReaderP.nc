@@ -30,29 +30,18 @@
 
 module TwiReaderP
 {
-  provides interface Sam3uTwiConfigure;//<const sam3u_adc12_channel_config_t*>;
+  provides interface Sam3uTwiConfigure;
 }
 
 implementation {
-  /*
-  const sam3u_adc12_channel_config_t config = {
-  channel: 0,
-  diff: 0,
-  prescal: 2,
-  lowres: 0,
-  shtim: 15,
-  ibctl: 1,
-  sleep: 0,
-  startup: 104,
-  trgen: 0,
-  trgsel: 0
+
+  const sam3u_twi_union_config_t config = {
+  cldiv: 59,
+  chdiv: 59,
+  ckdiv: 3
   };
-  */
 
-  /*const*/ sam3u_twi_union_config_t config = {};
-
-  async command sam3u_twi_union_config_t* Sam3uTwiConfigure.getConfig(){
-    //async command const sam3u_adc12_channel_config_t* AdcConfigure.getConfiguration() {
+  async command const sam3u_twi_union_config_t* Sam3uTwiConfigure.getConfig(){
     return &config;
   }
 }
