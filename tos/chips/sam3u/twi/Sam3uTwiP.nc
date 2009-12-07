@@ -19,8 +19,8 @@ implementation {
 
   norace sam3u_twi_action_state_t ACTION_STATE;
 
-  void nextRead();
-  void nextWrite();
+  task void nextRead();
+  task void nextWrite();
   void sendDone(error_t error);
 
   norace uint16_t ADDR;
@@ -183,17 +183,36 @@ implementation {
 
   async event void TwiInterrupt.fired0(){
     //DONE
-    if(LEN > 0){ // more to read/write
-      switch (ACTION_STATE){
-      case RX_STATE:
-	nextRead();
+    switch (ACTION_STATE){
+    case RX_STATE:
+      post nextRead();
+      break;
+    case TX_STATE:
+      post nextWrite();
+      break;
+    case IDLE_STATE:
+      break;
+    }      
+  }
+
+  async event void TwiInterrupt.fired1(){
+    //DONE
+    switch (ACTION_STATE){
+    case RX_STATE:
+      post nextRead();
+      break;
+    case TX_STATE:
+      post nextWrite();
 	break;
-      case TX_STATE:
-	nextWrite();
-	break;
-      case IDLE_STATE:
-	break;
-      }      
+    case IDLE_STATE:
+      break;
+    }      
+  }
+
+  task void nextWrite(){
+    //DONE
+    if(LEN > 0){
+      call TwiBasicAddr.write(FLAGS, ADDR, LEN, BUFFER ); // proceed with next item in the buffer
     }else{
       if(INIT_LEN != 1){
 	call HplTwi.setStop0();
@@ -202,35 +221,10 @@ implementation {
     }
   }
 
-  async event void TwiInterrupt.fired1(){
-    //DONE
-    if(LEN > 0){ // more to read/write
-      switch (ACTION_STATE){
-      case RX_STATE:
-	nextRead();
-	break;
-      case TX_STATE:
-	nextWrite();
-	break;
-      case IDLE_STATE:
-	break;
-      }      
-    }else{
-      if (INIT_LEN != 1){
-	call HplTwi.setStop1();
-      }
-      sendDone(SUCCESS);
-    }
-  }
-
-  void nextWrite(){
-    //DONE
-    call TwiBasicAddr.write(FLAGS, ADDR, LEN, BUFFER ); // proceed with next item in the buffer
-  }
-
-  void nextRead(){
+  task void nextRead(){
     //DONE
     uint8_t* tempBuffer = BUFFER - 1; // the buffer moved at the end of the read command above.
+    
     switch(channel){ // save received data to buffer
       case 0:
 	tempBuffer[0] = call HplTwi.readRxReg0();
@@ -239,8 +233,15 @@ implementation {
 	tempBuffer[0] = call HplTwi.readRxReg1();
 	break;
     }
-
-    call TwiBasicAddr.read(FLAGS, ADDR, LEN, BUFFER ); // read next data
+    if(LEN > 0){
+      call TwiBasicAddr.read(FLAGS, ADDR, LEN, BUFFER ); // read next data
+    }else{
+      call Leds.led0Toggle();
+      if(INIT_LEN != 1){
+	call HplTwi.setStop0();
+      }
+      sendDone(SUCCESS);
+    }
   }
 
   void sendDone(error_t error){

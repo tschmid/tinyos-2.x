@@ -9,7 +9,7 @@ implementation {
   Resource = TwiP.Resource;
   //ResourceConfigure = TwiP.ResourceConfigure;
   TwiResource = TwiP.TwiResource;
-  TwiP.Leds -> LedsC;
+  TwiP.Leds -> NoLedsC;
   //components HplSam3uTwiC;
   //TwiP.HplTwi -> HplSam3uTwiC;
   //TwiP.Sam3uTwiConfigure

@@ -10,7 +10,7 @@ implementation{
 
   components HplSam3uTwiP as TwiP;
   
-  HplSam3uTwiInterrupt = TwiP.HplSam3uTwiInterrupt[ CLIENT_ID ];
+  HplSam3uTwiInterrupt = TwiP.HplSam3uTwiInterrupt;
   HplSam3uTwi = TwiP.HplSam3uTwi;
 
 
