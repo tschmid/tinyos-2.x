@@ -21,8 +21,7 @@
 */
 
 /**
- * Simple test program for SAM3U's 12 bit ADC ReadNow with LCD
- * @author Chieh-Jan Mike Liang
+ * Simple test program for SAM3U's TWI with LCD
  * @author JeongGil Ko
  */
 
@@ -34,13 +33,12 @@ implementation
     LedsC, NoLedsC,
     new TimerMilliC() as TimerC,
     SerialActiveMessageC,
-  //AdcReaderC,
     TwiReaderC,
     LcdC,
     MoteP;
 
   MoteP.Boot -> MainC;
-  MoteP.Leds -> NoLedsC;
+  MoteP.Leds -> LedsC;
   MoteP.TWI -> TwiReaderC;
   MoteP.Resource -> TwiReaderC;
   MoteP.SerialSplitControl -> SerialActiveMessageC;
@@ -48,4 +46,5 @@ implementation
   MoteP.Timer -> TimerC;
   MoteP.Lcd -> LcdC;
   MoteP.Draw -> LcdC;
+  MoteP.ResourceConfigure -> TwiReaderC.ResourceConfigure[0];
 }

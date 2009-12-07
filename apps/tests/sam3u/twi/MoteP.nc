@@ -21,12 +21,10 @@
 */
 
 /**
- * Simple test program for SAM3U's 12 bit ADC ReadNow with LCD
- * @author Chieh-Jan Mike Liang
  * @author JeongGil Ko
  */
 
-#include "sam3uDmahardware.h"
+#include "sam3utwihardware.h"
 #include <color.h>
 #include <lcd.h>
 
@@ -43,6 +41,7 @@ module MoteP
     interface Timer<TMilli>;
     interface Lcd;
     interface Draw;
+    interface ResourceConfigure;
   }
 }
 
@@ -69,8 +68,17 @@ implementation
       }
   }
 
+  task void sample()
+  {
+    const char *start = "Resource Request!";
+    call Draw.fill(COLOR_BLUE);
+    call Draw.drawString(10,50,start,COLOR_BLACK);
+    call Resource.request();
+  }
+
   event void Lcd.startDone(){
-    call Timer.startPeriodic(512);
+    post sample();
+    call Timer.startPeriodic(1024);
   }
 
 
@@ -83,17 +91,27 @@ implementation
   
   event void SerialSplitControl.stopDone(error_t error) {}
   
-  task void sample()
-  {
-    const char *start = "Start Sampling";
-    //call Draw.fill(COLOR_BLUE);
-    call Draw.drawString(10,50,start,COLOR_BLACK);
-    call Resource.request();
-  }
+  volatile twi_mmr_t* MMR = (volatile twi_mmr_t *) (TWI0_BASE_ADDR + 0x4);
+  volatile twi_cwgr_t* CWGR = (volatile twi_cwgr_t *) (TWI0_BASE_ADDR + 0x10);
 
   uint8_t temp;
+
+  task void read(){
+    const char *start = "Read!!";
+    call Leds.led0Toggle();
+
+    call ResourceConfigure.configure();
+    call TWI.read(0, 0x48, 1, &temp);
+
+    call Draw.fill(COLOR_WHITE);
+    call Draw.drawString(10,50,start,COLOR_BLACK);
+    call Draw.drawInt(180,70,MMR->bits.dadr,1,COLOR_BLUE);
+    call Draw.drawInt(180,90,MMR->bits.mread,1,COLOR_BLUE);
+    call Draw.drawInt(180,110,CWGR->bits.cldiv,1,COLOR_BLUE);
+  }
+
   event void Resource.granted(){
-    call TWI.read(0, 0x48, 2, &temp);
+    post read();
   }
 
   task void drawResult(){
@@ -117,6 +135,6 @@ implementation
   }
   
   event void Timer.fired() {
-    post sample();
+    post read();
   }
 }
