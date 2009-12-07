@@ -38,7 +38,7 @@ implementation
     MoteP;
 
   MoteP.Boot -> MainC;
-  MoteP.Leds -> LedsC;
+  MoteP.Leds -> NoLedsC;
   MoteP.TWI -> TwiReaderC;
   MoteP.Resource -> TwiReaderC;
   MoteP.SerialSplitControl -> SerialActiveMessageC;

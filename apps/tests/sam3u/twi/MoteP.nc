@@ -98,13 +98,14 @@ implementation
 
   task void read(){
     const char *start = "Read!!";
-    call Leds.led0Toggle();
+    //call Leds.led0Toggle();
+
+    call Draw.fill(COLOR_WHITE);
+    call Draw.drawString(10,50,start,COLOR_BLACK);
 
     call ResourceConfigure.configure();
     call TWI.read(0, 0x48, 1, &temp);
 
-    call Draw.fill(COLOR_WHITE);
-    call Draw.drawString(10,50,start,COLOR_BLACK);
     call Draw.drawInt(180,70,MMR->bits.dadr,1,COLOR_BLUE);
     call Draw.drawInt(180,90,MMR->bits.mread,1,COLOR_BLUE);
     call Draw.drawInt(180,110,CWGR->bits.cldiv,1,COLOR_BLUE);

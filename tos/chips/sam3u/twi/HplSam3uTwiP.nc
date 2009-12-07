@@ -1,6 +1,6 @@
 configuration HplSam3uTwiP {
   provides interface HplSam3uTwi;
-  provides interface HplSam3uTwiInterrupt[uint8_t id];
+  provides interface HplSam3uTwiInterrupt;
 }
 
 implementation {
@@ -19,6 +19,5 @@ implementation {
   HplTwiP.Twd1Pin -> HplSam3uGeneralIOC.HplPioA24;
   HplTwiP.Twck0Pin -> HplSam3uGeneralIOC.HplPioA10;
   HplTwiP.Twck1Pin -> HplSam3uGeneralIOC.HplPioA25;
-  HplTwiP.Leds -> LedsC;
-  
+  HplTwiP.Leds -> NoLedsC;  
 }

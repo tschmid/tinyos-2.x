@@ -2,7 +2,7 @@
 module HplSam3uTwiImplP {
   provides {
     interface HplSam3uTwi;
-    interface HplSam3uTwiInterrupt as Interrupt[uint8_t id];
+    interface HplSam3uTwiInterrupt as Interrupt;
   }
   uses {
     interface HplNVICInterruptCntl as Twi0Interrupt;
@@ -25,13 +25,13 @@ implementation{
   void Twi0IrqHandler() @C() @spontaneous() {
     //signal something
     call Leds.led0Toggle();
-    signal Interrupt.fired0[Interrupt_ID]();
+    signal Interrupt.fired0();
     // HOW DO I DEFINE THE ID HERE?
   }
 
   void Twi1IrqHandler() @C() @spontaneous() {
     //signal something
-    signal Interrupt.fired1[Interrupt_ID]();
+    signal Interrupt.fired1();
     // HOW DO I DEFINE THE ID HERE?
   }
 
@@ -957,7 +957,7 @@ implementation{
   async event void Twi0ClockConfig.mainClockChanged(){}
   async event void Twi1ClockConfig.mainClockChanged(){}
 
- default async event void Interrupt.fired0[uint8_t id](){}
- default async event void Interrupt.fired1[uint8_t id](){}
+ default async event void Interrupt.fired0(){}
+ default async event void Interrupt.fired1(){}
 
 }
