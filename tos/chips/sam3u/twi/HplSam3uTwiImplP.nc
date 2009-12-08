@@ -138,7 +138,7 @@ implementation{
     call Twck1Pin.disablePioControl();
     call Twck1Pin.selectPeripheralA();
     */
-     clearAllInterrupts1();
+    clearAllInterrupts1();
   }
 
   async command void HplSam3uTwi.setStart0(){

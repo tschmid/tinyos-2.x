@@ -244,7 +244,7 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint8_t rxdata     :  1;
+    uint8_t rxdata     :  8;
     uint8_t reserved0  :  8;
     uint16_t reserved1 : 16;
   } __attribute__((__packed__)) bits;
@@ -259,7 +259,7 @@ typedef union
   uint32_t flat;
   struct
   {
-    uint8_t txdata     :  1;
+    uint8_t txdata     :  8;
     uint8_t reserved0  :  8;
     uint16_t reserved1 : 16;
   } __attribute__((__packed__)) bits;
