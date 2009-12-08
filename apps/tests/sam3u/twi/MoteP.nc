@@ -48,7 +48,8 @@ module MoteP
 implementation
 {
   norace error_t resultError;
-  norace uint16_t resultValue;
+  norace uint32_t resultValue;
+  uint8_t temp[4];
 
   event void Boot.booted()
   {
@@ -81,7 +82,6 @@ implementation
     call Timer.startPeriodic(1024);
   }
 
-
   event void SerialSplitControl.startDone(error_t error)
   {
     if (error != SUCCESS) {
@@ -94,17 +94,16 @@ implementation
   volatile twi_mmr_t* MMR = (volatile twi_mmr_t *) (TWI0_BASE_ADDR + 0x4);
   volatile twi_cwgr_t* CWGR = (volatile twi_cwgr_t *) (TWI0_BASE_ADDR + 0x10);
 
-  uint8_t temp;
-
   task void read(){
     const char *start = "Read!!";
-    //call Leds.led0Toggle();
 
     call Draw.fill(COLOR_WHITE);
     call Draw.drawString(10,50,start,COLOR_BLACK);
 
     call ResourceConfigure.configure();
-    call TWI.read(0, 0x48, 1, &temp);
+
+    //call TWI.read(0, 0x48, 2, (uint8_t*)temp);
+    call TWI.write(0, 0x48, 1, (uint8_t*)temp);
 
     call Draw.drawInt(180,70,MMR->bits.dadr,1,COLOR_BLUE);
     call Draw.drawInt(180,90,MMR->bits.mread,1,COLOR_BLUE);
@@ -123,15 +122,23 @@ implementation
       atomic call Draw.drawString(10,70,fail,COLOR_BLACK);
     }else{
       call Draw.drawString(10,70,good,COLOR_BLACK);
-      call Draw.drawInt(100,100,resultValue,1,COLOR_BLACK);
+      //call Draw.drawInt(100,100,resultValue,1,COLOR_BLACK);
+      call Draw.drawInt(100,100,temp[0],1,COLOR_BLACK);
+      call Draw.drawInt(100,120,temp[1],1,COLOR_BLACK);
+      call Draw.drawInt(100,140,temp[2],1,COLOR_BLACK);
+      call Draw.drawInt(100,160,temp[3],1,COLOR_BLACK);
     }
   }
 
-  async event void TWI.writeDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data){}
+  async event void TWI.writeDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data){
+    resultError = error;
+    post drawResult();
+  }
 
-  //async event void TWI.readDone(error_t error, uint16_t value)
   async event void TWI.readDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data)
   {
+    resultError = error;
+    resultValue = *data;
     post drawResult();
   }
   
