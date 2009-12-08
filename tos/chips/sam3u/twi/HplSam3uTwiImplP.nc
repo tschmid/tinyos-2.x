@@ -23,16 +23,11 @@ implementation{
   norace uint8_t Interrupt_ID;
 
   void Twi0IrqHandler() @C() @spontaneous() {
-    //signal something
-    call Leds.led0Toggle();
     signal Interrupt.fired0();
-    // HOW DO I DEFINE THE ID HERE?
   }
 
   void Twi1IrqHandler() @C() @spontaneous() {
-    //signal something
     signal Interrupt.fired1();
-    // HOW DO I DEFINE THE ID HERE?
   }
 
   void clearAllInterrupts0(){
@@ -112,32 +107,10 @@ implementation{
   }
 
   async command void HplSam3uTwi.init0(){
-    /*
-    call Twi0Interrupt.configure(IRQ_PRIO_TWI0);
-    call Twi0Interrupt.enable();
-
-    call Twi0ClockControl.enable();
-
-    call Twd0Pin.disablePioControl();
-    call Twd0Pin.selectPeripheralA();
-    call Twck0Pin.disablePioControl();
-    call Twck0Pin.selectPeripheralA();
-    */
     clearAllInterrupts0();
   }
 
   async command void HplSam3uTwi.init1(){
-    /*
-    call Twi1Interrupt.configure(IRQ_PRIO_TWI1);
-    call Twi1Interrupt.enable();
-
-    call Twi1ClockControl.enable();
-
-    call Twd1Pin.disablePioControl();
-    call Twd1Pin.selectPeripheralA();
-    call Twck1Pin.disablePioControl();
-    call Twck1Pin.selectPeripheralA();
-    */
     clearAllInterrupts1();
   }
 
@@ -170,7 +143,6 @@ implementation{
   }
 
   async command void HplSam3uTwi.setMaster0(){
-    // enable master / disable slave
     volatile twi_cr_t* CR = (volatile twi_cr_t *) (TWI0_BASE_ADDR + 0x0);
     twi_cr_t cr;
     cr.bits.msen = 1;
@@ -185,7 +157,6 @@ implementation{
   }
 
   async command void HplSam3uTwi.setMaster1(){
-    // enable master / disable slave
     volatile twi_cr_t* CR = (volatile twi_cr_t *) (TWI1_BASE_ADDR + 0x0);
     twi_cr_t cr;
     cr.bits.msen = 1;
@@ -200,7 +171,6 @@ implementation{
   }
 
   async command void HplSam3uTwi.setSlave0(){
-    // enable slave / disable master
     volatile twi_cr_t* CR = (volatile twi_cr_t *) (TWI0_BASE_ADDR + 0x0);
     twi_cr_t cr;
     cr.bits.sven = 1;
@@ -215,7 +185,6 @@ implementation{
   }
 
   async command void HplSam3uTwi.setSlave1(){
-    // enable slave / disable master
     volatile twi_cr_t* CR = (volatile twi_cr_t *) (TWI1_BASE_ADDR + 0x0);
     twi_cr_t cr;
     cr.bits.sven = 1;
