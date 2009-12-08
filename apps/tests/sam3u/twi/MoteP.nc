@@ -42,6 +42,7 @@ module MoteP
     interface Lcd;
     interface Draw;
     interface ResourceConfigure;
+    interface Sam3uTwiInternalAddress as InternalAddr;
   }
 }
 
@@ -50,6 +51,7 @@ implementation
   norace error_t resultError;
   norace uint32_t resultValue;
   uint8_t temp[4];
+  uint8_t tempWrite = 96; // for 12bit resolution on temp sensor
 
   event void Boot.booted()
   {
@@ -79,7 +81,7 @@ implementation
 
   event void Lcd.startDone(){
     post sample();
-    call Timer.startPeriodic(1024);
+    call Timer.startPeriodic(2*1024U);
   }
 
   event void SerialSplitControl.startDone(error_t error)
@@ -95,15 +97,15 @@ implementation
   volatile twi_cwgr_t* CWGR = (volatile twi_cwgr_t *) (TWI0_BASE_ADDR + 0x10);
 
   task void read(){
-    const char *start = "Read!!";
+    const char *start = "TWI!!";
 
     call Draw.fill(COLOR_WHITE);
     call Draw.drawString(10,50,start,COLOR_BLACK);
 
     call ResourceConfigure.configure();
-
-    //call TWI.read(0, 0x48, 2, (uint8_t*)temp);
-    call TWI.write(0, 0x48, 1, (uint8_t*)temp);
+    call InternalAddr.setInternalAddrSize(1);
+    call InternalAddr.setInternalAddr(1); // 1 byte configuration register
+    call TWI.write(0, 0x48, 1, (uint8_t*)&tempWrite);
 
     call Draw.drawInt(180,70,MMR->bits.dadr,1,COLOR_BLUE);
     call Draw.drawInt(180,90,MMR->bits.mread,1,COLOR_BLUE);
@@ -115,24 +117,33 @@ implementation
   }
 
   task void drawResult(){
-    const char *fail = "Read done error";
-    const char *good = "Read done success";
+    const char *fail = "Done error";
+    const char *good = "Done success";
     call Draw.fill(COLOR_GREEN);
     if (resultError != SUCCESS) {
       atomic call Draw.drawString(10,70,fail,COLOR_BLACK);
     }else{
       call Draw.drawString(10,70,good,COLOR_BLACK);
-      //call Draw.drawInt(100,100,resultValue,1,COLOR_BLACK);
       call Draw.drawInt(100,100,temp[0],1,COLOR_BLACK);
       call Draw.drawInt(100,120,temp[1],1,COLOR_BLACK);
       call Draw.drawInt(100,140,temp[2],1,COLOR_BLACK);
       call Draw.drawInt(100,160,temp[3],1,COLOR_BLACK);
+      call Draw.drawInt(100,180,resultValue,1,COLOR_BLACK);
     }
+  }
+
+  task void callRead(){
+    call ResourceConfigure.configure();
+    call InternalAddr.setInternalAddrSize(1);
+    call InternalAddr.setInternalAddr(0); // 2 byte temperature register
+    call TWI.read(0, 0x48, 2, (uint8_t*)temp);
   }
 
   async event void TWI.writeDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data){
     resultError = error;
+    resultValue = length;
     post drawResult();
+    post callRead();
   }
 
   async event void TWI.readDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data)

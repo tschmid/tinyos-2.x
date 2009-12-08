@@ -30,6 +30,7 @@ configuration TwiReaderC
   provides interface I2CPacket<TI2CBasicAddr>;
   provides interface Resource;
   provides interface ResourceConfigure[uint8_t id];
+  provides interface Sam3uTwiInternalAddress;
 }
 
 implementation
@@ -40,6 +41,7 @@ implementation
   I2CPacket = TwiC.TwiBasicAddr0;
   Resource = TwiC;
   ResourceConfigure = TwiC.Configure0;
+  Sam3uTwiInternalAddress = TwiC.InternalAddress0;
 
   TwiC.TwiConfig0 -> TwiReaderP;
 }

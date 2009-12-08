@@ -7,6 +7,8 @@ configuration Sam3uTwiC{
   provides interface I2CPacket<TI2CBasicAddr> as TwiBasicAddr1;
   provides interface ResourceConfigure as Configure0[ uint8_t id ];
   provides interface ResourceConfigure as Configure1[ uint8_t id ];
+  provides interface Sam3uTwiInternalAddress as InternalAddress0;
+  provides interface Sam3uTwiInternalAddress as InternalAddress1;
   uses interface Sam3uTwiConfigure as TwiConfig0;
   uses interface Sam3uTwiConfigure as TwiConfig1;
 }
@@ -29,6 +31,9 @@ implementation{
   TwiBasicAddr1 = TwiP1.TwiBasicAddr;
   TwiConfig0 = TwiP0.Sam3uTwiConfigure[ CLIENT_ID ];
   TwiConfig1 = TwiP1.Sam3uTwiConfigure[ CLIENT_ID ];
+
+  InternalAddress0 = TwiP0.InternalAddr;
+  InternalAddress1 = TwiP1.InternalAddr;
 
   Configure0 = TwiP0.ResourceConfigure;
   Configure1 = TwiP1.ResourceConfigure;

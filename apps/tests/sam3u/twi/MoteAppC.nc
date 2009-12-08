@@ -47,4 +47,5 @@ implementation
   MoteP.Lcd -> LcdC;
   MoteP.Draw -> LcdC;
   MoteP.ResourceConfigure -> TwiReaderC.ResourceConfigure[0];
+  MoteP.InternalAddr -> TwiReaderC;
 }
