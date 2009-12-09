@@ -1,3 +1,23 @@
+// choose exactly one of the following
+#define TEST_WRITE_PROTECTION
+//#define TEST_EXECUTE_PROTECTION
+
+// choose exactly one of the following
+#define PROTECTED
+//#define UNPROTECTED
+
+/* Running either one of the write/execute tests *with* protection should first light up LED 0 (green),
+ * then LED 2 (red) to indicate an MPU fault. LED 1 (green) should not light up,
+ * since that would indicate a successful write/execution despite MPU protection.
+ * Running either one of the write/execute tests *without* protection should first light up LED 0 (green),
+ * then LED 1 (green) to indicate a successful write/execution. LED 2 (red) should not light up,
+ * since that would indicate an MPU fault. */
+
+/* Caveat: currently, the linker ignores the alignment for the function and spits out
+ * warning: `aligned' attribute directive ignored
+ * When setting up the region, the function address is aligned, and the first instruction of the function
+ * will be protected, triggering the trap if protected. */
+
 typedef struct
 {
 	uint32_t word1;
@@ -36,28 +56,45 @@ implementation
 		call HplSam3uMpu.enableDefaultBackgroundRegion();
 		call HplSam3uMpu.disableMpuDuringHardFaults();
 
-//		structure.word1 = 13;
+		// first iteration should be successful, MPU not yet active
+#ifdef TEST_WRITE_PROTECTION
+		structure.word1 = 13;
+#endif
+#ifdef TEST_EXECUTE_PROTECTION
 		protected();
+#endif
 
-		call Leds.led0On(); // LED 0: successful write/execute
+		call Leds.led0On(); // LED 0: successful write/execute (should always happen)
 
+#ifdef TEST_WRITE_PROTECTION
+#ifdef PROTECTED
 		// activate MPU and write-protect structure
-		//if ((call HplSam3uMpu.setupRegion(0, (void *) &structure, 32, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, 0)) == FAIL) {
-		//	fatal();
-		//}
-
-		// activate MPU and execute-protect protected()
-		if ((call HplSam3uMpu.setupRegion(0, (void *) (((uint32_t) &protected) & (~ (32 - 1))), 32, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, 0)) == FAIL) { // aligned
-		//if ((call HplSam3uMpu.setupRegion(0, (void *) &protected, 32, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, 0)) == FAIL) { // unaligned
+		if ((call HplSam3uMpu.setupRegion(0, TRUE, (void *) &structure, 32, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, 0)) == FAIL) {
 			fatal();
 		}
+#endif
+#endif
+#ifdef TEST_EXECUTE_PROTECTION
+#ifdef PROTECTED
+		// activate MPU and execute-protect protected()
+		if ((call HplSam3uMpu.setupRegion(0, TRUE, (void *) (((uint32_t) &protected) & (~ (32 - 1))), 32, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, 0)) == FAIL) { // aligned
+			fatal();
+		}
+#endif
+#endif
 
+#ifdef PROTECTED
 		call HplSam3uMpu.enableMpu();
+#endif
 
-//		structure.word1 = 42;
+#ifdef TEST_WRITE_PROTECTION
+		structure.word1 = 42;
+#endif
+#ifdef TEST_EXECUTE_PROTECTION
 		protected();
+#endif
 
-		call Leds.led1On(); // LED 1: successful protected write/execute (should not happen)
+		call Leds.led1On(); // LED 1: successful protected write/execute (should not happen if protected)
 
 		while(1);
 	}
@@ -74,6 +111,6 @@ implementation
 	async event void HplSam3uMpu.mpuFault()
 	{
 		call Leds.led2On(); // LED 2 (red): MPU fault
-		//while(1);
+		while(1);
 	}
 }
