@@ -16,5 +16,25 @@ define mpu
 	print $sp
 	echo Stack:\n
 	x/30w $sp
-	echo (if iaccviol, then the 9th word is the offending instruction (3rd row, 1st column).)\n
+	echo (If iaccviol, then the 9th word is the offending instruction (3rd row, 1st column).)\n
+	echo (If iaccviol (w/o optimization), then the 15th word is the offending instruction (4th row, 3rd column).)\n
+	echo (In exception handler: 1st word: r0, 2nd: r1, 3rd: r2, 4th: r3, 5th: r12, 6th: lr, 7th: pc, 8th: psr (CM3TR, p. 5-11)\n
+end
+
+define res
+	mon soft_reset_halt
+end
+
+define control
+	mon reg control
+	echo (0: privileged, 1: user)\n
+end
+
+define irq
+	x 0xe000ed04
+	echo (21-12: vectpending, 11: rettobase, 9-0: vectactive)\n
+end
+
+define user
+	help user-defined
 end
