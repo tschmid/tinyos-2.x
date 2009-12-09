@@ -11,7 +11,7 @@ configuration TestMpuProtectionSyscallAppC
 implementation
 {
 	components MainC, TestMpuProtectionSyscallC;
-	components new ThreadC(0x200) as Thread0;
+	components new ThreadC(0x400) as Thread0;
 
 	components new BlockingSineSensorC();
 	//components BlockingSerialActiveMessageC;
