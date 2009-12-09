@@ -54,9 +54,9 @@ implementation {
     NO_TASK = 255,
   };
 
-  volatile uint8_t m_head __attribute__((section(".bsscommon")));
-  volatile uint8_t m_tail __attribute__((section(".bsscommon")));
-  volatile uint8_t m_next[NUM_TASKS] __attribute__((section(".bsscommon")));
+  volatile uint8_t m_head;
+  volatile uint8_t m_tail;
+  volatile uint8_t m_next[NUM_TASKS];
 
   // Helper functions (internal functions) intentionally do not have atomic
   // sections.  It is left as the duty of the exported interface functions to
@@ -142,7 +142,7 @@ implementation {
    * Return SUCCESS if the post succeeded, EBUSY if it was already posted.
    */
   
-  async command error_t TaskBasic.postTask[uint8_t id]() __attribute__((section(".textcommon"))) {
+  async command error_t TaskBasic.postTask[uint8_t id]() {
     atomic { return pushTask(id) ? SUCCESS : EBUSY; }
   }
 
