@@ -56,13 +56,13 @@ implementation {
   //Pointer to currently running thread
   thread_t* current_thread __attribute__((section(".bsscommon")));
   //Pointer to the tos thread
-  thread_t* tos_thread __attribute__((section(".bsscommon")));
+  thread_t* tos_thread;
   //Pointer to yielding thread
-  thread_t* yielding_thread __attribute__((section(".bsscommon")));
+  thread_t* yielding_thread;
   //Number of threads started, and currently capable of running if given the chance
   uint8_t num_runnable_threads;
   //Thread queue for keeping track of threads waiting to run
-  thread_queue_t ready_queue __attribute__((section(".bsscommon")));
+  thread_queue_t ready_queue;
   
   void task alarmTask() {
     uint8_t temp;
@@ -220,7 +220,7 @@ implementation {
    * Should be complete as is.  Add functionality to getNextThreadId() 
    * if you need to change the actual scheduling policy.
    */
-  void scheduleNextThread() __attribute__((section(".textcommon"))) {
+  void scheduleNextThread() {
     if(tos_thread->state == TOSTHREAD_STATE_READY)
       current_thread = tos_thread;
     else
@@ -233,7 +233,7 @@ implementation {
    * This routine figures out what thread should run next
    * and then switches to it.
    */
-  void interrupt(thread_t* thread) __attribute__((section(".textcommon"))) {
+  void interrupt(thread_t* thread) {
     yielding_thread = thread;
     scheduleNextThread();
     if(current_thread != yielding_thread) {
@@ -400,7 +400,7 @@ implementation {
     return EALREADY;
   }
   
-  async command error_t ThreadScheduler.wakeupThread(uint8_t id) __attribute__((section(".textcommon"))) {
+  async command error_t ThreadScheduler.wakeupThread(uint8_t id) {
     thread_t* t = call ThreadInfo.get[id]();
     if((t->state) == TOSTHREAD_STATE_SUSPENDED) {
       t->state = TOSTHREAD_STATE_READY;
