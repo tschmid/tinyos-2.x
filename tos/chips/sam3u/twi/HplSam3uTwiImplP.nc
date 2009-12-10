@@ -1,3 +1,29 @@
+/*
+* Copyright (c) 2009 Johns Hopkins University.
+* All rights reserved.
+*
+* Permission to use, copy, modify, and distribute this software and its
+* documentation for any purpose, without fee, and without written
+* agreement is hereby granted, provided that the above copyright
+* notice, the (updated) modification history and the author appear in
+* all copies of this source code.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS  `AS IS'
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE
+* ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR  CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, LOSS OF USE,  DATA,
+* OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR  OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+* THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/**
+ * @author JeongGil Ko
+ */
+
 #include "sam3utwihardware.h"
 module HplSam3uTwiImplP {
   provides {
@@ -41,8 +67,8 @@ implementation{
     call HplSam3uTwi.disIntArbLost0();
     call HplSam3uTwi.disIntClockWaitState0();
     call HplSam3uTwi.disIntEOSAccess0();
-    call HplSam3uTwi.disIntEndRxBuf0();
-    call HplSam3uTwi.disIntEndTxBuf0();
+    call HplSam3uTwi.disIntEndRx0();
+    call HplSam3uTwi.disIntEndTx0();
     call HplSam3uTwi.disIntRxBufFull0();
     call HplSam3uTwi.disIntTxBufEmpty0();
   }
@@ -57,8 +83,8 @@ implementation{
     call HplSam3uTwi.disIntArbLost1();
     call HplSam3uTwi.disIntClockWaitState1();
     call HplSam3uTwi.disIntEOSAccess1();
-    call HplSam3uTwi.disIntEndRxBuf1();
-    call HplSam3uTwi.disIntEndTxBuf1();
+    call HplSam3uTwi.disIntEndRx1();
+    call HplSam3uTwi.disIntEndTx1();
     call HplSam3uTwi.disIntRxBufFull1();
     call HplSam3uTwi.disIntTxBufEmpty1();
   }
@@ -370,11 +396,11 @@ implementation{
     volatile twi_sr_t* SR = (volatile twi_sr_t *) (TWI0_BASE_ADDR + 0x20);
     return SR->bits.eosacc;
   }
-  async command uint8_t HplSam3uTwi.getEndRxBuf0(){
+  async command uint8_t HplSam3uTwi.getEndRx0(){
     volatile twi_sr_t* SR = (volatile twi_sr_t *) (TWI0_BASE_ADDR + 0x20);
     return SR->bits.endrx;
   }
-  async command uint8_t HplSam3uTwi.getEndTxBuf0(){
+  async command uint8_t HplSam3uTwi.getEndTx0(){
     volatile twi_sr_t* SR = (volatile twi_sr_t *) (TWI0_BASE_ADDR + 0x20);
     return SR->bits.endtx;
   }
@@ -431,11 +457,11 @@ implementation{
     volatile twi_sr_t* SR = (volatile twi_sr_t *) (TWI1_BASE_ADDR + 0x20);
     return SR->bits.eosacc;
   }
-  async command uint8_t HplSam3uTwi.getEndRxBuf1(){
+  async command uint8_t HplSam3uTwi.getEndRx1(){
     volatile twi_sr_t* SR = (volatile twi_sr_t *) (TWI1_BASE_ADDR + 0x20);
     return SR->bits.endrx;
   }
-  async command uint8_t HplSam3uTwi.getEndTxBuf1(){
+  async command uint8_t HplSam3uTwi.getEndTx1(){
     volatile twi_sr_t* SR = (volatile twi_sr_t *) (TWI1_BASE_ADDR + 0x20);
     return SR->bits.endtx;
   }
@@ -508,13 +534,13 @@ implementation{
     ier.bits.eosacc = 1;
     *IER = ier;
   }
-  async command void HplSam3uTwi.setIntEndRxBuf0(){
+  async command void HplSam3uTwi.setIntEndRx0(){
     volatile twi_ier_t* IER = (volatile twi_ier_t *) (TWI0_BASE_ADDR + 0x24);
     twi_ier_t ier;
     ier.bits.endrx = 1;
     *IER = ier;
   }
-  async command void HplSam3uTwi.setIntEndTxBuf0(){
+  async command void HplSam3uTwi.setIntEndTx0(){
     volatile twi_ier_t* IER = (volatile twi_ier_t *) (TWI0_BASE_ADDR + 0x24);
     twi_ier_t ier;
     ier.bits.endtx = 1;
@@ -592,13 +618,13 @@ implementation{
     ier.bits.eosacc = 1;
     *IER = ier;
   }
-  async command void HplSam3uTwi.setIntEndRxBuf1(){
+  async command void HplSam3uTwi.setIntEndRx1(){
     volatile twi_ier_t* IER = (volatile twi_ier_t *) (TWI1_BASE_ADDR + 0x24);
     twi_ier_t ier;
     ier.bits.endrx = 1;
     *IER = ier;
   }
-  async command void HplSam3uTwi.setIntEndTxBuf1(){
+  async command void HplSam3uTwi.setIntEndTx1(){
     volatile twi_ier_t* IER = (volatile twi_ier_t *) (TWI1_BASE_ADDR + 0x24);
     twi_ier_t ier;
     ier.bits.endtx = 1;
@@ -677,13 +703,13 @@ implementation{
     idr.bits.eosacc = 1;
     *IDR = idr;
   }
-  async command void HplSam3uTwi.disIntEndRxBuf0(){
+  async command void HplSam3uTwi.disIntEndRx0(){
     volatile twi_idr_t* IDR = (volatile twi_idr_t *) (TWI0_BASE_ADDR + 0x28);
     twi_idr_t idr;
     idr.bits.endrx = 1;
     *IDR = idr;
   }
-  async command void HplSam3uTwi.disIntEndTxBuf0(){
+  async command void HplSam3uTwi.disIntEndTx0(){
     volatile twi_idr_t* IDR = (volatile twi_idr_t *) (TWI0_BASE_ADDR + 0x28);
     twi_idr_t idr;
     idr.bits.endtx = 1;
@@ -762,13 +788,13 @@ implementation{
     idr.bits.eosacc = 1;
     *IDR = idr;
   }
-  async command void HplSam3uTwi.disIntEndRxBuf1(){
+  async command void HplSam3uTwi.disIntEndRx1(){
     volatile twi_idr_t* IDR = (volatile twi_idr_t *) (TWI1_BASE_ADDR + 0x28);
     twi_idr_t idr;
     idr.bits.endrx = 1;
     *IDR = idr;
   }
-  async command void HplSam3uTwi.disIntEndTxBuf1(){
+  async command void HplSam3uTwi.disIntEndTx1(){
     volatile twi_idr_t* IDR = (volatile twi_idr_t *) (TWI1_BASE_ADDR + 0x28);
     twi_idr_t idr;
     idr.bits.endtx = 1;
@@ -827,11 +853,11 @@ implementation{
     volatile twi_imr_t* IMR = (volatile twi_imr_t *) (TWI0_BASE_ADDR + 0x2C);
     return IMR->bits.eosacc;
   }
-  async command uint8_t HplSam3uTwi.maskIntEndRxBuf0(){
+  async command uint8_t HplSam3uTwi.maskIntEndRx0(){
     volatile twi_imr_t* IMR = (volatile twi_imr_t *) (TWI0_BASE_ADDR + 0x2C);
     return IMR->bits.endrx;
   }
-  async command uint8_t HplSam3uTwi.maskIntEndTxBuf0(){
+  async command uint8_t HplSam3uTwi.maskIntEndTx0(){
     volatile twi_imr_t* IMR = (volatile twi_imr_t *) (TWI0_BASE_ADDR + 0x2C);
     return IMR->bits.endtx;
   }
@@ -883,11 +909,11 @@ implementation{
     volatile twi_imr_t* IMR = (volatile twi_imr_t *) (TWI1_BASE_ADDR + 0x2C);
     return IMR->bits.eosacc;
   }
-  async command uint8_t HplSam3uTwi.maskIntEndRxBuf1(){
+  async command uint8_t HplSam3uTwi.maskIntEndRx1(){
     volatile twi_imr_t* IMR = (volatile twi_imr_t *) (TWI1_BASE_ADDR + 0x2C);
     return IMR->bits.endrx;
   }
-  async command uint8_t HplSam3uTwi.maskIntEndTxBuf1(){
+  async command uint8_t HplSam3uTwi.maskIntEndTx1(){
     volatile twi_imr_t* IMR = (volatile twi_imr_t *) (TWI1_BASE_ADDR + 0x2C);
     return IMR->bits.endtx;
   }

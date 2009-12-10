@@ -1,4 +1,31 @@
+/*
+* Copyright (c) 2009 Johns Hopkins University.
+* All rights reserved.
+*
+* Permission to use, copy, modify, and distribute this software and its
+* documentation for any purpose, without fee, and without written
+* agreement is hereby granted, provided that the above copyright
+* notice, the (updated) modification history and the author appear in
+* all copies of this source code.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS  `AS IS'
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR  PURPOSE
+* ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR  CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, LOSS OF USE,  DATA,
+* OR PROFITS) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR  OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+* THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/**
+ * @author JeongGil Ko
+ */
+
 // This file shows the Hpl level commands.
+
 interface HplSam3uTwi{
 
   async command void setInterruptID(uint8_t id);
@@ -63,8 +90,8 @@ interface HplSam3uTwi{
   async command uint8_t getArbLost0();
   async command uint8_t getClockWaitState0();
   async command uint8_t getEOSAccess0();
-  async command uint8_t getEndRxBuf0();
-  async command uint8_t getEndTxBuf0();
+  async command uint8_t getEndRx0();
+  async command uint8_t getEndTx0();
   async command uint8_t getRxBufFull0();
   async command uint8_t getTxBufEmpty0();
 
@@ -79,8 +106,8 @@ interface HplSam3uTwi{
   async command uint8_t getArbLost1();
   async command uint8_t getClockWaitState1();
   async command uint8_t getEOSAccess1();
-  async command uint8_t getEndRxBuf1();
-  async command uint8_t getEndTxBuf1();
+  async command uint8_t getEndRx1();
+  async command uint8_t getEndTx1();
   async command uint8_t getRxBufFull1();
   async command uint8_t getTxBufEmpty1();
 
@@ -95,8 +122,8 @@ interface HplSam3uTwi{
   async command void setIntArbLost0();
   async command void setIntClockWaitState0();
   async command void setIntEOSAccess0();
-  async command void setIntEndRxBuf0();
-  async command void setIntEndTxBuf0();
+  async command void setIntEndRx0();
+  async command void setIntEndTx0();
   async command void setIntRxBufFull0();
   async command void setIntTxBufEmpty0();
 
@@ -110,8 +137,8 @@ interface HplSam3uTwi{
   async command void setIntArbLost1();
   async command void setIntClockWaitState1();
   async command void setIntEOSAccess1();
-  async command void setIntEndRxBuf1();
-  async command void setIntEndTxBuf1();
+  async command void setIntEndRx1();
+  async command void setIntEndTx1();
   async command void setIntRxBufFull1();
   async command void setIntTxBufEmpty1();
 
@@ -126,8 +153,8 @@ interface HplSam3uTwi{
   async command void disIntArbLost0();
   async command void disIntClockWaitState0();
   async command void disIntEOSAccess0();
-  async command void disIntEndRxBuf0();
-  async command void disIntEndTxBuf0();
+  async command void disIntEndRx0();
+  async command void disIntEndTx0();
   async command void disIntRxBufFull0();
   async command void disIntTxBufEmpty0();
 
@@ -141,8 +168,8 @@ interface HplSam3uTwi{
   async command void disIntArbLost1();
   async command void disIntClockWaitState1();
   async command void disIntEOSAccess1();
-  async command void disIntEndRxBuf1();
-  async command void disIntEndTxBuf1();
+  async command void disIntEndRx1();
+  async command void disIntEndTx1();
   async command void disIntRxBufFull1();
   async command void disIntTxBufEmpty1();
 
@@ -157,8 +184,8 @@ interface HplSam3uTwi{
   async command uint8_t maskIntArbLost0();
   async command uint8_t maskIntClockWaitState0();
   async command uint8_t maskIntEOSAccess0();
-  async command uint8_t maskIntEndRxBuf0();
-  async command uint8_t maskIntEndTxBuf0();
+  async command uint8_t maskIntEndRx0();
+  async command uint8_t maskIntEndTx0();
   async command uint8_t maskIntRxBufFull0();
   async command uint8_t maskIntTxBufEmpty0();
 
@@ -172,8 +199,8 @@ interface HplSam3uTwi{
   async command uint8_t maskIntArbLost1();
   async command uint8_t maskIntClockWaitState1();
   async command uint8_t maskIntEOSAccess1();
-  async command uint8_t maskIntEndRxBuf1();
-  async command uint8_t maskIntEndTxBuf1();
+  async command uint8_t maskIntEndRx1();
+  async command uint8_t maskIntEndTx1();
   async command uint8_t maskIntRxBufFull1();
   async command uint8_t maskIntTxBufEmpty1();
 
