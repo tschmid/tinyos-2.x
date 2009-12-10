@@ -33,7 +33,6 @@ module MoteP
   uses {
     interface Boot;
     interface Leds;
-    //interface ReadNow<uint16_t>;
     interface I2CPacket<TI2CBasicAddr> as TWI;
     interface Resource;
     interface SplitControl as SerialSplitControl;
@@ -51,11 +50,14 @@ implementation
   norace error_t resultError;
   norace uint32_t resultValue;
   uint8_t temp[4];
-  uint8_t tempWrite = 96; // for 12bit resolution on temp sensor
+  uint8_t tempWrite[2];// = 0x60606060; // for 12bit resolution on temp sensor
+  uint16_t tempWriteLimit = 0x4680;
 
   event void Boot.booted()
   {
     while (call SerialSplitControl.start() != SUCCESS);
+    tempWrite[0] = 0x60;//70;
+    tempWrite[1] = 0x60;//128;
     call Lcd.initialize();
   }
 
@@ -104,8 +106,9 @@ implementation
 
     call ResourceConfigure.configure();
     call InternalAddr.setInternalAddrSize(1);
-    call InternalAddr.setInternalAddr(1); // 1 byte configuration register
-    call TWI.write(0, 0x48, 1, (uint8_t*)&tempWrite);
+    //call InternalAddr.setInternalAddr(1); // 1 byte configuration register
+    call InternalAddr.setInternalAddr(1); // temp Limit register
+    call TWI.write(1, 0x48, 1, (uint8_t*)&tempWrite);
 
     call Draw.drawInt(180,70,MMR->bits.dadr,1,COLOR_BLUE);
     call Draw.drawInt(180,90,MMR->bits.mread,1,COLOR_BLUE);
@@ -136,7 +139,7 @@ implementation
     call ResourceConfigure.configure();
     call InternalAddr.setInternalAddrSize(1);
     call InternalAddr.setInternalAddr(0); // 2 byte temperature register
-    call TWI.read(0, 0x48, 2, (uint8_t*)temp);
+    call TWI.read(1, 0x48, 2, (uint8_t*)temp);
   }
 
   async event void TWI.writeDone(error_t error, uint16_t addr, uint8_t length, uint8_t* data){
