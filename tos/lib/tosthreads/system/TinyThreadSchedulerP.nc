@@ -63,6 +63,10 @@ implementation {
   uint8_t num_runnable_threads;
   //Thread queue for keeping track of threads waiting to run
   thread_queue_t ready_queue;
+
+#ifdef PLATFORM_SAM3U_EK
+  void context_switch() __attribute__((noinline));
+#endif
   
   void task alarmTask() {
     uint8_t temp;
@@ -174,14 +178,14 @@ implementation {
  * why we need to manually save volatile (caller-save) registers before calling
  * another (non-inlined) function.
  */
-  void PendSVHandler() @C() @spontaneous() __attribute((naked))
+  void PendSVHandler() @C() @spontaneous() __attribute__((naked))
   {
 	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("mrs r0, msp");
-		  asm volatile("stmdb r0!, {r4-r11}");
+		  asm volatile("stmdb r0!, {r1-r12,lr}");
 		  asm volatile("str r0, %0" : "=m" ((yielding_thread)->stack_ptr));
 		  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
-		  asm volatile("ldmia r0!, {r4-r11}");
+		  asm volatile("ldmia r0!, {r1-r12,lr}");
 		  asm volatile("msr msp, r0");
 #ifdef MPU_PROTECTION
 		  asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
@@ -192,11 +196,69 @@ implementation {
 	  asm volatile("bx lr"); // important because this is a naked function
   }
 
-  void SVCallHandler() @C() @spontaneous()
+  void context_switch() __attribute__((noinline)) {
+	  atomic { // context switch itself is protected from being interrupted
+		  asm volatile("mrs r0, msp");
+		  asm volatile("stmdb r0!, {r1-r12,lr}");
+		  asm volatile("str r0, %0" : "=m" ((yielding_thread)->stack_ptr));
+		  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
+		  asm volatile("ldmia r0!, {r1-r12,lr}");
+		  asm volatile("msr msp, r0");
+#ifdef MPU_PROTECTION
+		  asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
+		  switchMpuContexts();
+		  asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
+#endif
+	  }
+	  asm volatile("bx lr"); // important because this is a naked function
+  }
+
+  void ActualSVCallHandler(uint32_t *args) @C() @spontaneous()
   {
-    atomic { // disable interrupts
-      *((volatile uint32_t *) 0xe000ed04) = 0x10000000; // set PendSV request
-	} // enable interrupts, letting the PendSV IRQ come through
+      volatile uint32_t svc_id;
+      volatile uint32_t svc_r0;
+      volatile uint32_t svc_r1;
+      volatile uint32_t svc_r2;
+      volatile uint32_t svc_r3;
+      volatile uint32_t prev_pc; // PC to return to after the syscall
+
+      svc_id = ((uint8_t *) args[6])[-2];
+      svc_r0 = ((uint32_t) args[0]);
+      svc_r1 = ((uint32_t) args[1]);
+      svc_r2 = ((uint32_t) args[2]);
+      svc_r3 = ((uint32_t) args[3]);
+      prev_pc = ((uint32_t) args[6]);
+
+      // switch thread mode to privileged (takes effect when returning from this handler)
+      asm volatile(
+          "mrs r1, control\n"
+          "bic r1, #1\n"
+          "msr control, r1\n"
+          :::"r1"
+      );
+
+      if (svc_id == 0) { // context-switch syscall
+	    context_switch();
+      } else if (svc_id == 0x47) {
+		//error_t result = call Foo.blockingReadImpl((uint8_t) svc_r0, (uint16_t *) svc_r1);
+		//// put result in stacked r0, which will be interpreted as the result by calling function
+		//args[0] = result;
+          //args[6] = (uint32_t) blockingReadImpl; // patch return PC to jump to impl
+      }
+
+      return; // this will return to svc call site
+  }
+
+  void SVCallHandler() @C() @spontaneous() __attribute__((naked))
+  {
+      asm volatile(
+      "tst lr, #4\n"
+      "ite eq\n"
+      "mrseq r0, msp\n"
+      "mrsne r0, psp\n"
+      "b ActualSVCallHandler\n"
+      );
+      // return from ActualSVCallHandler() returns to svc call site (through lr)
   }
 #endif
   
