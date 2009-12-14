@@ -71,6 +71,7 @@ module NoBeaconTransmitP
     interface GetSet<ieee154_txframe_t*> as GetSetRealignmentFrame;
     interface GetNow<bool> as IsBroadcastReady; 
     interface TimeCalc;
+    interface Random;
     interface Leds;
   }
 }

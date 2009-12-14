@@ -266,6 +266,7 @@ implementation
   BeaconTransmitP.GetSetRealignmentFrame -> CoordRealignmentP;
   BeaconTransmitP.IsBroadcastReady -> CoordBroadcastP.IsBroadcastReady;
   BeaconTransmitP.TimeCalc -> PibP;
+  BeaconTransmitP.Random = Random;
   BeaconTransmitP.Leds = Leds;
 
   /* ------------------ Beacon Tracking (MLME-SYNC) ------------------ */
