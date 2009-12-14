@@ -207,8 +207,8 @@ implementation
       if (m_assocRespStatus == IEEE154_ASSOCIATION_SUCCESSFUL)
         call MLME_SET.macShortAddress(m_shortAddress);
       signal MLME_ASSOCIATE.confirm(m_shortAddress, m_assocRespStatus, 0);
-      dbg_serial("AssociationP", "confirm: %lx, %lu\n", 
-          (uint32_t) m_shortAddress, (uint32_t) m_assocRespStatus);
+      dbg_serial("AssociationP", "confirm, status:  %lu, my new address: 0x%lx\n", 
+          (uint32_t) m_assocRespStatus, (uint32_t) m_shortAddress);
     }
   }
 

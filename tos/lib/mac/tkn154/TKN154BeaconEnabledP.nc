@@ -423,6 +423,7 @@ implementation
   DeviceCap.TimeCalc -> PibP;
   DeviceCap.Leds = Leds;
   DeviceCap.TrackSingleBeacon -> BeaconSynchronizeP.TrackSingleBeacon;
+  DeviceCap.MLME_SYNC_LOSS -> BeaconSynchronizeP;
 
   /* ---------------------- CAP (outgoing superframe) ------------------- */
 

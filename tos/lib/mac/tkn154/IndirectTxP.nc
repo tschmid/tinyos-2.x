@@ -236,11 +236,11 @@ implementation
     }
     if (dataResponseFrame != NULL) {
       // found a matching frame, mark it for transmission
-      dbg_serial("IndirectTxP", "We have data for this device, trying to transmit...");
+      dbg_serial("IndirectTxP", "We have data for this device, trying to transmit...\n");
       dataResponseFrame->client |= SEND_THIS_FRAME;
       post tryCoordCapTxTask();
     } else {
-      dbg_serial("IndirectTxP", "We don't have data for this device, sending an empty frame...");
+      dbg_serial("IndirectTxP", "We don't have data for this device, sending an empty frame...\n");
       transmitEmptyDataFrame(frame);
     }
     return frame;
