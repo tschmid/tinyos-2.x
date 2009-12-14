@@ -1,3 +1,10 @@
+// depending on the flag, thread 1 will be given the right to write to
+// thread 0's data or not, and, therefore, after LED 0 lights up, either
+// LED 1 should light up (not protected) or LED 2 (red) should light up
+// (protected)
+
+#define PROTECTED
+
 typedef struct
 {
 	uint32_t word1;
@@ -107,7 +114,7 @@ implementation
 		// thread-specific code: ThreadInfoP$0$run_thread(), TestMpuProtectionC$Thread0$run()
 		call Thread0.setupMpuRegion(1, TRUE, (void *) &_stextthread0, (((uint32_t) &_etextthread0) - ((uint32_t) &_stextthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// ThreadInfoP$0$stack
-		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x20000600, 0x200, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x20000800, 0x400, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
 		// needed for LED: 0x400e0e34
 		call Thread0.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
 		// thread-specific BSS: data0
@@ -131,7 +138,7 @@ implementation
 		// thread-specific code: ThreadInfoP$1$run_thread(), TestMpuProtectionC$Thread1$run()
 		call Thread1.setupMpuRegion(1, TRUE, (void *) &_stextthread1, (((uint32_t) &_etextthread1) - ((uint32_t) &_stextthread1)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// ThreadInfoP$1$stack
-		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x20000800, 0x200, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x20000c00, 0x400, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
 		// needed for LED: 0x400e0e34
 		call Thread1.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
 		// thread-specific BSS: data1
@@ -148,9 +155,13 @@ implementation
 		}
 		// other thread's data0
 		if (&_sbssthread0 != &_ebssthread0) {
+#ifdef PROTECTED
+			// no right to other thread's data
+			call Thread1.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+#else
+			// right to other thread's data
 			call Thread1.setupMpuRegion(6, TRUE, (void *) &_sbssthread0, (((uint32_t) &_ebssthread0) - ((uint32_t) &_sbssthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-			// or not
-			//call Thread1.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+#endif
 		} else {
 			call Thread1.setupMpuRegion(6, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 		}

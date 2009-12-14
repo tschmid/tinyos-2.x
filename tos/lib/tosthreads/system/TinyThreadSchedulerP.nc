@@ -188,6 +188,7 @@ implementation {
 		  asm volatile("ldmia r0!, {r1-r12,lr}");
 		  asm volatile("msr msp, r0");
 #ifdef MPU_PROTECTION
+		  // already runs on the new stack, in new context
 		  asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
 		  switchMpuContexts();
 		  asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
@@ -196,7 +197,7 @@ implementation {
 	  asm volatile("bx lr"); // important because this is a naked function
   }
 
-  void context_switch() __attribute__((noinline)) {
+  void context_switch() __attribute__((noinline, naked)) {
 	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("mrs r0, msp");
 		  asm volatile("stmdb r0!, {r1-r12,lr}");
@@ -205,6 +206,7 @@ implementation {
 		  asm volatile("ldmia r0!, {r1-r12,lr}");
 		  asm volatile("msr msp, r0");
 #ifdef MPU_PROTECTION
+		  // already runs on the new stack, in new context
 		  asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
 		  switchMpuContexts();
 		  asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
@@ -229,13 +231,13 @@ implementation {
       svc_r3 = ((uint32_t) args[3]);
       prev_pc = ((uint32_t) args[6]);
 
-      // switch thread mode to privileged (takes effect when returning from this handler)
-      asm volatile(
-          "mrs r1, control\n"
-          "bic r1, #1\n"
-          "msr control, r1\n"
-          :::"r1"
-      );
+//      // switch thread mode to privileged (takes effect when returning from this handler)
+//      asm volatile(
+//          "mrs r1, control\n"
+//          "bic r1, #1\n"
+//          "msr control, r1\n"
+//          :::"r1"
+//      );
 
       if (svc_id == 0) { // context-switch syscall
 	    context_switch();

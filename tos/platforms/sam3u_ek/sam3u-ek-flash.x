@@ -142,10 +142,10 @@ SECTIONS
 		. = ALIGN(0x200);
 		_ebssthread1 = .;
 
-		. = ALIGN(0x200);
+		. = ALIGN(0x400);
 		_sbssstacks = .;
 		*(.bssstacks*)
-		. = ALIGN(0x200);
+		. = ALIGN(0x400);
 		_ebssstacks = .;
 
 		. = ALIGN(0x400);
