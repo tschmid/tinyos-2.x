@@ -48,20 +48,55 @@ typedef uint32_t* stack_ptr_t;
  *   function (i.e., the wrapper) is never supposed to return!
  * - r0 to r3, r12: would be saved by the corresponding exception (SVCall
  *   or PendSV)
- * - r4 to r11: saved by context-switch routine (see TinyThreadSchedulerP)
+ * - r1 to r12: saved by context-switch routine (see TinyThreadSchedulerP)
+ *   (r0 is used by context-switch routine)
+ * - lr: also saved by context-switch routine (see TinyThreadSchedulerP),
+ *   initialized to 0xfffffff9 (i.e., exception return, to thread mode and
+ *   main stack)
  */
 #define PREPARE_THREAD(t, thread_ptr) \
 *((t)->stack_ptr) = (uint32_t)(0x01000000); \
 \
-((t)->stack_ptr) -= 1; \
-*((t)->stack_ptr) = (uint32_t)(&(thread_ptr)); \
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(&(thread_ptr)); \
 \
-((t)->stack_ptr) -= 1; \
-*((t)->stack_ptr) = (uint32_t)(0xffffffff); \
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0xffffffff); \
 \
-((t)->stack_ptr) -= 5; \
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x12121212); \
 \
-((t)->stack_ptr) -= 8;
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x03030303); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x02020202); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x01010101); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x00000000); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0xfffffff9); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x12121212); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x11111111); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x10101010); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x09090909); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x08080808); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x07070707); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x06060606); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x05050505); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x04040404); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x03030303); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x02020202); \
+\
+((t)->stack_ptr) -= 1; *((t)->stack_ptr) = (uint32_t)(0x01010101); \
+;
 
 /*
  * The context-switch call distinguishes between its being called
@@ -78,10 +113,12 @@ typedef uint32_t* stack_ptr_t;
 #define SWITCH_CONTEXTS(from,to) \
 uint32_t icsr = *((volatile uint32_t *) 0xe000ed04); \
 uint16_t vectactive = icsr & 0x000001ff; \
-if (vectactive != 0) { \
-	*((volatile uint32_t *) 0xe000ed04) = 0x10000000; \
-} else { \
+if (vectactive == 0) { \
 	asm volatile("svc 0"); \
+} else if (vectactive == 0xb) { \
+	context_switch(); \
+} else { \
+	*((volatile uint32_t *) 0xe000ed04) = 0x10000000; \
 }
 
 // FIXME Restoring the TCB is not implemented at this point.

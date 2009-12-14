@@ -233,7 +233,7 @@ void __init()
 	// FIXME: configure SVCall and PendSV prios
 	*((volatile unsigned int *) 0xe000ed18) = 0x00000000;
 	*((volatile unsigned int *) 0xe000ed1c) = 0xff000000; // SVCall, lowest prio
-	*((volatile unsigned int *) 0xe000ed20) = 0x00ee0000; // PendSV, second-lowest prio
+	*((volatile unsigned int *) 0xe000ed20) = 0x00ff0000; // PendSV, same lowest prio
 
 	// Call main()
 	main();
