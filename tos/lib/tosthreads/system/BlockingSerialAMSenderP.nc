@@ -62,4 +62,7 @@ implementation {
   BlockingAMSenderImplP.SystemCall -> SystemCallC;
   BlockingAMSenderImplP.Packet -> AM;
   BlockingAMSenderImplP.Leds -> LedsC;
+
+  components TinyThreadSchedulerP;
+  TinyThreadSchedulerP.Blubb -> BlockingAMSenderImplP;
 }

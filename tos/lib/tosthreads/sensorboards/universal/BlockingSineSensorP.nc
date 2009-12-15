@@ -47,4 +47,7 @@ implementation {
   components SystemCallQueueC;
   BlockingReadP.SystemCallQueue -> SystemCallQueueC;
   BlockingReadP.SystemCall -> SystemCallC;
+
+  components TinyThreadSchedulerP;
+  TinyThreadSchedulerP.Foo -> BlockingReadP;
 }

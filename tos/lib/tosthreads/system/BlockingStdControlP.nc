@@ -59,4 +59,6 @@ implementation {
   BlockingStdControlImplP.SystemCallQueue -> SystemCallQueueC;
   BlockingStdControlImplP.SystemCall -> SystemCallC;
 
+  components TinyThreadSchedulerP;
+  TinyThreadSchedulerP.Bar -> BlockingStdControlImplP;
 }

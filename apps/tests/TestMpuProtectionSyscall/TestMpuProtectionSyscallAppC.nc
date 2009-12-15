@@ -14,15 +14,15 @@ implementation
 	components new ThreadC(0x400) as Thread0;
 
 	components new BlockingSineSensorC();
-	//components BlockingSerialActiveMessageC;
-	//components new BlockingSerialAMSenderC(228);
+	components BlockingSerialActiveMessageC;
+	components new BlockingSerialAMSenderC(228);
 
 	MainC.Boot <- TestMpuProtectionSyscallC;
 	MainC.SoftwareInit -> BlockingSineSensorC;
 	TestMpuProtectionSyscallC.Thread0 -> Thread0;
 	TestMpuProtectionSyscallC.BlockingRead -> BlockingSineSensorC;
-	//TestMpuProtectionSyscallC.AMControl -> BlockingSerialActiveMessageC;
-	//TestMpuProtectionSyscallC.BlockingAMSend -> BlockingSerialAMSenderC;
+	TestMpuProtectionSyscallC.AMControl -> BlockingSerialActiveMessageC;
+	TestMpuProtectionSyscallC.BlockingAMSend -> BlockingSerialAMSenderC;
 	//TestMpuProtectionSyscallC.Packet -> BlockingSerialAMSenderC;
 
 	components LedsC;
