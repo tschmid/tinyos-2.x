@@ -32,7 +32,7 @@
 /**
  * @author Kevin Klues <klueska@cs.stanford.edu>
  */
-  
+
 module TinyThreadSchedulerP {
   provides {
     interface ThreadScheduler;
@@ -50,6 +50,9 @@ module TinyThreadSchedulerP {
 #ifdef MPU_PROTECTION
     interface HplSam3uMpu;
 #endif
+    interface Foo;
+    interface Bar;
+    interface Blubb;
   }
 }
 implementation {
@@ -231,21 +234,24 @@ implementation {
       svc_r3 = ((uint32_t) args[3]);
       prev_pc = ((uint32_t) args[6]);
 
-//      // switch thread mode to privileged (takes effect when returning from this handler)
-//      asm volatile(
-//          "mrs r1, control\n"
-//          "bic r1, #1\n"
-//          "msr control, r1\n"
-//          :::"r1"
-//      );
-
       if (svc_id == 0) { // context-switch syscall
 	    context_switch();
       } else if (svc_id == 0x47) {
-		//error_t result = call Foo.blockingReadImpl((uint8_t) svc_r0, (uint16_t *) svc_r1);
-		//// put result in stacked r0, which will be interpreted as the result by calling function
-		//args[0] = result;
-          //args[6] = (uint32_t) blockingReadImpl; // patch return PC to jump to impl
+		error_t result = call Foo.blockingReadImpl((uint8_t) svc_r0, (uint16_t *) svc_r1);
+		// put result in stacked r0, which will be interpreted as the result by calling function
+		args[0] = result;
+      } else if (svc_id == 0x48) {
+		error_t result = call Bar.startImpl((uint8_t) svc_r0);
+		// put result in stacked r0, which will be interpreted as the result by calling function
+		args[0] = result;
+      } else if (svc_id == 0x49) {
+		error_t result = call Bar.stopImpl((uint8_t) svc_r0);
+		// put result in stacked r0, which will be interpreted as the result by calling function
+		args[0] = result;
+      } else if (svc_id == 0x50) {
+		error_t result = call Blubb.send((am_id_t) svc_r0, (am_addr_t) svc_r1, (message_t *) svc_r2, (uint8_t) svc_r3);
+		// put result in stacked r0, which will be interpreted as the result by calling function
+		args[0] = result;
       }
 
       return; // this will return to svc call site
