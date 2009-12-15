@@ -3,8 +3,8 @@ mon halt
 load
 mon soft_reset_halt
 
-define mpu
-	echo MPU status reg:\n
+define st
+	echo MPU / bus fault / usage fault status reg:\n
 	x 0xe000ed28
 	echo (MPU: 7: mmarvalid, 4: mstkerr, 3: munstkerr, 1: daccviol, 0: iaccviol)\n
 	echo (BF: 7: bfarvalid, 4: stkerr, 3: unstkerr, 2: impreciserr, 1: preciserr, 0: ibuserr)\n
@@ -12,6 +12,24 @@ define mpu
 	x 0xe000ed34
 	echo BF address reg:\n
 	x 0xe000ed38
+	echo Hard fault status reg:\n
+	x 0xe000ed2c
+	echo (HF: 31: debugevt, 30: forced, 1: vecttbl)\n
+	echo IRQ status reg:\n
+	x 0xe000ed04
+	echo (21-12: vectpending, 11: rettobase, 9-0: vectactive)\n
+	echo Control reg:\n
+	mon reg control
+	echo (0: privileged, 1: user)\n
+	echo Primask reg:\n
+	mon reg primask
+	echo (0: normal, 1: IRQs disabled except NMI, hard fault)\n
+	echo Fault mask reg:\n
+	mon reg faultmask
+	echo (0: normal, 1: IRQs disabled except NMI)\n
+	echo Basepri reg:\n
+	mon reg basepri
+	echo (0: normal, 9 bits: IRQs disabled w/ prio << value)\n
 	echo Stack pointer:\n
 	print $sp
 	echo Stack:\n
@@ -23,16 +41,6 @@ end
 
 define res
 	mon soft_reset_halt
-end
-
-define control
-	mon reg control
-	echo (0: privileged, 1: user)\n
-end
-
-define irq
-	x 0xe000ed04
-	echo (21-12: vectpending, 11: rettobase, 9-0: vectactive)\n
 end
 
 define user

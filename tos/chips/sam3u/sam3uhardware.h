@@ -45,8 +45,6 @@ inline __nesc_atomic_t __nesc_atomic_start() @spontaneous() __attribute__((alway
 {
 	__nesc_atomic_t oldState = 0;
 	__nesc_atomic_t newState = 1;
-
-
 	asm volatile(
 		"mrs %[old], primask\n"
 		"msr primask, %[new]\n"
@@ -54,14 +52,13 @@ inline __nesc_atomic_t __nesc_atomic_start() @spontaneous() __attribute__((alway
 		: [new] "r"  (newState)  // input
         : "cc", "memory"         // clobber condition code flag and memory
 	);
-
 	return oldState;
 }
-
+ 
 inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous() __attribute__((always_inline))
 {
 	asm volatile("" : : : "memory"); // memory barrier
-
+ 
 	asm volatile(
 		"msr primask, %[old]"
 		:                      // no output

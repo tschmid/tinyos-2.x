@@ -9,6 +9,8 @@ implementation
 	{
 		volatile uint32_t result;
 
+		//__nesc_disable_interrupt();
+
 		asm volatile("mov r0, %0" : : "r" (p0));
 		asm volatile("mov r1, %0" : : "r" (p1));
 		asm volatile("mov r2, %0" : : "r" (p2));
@@ -24,6 +26,8 @@ implementation
 	event void Boot.booted()
 	{
 		volatile uint32_t result = syscall(0x42, 0x00, 0x11, 0x22, 0x33);
+
+		result++;
 
 		while(1);
 
