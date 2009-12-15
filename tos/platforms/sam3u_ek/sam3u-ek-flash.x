@@ -102,3 +102,4 @@ SECTIONS
         */
        _ebss = .;
 }
+end = .;
