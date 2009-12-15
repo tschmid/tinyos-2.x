@@ -1,4 +1,4 @@
-//$Id: SerialDispatcherP.nc,v 1.7 2008/06/04 03:43:53 regehr Exp $
+//$Id: SerialDispatcherP.nc,v 1.9 2009/09/17 17:58:02 sdhsdh Exp $
 
 /* "Copyright (c) 2000-2005 The Regents of the University of California.  
  * All rights reserved.
@@ -186,7 +186,7 @@ implementation {
   }
 
   bool isCurrentBufferLocked() {
-    return (receiveState.which)? receiveState.bufZeroLocked : receiveState.bufOneLocked;
+    return (receiveState.which)? receiveState.bufOneLocked : receiveState.bufZeroLocked;
   }
 
   void lockCurrentBuffer() {
@@ -294,6 +294,9 @@ implementation {
         receiveTaskSize = recvIndex;
         receiveBufferSwap();
         receiveState.state = RECV_STATE_IDLE;
+      } else {
+        // we can't deliver the packet, better free the current buffer.
+        unlockBuffer(receiveState.which);
       }
     }
     if (postsignalreceive){

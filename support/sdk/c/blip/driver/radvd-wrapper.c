@@ -1,3 +1,24 @@
+/*
+ * "Copyright (c) 2008, 2009 The Regents of the University  of California.
+ * All rights reserved."
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice, the following
+ * two paragraphs and the author appear in all copies of this software.
+ *
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ */
 /* 
  * radvd-wrapper.c
  * author: Stephen Dawson-Haggerty <stevedh@eecs.berkeley.edu>
@@ -24,9 +45,9 @@
  */
 
 
-#include <includes.h>
-#include <radvd.h>
-#include <pathnames.h>
+#include "radvd-1.0/includes.h"
+#include "radvd-1.0/radvd.h"
+#include "radvd-1.0/pathnames.h"
 
 #include "logging.h"
 #include "config.h"
@@ -50,6 +71,19 @@ void radvd_timer_handler(void *data) {
   }
 
   set_timer(&iface->tm, next);
+}
+
+void radvd_reset_adverts(void) {
+  if (iface->AdvSendAdvert) {
+    /* send an initial advertisement */
+    send_ra(sock, iface, NULL);
+    
+    iface->init_racount = 0;
+
+    set_timer(&iface->tm,
+              min(MAX_INITIAL_RTR_ADVERT_INTERVAL,
+                  iface->MaxRtrAdvInterval));
+  }
 }
 
 
@@ -157,6 +191,8 @@ int radvd_init(char *ifname, struct config *c) {
 
   // config_interface();
   radvd_kickoff_adverts();
+
+  set_debuglevel(0);
 
   return sock;
 }

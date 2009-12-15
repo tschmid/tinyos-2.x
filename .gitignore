@@ -1,2 +1,8 @@
 .??*.swp
 *.class
+*.o
+*.in
+*.a
+tools/tinyos
+tools/platforms/mica
+tools/platforms/msp430

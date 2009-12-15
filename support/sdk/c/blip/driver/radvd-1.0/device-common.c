@@ -1,5 +1,5 @@
 /*
- *   $Id: device-common.c,v 1.1 2009/01/20 00:28:15 sdhsdh Exp $
+ *   $Id: device-common.c,v 1.3 2009/08/20 17:03:05 sdhsdh Exp $
  *
  *   Authors:
  *    Lars Fenneberg		<lf@elemental.net>	 
@@ -13,10 +13,10 @@
  *
  */
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
-#include <defaults.h>
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
+#include "defaults.h"
 
 int
 check_device(int sock, struct Interface *iface)

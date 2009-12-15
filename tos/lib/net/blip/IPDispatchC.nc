@@ -39,11 +39,7 @@ configuration IPDispatchC {
   }
 } implementation {
   
-#ifndef SIM
-  components CC2420ActiveMessageC as MessageC;
-#else
-  components ActiveMessageC as MessageC;
-#endif
+  components Ieee154MessageC as MessageC; 
   components MainC, IPDispatchP, IPAddressC, IPRoutingP; 
   components NoLedsC as LedsC;
   components RandomC;
@@ -54,27 +50,25 @@ configuration IPDispatchC {
 
   IPDispatchP.Boot -> MainC;
 
-#ifndef SIM
-  IPDispatchP.IEEE154Send -> MessageC;
-  IPDispatchP.IEEE154Receive -> MessageC;
+#ifdef IEEE154FRAMES_ENABLED
+  IPDispatchP.Ieee154Send -> MessageC;
 #else
-  IPDispatchP.IEEE154Send -> MessageC.AMSend[0];
-  IPDispatchP.IEEE154Receive -> MessageC.Receive[0];
+  components ResourceSendP;
+  ResourceSendP.SubSend -> MessageC;
+  ResourceSendP.Resource -> MessageC.SendResource[unique(RADIO_SEND_RESOURCE)];
+  IPDispatchP.Ieee154Send -> ResourceSendP.Ieee154Send;
 #endif
-  IPDispatchP.Packet -> MessageC.SubAMPacket;
+
+  IPDispatchP.Ieee154Receive -> MessageC.Ieee154Receive;
+  IPDispatchP.Packet -> MessageC.Packet;
 #ifdef LOW_POWER_LISTENING
   IPDispatchP.LowPowerListening -> MessageC;
 #endif
 
-
-  IPDispatchP.IEEE154Packet -> MessageC;
+  components ReadLqiC;
+  IPDispatchP.Ieee154Packet -> MessageC;
   IPDispatchP.PacketLink -> MessageC;
-  IPDispatchP.CC2420Packet -> MessageC;
-
-#ifdef DBG_TRACK_FLOWS
-  IPDispatchP.getFlowID -> MessageC;
-#endif
-
+  IPDispatchP.ReadLqi -> ReadLqiC;
 
   IPDispatchP.Leds -> LedsC;
 
@@ -101,13 +95,21 @@ configuration IPDispatchC {
   IPRoutingP.ICMP  -> ICMPResponderC;
   IPDispatchP.RadioControl -> MessageC;
 
+  components IPExtensionP;
+  MainC.SoftwareInit -> IPExtensionP.Init;
+  IPDispatchP.InternalIPExtension -> IPExtensionP;
+
   IPDispatchP.IPRouting -> IPRoutingP;
   IPRoutingP.Boot -> MainC;
   IPRoutingP.Leds -> LedsC;
   IPRoutingP.IPAddress -> IPAddressC;
   IPRoutingP.Random -> RandomC;
   IPRoutingP.TrafficGenTimer -> TGenTimer;
-  IPRoutingP.TGenSend -> IPDispatchP.IP[NXTHDR_UNKNOWN];
+  IPRoutingP.TGenSend -> IPDispatchP.IP[IPV6_NONEXT];
+
+  IPRoutingP.IPExtensions -> IPDispatchP;
+  IPRoutingP.DestinationExt -> IPExtensionP.DestinationExt[0];
+  
 
   IPStats    = IPDispatchP;
   RouteStats = IPRoutingP;

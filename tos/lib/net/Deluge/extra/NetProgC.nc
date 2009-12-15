@@ -40,20 +40,24 @@ configuration NetProgC {
 
 implementation {
 
-  components MainC, InternalFlashC as IFlash, CrcP;
+  components MainC, InternalFlashC as IFlash, CrcC;
   components NetProgM, ReprogramGuardC;
 
   NetProg = NetProgM;
 
   MainC.SoftwareInit -> NetProgM.Init;
   NetProgM.IFlash -> IFlash;
-  NetProgM.Crc -> CrcP;
+  NetProgM.Crc -> CrcC;
   NetProgM.ReprogramGuard -> ReprogramGuardC;
 
   components LedsC;
   NetProgM.Leds -> LedsC;
   
-  components CC2420ControlP, ActiveMessageAddressC;
-  NetProgM.CC2420Config -> CC2420ControlP;
+  components ActiveMessageAddressC;
   NetProgM.setAmAddress -> ActiveMessageAddressC;
+
+#if !defined(PLATFORM_TINYNODE)
+  components CC2420ControlP;
+  NetProgM.CC2420Config -> CC2420ControlP;
+#endif
 }

@@ -1,18 +1,26 @@
 
 #include <ip_malloc.h>
 #include <in_cksum.h>
+#include <Statistics.h>
 
 module UdpP {
   provides interface UDP[uint8_t clnt];
   provides interface Init;
+  provides interface Statistics<udp_statistics_t>;
   uses interface IP;
   uses interface IPAddress;
 } implementation {
+
+#ifdef PRINTFUART_ENABLED
+#undef dbg
+#define dbg(X,fmt, args...) printfUART(fmt, ##args)
+#endif
 
   enum {
     N_CLIENTS = uniqueCount("UDP_CLIENT"),
   };
 
+  udp_statistics_t stats;
   uint16_t local_ports[N_CLIENTS];
 
   enum {
@@ -40,30 +48,22 @@ module UdpP {
   }
 
   command error_t Init.init() {
+    call Statistics.clear();
     ip_memclr((uint8_t *)local_ports, sizeof(uint16_t) * N_CLIENTS);
     return SUCCESS;
   }
 
-  void setSrcAddr(struct split_ip_msg *msg) {
-    if (msg->hdr.ip6_dst.s6_addr16[7] == htons(0xff02) ||
-        msg->hdr.ip6_dst.s6_addr16[7] == htons(0xfe80)) {
-      call IPAddress.getLLAddr(&msg->hdr.ip6_src);
-    } else {
-      call IPAddress.getIPAddr(&msg->hdr.ip6_src);
-    }
-  }
-
-
   command error_t UDP.bind[uint8_t clnt](uint16_t port) {
     int i;
     port = htons(port);
-    for (i = 0; i < N_CLIENTS; i++)
-      if (i != clnt && local_ports[i] == port)
-        return FAIL;
+    if (port > 0) {
+      for (i = 0; i < N_CLIENTS; i++)
+        if (i != clnt && local_ports[i] == port)
+          return FAIL;
+    }
     local_ports[clnt] = port;
     return SUCCESS;
   }
-
 
   event void IP.recv(struct ip6_hdr *iph,
                      void *payload,
@@ -86,6 +86,34 @@ module UdpP {
     ip_memcpy(&addr.sin6_addr, &iph->ip6_src, 16);
     addr.sin6_port = udph->srcport;
 
+
+    { 
+      uint16_t rx_cksum = ntohs(udph->chksum), my_cksum;
+      vec_t cksum_vec[4];
+      uint32_t hdr[2];
+
+      udph->chksum = 0;
+
+      cksum_vec[0].ptr = (uint8_t *)(iph->ip6_src.s6_addr);
+      cksum_vec[0].len = 16;
+      cksum_vec[1].ptr = (uint8_t *)(iph->ip6_dst.s6_addr);
+      cksum_vec[1].len = 16;
+      cksum_vec[2].ptr = (uint8_t *)hdr;
+      cksum_vec[2].len = 8;
+      hdr[0] = iph->plen;
+      hdr[1] = htonl(IANA_UDP);
+      cksum_vec[3].ptr = payload;
+      cksum_vec[3].len = ntohs(iph->plen);
+
+      my_cksum = in_cksum(cksum_vec, 4);
+      printfUART("rx cksum: %x calc: %x\n", rx_cksum, my_cksum);
+      if (rx_cksum != my_cksum) {
+        BLIP_STATS_INCR(stats.cksum);
+        // return;
+      }
+    }
+
+    BLIP_STATS_INCR(stats.rcvd);
     signal UDP.recvfrom[i](&addr, (void *)(udph + 1), ntohs(iph->plen) - sizeof(struct udp_hdr), meta);
   }
 
@@ -118,13 +146,16 @@ module UdpP {
     g_udp = (struct generic_header *)(udp + 1);
 
     // fill in all the packet fields
-    ip_memclr((uint8_t *)&msg->hdr, sizeof(struct ip6_hdr));
+    ip_memclr((uint8_t *)msg, sizeof(struct split_ip_msg));
     ip_memclr((uint8_t *)udp, sizeof(struct udp_hdr));
     
-    setSrcAddr(msg);
     memcpy(&msg->hdr.ip6_dst, dest->sin6_addr.s6_addr, 16);
+    call IPAddress.setSource(&msg->hdr);
     
-    if (local_ports[clnt] == 0 && alloc_lport(clnt) == 0) return FAIL;
+    if (local_ports[clnt] == 0 && (local_ports[clnt] = alloc_lport(clnt)) == 0) {
+      ip_free(msg);
+      return FAIL;
+    }
     udp->srcport = local_ports[clnt];
     udp->dstport = dest->sin6_port;
     udp->len = htons(len + sizeof(struct udp_hdr));
@@ -137,14 +168,28 @@ module UdpP {
     msg->headers = g_udp;
     msg->data_len = len;
     msg->data = payload;
+    msg->hdr.plen = udp->len;
 
     udp->chksum = htons(msg_cksum(msg, IANA_UDP)); 
 
     rc = call IP.send(msg);
+    BLIP_STATS_INCR(stats.sent);
 
     ip_free(msg);
     return rc;
 
+  }
+
+  command void Statistics.clear() {
+#ifdef BLIP_STATS
+    ip_memclr((uint8_t *)&stats, sizeof(udp_statistics_t));
+#endif
+  }
+
+  command void Statistics.get(udp_statistics_t *buf) {
+#ifdef BLIP_STATS
+    ip_memcpy(buf, &stats, sizeof(udp_statistics_t));
+#endif
   }
 
   default event void UDP.recvfrom[uint8_t clnt](struct sockaddr_in6 *from, void *payload,

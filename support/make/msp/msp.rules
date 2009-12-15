@@ -1,5 +1,5 @@
 #-*-Makefile-*- vim:syntax=make
-#$Id: msp.rules,v 1.16 2008/09/06 21:22:33 regehr Exp $
+#$Id: msp.rules,v 1.19 2009/11/12 20:40:06 razvanm Exp $
 
 define MSP_HELP
 
@@ -7,7 +7,6 @@ define MSP_HELP
 
    debug    : compile with minimal optimization and debug symbols
    debugopt : compile with debug symbols
-   xnp      : compile for network programming
 
  Programmer options:
 
@@ -39,7 +38,12 @@ SET_ID = tos-set-symbols
 NCC = ncc
 LIBS = -lm
 
-AMADDR = ActiveMessageAddressC\$$addr
+# Use __ as the separator - requires nesC 1.2.9 or later
+ifneq ($(filter sim,$(GOALS)),sim)
+        PFLAGS += -fnesc-separator=__
+endif
+
+AMADDR = ActiveMessageAddressC__addr
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_IHEX = $(BUILDDIR)/main.ihex

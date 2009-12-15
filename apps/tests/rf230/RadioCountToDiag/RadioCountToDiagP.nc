@@ -42,11 +42,13 @@ module RadioCountToDiagP
 
 		interface ActiveMessageAddress;
 		interface LowPowerListening;
+
+		interface Leds;
 	}
 }
 
 #ifndef SEND_PERIOD
-#define SEND_PERIOD 10
+#define SEND_PERIOD 20
 #endif
 
 #ifndef SLEEP_INTERVAL
@@ -68,7 +70,7 @@ implementation
 		else
 		{
 #ifdef LOW_POWER_LISTENING
-			call LowPowerListening.setLocalSleepInterval(SLEEP_INTERVAL);
+			call LowPowerListening.setLocalWakeupInterval(SLEEP_INTERVAL);
 #endif		
 			call SendTimer.startPeriodic(SEND_PERIOD);
 			call ReportTimer.startPeriodic(1000);
@@ -116,6 +118,8 @@ implementation
 
 	event void ReportTimer.fired()
 	{
+		call Leds.led0Toggle();
+
 		if( call DiagMsg.record() )
 		{
 			call DiagMsg.uint16(sendCount);
@@ -141,10 +145,12 @@ implementation
 	{
 		uint16_t addr;
 
+		call Leds.led1Toggle();
+		
 		call Packet.clear(&txMsg);
 		call PacketAcknowledgements.requestAck(&txMsg);
 #ifdef LOW_POWER_LISTENING
-		call LowPowerListening.setRxSleepInterval(&txMsg, SLEEP_INTERVAL);
+		call LowPowerListening.setRemoteWakeupInterval(&txMsg, SLEEP_INTERVAL);
 #endif
 
 		addr = call ActiveMessageAddress.amAddress();
