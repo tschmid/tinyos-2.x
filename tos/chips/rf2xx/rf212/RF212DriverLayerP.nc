@@ -457,7 +457,7 @@ implementation
 		atomic
 		{
 			call SLP_TR.set();
-			time = call RadioAlarm.getNow() + TX_SFD_DELAY;
+			time = call RadioAlarm.getNow();
 		}
 		call SLP_TR.clr();
 
@@ -487,7 +487,7 @@ implementation
 		}
 		while( --header != 0 );
 
-		time32 += (int16_t)(time) - (int16_t)(time32);
+		time32 += (int16_t)(time + TX_SFD_DELAY) - (int16_t)(time32);
 
 		if( timesync != 0 )
 			*(timesync_relative_t*)timesync = (*(timesync_absolute_t*)timesync) - time32;
@@ -514,23 +514,24 @@ implementation
 		// go back to RX_ON state when finished
 		writeRegister(RF212_TRX_STATE, RF212_RX_ON);
 
+		if( timesync != 0 )
+			*(timesync_absolute_t*)timesync = (*(timesync_relative_t*)timesync) + time32;
+
+		call PacketTimeStamp.set(msg, time32);
+
 #ifdef RADIO_DEBUG_MESSAGES
 		if( call DiagMsg.record() )
 		{
 			length = getHeader(msg)->length;
 
-			call DiagMsg.str("tx");
-			call DiagMsg.uint16(time);
-			call DiagMsg.uint8(length);
+			call DiagMsg.str('t');
+			call DiagMsg.uint32(call PacketTimeStamp.isValid(rxMsg) ? call PacketTimeStamp.timestamp(rxMsg) : 0);
+			call DiagMsg.uint16(call RadioAlarm.getNow());
+			call DiagMsg.int8(length);
 			call DiagMsg.hex8s(getPayload(msg), length - 2);
 			call DiagMsg.send();
 		}
 #endif
-
-		if( timesync != 0 )
-			*(timesync_absolute_t*)timesync = (*(timesync_relative_t*)timesync) + time32;
-
-		call PacketTimeStamp.set(msg, time32);
 
 		// wait for the TRX_END interrupt
 		state = STATE_BUSY_TX_2_RX_ON;
@@ -567,7 +568,7 @@ implementation
 	inline void downloadMessage()
 	{
 		uint8_t length;
-		uint8_t crc = 0;
+		bool crcValid = FALSE;
 
 		call SELN.clr();
 		call FastSpiByte.write(RF212_CMD_FRAME_READ);
@@ -586,7 +587,6 @@ implementation
 
 			data = getPayload(rxMsg);
 			getHeader(rxMsg)->length = length;
-			crc = 0;
 
 			// we do not store the CRC field
 			length -= 2;
@@ -612,7 +612,7 @@ implementation
 
 				call PacketLinkQuality.set(rxMsg, call FastSpiByte.splitReadWrite(0));
 				call FastSpiByte.splitReadWrite(0);	// ED
-				crc = call FastSpiByte.splitRead() & RF212_RX_CRC_VALID;	// RX_STATUS
+				crcValid = call FastSpiByte.splitRead() & RF212_RX_CRC_VALID;	// RX_STATUS
 			}
 		}
 
@@ -624,12 +624,13 @@ implementation
 		{
 			length = getHeader(rxMsg)->length;
 
-			call DiagMsg.str("rx");
+			call DiagMsg.str('r');
 			call DiagMsg.uint32(call PacketTimeStamp.isValid(rxMsg) ? call PacketTimeStamp.timestamp(rxMsg) : 0);
 			call DiagMsg.uint16(call RadioAlarm.getNow());
-			call DiagMsg.uint8(crc != 0);
-			call DiagMsg.uint8(length);
+			call DiagMsg.int8(crcValid ? length : -length);
 			call DiagMsg.hex8s(getPayload(rxMsg), length - 2);
+			call DiagMsg.int8(call PacketRSSI.isSet(rxMsg) ? call PacketRSSI.get(rxMsg) : -1);
+			call DiagMsg.uint8(call PacketLinkQuality.isSet(rxMsg) ? call PacketLinkQuality.get(rxMsg) : 0);
 			call DiagMsg.send();
 		}
 #endif
@@ -637,7 +638,7 @@ implementation
 		cmd = CMD_NONE;
 
 		// signal only if it has passed the CRC check
-		if( crc != 0 )
+		if( crcValid )
 			rxMsg = signal RadioReceive.receive(rxMsg);
 	}
 
@@ -684,6 +685,17 @@ implementation
 					call DiagMsg.uint8(cmd);
 					call DiagMsg.send();
 				}
+			}
+#endif
+
+#ifdef RF212_RSSI_ENERGY
+			if( irq & RF212_IRQ_TRX_END )
+			{
+				if( irq == RF212_IRQ_TRX_END || 
+					(irq == (RF212_IRQ_RX_START | RF212_IRQ_TRX_END) && cmd == CMD_NONE) )
+					call PacketRSSI.set(rxMsg, readRegister(RF212_PHY_ED_LEVEL));
+				else
+					call PacketRSSI.clear(rxMsg);
 			}
 #endif
 
@@ -769,12 +781,7 @@ implementation
 				else if( cmd == CMD_RECEIVE )
 				{
 					ASSERT( state == STATE_RX_ON || state == STATE_PLL_ON_2_RX_ON );
-#ifdef RF212_RSSI_ENERGY
-					if( irq == RF212_IRQ_TRX_END )
-						call PacketRSSI.set(rxMsg, readRegister(RF212_PHY_ED_LEVEL));
-					else
-						call PacketRSSI.clear(rxMsg);
-#endif
+
 					if( state == STATE_PLL_ON_2_RX_ON )
 					{
 						ASSERT( (readRegister(RF212_TRX_STATUS) & RF212_TRX_STATUS_MASK) == RF212_PLL_ON );

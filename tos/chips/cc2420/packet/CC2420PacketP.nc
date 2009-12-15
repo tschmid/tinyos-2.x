@@ -95,6 +95,21 @@ implementation {
     return (call CC2420PacketBody.getMetadata( p_msg ))->lqi;
   }
 
+  async command uint8_t CC2420Packet.getNetwork( message_t* p_msg ) {
+#if defined(TFRAMES_ENABLED)
+    return TINYOS_6LOWPAN_NETWORK_ID;
+#else
+    return (call CC2420PacketBody.getHeader( p_msg ))->network;
+#endif
+  }
+
+  async command void CC2420Packet.setNetwork( message_t* p_msg , uint8_t networkId ) {
+#if ! defined(TFRAMES_ENABLED)
+    (call CC2420PacketBody.getHeader( p_msg ))->network = networkId;
+#endif
+  }    
+
+
   /***************** CC2420PacketBody Commands ****************/
   async command cc2420_header_t * ONE CC2420PacketBody.getHeader( message_t* ONE msg ) {
     return TCAST(cc2420_header_t* ONE, (uint8_t *)msg + offsetof(message_t, data) - sizeof( cc2420_header_t ));

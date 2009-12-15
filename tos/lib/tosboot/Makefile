@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.4 2008/08/25 16:48:47 razvanm Exp $
+# $Id: Makefile,v 1.7 2009/11/10 07:03:34 rflury Exp $
 
 #
 #
@@ -28,7 +28,7 @@
 # @author Jonathan Hui <jwhui@cs.berkeley.edu>
 #
 
-COMPONENT=TOSBoot
+COMPONENT=TosBootC
 TINYOS_NP=
 
 PFLAGS += -DNESC_BUILD_BINARY
@@ -78,6 +78,22 @@ ifeq ($(MAKECMDGOALS),epic)
   CFLAGS += -I../net/Deluge
   POST_BUILD_EXTRA_DEPS += strip_iv
 endif
+
+ifeq ($(MAKECMDGOALS),mulle)
+  CFLAGS += -DTOSBOOT_START=0xe0000 -DTOSBOOT_END=0xeffff
+  CFLAGS += -Iat45db -Imulle -Im16c62p -Ilib
+  CFLAGS += -I../net/Deluge -I../net/Deluge/extra/mulle
+  CFLAGS += -I../net/Deluge/extra/m16c62p
+endif
+
+ifeq ($(MAKECMDGOALS),tinynode)
+  CFLAGS += -DTOSBOOT_START=0x4000 -DTOSBOOT_END=0x4a00
+  CFLAGS += -Itinynode -Imsp430 -Imsp430f1611 -Iat45db -Ilib
+  CFLAGS += -I../net/Deluge
+  POST_BUILD_EXTRA_DEPS += strip_iv 
+endif
+
+
 
 strip_iv: FORCE
 	@echo "    removing interrupt vector from binary"

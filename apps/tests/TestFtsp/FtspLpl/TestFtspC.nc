@@ -44,9 +44,7 @@ module TestFtspC
 
         interface TimeSyncPacket<T32khz,uint32_t>;
 
-#ifdef LOW_POWER_LISTENING
         interface LowPowerListening;
-#endif
 
     }
 }
@@ -100,7 +98,7 @@ implementation
     event void RandomTimer.fired()
     {
 #ifdef LOW_POWER_LISTENING
-        call LowPowerListening.setRxSleepInterval(&msg, LPL_INTERVAL);
+        call LowPowerListening.setRemoteWakeupInterval(&msg, LPL_INTERVAL);
 #endif
         if(locked && (call AMSend.send(4000, &msg, sizeof(test_ftsp_msg_t)) == SUCCESS)){
             call Leds.led2On();
@@ -116,9 +114,7 @@ implementation
     }
 
     event void RadioControl.startDone(error_t err) {
-#ifdef LOW_POWER_LISTENING
-        call LowPowerListening.setLocalSleepInterval(LPL_INTERVAL);
-#endif
+        call LowPowerListening.setLocalWakeupInterval(LPL_INTERVAL);
     }
     event void RadioControl.stopDone(error_t error){}
 }

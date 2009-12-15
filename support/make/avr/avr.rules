@@ -1,5 +1,5 @@
 #-*-Makefile-*- vim:syntax=make
-#$Id: avr.rules,v 1.23 2009/04/11 05:39:40 regehr Exp $
+#$Id: avr.rules,v 1.28 2009/12/02 17:48:21 razvanm Exp $
 
 define AVR_HELP
 
@@ -36,7 +36,11 @@ NCC = ncc
 LIBS = -lm
 
 # Use __ as the separator - requires nesC 1.2.9 or later
-PFLAGS += -fnesc-separator=__
+ifneq ($(filter sim,$(GOALS)),sim)
+ifneq ($(filter sim-sf,$(GOALS)),sim-sf)
+	PFLAGS += -fnesc-separator=__
+endif
+endif
 AMADDR = ActiveMessageAddressC__addr
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
@@ -64,6 +68,9 @@ else
 endif
 
 ifeq ($(PROGRAMMER),avrdude)
+  ifeq ($(findstring Darwin, $(shell uname)), Darwin)
+    AVRDUDE_CONF ?= /opt/local/etc/avrdude.conf
+  endif
   AVRDUDE_CONF ?= /etc/avrdude/avrdude.conf
   ifeq ($(shell [ -f /bin/cygwin1.dll ] && echo cygwin),cygwin)
     AVRDUDE_CONF := $(shell cygpath -m $(AVRDUDE_CONF))

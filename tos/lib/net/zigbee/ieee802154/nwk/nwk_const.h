@@ -20,7 +20,7 @@
 #define DEVICE_DEPTH 0x01
 
 //used to operate in a fixed channel
-#define LOGICAL_CHANNEL 0x15
+#define LOGICAL_CHANNEL 0x1A
 
 //PAN VARIABLES
 //conflict error

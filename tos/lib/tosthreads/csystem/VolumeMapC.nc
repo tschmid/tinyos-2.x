@@ -22,6 +22,7 @@
 
 /**
  * @author Chieh-Jan Mike Liang <cliang4@cs.jhu.edu>
+ * @author J— çgila Bitsch Link <jo.bitsch@cs.rwth-aachen.de>
  */
 
 configuration VolumeMapC { 
@@ -30,6 +31,8 @@ configuration VolumeMapC {
     interface BlockWrite[uint8_t volume_id];
     interface LogRead[uint8_t volume_id];
     interface LogWrite[uint8_t volume_id];
+    interface ConfigStorage[uint8_t volume_id];
+    interface Mount[uint8_t volume_id];
   }
 } 
 
@@ -40,4 +43,7 @@ implementation {
   BlockWrite = VolumeMapP;
   LogRead = VolumeMapP;
   LogWrite = VolumeMapP;
+  
+  ConfigStorage = VolumeMapP;
+  Mount = VolumeMapP;
 } 

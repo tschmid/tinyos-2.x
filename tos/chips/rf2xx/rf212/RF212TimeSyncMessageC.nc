@@ -28,15 +28,17 @@ configuration RF212TimeSyncMessageC
 	provides
 	{
 		interface SplitControl;
+
 		interface Receive[uint8_t id];
 		interface Receive as Snoop[am_id_t id];
+		interface Packet;
 		interface AMPacket;
 
-		interface Packet;
-
+		interface PacketTimeStamp<TRadio, uint32_t> as PacketTimeStampRadio;
 		interface TimeSyncAMSend<TRadio, uint32_t> as TimeSyncAMSendRadio[am_id_t id];
 		interface TimeSyncPacket<TRadio, uint32_t> as TimeSyncPacketRadio;
 
+		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
 		interface TimeSyncAMSend<TMilli, uint32_t> as TimeSyncAMSendMilli[am_id_t id];
 		interface TimeSyncPacket<TMilli, uint32_t> as TimeSyncPacketMilli;
 	}
@@ -47,13 +49,16 @@ implementation
 	components RF212DriverLayerC, RF212ActiveMessageC, TimeSyncMessageLayerC;
   
 	SplitControl	= RF212ActiveMessageC;
-  	Receive		= RF212ActiveMessageC.Receive;
-	Snoop		= RF212ActiveMessageC.Snoop;
-	AMPacket	= RF212ActiveMessageC;
+	AMPacket	= TimeSyncMessageLayerC;
+  	Receive		= TimeSyncMessageLayerC.Receive;
+	Snoop		= TimeSyncMessageLayerC.Snoop;
 	Packet		= TimeSyncMessageLayerC;
 
+	PacketTimeStampRadio	= RF212ActiveMessageC;
 	TimeSyncAMSendRadio	= TimeSyncMessageLayerC;
 	TimeSyncPacketRadio	= TimeSyncMessageLayerC;
+
+	PacketTimeStampMilli	= RF212ActiveMessageC;
 	TimeSyncAMSendMilli	= TimeSyncMessageLayerC;
 	TimeSyncPacketMilli	= TimeSyncMessageLayerC;
 

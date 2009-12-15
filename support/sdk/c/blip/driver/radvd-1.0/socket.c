@@ -1,5 +1,5 @@
 /*
- *   $Id: socket.c,v 1.1 2009/01/20 00:28:15 sdhsdh Exp $
+ *   $Id: socket.c,v 1.3 2009/08/20 17:03:05 sdhsdh Exp $
  *
  *   Authors:
  *    Pedro Roque		<roque@di.fc.ul.pt>
@@ -14,9 +14,9 @@
  *
  */
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
 
 /* Note: these are applicable to receiving sockopts only */
 #if defined IPV6_HOPLIMIT && !defined IPV6_RECVHOPLIMIT

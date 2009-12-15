@@ -24,6 +24,7 @@
 
 #include <message.h>
 #include <lib6lowpan.h>
+#include <Statistics.h>
 
 enum {
   N_PARENTS = 3,
@@ -36,14 +37,17 @@ enum {
 enum {
   CONF_EVICT_THRESHOLD = 5, // Neighbor is 'mature'
   CONF_PROM_THRESHOLD = 5, // Acceptable threshold for promotion
-  MAX_CONSEC_FAILURES = 40, // Max Failures before reroute is attempted
+  MAX_CONSEC_FAILURES = 11, // Max Failures before reroute is attempted
   PATH_COST_DIFF_THRESH = 10, // Threshold for 'similar' path costs
   LQI_DIFF_THRESH = 10, // Threshold for 'similar' LQI's
   LINK_EVICT_THRESH = 50, // ETX * 10
-  LQI_ADMIT_THRESH = 0x200, 
-  RSSI_ADMIT_THRESH = 0,
   RANDOM_ROUTE = 20, //Percentage of time to select random default route
+  LQI_ADMIT_THRESH = 0x200, 
 };
+
+/* chip-specific lqi values */
+uint16_t adjustLQI(uint8_t val);
+
 
 enum {
   WITHIN_THRESH = 1,
@@ -51,10 +55,18 @@ enum {
   BELOW_THRESH = 3,
 };
 
+#ifndef LOW_POWER_LISTENING
 enum {
   TGEN_BASE_TIME = 512,
   TGEN_MAX_INTERVAL = 60L * 1024L * 5L,
 };
+#else
+enum {
+  TGEN_BASE_TIME = 16384L,
+  TGEN_MAX_INTERVAL = 60L * 1024L * 5L,
+};
+#endif
+
 
 struct epoch_stats {
   uint16_t success;
@@ -98,12 +110,12 @@ enum {
 typedef struct {
   // The extra 2 is because one dest could be from source route, other
   //  from the dest being a direct neighbor
-  hw_addr_t dest[N_FLOW_CHOICES + N_PARENT_CHOICES + 2];
+  ieee154_saddr_t dest[N_FLOW_CHOICES + N_PARENT_CHOICES + 2];
   uint8_t   current:4;
   uint8_t   nchoices:4;
   uint8_t   retries;
   uint8_t   actRetries;
-  uint8_t   delay;
+  uint16_t  delay;
 } send_policy_t;
 
 typedef struct {
@@ -111,6 +123,7 @@ typedef struct {
   uint8_t frags_sent;
   bool failed;
   uint8_t refcount;
+  uint8_t local_flow_label;
 } send_info_t;
 
 typedef struct {
@@ -120,7 +133,7 @@ typedef struct {
 
 typedef struct {
   uint8_t timeout;
-  hw_addr_t l2_src;
+  ieee154_saddr_t l2_src;
   uint16_t old_tag;
   uint16_t new_tag;
   send_info_t *s_info;
@@ -193,7 +206,7 @@ struct flow_entry {
 struct neigh_entry {
   uint8_t flags;
   uint8_t hops; // Put this before neighbor to remove potential padding issues
-  hw_addr_t neighbor;
+  ieee154_saddr_t neighbor;
   uint16_t costEstimate;
   uint16_t linkEstimate;
   struct epoch_stats stats[N_EPOCHS];
@@ -226,47 +239,5 @@ typedef enum {
   S_REQ,
 } send_type_t;
 
-
-typedef nx_struct {
-  nx_uint16_t sent;
-  nx_uint16_t forwarded;
-  nx_uint8_t rx_drop;
-  nx_uint8_t tx_drop;
-  nx_uint8_t fw_drop;
-  nx_uint8_t rx_total;
-  nx_uint8_t real_drop;
-  nx_uint8_t hlim_drop;
-  nx_uint8_t senddone_el;
-  nx_uint8_t fragpool;
-  nx_uint8_t sendinfo;
-  nx_uint8_t sendentry;
-  nx_uint8_t sndqueue;
-  nx_uint8_t encfail;
-  nx_uint16_t heapfree;
-} ip_statistics_t;
-
-
-typedef nx_struct {
-  nx_uint8_t hop_limit;
-  nx_uint16_t parent;
-  nx_uint16_t parent_metric;
-  nx_uint16_t parent_etx;
-} route_statistics_t;
-
-typedef nx_struct {
-/*   nx_uint8_t sol_rx; */
-/*   nx_uint8_t sol_tx; */
-/*   nx_uint8_t adv_rx; */
-/*   nx_uint8_t adv_tx; */
-/*   nx_uint8_t unk_rx; */
-  nx_uint16_t rx;
-} icmp_statistics_t;
-
-typedef nx_struct {
-  nx_uint16_t total;
-  nx_uint16_t failed;
-  nx_uint16_t seqno;
-  nx_uint16_t sender;
-} udp_statistics_t;
 
 #endif
