@@ -44,28 +44,27 @@ typedef uint32_t __nesc_atomic_t;
 inline __nesc_atomic_t __nesc_atomic_start() @spontaneous() __attribute__((always_inline))
 {
 	__nesc_atomic_t oldState = 0;
-	__nesc_atomic_t newState = 0;
-
+	__nesc_atomic_t newState = 1;
+ 
 	asm volatile(
-		"mrs %0, primask\n"
-		"msr primask, %1\n"
-		: "=r" (oldState) // output
-		: "r" (newState) // input
+		"mrs %[old], primask\n"
+		"msr primask, %[new]\n"
+		: [old] "=&r" (oldState) // output, assure write only!
+		: [new] "r"  (newState)  // input
+        : "cc", "memory"         // clobber condition code flag and memory
 	);
-
-	asm volatile("" : : : "memory"); // memory barrier
-
+ 
 	return oldState;
 }
-
+ 
 inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous() __attribute__((always_inline))
 {
 	asm volatile("" : : : "memory"); // memory barrier
-
+ 
 	asm volatile(
-		"msr primask, %0"
-		: // output
-		: "r" (oldState) // input
+		"msr primask, %[old]"
+		:                      // no output
+		: [old] "r" (oldState) // input
 	);
 }
 

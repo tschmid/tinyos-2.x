@@ -110,10 +110,16 @@ typedef uint32_t* stack_ptr_t;
  * wiring in the target component (TinyThreadSchedulerP) is not
  * possible if this is defined as a macro.
  */
+
+// FIXME: The enable IRQ statement is currently a hack, since invoking
+// a system call w/ IRQs disabled results in a usage fault.
+// This should be properly synchronized eventually.
+
 #define SWITCH_CONTEXTS(from,to) \
 uint32_t icsr = *((volatile uint32_t *) 0xe000ed04); \
 uint16_t vectactive = icsr & 0x000001ff; \
 if (vectactive == 0) { \
+	__nesc_enable_interrupt(); \
 	asm volatile("svc 0"); \
 } else if (vectactive == 0xb) { \
 	context_switch(); \
