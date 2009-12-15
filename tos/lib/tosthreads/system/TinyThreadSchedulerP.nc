@@ -49,10 +49,10 @@ module TinyThreadSchedulerP {
     interface Timer<TMilli> as PreemptionAlarm;
 #ifdef MPU_PROTECTION
     interface HplSam3uMpu;
-#endif
     interface Foo;
     interface Bar;
     interface Blubb;
+#endif
   }
 }
 implementation {
@@ -148,7 +148,6 @@ implementation {
 			      : // output
 			      : "r" (newState) // input
 			  );
-			  ; // FIXME: commented out for now, since syscalls disable IRQs
 		  }
 
 		  // reactivate MPU (if not kernel thread)
@@ -236,7 +235,9 @@ implementation {
 
       if (svc_id == 0) { // context-switch syscall
 	    context_switch();
-      } else if (svc_id == 0x47) {
+      }
+#ifdef MPU_PROTECTION
+	  else if (svc_id == 0x47) {
 		error_t result = call Foo.blockingReadImpl((uint8_t) svc_r0, (uint16_t *) svc_r1);
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
@@ -253,6 +254,7 @@ implementation {
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
       }
+#endif
 
       return; // this will return to svc call site
   }
