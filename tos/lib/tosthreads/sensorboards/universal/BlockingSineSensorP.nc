@@ -48,6 +48,10 @@ implementation {
   BlockingReadP.SystemCallQueue -> SystemCallQueueC;
   BlockingReadP.SystemCall -> SystemCallC;
 
+#ifdef MPU_PROTECTION
+  components SyscallInstructionC;
+  BlockingReadP.SyscallInstruction -> SyscallInstructionC;
   components TinyThreadSchedulerP;
-  TinyThreadSchedulerP.Foo -> BlockingReadP;
+  TinyThreadSchedulerP.BlockingReadCallback -> BlockingReadP;
+#endif
 }

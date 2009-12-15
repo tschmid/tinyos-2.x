@@ -33,6 +33,8 @@
  * @author Kevin Klues <klueska@cs.stanford.edu>
  */
 
+#include "syscall_ids.h"
+
 module TinyThreadSchedulerP {
   provides {
     interface ThreadScheduler;
@@ -49,7 +51,7 @@ module TinyThreadSchedulerP {
     interface Timer<TMilli> as PreemptionAlarm;
 #ifdef MPU_PROTECTION
     interface HplSam3uMpu;
-    interface Foo;
+    interface BlockingReadCallback;
     interface Bar;
     interface Blubb;
 #endif
@@ -237,8 +239,8 @@ implementation {
 	    context_switch();
       }
 #ifdef MPU_PROTECTION
-	  else if (svc_id == 0x47) {
-		error_t result = call Foo.blockingReadImpl((uint8_t) svc_r0, (uint16_t *) svc_r1);
+	  else if (svc_id == SYSCALL_ID_READ) {
+		error_t result = call BlockingReadCallback.read((uint8_t) svc_r0, (uint16_t *) svc_r1);
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
       } else if (svc_id == 0x48) {
