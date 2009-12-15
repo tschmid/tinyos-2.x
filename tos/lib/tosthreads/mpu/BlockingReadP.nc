@@ -33,16 +33,20 @@
  * @author Kevin Klues <klueska@cs.stanford.edu>
  */
 
+#include "syscall_ids.h"
+
 generic module BlockingReadP() {
   provides {
     interface Init;
     interface BlockingRead<uint16_t> as BlockingRead[uint8_t client];
+	interface BlockingReadCallback;
   }
   uses {
     interface Read<uint16_t> as Read[uint8_t client];
     
     interface SystemCall;
     interface SystemCallQueue;
+	interface SyscallInstruction;
   }
 }
 implementation {
@@ -68,7 +72,11 @@ implementation {
     } 
   }  
   
-  command error_t BlockingRead.read[uint8_t id](uint16_t* val) {
+  command error_t BlockingRead.read[uint8_t id](uint16_t* val) __attribute__((section(".textcommon"))) {
+    return (call SyscallInstruction.syscall(SYSCALL_ID_READ, (uint32_t) id, (uint32_t) val, 0, 0));
+  }
+
+  command error_t BlockingReadCallback.read(uint8_t id, uint16_t* val) {
     syscall_t s;
     read_params_t p;
     atomic {

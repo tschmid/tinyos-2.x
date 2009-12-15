@@ -39,6 +39,10 @@ define st
 	echo (In exception handler: 1st word: r0, 2nd: r1, 3rd: r2, 4th: r3, 5th: r12, 6th: lr, 7th: pc, 8th: psr (CM3TR, p. 5-11)\n
 end
 
+define clock
+	mon at91sam3 info
+end
+
 define res
 	mon soft_reset_halt
 end
