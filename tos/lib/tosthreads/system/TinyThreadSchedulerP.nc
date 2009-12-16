@@ -147,8 +147,11 @@ implementation {
 		  // switch to unprivileged mode in thread mode (if not kernel thread)
 		  {
 			  uint32_t newState = 0x1; // MSP, user mode
+			  // An ISB instruction is required to ensure instruction fetch correctness following a Thread
+			  // mode privileged => unprivileged transition. (ARM7AALRM, p. B3-11)
 			  asm volatile(
-			      "msr control, %0"
+			      "msr control, %0\n"
+				  "isb\n"
 			      : // output
 			      : "r" (newState) // input
 			  );
@@ -160,12 +163,16 @@ implementation {
 		  // switch to privileged mode in thread mode (if kernel thread)
 		  {
 			  uint32_t newState = 0x0; // MSP, privileged mode
+			  // An ISB instruction is required to ensure instruction fetch correctness following a Thread
+			  // mode privileged => unprivileged transition. (ARM7AALRM, p. B3-11)
 			  asm volatile(
-				  "msr control, %0"
+				  "msr control, %0\n"
+				  "isb\n"
 				  : // output
 				  : "r" (newState) // input
 			  );
 		  }
+		  // do not reactivate MPU (if kernel thread)
       }
   }
 
