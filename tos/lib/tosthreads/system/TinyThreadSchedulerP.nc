@@ -33,7 +33,9 @@
  * @author Kevin Klues <klueska@cs.stanford.edu>
  */
 
+#ifdef MPU_PROTECTION
 #include "syscall_ids.h"
+#endif
 
 module TinyThreadSchedulerP {
   provides {
@@ -53,7 +55,7 @@ module TinyThreadSchedulerP {
     interface HplSam3uMpu;
     interface BlockingReadCallback;
     interface BlockingStdControlCallback;
-    interface Blubb;
+    interface BlockingAMSendCallback;
 #endif
   }
 }
@@ -251,8 +253,8 @@ implementation {
 		error_t result = call BlockingStdControlCallback.stop((uint8_t) svc_r0);
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
-      } else if (svc_id == 0x50) {
-		error_t result = call Blubb.send((am_id_t) svc_r0, (am_addr_t) svc_r1, (message_t *) svc_r2, (uint8_t) svc_r3);
+      } else if (svc_id == SYSCALL_ID_AMSEND) {
+		error_t result = call BlockingAMSendCallback.send((am_id_t) svc_r0, (am_addr_t) svc_r1, (message_t *) svc_r2, (uint8_t) svc_r3);
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
       }
@@ -514,4 +516,19 @@ implementation {
   default async command thread_t* ThreadInfo.get[uint8_t id]() {
     return NULL;
   }
+
+#ifdef MPU_PROTECTION
+  default command error_t BlockingReadCallback.read(uint8_t svc_r0, uint16_t *svc_r1) {
+    return FAIL;
+  }
+  default command error_t BlockingStdControlCallback.start(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t BlockingStdControlCallback.stop(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t BlockingAMSendCallback.send(am_id_t svc_r0, am_addr_t svc_r1, message_t * svc_r2, uint8_t svc_r3) {
+    return FAIL;
+  }
+#endif
 }

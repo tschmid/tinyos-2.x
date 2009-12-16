@@ -34,11 +34,13 @@
  * @author Chieh-Jan Mike Liang <cliang4@cs.jhu.edu>
  */
 
+#include "syscall_ids.h"
+
 generic module BlockingAMSenderImplP() {
   provides {
     interface Init;
     interface BlockingAMSend[am_id_t id];
-	interface Blubb;
+	interface BlockingAMSendCallback;
   }
   uses {
     interface SystemCall;
@@ -46,26 +48,10 @@ generic module BlockingAMSenderImplP() {
     interface AMSend[am_id_t id];
     interface Packet;
     interface Leds;
+	interface SyscallInstruction;
   }
 }
 implementation {
-
-	error_t syscall(uint8_t id, uint32_t p0, uint32_t p1, uint32_t p2, uint32_t p3) __attribute__((section(".textcommon")))
-	{
-		volatile uint32_t result;
-
-		asm volatile("mov r0, %0" : : "r" (p0));
-		asm volatile("mov r1, %0" : : "r" (p1));
-		asm volatile("mov r2, %0" : : "r" (p2));
-		asm volatile("mov r3, %0" : : "r" (p3));
-
-		asm volatile("svc %0" : : "i" (id));
-
-		// result is in r0
-		asm volatile("mov %0, r0" : "=r" (result));
-
-		return result;
-	}
 
   typedef struct params {
     am_addr_t  addr;
@@ -88,12 +74,12 @@ implementation {
     call Mutex.init(&my_mutex);
     return SUCCESS;
   }
-
-  command error_t BlockingAMSend.send[am_id_t am_id](am_addr_t addr, message_t* msg, uint8_t len) __attribute__((section(".textcommon"))) {
-		return syscall(0x50 /*syscall ID*/, (uint32_t) am_id, (uint32_t) addr, (uint32_t) msg, (uint8_t) len);
-  }
   
-  command error_t Blubb.send(am_id_t am_id, am_addr_t addr, message_t* msg, uint8_t len) {
+  command error_t BlockingAMSend.send[am_id_t am_id](am_addr_t addr, message_t* msg, uint8_t len) __attribute__((section(".textcommon"))) {
+    return (call SyscallInstruction.syscall(SYSCALL_ID_AMSEND, (uint32_t) am_id, (uint32_t) addr, (uint32_t) msg, (uint32_t) len));
+  }
+
+  command error_t BlockingAMSendCallback.send(am_id_t am_id, am_addr_t addr, message_t* msg, uint8_t len) {
     syscall_t s;
     params_t p;
     call Mutex.lock(&my_mutex);
@@ -137,3 +123,18 @@ implementation {
     return FAIL;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
