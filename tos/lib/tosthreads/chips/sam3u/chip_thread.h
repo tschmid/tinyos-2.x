@@ -106,6 +106,11 @@ typedef uint32_t* stack_ptr_t;
  * IRQ handler returns, or it invokes an SVCall with parameter 0,
  * which is executed promptly.
  *
+ * The restore-TCB call does the same thing, except that it uses
+ * SVCall with parameter 1, which indicates that the current context
+ * does not need to be saved. This should always happen with no
+ * IRQ being active, so the infinite loop should never be entered.
+ *
  * The corresponding register addresses are hard-coded because
  * wiring in the target component (TinyThreadSchedulerP) is not
  * possible if this is defined as a macro.
@@ -127,11 +132,15 @@ if (vectactive == 0) { \
 	*((volatile uint32_t *) 0xe000ed04) = 0x10000000; \
 }
 
-// FIXME Restoring the TCB is not implemented at this point.
-// The problem is that we need to pass a parameter (whether
-// to save the yielding thread's context or not) to the IRQ/
-// exception handler. To be done.
-#define RESTORE_TCB(t) while(1);
+#define RESTORE_TCB(t) \
+uint32_t icsr = *((volatile uint32_t *) 0xe000ed04); \
+uint16_t vectactive = icsr & 0x000001ff; \
+if (vectactive == 0) { \
+	__nesc_enable_interrupt(); \
+	asm volatile("svc 1"); \
+} else { \
+	while (1); \
+}
 
 /*
  * Documentation:

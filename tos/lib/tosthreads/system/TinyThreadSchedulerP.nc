@@ -210,11 +210,28 @@ implementation {
 	  asm volatile("bx lr"); // important because this is a naked function
   }
 
-  void context_switch() __attribute__((noinline, naked)) {
+  void context_switch() __attribute__((noinline, naked))
+  {
 	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("mrs r0, msp");
 		  asm volatile("stmdb r0!, {r1-r12,lr}");
 		  asm volatile("str r0, %0" : "=m" ((yielding_thread)->stack_ptr));
+		  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
+		  asm volatile("ldmia r0!, {r1-r12,lr}");
+		  asm volatile("msr msp, r0");
+#ifdef MPU_PROTECTION
+		  // already runs on the new stack, in new context
+		  asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
+		  switchMpuContexts();
+		  asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
+#endif
+	  }
+	  asm volatile("bx lr"); // important because this is a naked function
+  }
+
+  void restore_tcb() __attribute__((noinline, naked))
+  {
+	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
 		  asm volatile("ldmia r0!, {r1-r12,lr}");
 		  asm volatile("msr msp, r0");
@@ -246,7 +263,9 @@ implementation {
 
       if (svc_id == 0) { // context-switch syscall
 	    context_switch();
-      }
+      } else if (svc_id == 1) { // restore-TCB syscall
+	    restore_tcb();
+	  }
 #ifdef MPU_PROTECTION
 	  else if (svc_id == SYSCALL_ID_READ) {
 		error_t result = call BlockingReadCallback.read((uint8_t) svc_r0, (uint16_t *) svc_r1);
