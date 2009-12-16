@@ -52,7 +52,7 @@ module TinyThreadSchedulerP {
 #ifdef MPU_PROTECTION
     interface HplSam3uMpu;
     interface BlockingReadCallback;
-    interface Bar;
+    interface BlockingStdControlCallback;
     interface Blubb;
 #endif
   }
@@ -243,12 +243,12 @@ implementation {
 		error_t result = call BlockingReadCallback.read((uint8_t) svc_r0, (uint16_t *) svc_r1);
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
-      } else if (svc_id == 0x48) {
-		error_t result = call Bar.startImpl((uint8_t) svc_r0);
+      } else if (svc_id == SYSCALL_ID_STDCONTROL_START) {
+		error_t result = call BlockingStdControlCallback.start((uint8_t) svc_r0);
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
-      } else if (svc_id == 0x49) {
-		error_t result = call Bar.stopImpl((uint8_t) svc_r0);
+      } else if (svc_id == SYSCALL_ID_STDCONTROL_STOP) {
+		error_t result = call BlockingStdControlCallback.stop((uint8_t) svc_r0);
 		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = result;
       } else if (svc_id == 0x50) {
