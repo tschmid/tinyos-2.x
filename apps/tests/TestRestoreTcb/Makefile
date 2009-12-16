@@ -1,0 +1,2 @@
+COMPONENT=TestRestoreTcbAppC
+include $(MAKERULES)
