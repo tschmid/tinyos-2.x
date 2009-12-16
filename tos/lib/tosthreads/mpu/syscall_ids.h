@@ -5,5 +5,6 @@
 #define SYSCALL_ID_READ                   0x10
 #define SYSCALL_ID_STDCONTROL_START       0x11
 #define SYSCALL_ID_STDCONTROL_STOP        0x12
+#define SYSCALL_ID_AMSEND                 0x13
 
 #endif // SYSCALL_IDS_H

@@ -63,6 +63,10 @@ implementation {
   BlockingAMSenderImplP.Packet -> AM;
   BlockingAMSenderImplP.Leds -> LedsC;
 
+#ifdef MPU_PROTECTION
+  components SyscallInstructionC;
+  BlockingAMSenderImplP.SyscallInstruction -> SyscallInstructionC;
   components TinyThreadSchedulerP;
-  TinyThreadSchedulerP.Blubb -> BlockingAMSenderImplP;
+  TinyThreadSchedulerP.BlockingAMSendCallback -> BlockingAMSenderImplP;
+#endif
 }
