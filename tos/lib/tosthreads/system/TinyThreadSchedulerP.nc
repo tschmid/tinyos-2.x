@@ -191,7 +191,7 @@ implementation {
  * why we need to manually save volatile (caller-save) registers before calling
  * another (non-inlined) function.
  */
-  void PendSVHandler() @C() @spontaneous() __attribute__((naked))
+  void PendSVHandler() @C() @spontaneous() __attribute__((naked, flatten))
   {
 	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("mrs r0, msp");
@@ -210,7 +210,7 @@ implementation {
 	  asm volatile("bx lr"); // important because this is a naked function
   }
 
-  void context_switch() __attribute__((noinline, naked))
+  void context_switch() __attribute__((noinline, naked, flatten))
   {
 	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("mrs r0, msp");
@@ -229,7 +229,7 @@ implementation {
 	  asm volatile("bx lr"); // important because this is a naked function
   }
 
-  void restore_tcb() __attribute__((noinline, naked))
+  void restore_tcb() __attribute__((noinline, naked, flatten))
   {
 	  atomic { // context switch itself is protected from being interrupted
 		  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
