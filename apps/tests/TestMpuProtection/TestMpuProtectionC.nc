@@ -115,8 +115,9 @@ implementation
 		call Thread0.setupMpuRegion(1, TRUE, (void *) &_stextthread0, (((uint32_t) &_etextthread0) - ((uint32_t) &_stextthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
 		// ThreadInfoP$0$stack
 		call Thread0.setupMpuRegion(2, TRUE, (void *) 0x20000800, 0x400, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
-		// needed for LED: 0x400e0e34
-		call Thread0.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
+		// needed for LED: 0x400e0e34 (not needed anymore since LEDs are syscalls now)
+		//call Thread0.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
+		call Thread0.setupMpuRegion(3, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 		// thread-specific BSS: data0
 		if (&_sbssthread0 != &_ebssthread0) {
 			call Thread0.setupMpuRegion(4, TRUE, (void *) &_sbssthread0, (((uint32_t) &_ebssthread0) - ((uint32_t) &_sbssthread0)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
@@ -140,7 +141,8 @@ implementation
 		// ThreadInfoP$1$stack
 		call Thread1.setupMpuRegion(2, TRUE, (void *) 0x20000c00, 0x400, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
 		// needed for LED: 0x400e0e34
-		call Thread1.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
+		//call Thread1.setupMpuRegion(3, TRUE, (void *) 0x400e0000, 0x10000, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ FALSE, /*B*/ TRUE, 0x00); // 512 MB, periphery
+		call Thread1.setupMpuRegion(3, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 		// thread-specific BSS: data1
 		if (&_sbssthread1 != &_ebssthread1) {
 			call Thread1.setupMpuRegion(4, TRUE, (void *) &_sbssthread1, (((uint32_t) &_ebssthread1) - ((uint32_t) &_sbssthread1)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
@@ -218,8 +220,9 @@ implementation
 #ifdef MPU_PROTECTION
 	async event void HplSam3uMpu.mpuFault()
 	{
-		call Leds.led2On(); // LED 2 (red): MPU fault
-		while (1); // wait
+		// real implementation is in TinyThreadSchedulerP
+		// this is only included because of the MPU setup
+		// that is currently done in the booted() event of the app
 	}
 #endif
 }
