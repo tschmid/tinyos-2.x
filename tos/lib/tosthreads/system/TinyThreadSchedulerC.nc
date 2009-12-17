@@ -66,8 +66,8 @@ implementation {
   components new TimerMilliC() as Alarm;
   Sched.PreemptionAlarm -> Alarm;
   
-  components LedsC;
-  Sched.Leds -> LedsC;
+  components PlatformLedsC;
+  Sched.Led2 -> PlatformLedsC.Led2;
 
 #ifdef MPU_PROTECTION
   components HplSam3uMpuC;

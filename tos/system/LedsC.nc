@@ -43,5 +43,12 @@ implementation {
   LedsP.Led0 -> PlatformLedsC.Led0;
   LedsP.Led1 -> PlatformLedsC.Led1;
   LedsP.Led2 -> PlatformLedsC.Led2;
+
+#ifdef MPU_PROTECTION
+  components SyscallInstructionC;
+  LedsP.SyscallInstruction -> SyscallInstructionC;
+  components TinyThreadSchedulerP;
+  TinyThreadSchedulerP.LedsCallback -> LedsP;
+#endif
 }
 
