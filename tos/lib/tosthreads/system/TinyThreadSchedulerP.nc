@@ -426,6 +426,12 @@ implementation {
     current_thread = tos_thread;
     current_thread->state = TOSTHREAD_STATE_ACTIVE;
     current_thread->init_block = NULL;
+
+#ifdef MPU_PROTECTION
+	call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
+	call HplSam3uMpu.disableMpuDuringHardFaults();
+#endif
+
     signal TinyOSBoot.booted();
   }
   

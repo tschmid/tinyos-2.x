@@ -21,9 +21,6 @@ module TestMpuProtectionSyscallC
 		//interface Packet;
 		interface Leds;
 	}
-#ifdef MPU_PROTECTION
-	uses interface HplSam3uMpu;
-#endif
 }
 implementation
 {
@@ -38,9 +35,6 @@ implementation
 
 #ifdef MPU_PROTECTION
 		// MPU region setup has to be *after* thread start because init() sets all regions to disabled
-
-		call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
-		call HplSam3uMpu.disableMpuDuringHardFaults();
 
 		// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun() (here: inlined?)
 		call Thread0.setupMpuRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
@@ -88,12 +82,4 @@ implementation
 			wait();
 		}
 	}
-
-#ifdef MPU_PROTECTION
-	async event void HplSam3uMpu.mpuFault()
-	{
-		call Leds.led2On(); // LED 2 (red): MPU fault
-		while (1); // wait
-	}
-#endif
 }

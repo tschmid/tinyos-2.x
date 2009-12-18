@@ -40,9 +40,6 @@ module TestMpuProtectionC
 	uses interface Boot;
 	uses interface Thread as Thread0;
 	uses interface Thread as Thread1;
-#ifdef MPU_PROTECTION
-	uses interface HplSam3uMpu;
-#endif
 }
 implementation
 {
@@ -105,9 +102,6 @@ implementation
 		call Thread0.setupMpuRegion(6, TRUE, (void *) 0xe0100000, 535822336, /*X*/ FALSE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 511 MB, reserved
 		call Thread0.setupMpuRegion(7, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 #endif
-
-		call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
-		call HplSam3uMpu.disableMpuDuringHardFaults();
 
 		// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
 		call Thread0.setupMpuRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, code
@@ -218,13 +212,4 @@ implementation
 			call Leds.led2Toggle(); // Led 2 (red) blinking: fatal
 		}
 	}
-
-#ifdef MPU_PROTECTION
-	async event void HplSam3uMpu.mpuFault()
-	{
-		// real implementation is in TinyThreadSchedulerP
-		// this is only included because of the MPU setup
-		// that is currently done in the booted() event of the app
-	}
-#endif
 }
