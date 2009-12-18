@@ -35,6 +35,12 @@
 
 #ifdef MPU_PROTECTION
 #include "syscall_ids.h"
+
+// section symbols defined in the linker script
+extern unsigned int _stextcommon;
+extern unsigned int _etextcommon;
+extern unsigned int _sbsscommon;
+extern unsigned int _ebsscommon;
 #endif
 
 module TinyThreadSchedulerP {
@@ -123,7 +129,7 @@ implementation {
 	  if (current_thread->id != TOSTHREAD_TOS_THREAD_ID) {
 		  // deploy MPU settings of current_thread (if not kernel thread)
 		  uint8_t reg;
-		  for (reg = 0; reg < 8; reg++) {
+		  for (reg = 2; reg <= 4; reg++) {
 			thread_t *t = current_thread;
 			// FIXME: optimize later (packed MPU-like structure)
 			if (call HplSam3uMpu.setupRegion(
@@ -430,6 +436,18 @@ implementation {
 #ifdef MPU_PROTECTION
 	call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
 	call HplSam3uMpu.disableMpuDuringHardFaults();
+	// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
+	if (&_stextcommon != &_etextcommon) {
+		call HplSam3uMpu.setupRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00);
+	} else {
+		call HplSam3uMpu.setupRegion(0, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+	}
+	// common BSS: TinyThreadSchedulerP$current_thread (ro would be enough)
+	if (&_sbsscommon != &_ebsscommon) {
+		call HplSam3uMpu.setupRegion(1, TRUE, (void *) &_sbsscommon, (((uint32_t) &_ebsscommon) - ((uint32_t) &_sbsscommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00);
+	} else {
+		call HplSam3uMpu.setupRegion(1, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+	}
 #endif
 
     signal TinyOSBoot.booted();
