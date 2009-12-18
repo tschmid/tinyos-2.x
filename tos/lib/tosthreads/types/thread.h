@@ -125,7 +125,7 @@ struct thread {
   syscall_t* syscall;                   //Pointer to an instance of a system call
   thread_regs_t regs;                   //Contents of the GPRs stored when doing a context switch
 #ifdef MPU_PROTECTION
-  struct mpuregion regions[8];          //MPU settings for this thread
+  struct mpuregion regions[3];          //MPU settings for this thread, 0=code, 1=BSS, 2=data
 #endif
 };
 
