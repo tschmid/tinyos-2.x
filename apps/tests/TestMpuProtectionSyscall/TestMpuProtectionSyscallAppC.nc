@@ -27,9 +27,4 @@ implementation
 
 	components LedsC;
 	TestMpuProtectionSyscallC.Leds -> LedsC;
-
-#ifdef MPU_PROTECTION
-	components HplSam3uMpuC;
-	TestMpuProtectionSyscallC.HplSam3uMpu -> HplSam3uMpuC;
-#endif
 }

@@ -17,8 +17,4 @@ implementation
 	TestMpuProtectionC.Leds -> LedsC;
 	TestMpuProtectionC.Thread0 -> Thread0;
 	TestMpuProtectionC.Thread1 -> Thread1;
-#ifdef MPU_PROTECTION
-	components HplSam3uMpuC;
-	TestMpuProtectionC.HplSam3uMpu -> HplSam3uMpuC;
-#endif
 }
