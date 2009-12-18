@@ -48,7 +48,7 @@ implementation {
   // the stack has to be word-aligned on SAM3U,
   // otherwise we'll get bus faults
   static uint8_t stack[stack_size] __attribute__((aligned(4)));
-  thread_t thread_info __attribute__((section(".bsscommon"))); // FIXME: should be per thread
+  static thread_t thread_info;
 #else
   uint8_t stack[stack_size];
   thread_t thread_info;
