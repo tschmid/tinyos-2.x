@@ -7,6 +7,7 @@
 #define SYSCALL_ID_STDCONTROL_STOP        0x12
 #define SYSCALL_ID_AMSEND                 0x13
 #define SYSCALL_ID_LEDS                   0x14
+#define SYSCALL_ID_THREAD_SLEEP           0x15
 
 // LEDs functions
 #define SYSCALL_LEDS_PARAM_ON              0x0

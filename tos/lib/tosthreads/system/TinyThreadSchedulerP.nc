@@ -63,6 +63,7 @@ module TinyThreadSchedulerP {
     interface BlockingStdControlCallback;
     interface BlockingAMSendCallback;
     interface LedsCallback;
+    interface ThreadCallback;
 #endif
   }
 }
@@ -278,23 +279,27 @@ implementation {
 	  else if (svc_id == SYSCALL_ID_READ) {
 		error_t result = call BlockingReadCallback.read((uint8_t) svc_r0, (uint16_t *) svc_r1);
 		// put result in stacked r0, which will be interpreted as the result by calling function
-		args[0] = result;
+		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_STDCONTROL_START) {
 		error_t result = call BlockingStdControlCallback.start((uint8_t) svc_r0);
 		// put result in stacked r0, which will be interpreted as the result by calling function
-		args[0] = result;
+		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_STDCONTROL_STOP) {
 		error_t result = call BlockingStdControlCallback.stop((uint8_t) svc_r0);
 		// put result in stacked r0, which will be interpreted as the result by calling function
-		args[0] = result;
+		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_AMSEND) {
 		error_t result = call BlockingAMSendCallback.send((am_id_t) svc_r0, (am_addr_t) svc_r1, (message_t *) svc_r2, (uint8_t) svc_r3);
 		// put result in stacked r0, which will be interpreted as the result by calling function
-		args[0] = result;
+		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_LEDS) {
 		uint32_t result = call LedsCallback.leds((uint32_t) svc_r0, (uint32_t) svc_r1);
 		// put result in stacked r0, which will be interpreted as the result by calling function
-		args[0] = result;
+		args[0] = (uint32_t) result;
+      } else if (svc_id == SYSCALL_ID_THREAD_SLEEP) {
+		error_t result = call ThreadCallback.sleep((uint8_t) svc_r0, (uint32_t) svc_r1);
+		// put result in stacked r0, which will be interpreted as the result by calling function
+		args[0] = (uint32_t) result;
       }
 #endif
 
@@ -588,6 +593,9 @@ implementation {
   }
   default async command uint32_t LedsCallback.leds(uint32_t svc_r0, uint32_t svc_r1) {
     return 0;
+  }
+  default command error_t ThreadCallback.sleep(uint8_t svc_r0, uint32_t svc_r1) {
+    return FAIL;
   }
 #endif
 }

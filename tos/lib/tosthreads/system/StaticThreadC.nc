@@ -60,5 +60,12 @@ implementation {
   components TinyThreadSchedulerC;
   StaticThreadP.ThreadSleep -> ThreadSleepC;
   StaticThreadP.ThreadScheduler -> TinyThreadSchedulerC;
+
+#ifdef MPU_PROTECTION
+  components SyscallInstructionC;
+  StaticThreadP.SyscallInstruction -> SyscallInstructionC;
+  components TinyThreadSchedulerP;
+  TinyThreadSchedulerP.ThreadCallback -> StaticThreadP;
+#endif
 }
 
