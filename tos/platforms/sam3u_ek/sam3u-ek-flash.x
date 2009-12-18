@@ -162,6 +162,7 @@ SECTIONS
 		. = ALIGN(0x1000);
 		_sbssthread0 = .;
 		*(.bss.ThreadInfoP$0$stack)
+		*(.bss.ThreadInfoP$0$thread_info)
 		*(.bssthread0*)
 		. = ALIGN(0x1000);
 		_ebssthread0 = .;
@@ -169,6 +170,7 @@ SECTIONS
 		. = ALIGN(0x1000);
 		_sbssthread1 = .;
 		*(.bss.ThreadInfoP$1$stack)
+		*(.bss.ThreadInfoP$1$thread_info)
 		*(.bssthread1*)
 		. = ALIGN(0x1000);
 		_ebssthread1 = .;
@@ -176,6 +178,7 @@ SECTIONS
 		. = ALIGN(0x1000);
 		_sbssthread2 = .;
 		*(.bss.ThreadInfoP$2$stack)
+		*(.bss.ThreadInfoP$2$thread_info)
 		*(.bssthread2*)
 		. = ALIGN(0x1000);
 		_ebssthread2 = .;
@@ -183,6 +186,7 @@ SECTIONS
 		. = ALIGN(0x1000);
 		_sbssthread3 = .;
 		*(.bss.ThreadInfoP$3$stack)
+		*(.bss.ThreadInfoP$3$thread_info)
 		*(.bssthread3*)
 		. = ALIGN(0x1000);
 		_ebssthread3 = .;
