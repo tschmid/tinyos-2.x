@@ -33,6 +33,33 @@
  * @author Kevin Klues <klueska@cs.stanford.edu>
  */
 
+#ifdef MPU_PROTECTION
+extern unsigned int _stextthread0;
+extern unsigned int _etextthread0;
+extern unsigned int _stextthread1;
+extern unsigned int _etextthread1;
+extern unsigned int _stextthread2;
+extern unsigned int _etextthread2;
+extern unsigned int _stextthread3;
+extern unsigned int _etextthread3;
+extern unsigned int _sbssthread0;
+extern unsigned int _ebssthread0;
+extern unsigned int _sbssthread1;
+extern unsigned int _ebssthread1;
+extern unsigned int _sbssthread2;
+extern unsigned int _ebssthread2;
+extern unsigned int _sbssthread3;
+extern unsigned int _ebssthread3;
+extern unsigned int _sdatathread0;
+extern unsigned int _edatathread0;
+extern unsigned int _sdatathread1;
+extern unsigned int _edatathread1;
+extern unsigned int _sdatathread2;
+extern unsigned int _edatathread2;
+extern unsigned int _sdatathread3;
+extern unsigned int _edatathread3;
+#endif
+
 generic module ThreadInfoP(uint16_t stack_size, uint8_t thread_id) {
   provides {
     interface Init;
@@ -57,7 +84,37 @@ implementation {
   void run_thread(void* arg) __attribute__((noinline)) {
     signal ThreadFunction.signalThreadRun(arg);
   }
-  
+
+#ifdef MPU_PROTECTION
+  void setupMpuRegion(
+    uint8_t regionNumber,
+    bool enable,
+    void *baseAddress,
+    uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
+    bool enableInstructionFetch,
+    bool enableReadPrivileged,
+    bool enableWritePrivileged,
+    bool enableReadUnprivileged,
+    bool enableWriteUnprivileged,
+    bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
+    bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+    uint8_t disabledSubregions // bit = 1: subregion disabled
+  ) {
+    // setup region info for context switch to deploy
+    thread_info.regions[regionNumber].enable = enable;
+    thread_info.regions[regionNumber].baseAddress = baseAddress;
+    thread_info.regions[regionNumber].size = size;
+    thread_info.regions[regionNumber].enableInstructionFetch = enableInstructionFetch;
+    thread_info.regions[regionNumber].enableReadPrivileged = enableReadPrivileged;
+    thread_info.regions[regionNumber].enableWritePrivileged = enableWritePrivileged;
+    thread_info.regions[regionNumber].enableReadUnprivileged = enableReadUnprivileged;
+    thread_info.regions[regionNumber].enableWriteUnprivileged = enableWriteUnprivileged;
+    thread_info.regions[regionNumber].cacheable = cacheable;
+    thread_info.regions[regionNumber].bufferable = bufferable;
+    thread_info.regions[regionNumber].disabledSubregions = disabledSubregions;
+  }
+#endif
+
   error_t init() {
     thread_info.next_thread = NULL;
     thread_info.id = thread_id;
@@ -70,10 +127,34 @@ implementation {
     thread_info.syscall = NULL;
 #ifdef MPU_PROTECTION
 	{
-		uint8_t i;
-		// mark all regions as disabled for now
-		for (i = 0; i < 8; i++) {
-			thread_info.regions[i].enable = FALSE;
+		uint32_t stext = 0, etext = 0, sbss = 0, ebss = 0, sdata = 0, edata = 0;
+
+		if (thread_id == 0) {
+			stext = (uint32_t) &_stextthread0; etext = (uint32_t) &_etextthread0; sbss = (uint32_t) &_sbssthread0; ebss = (uint32_t) &_ebssthread0; sdata = (uint32_t) &_sdatathread0; edata = (uint32_t) &_edatathread0;
+		} else if (thread_id == 1) {
+			stext = (uint32_t) &_stextthread1; etext = (uint32_t) &_etextthread1; sbss = (uint32_t) &_sbssthread1; ebss = (uint32_t) &_ebssthread1; sdata = (uint32_t) &_sdatathread1; edata = (uint32_t) &_edatathread1;
+		} else if (thread_id == 2) {
+			stext = (uint32_t) &_stextthread2; etext = (uint32_t) &_etextthread2; sbss = (uint32_t) &_sbssthread2; ebss = (uint32_t) &_ebssthread2; sdata = (uint32_t) &_sdatathread2; edata = (uint32_t) &_edatathread2;
+		} else if (thread_id == 3) {
+			stext = (uint32_t) &_stextthread3; etext = (uint32_t) &_etextthread3; sbss = (uint32_t) &_sbssthread3; ebss = (uint32_t) &_ebssthread3; sdata = (uint32_t) &_sdatathread3; edata = (uint32_t) &_edatathread3;
+		}
+
+		if (stext != etext) {
+			setupMpuRegion(0, TRUE, (void *) stext, etext - stext, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		} else {
+			setupMpuRegion(0, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		}
+
+		if (sbss != ebss) {
+			setupMpuRegion(1, TRUE, (void *) sbss, ebss - sbss, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		} else {
+			setupMpuRegion(1, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+		}
+
+		if (sdata != edata) {
+			setupMpuRegion(2, TRUE, (void *) sdata, edata - sdata, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+		} else {
+			setupMpuRegion(2, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
 		}
 	}
 #endif

@@ -129,11 +129,11 @@ implementation {
 	  if (current_thread->id != TOSTHREAD_TOS_THREAD_ID) {
 		  // deploy MPU settings of current_thread (if not kernel thread)
 		  uint8_t reg;
-		  for (reg = 2; reg <= 4; reg++) {
+		  for (reg = 0; reg <= 2; reg++) {
 			thread_t *t = current_thread;
 			// FIXME: optimize later (packed MPU-like structure)
 			if (call HplSam3uMpu.setupRegion(
-				reg,
+				reg + 2, // first 2 regions occupied by common code and BSS
 				t->regions[reg].enable,
 				t->regions[reg].baseAddress,
 				t->regions[reg].size,
@@ -183,7 +183,8 @@ implementation {
       }
   }
 
-// FIXME for now this is OK
+  // FIXME for now this is OK
+  // in the long term, finding and killing (?) the appropriate thread will be necessary
   async event void HplSam3uMpu.mpuFault()
   {
 	  call Led2.set(); // LED 2 (red): MPU fault
