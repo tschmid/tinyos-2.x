@@ -92,6 +92,22 @@ SECTIONS
 		. = ALIGN(0x200);
 		_etextthread1 = .;
 
+		. = ALIGN(0x200);
+		_stextthread2 = .;
+		*(.text.ThreadInfoP$2$run_thread)
+		/* this will collect the definition of the thread's run() event in the app component */
+		*(.text.*$Thread2$run)
+		. = ALIGN(0x200);
+		_etextthread2 = .;
+
+		. = ALIGN(0x200);
+		_stextthread3 = .;
+		*(.text.ThreadInfoP$3$run_thread)
+		/* this will collect the definition of the thread's run() event in the app component */
+		*(.text.*$Thread3$run)
+		. = ALIGN(0x200);
+		_etextthread3 = .;
+
 		*(.text*)
 		*(.rodata*)
 		*(.glue_7) /* ARM/Thumb interworking code */
@@ -118,7 +134,20 @@ SECTIONS
 		. = ALIGN(0x200);
 		_edatathread1 = .;
 
+		. = ALIGN(0x200);
+		_sdatathread2 = .;
+		*(.datathread2*)
+		. = ALIGN(0x200);
+		_edatathread2 = .;
+
+		. = ALIGN(0x200);
+		_sdatathread3 = .;
+		*(.datathread3*)
+		. = ALIGN(0x200);
+		_edatathread3 = .;
+
 		*(.ramfunc) /* functions linked into RAM */
+		*(.data.*)
 		*(.data)
 		. = ALIGN(4);
 		_edata = .;
@@ -130,30 +159,41 @@ SECTIONS
 		. = ALIGN(4);
 		_sbss = .;
 
-		. = ALIGN(0x200);
+		. = ALIGN(0x1000);
 		_sbssthread0 = .;
+		*(.bss.ThreadInfoP$0$stack)
 		*(.bssthread0*)
-		. = ALIGN(0x200);
+		. = ALIGN(0x1000);
 		_ebssthread0 = .;
 
-		. = ALIGN(0x200);
+		. = ALIGN(0x1000);
 		_sbssthread1 = .;
+		*(.bss.ThreadInfoP$1$stack)
 		*(.bssthread1*)
-		. = ALIGN(0x200);
+		. = ALIGN(0x1000);
 		_ebssthread1 = .;
 
-		. = ALIGN(0x400);
-		_sbssstacks = .;
-		*(.bssstacks*)
-		. = ALIGN(0x400);
-		_ebssstacks = .;
+		. = ALIGN(0x1000);
+		_sbssthread2 = .;
+		*(.bss.ThreadInfoP$2$stack)
+		*(.bssthread2*)
+		. = ALIGN(0x1000);
+		_ebssthread2 = .;
 
-		. = ALIGN(0x400);
+		. = ALIGN(0x1000);
+		_sbssthread3 = .;
+		*(.bss.ThreadInfoP$3$stack)
+		*(.bssthread3*)
+		. = ALIGN(0x1000);
+		_ebssthread3 = .;
+
+		. = ALIGN(0x1000);
 		_sbsscommon = .;
 		*(.bsscommon*)
-		. = ALIGN(0x400);
+		. = ALIGN(0x1000);
 		_ebsscommon = .;
 
+		*(.bss.*)
 		*(.bss)
 		. = ALIGN(4);
 	} > sram0

@@ -47,7 +47,7 @@ implementation {
 #ifdef PLATFORM_SAM3U_EK
   // the stack has to be word-aligned on SAM3U,
   // otherwise we'll get bus faults
-  uint8_t stack[stack_size] __attribute__((aligned(4), section(".bssstacks"))); // FIXME: should be per thread
+  static uint8_t stack[stack_size] __attribute__((aligned(4)));
   thread_t thread_info __attribute__((section(".bsscommon"))); // FIXME: should be per thread
 #else
   uint8_t stack[stack_size];
