@@ -28,6 +28,7 @@ push ( @includes, qw(
   %T/chips/cc2420/spi
   %T/chips/cc2420/transmit
   %T/chips/cc2420/unique
+  %T/chips/cc2420/security
   %T/chips/pxa27x
   %T/chips/pxa27x/lib
   %T/chips/pxa27x/timer
