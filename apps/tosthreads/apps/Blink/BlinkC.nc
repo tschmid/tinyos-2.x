@@ -52,23 +52,23 @@ implementation {
     call TinyThread2.start(NULL);
   }
 
-  event void NullThread.run(void* arg) {
+  event void NullThread.run(void* arg) __attribute__((noinline)) {
     for(;;){
     }
   }  
-  event void TinyThread0.run(void* arg) {
+  event void TinyThread0.run(void* arg) __attribute__((noinline)) {
     for(;;){
       call Leds.led0Toggle();
       call TinyThread0.sleep(250);
     }
   }
-  event void TinyThread1.run(void* arg) {
+  event void TinyThread1.run(void* arg) __attribute__((noinline)) {
     for(;;){
       call Leds.led1Toggle();
       call TinyThread1.sleep(500);
     }
   }
-  event void TinyThread2.run(void* arg) {
+  event void TinyThread2.run(void* arg) __attribute__((noinline)) {
     for(;;){
       call Leds.led2Toggle();
       call TinyThread2.sleep(1000);

@@ -49,7 +49,7 @@ implementation {
     call NullThread.start(NULL);
   }
 
-  event void NullThread.run(void* arg) {
+  event void NullThread.run(void* arg) __attribute__((noinline)) {
     for(;;){
       call TinyThread0.start(NULL);
       call TinyThread1.start(NULL);
@@ -59,21 +59,21 @@ implementation {
       call TinyThread2.join();
     }
   }  
-  event void TinyThread0.run(void* arg) {
+  event void TinyThread0.run(void* arg) __attribute__((noinline)) {
     int i;
     for(i=0; i<2; i++){
       call Leds.led0Toggle();
       call TinyThread0.sleep(1000);
     }
   }
-  event void TinyThread1.run(void* arg) {
+  event void TinyThread1.run(void* arg) __attribute__((noinline)) {
     int i;
     for(i=0; i<4; i++){ 
       call Leds.led1Toggle();
       call TinyThread1.sleep(1000);
     }
   }
-  event void TinyThread2.run(void* arg) {
+  event void TinyThread2.run(void* arg) __attribute__((noinline)) {
     int i;
     for(i=0; i<6; i++){
       call Leds.led2Toggle();
