@@ -80,15 +80,27 @@ implementation {
     return FAIL;
   }
   
-  command error_t Thread.pause[uint8_t id]() {
+  command error_t Thread.pause[uint8_t id]() __attribute__((section(".textcommon"))) {
+    return (call SyscallInstruction.syscall(SYSCALL_ID_THREAD_PAUSE, (uint32_t) id, 0, 0, 0));
+  }
+
+  command error_t ThreadCallback.pause(uint8_t id) {
     return call ThreadScheduler.stopThread(id);
   }
   
-  command error_t Thread.resume[uint8_t id]() {
+  command error_t Thread.resume[uint8_t id]() __attribute__((section(".textcommon"))) {
+    return (call SyscallInstruction.syscall(SYSCALL_ID_THREAD_RESUME, (uint32_t) id, 0, 0, 0));
+  }
+
+  command error_t ThreadCallback.resume(uint8_t id) {
     return call ThreadScheduler.startThread(id);
   }
   
-  command error_t Thread.stop[uint8_t id]() {
+  command error_t Thread.stop[uint8_t id]() __attribute__((section(".textcommon"))) {
+    return (call SyscallInstruction.syscall(SYSCALL_ID_THREAD_STOP, (uint32_t) id, 0, 0, 0));
+  }
+
+  command error_t ThreadCallback.stop(uint8_t id) {
     if(call ThreadScheduler.stopThread(id) == SUCCESS)
       return init(id, NULL);
     return FAIL;

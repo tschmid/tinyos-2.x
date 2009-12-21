@@ -308,6 +308,15 @@ implementation {
       } else if (svc_id == SYSCALL_ID_THREAD_START) {
 		error_t result = call ThreadCallback.start((uint8_t) svc_r0, (void *) svc_r1);
 		args[0] = (uint32_t) result;
+      } else if (svc_id == SYSCALL_ID_THREAD_PAUSE) {
+		error_t result = call ThreadCallback.pause((uint8_t) svc_r0);
+		args[0] = (uint32_t) result;
+      } else if (svc_id == SYSCALL_ID_THREAD_RESUME) {
+		error_t result = call ThreadCallback.resume((uint8_t) svc_r0);
+		args[0] = (uint32_t) result;
+      } else if (svc_id == SYSCALL_ID_THREAD_STOP) {
+		error_t result = call ThreadCallback.stop((uint8_t) svc_r0);
+		args[0] = (uint32_t) result;
       }
 #endif
 
@@ -442,14 +451,15 @@ implementation {
   
   /* This executes and cleans up a thread
    */
-  void threadWrapper() __attribute__((naked, noinline, section(".textcommon"))) {
 #ifdef MPU_PROTECTION
+  void threadWrapper() __attribute__((naked, noinline, section(".textcommon"))) {
     thread_t* t = (thread_t *) (call SyscallInstruction.syscall(2, 0, 0, 0, 0));
 
     (*(t->start_ptr))(t->start_arg_ptr);
 
 	(void) call SyscallInstruction.syscall(3, (uint32_t) t, 0, 0, 0);
 #else
+  void threadWrapper() __attribute__((naked, noinline)) {
     thread_t* t;
     atomic t = current_thread;
     
@@ -638,6 +648,15 @@ implementation {
     return FAIL;
   }
   default command error_t ThreadCallback.start(uint8_t svc_r0, void *svc_r1) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.pause(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.resume(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.stop(uint8_t svc_r0) {
     return FAIL;
   }
 #endif
