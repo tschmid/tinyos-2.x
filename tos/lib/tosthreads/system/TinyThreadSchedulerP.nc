@@ -39,8 +39,6 @@
 // section symbols defined in the linker script
 extern unsigned int _stextcommon;
 extern unsigned int _etextcommon;
-extern unsigned int _sbsscommon;
-extern unsigned int _ebsscommon;
 #endif
 
 module TinyThreadSchedulerP {
@@ -70,7 +68,7 @@ module TinyThreadSchedulerP {
 }
 implementation {
   //Pointer to currently running thread
-  thread_t* current_thread __attribute__((section(".bsscommon")));
+  thread_t* current_thread;
   //Pointer to the tos thread
   thread_t* tos_thread;
   //Pointer to yielding thread
@@ -107,7 +105,7 @@ implementation {
    * compiler, causing obvious problems with the stack switching
    * thats going on....
    */
-  void switchThreads() __attribute__((noinline, section(".textcommon"))) {
+  void switchThreads() __attribute__((noinline)) {
     SWITCH_CONTEXTS(yielding_thread, current_thread);
   }
 
@@ -138,7 +136,7 @@ implementation {
 			thread_t *t = current_thread;
 			// FIXME: optimize later (packed MPU-like structure)
 			if (call HplSam3uMpu.setupRegion(
-				reg + 2, // first 2 regions occupied by common code and BSS
+				reg + 1, // first region occupied by common code (textcommon)
 				t->regions[reg].enable,
 				t->regions[reg].baseAddress,
 				t->regions[reg].size,
@@ -478,19 +476,20 @@ implementation {
     current_thread->init_block = NULL;
 
 #ifdef MPU_PROTECTION
-	call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
-	call HplSam3uMpu.disableMpuDuringHardFaults();
-	// common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
-	if (&_stextcommon != &_etextcommon) {
-		call HplSam3uMpu.setupRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00);
-	} else {
-		call HplSam3uMpu.setupRegion(0, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-	}
-	// common BSS: TinyThreadSchedulerP$current_thread (ro would be enough)
-	if (&_sbsscommon != &_ebsscommon) {
-		call HplSam3uMpu.setupRegion(1, TRUE, (void *) &_sbsscommon, (((uint32_t) &_ebsscommon) - ((uint32_t) &_sbsscommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00);
-	} else {
-		call HplSam3uMpu.setupRegion(1, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+    {
+      uint8_t i = 1;
+      call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
+      call HplSam3uMpu.disableMpuDuringHardFaults();
+      // common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
+      if (&_stextcommon != &_etextcommon) {
+        call HplSam3uMpu.setupRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00);
+      } else {
+        call HplSam3uMpu.setupRegion(0, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+      }
+      // all other regions are disabled for now
+      for (i = 1; i <= 7; i++) {
+        call HplSam3uMpu.setupRegion(i, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+      }
 	}
 #endif
 

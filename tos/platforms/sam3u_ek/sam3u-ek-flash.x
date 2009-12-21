@@ -199,12 +199,6 @@ SECTIONS
 		. = ALIGN(0x1000);
 		_ebssthread3 = .;
 
-		. = ALIGN(0x1000);
-		_sbsscommon = .;
-		*(.bsscommon*)
-		. = ALIGN(0x1000);
-		_ebsscommon = .;
-
 		*(.bss.*)
 		*(.bss)
 		. = ALIGN(4);
