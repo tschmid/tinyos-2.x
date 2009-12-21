@@ -10,6 +10,9 @@
 #define SYSCALL_ID_THREAD_SLEEP           0x15
 #define SYSCALL_ID_THREAD_JOIN            0x16
 #define SYSCALL_ID_THREAD_START           0x17
+#define SYSCALL_ID_THREAD_PAUSE           0x18
+#define SYSCALL_ID_THREAD_RESUME          0x19
+#define SYSCALL_ID_THREAD_STOP            0x20
 
 // LEDs functions
 #define SYSCALL_LEDS_PARAM_ON              0x0
