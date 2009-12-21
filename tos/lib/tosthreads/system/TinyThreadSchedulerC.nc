@@ -72,6 +72,8 @@ implementation {
 #ifdef MPU_PROTECTION
   components HplSam3uMpuC;
   Sched.HplSam3uMpu -> HplSam3uMpuC;
+  components SyscallInstructionC;
+  Sched.SyscallInstruction -> SyscallInstructionC;
 #endif
 }
 

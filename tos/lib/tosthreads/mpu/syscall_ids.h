@@ -8,6 +8,8 @@
 #define SYSCALL_ID_AMSEND                 0x13
 #define SYSCALL_ID_LEDS                   0x14
 #define SYSCALL_ID_THREAD_SLEEP           0x15
+#define SYSCALL_ID_THREAD_JOIN            0x16
+#define SYSCALL_ID_THREAD_START           0x17
 
 // LEDs functions
 #define SYSCALL_LEDS_PARAM_ON              0x0
