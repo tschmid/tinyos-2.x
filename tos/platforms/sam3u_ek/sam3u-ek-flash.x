@@ -81,6 +81,8 @@ SECTIONS
 		*(.text.ThreadInfoP$0$run_thread)
 		/* this will collect the definition of the thread's run() event in the app component */
 		*(.text.*$Thread0$run)
+		*(.text.TestJoinC$NullThread$run)
+		*(.text.BlinkC$NullThread$run)
 		. = ALIGN(0x200);
 		_etextthread0 = .;
 
@@ -89,6 +91,8 @@ SECTIONS
 		*(.text.ThreadInfoP$1$run_thread)
 		/* this will collect the definition of the thread's run() event in the app component */
 		*(.text.*$Thread1$run)
+		*(.text.TestJoinC$TinyThread0$run)
+		*(.text.BlinkC$TinyThread0$run)
 		. = ALIGN(0x200);
 		_etextthread1 = .;
 
@@ -97,6 +101,8 @@ SECTIONS
 		*(.text.ThreadInfoP$2$run_thread)
 		/* this will collect the definition of the thread's run() event in the app component */
 		*(.text.*$Thread2$run)
+		*(.text.TestJoinC$TinyThread1$run)
+		*(.text.BlinkC$TinyThread1$run)
 		. = ALIGN(0x200);
 		_etextthread2 = .;
 
@@ -105,6 +111,8 @@ SECTIONS
 		*(.text.ThreadInfoP$3$run_thread)
 		/* this will collect the definition of the thread's run() event in the app component */
 		*(.text.*$Thread3$run)
+		*(.text.TestJoinC$TinyThread2$run)
+		*(.text.BlinkC$TinyThread2$run)
 		. = ALIGN(0x200);
 		_etextthread3 = .;
 
