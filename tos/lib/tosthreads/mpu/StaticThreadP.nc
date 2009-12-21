@@ -64,7 +64,11 @@ implementation {
     return ecombine(r1, r2);
   }
   
-  command error_t Thread.start[uint8_t id](void* arg) {
+  command error_t Thread.start[uint8_t id](void* arg) __attribute__((section(".textcommon"))) {
+    return (call SyscallInstruction.syscall(SYSCALL_ID_THREAD_START, (uint32_t) id, (uint32_t) arg, 0, 0));
+  }
+
+  command error_t ThreadCallback.start(uint8_t id, void* arg) {
     atomic {
       if( init(id, arg) == SUCCESS ) {
         error_t e = call ThreadScheduler.startThread(id);
@@ -98,7 +102,11 @@ implementation {
     return call ThreadSleep.sleep(milli);
   }
   
-  command error_t Thread.join[uint8_t id]() {
+  command error_t Thread.join[uint8_t id]() __attribute__((section(".textcommon"))) {
+    return (call SyscallInstruction.syscall(SYSCALL_ID_THREAD_JOIN, (uint32_t) id, 0, 0, 0));
+  }
+
+  command error_t ThreadCallback.join(uint8_t id) {
     return call ThreadScheduler.joinThread(id);
   }
   

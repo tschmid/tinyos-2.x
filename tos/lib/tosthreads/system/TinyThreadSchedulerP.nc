@@ -59,6 +59,7 @@ module TinyThreadSchedulerP {
     interface Timer<TMilli> as PreemptionAlarm;
 #ifdef MPU_PROTECTION
     interface HplSam3uMpu;
+    interface SyscallInstruction;
     interface BlockingReadCallback;
     interface BlockingStdControlCallback;
     interface BlockingAMSendCallback;
@@ -81,6 +82,9 @@ implementation {
 
 #ifdef PLATFORM_SAM3U_EK
   void context_switch() __attribute__((noinline));
+  void restore_tcb() __attribute__((noinline));
+  thread_t *thread_prolog() __attribute__((noinline));
+  void thread_epilog(thread_t *t) __attribute__((noinline));
 #endif
   
   void task alarmTask() {
@@ -274,31 +278,37 @@ implementation {
 	    context_switch();
       } else if (svc_id == 1) { // restore-TCB syscall
 	    restore_tcb();
+      } else if (svc_id == 2) { // thread-prolog syscall
+	    thread_t *t = thread_prolog();
+		args[0] = (uint32_t) t;
+      } else if (svc_id == 3) { // thread-epilog syscall
+	    thread_epilog((thread_t *) svc_r0);
 	  }
 #ifdef MPU_PROTECTION
+      // put result in stacked r0, which will be interpreted as the result by calling function
 	  else if (svc_id == SYSCALL_ID_READ) {
 		error_t result = call BlockingReadCallback.read((uint8_t) svc_r0, (uint16_t *) svc_r1);
-		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_STDCONTROL_START) {
 		error_t result = call BlockingStdControlCallback.start((uint8_t) svc_r0);
-		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_STDCONTROL_STOP) {
 		error_t result = call BlockingStdControlCallback.stop((uint8_t) svc_r0);
-		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_AMSEND) {
 		error_t result = call BlockingAMSendCallback.send((am_id_t) svc_r0, (am_addr_t) svc_r1, (message_t *) svc_r2, (uint8_t) svc_r3);
-		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_LEDS) {
 		uint32_t result = call LedsCallback.leds((uint32_t) svc_r0, (uint32_t) svc_r1);
-		// put result in stacked r0, which will be interpreted as the result by calling function
 		args[0] = (uint32_t) result;
       } else if (svc_id == SYSCALL_ID_THREAD_SLEEP) {
 		error_t result = call ThreadCallback.sleep((uint8_t) svc_r0, (uint32_t) svc_r1);
-		// put result in stacked r0, which will be interpreted as the result by calling function
+		args[0] = (uint32_t) result;
+      } else if (svc_id == SYSCALL_ID_THREAD_JOIN) {
+		error_t result = call ThreadCallback.join((uint8_t) svc_r0);
+		args[0] = (uint32_t) result;
+      } else if (svc_id == SYSCALL_ID_THREAD_START) {
+		error_t result = call ThreadCallback.start((uint8_t) svc_r0, (void *) svc_r1);
 		args[0] = (uint32_t) result;
       }
 #endif
@@ -411,10 +421,37 @@ implementation {
     #endif
     signal ThreadCleanup.cleanup[t->id]();
   }
+
+  thread_t *thread_prolog() __attribute__((noinline))
+  {
+    thread_t* t;
+    atomic t = current_thread;
+
+    __nesc_enable_interrupt();
+
+	return t;
+  }
+
+  void thread_epilog(thread_t *t) __attribute__((noinline))
+  {
+    atomic {
+      stop(t);
+      sleepWhileIdle();
+      scheduleNextThread();
+      restoreThread();
+    }
+  }
   
   /* This executes and cleans up a thread
    */
   void threadWrapper() __attribute__((naked, noinline, section(".textcommon"))) {
+#ifdef MPU_PROTECTION
+    thread_t* t = (thread_t *) (call SyscallInstruction.syscall(2, 0, 0, 0, 0));
+
+    (*(t->start_ptr))(t->start_arg_ptr);
+
+	(void) call SyscallInstruction.syscall(3, (uint32_t) t, 0, 0, 0);
+#else
     thread_t* t;
     atomic t = current_thread;
     
@@ -427,6 +464,7 @@ implementation {
       scheduleNextThread();
       restoreThread();
     }
+#endif
   } 
   
   event void ThreadSchedulerBoot.booted() {
@@ -595,6 +633,12 @@ implementation {
     return 0;
   }
   default command error_t ThreadCallback.sleep(uint8_t svc_r0, uint32_t svc_r1) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.join(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.start(uint8_t svc_r0, void *svc_r1) {
     return FAIL;
   }
 #endif

@@ -139,7 +139,7 @@ if (vectactive == 0) { \
 	__nesc_enable_interrupt(); \
 	asm volatile("svc 1"); \
 } else { \
-	while (1); \
+	restore_tcb(); \
 }
 
 /*
