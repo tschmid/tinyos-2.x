@@ -101,30 +101,34 @@ implementation {
     uint8_t disabledSubregions // bit = 1: subregion disabled
   ) {
     // setup region info for context switch to deploy
-    thread_info.regions[regionNumber].enable = enable;
-    thread_info.regions[regionNumber].baseAddress = baseAddress;
-    thread_info.regions[regionNumber].size = size;
-    thread_info.regions[regionNumber].enableInstructionFetch = enableInstructionFetch;
-    thread_info.regions[regionNumber].enableReadPrivileged = enableReadPrivileged;
-    thread_info.regions[regionNumber].enableWritePrivileged = enableWritePrivileged;
-    thread_info.regions[regionNumber].enableReadUnprivileged = enableReadUnprivileged;
-    thread_info.regions[regionNumber].enableWriteUnprivileged = enableWriteUnprivileged;
-    thread_info.regions[regionNumber].cacheable = cacheable;
-    thread_info.regions[regionNumber].bufferable = bufferable;
-    thread_info.regions[regionNumber].disabledSubregions = disabledSubregions;
+	atomic {
+      thread_info.regions[regionNumber].enable = enable;
+      thread_info.regions[regionNumber].baseAddress = baseAddress;
+      thread_info.regions[regionNumber].size = size;
+      thread_info.regions[regionNumber].enableInstructionFetch = enableInstructionFetch;
+      thread_info.regions[regionNumber].enableReadPrivileged = enableReadPrivileged;
+      thread_info.regions[regionNumber].enableWritePrivileged = enableWritePrivileged;
+      thread_info.regions[regionNumber].enableReadUnprivileged = enableReadUnprivileged;
+      thread_info.regions[regionNumber].enableWriteUnprivileged = enableWriteUnprivileged;
+      thread_info.regions[regionNumber].cacheable = cacheable;
+      thread_info.regions[regionNumber].bufferable = bufferable;
+      thread_info.regions[regionNumber].disabledSubregions = disabledSubregions;
+	}
   }
 #endif
 
   error_t init() {
-    thread_info.next_thread = NULL;
-    thread_info.id = thread_id;
-    thread_info.init_block = NULL;
-    thread_info.stack_ptr = (stack_ptr_t)(STACK_TOP(stack, sizeof(stack)));
-    thread_info.state = TOSTHREAD_STATE_INACTIVE;
-    thread_info.mutex_count = 0;
-    thread_info.start_ptr = run_thread;
-    thread_info.start_arg_ptr = NULL;
-    thread_info.syscall = NULL;
+    atomic {
+      thread_info.next_thread = NULL;
+      thread_info.id = thread_id;
+      thread_info.init_block = NULL;
+      thread_info.stack_ptr = (stack_ptr_t)(STACK_TOP(stack, sizeof(stack)));
+      thread_info.state = TOSTHREAD_STATE_INACTIVE;
+      thread_info.mutex_count = 0;
+      thread_info.start_ptr = run_thread;
+      thread_info.start_arg_ptr = NULL;
+      thread_info.syscall = NULL;
+	}
 #ifdef MPU_PROTECTION
 	{
 		uint32_t stext = 0, etext = 0, sbss = 0, ebss = 0, sdata = 0, edata = 0;
