@@ -94,9 +94,6 @@ implementation {
     return call ThreadScheduler.joinThread(id);
   }
   
-#ifdef MPU_PROTECTION
-  event void ThreadFunction.signalThreadRun[uint8_t id](void *arg) __attribute__((section(".textcommon"))) {
-#endif
   event void ThreadFunction.signalThreadRun[uint8_t id](void *arg) {
     signal Thread.run[id](arg);
   }

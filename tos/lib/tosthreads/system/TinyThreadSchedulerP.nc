@@ -458,6 +458,7 @@ implementation {
     (*(t->start_ptr))(t->start_arg_ptr);
 
 	(void) call SyscallInstruction.syscall(3, (uint32_t) t, 0, 0, 0);
+  }
 #else
   void threadWrapper() __attribute__((naked, noinline)) {
     thread_t* t;
@@ -472,8 +473,8 @@ implementation {
       scheduleNextThread();
       restoreThread();
     }
+  }
 #endif
-  } 
   
   event void ThreadSchedulerBoot.booted() {
     num_runnable_threads = 0;
@@ -509,7 +510,7 @@ implementation {
   command error_t ThreadScheduler.initThread(uint8_t id) { 
     thread_t* t = (call ThreadInfo.get[id]());
     t->state = TOSTHREAD_STATE_INACTIVE;
-    t->init_block = current_thread->init_block;
+    atomic t->init_block = current_thread->init_block;
     call BitArrayUtils.clrArray(t->joinedOnMe, sizeof(t->joinedOnMe));
     PREPARE_THREAD(t, threadWrapper);
     return SUCCESS;
