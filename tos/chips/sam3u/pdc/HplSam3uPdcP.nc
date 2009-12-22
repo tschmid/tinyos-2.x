@@ -61,6 +61,46 @@ implementation{
     *TNPR = tnpr;
   }
 
+  async command uint32_t Pdc.getRxPtr(){
+    volatile periph_rpr_t* RPR = (volatile periph_rpr_t*) (PDC_BASE_ADDR + 0x0);
+    return RPR->bits.rxptr;
+  }
+
+  async command uint32_t Pdc.getTxPtr(){
+    volatile periph_tpr_t* TPR = (volatile periph_tpr_t*) (PDC_BASE_ADDR + 0x8);
+    return TPR->bits.txptr;
+  }
+
+  async command uint32_t Pdc.getNextRxPtr(){
+    volatile periph_rnpr_t* RNPR = (volatile periph_rnpr_t*) (PDC_BASE_ADDR + 0x10);
+    return RNPR->bits.rxnptr;
+  }
+
+  async command uint32_t Pdc.getNextTxPtr(){
+    volatile periph_tnpr_t* TNPR = (volatile periph_tnpr_t*) (PDC_BASE_ADDR + 0x18);
+    return TNPR->bits.txnptr;
+  }
+
+  async command uint16_t Pdc.getRxCounter(){
+    volatile periph_rcr_t* RCR = (volatile periph_rcr_t*) (PDC_BASE_ADDR + 0x4);
+    return RCR->bits.rxctr;
+  }
+
+  async command uint16_t Pdc.getTxCounter(){
+    volatile periph_tcr_t* TCR = (volatile periph_tcr_t*) (PDC_BASE_ADDR + 0xC);
+    return TCR->bits.txctr;
+  }
+
+  async command uint16_t Pdc.getNextRxCounter(){
+    volatile periph_rncr_t* RNCR = (volatile periph_rncr_t*) (PDC_BASE_ADDR + 0x14);
+    return RNCR->bits.rxnctr;
+  }
+
+  async command uint16_t Pdc.getNextTxCounter(){
+    volatile periph_tncr_t* TNCR = (volatile periph_tncr_t*) (PDC_BASE_ADDR + 0x1C);
+    return TNCR->bits.txnctr;
+  }
+
   async command void Pdc.setRxCounter(uint16_t counter){
     volatile periph_rcr_t* RCR = (volatile periph_rcr_t*) (PDC_BASE_ADDR + 0x4);
     periph_rcr_t rcr;
