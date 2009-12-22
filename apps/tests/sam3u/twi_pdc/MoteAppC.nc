@@ -21,41 +21,31 @@
 */
 
 /**
+ * Simple test program for SAM3U's TWI with LCD
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
+configuration MoteAppC {}
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+implementation
+{
+  components MainC,
+    LedsC, NoLedsC,
+    new TimerMilliC() as TimerC,
+    SerialActiveMessageC,
+    TwiReaderC,
+    LcdC,
+    MoteP;
 
-  async command uint32_t getRxPtr();
-  async command uint32_t getTxPtr();
-  async command uint32_t getNextRxPtr();
-  async command uint32_t getNextTxPtr();
-
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
-
-  async command uint16_t getRxCounter();
-  async command uint16_t getTxCounter();
-  async command uint16_t getNextRxCounter();
-  async command uint16_t getNextTxCounter();
-
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
-
+  MoteP.Boot -> MainC;
+  MoteP.Leds -> LedsC;
+  MoteP.TWI -> TwiReaderC;
+  MoteP.Resource -> TwiReaderC;
+  MoteP.SerialSplitControl -> SerialActiveMessageC;
+  MoteP.Packet -> SerialActiveMessageC;
+  MoteP.Timer -> TimerC;
+  MoteP.Lcd -> LcdC;
+  MoteP.Draw -> LcdC;
+  MoteP.ResourceConfigure -> TwiReaderC.ResourceConfigure[0];
+  MoteP.InternalAddr -> TwiReaderC;
 }

@@ -21,41 +21,27 @@
 */
 
 /**
+ * ADC configuration settings (part of test application) for SAM3U's 12 bit ADC
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+#include "sam3utwihardware.h"
 
-  async command uint32_t getRxPtr();
-  async command uint32_t getTxPtr();
-  async command uint32_t getNextRxPtr();
-  async command uint32_t getNextTxPtr();
+module TwiReaderP
+{
+  provides interface Sam3uTwiConfigure;
+}
 
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
+implementation {
 
-  async command uint16_t getRxCounter();
-  async command uint16_t getTxCounter();
-  async command uint16_t getNextRxCounter();
-  async command uint16_t getNextTxCounter();
+  const sam3u_twi_union_config_t config = {
+  cldiv: 59,
+  chdiv: 59,
+  ckdiv: 3
+  };
 
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
-
+  async command const sam3u_twi_union_config_t* Sam3uTwiConfigure.getConfig(){
+    return &config;
+  }
 }
