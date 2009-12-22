@@ -208,7 +208,6 @@ implementation {
       call HplTwi.setIntTxReady0();
 
       if(flags == I2C_START){
-	call Leds.led0Toggle();
 	call HplPdc.enablePdcTx();
 	if(len == 1){
 	  call HplTwi.setIntTxComp0();
@@ -249,10 +248,27 @@ implementation {
 	signal TwiBasicAddr.readDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
       }
     }else{
+      WRITE ++;
+      if(INIT_LEN != 1 && WRITE == INIT_LEN){
+	call HplTwi.disIntTxReady0();
+	call HplTwi.disIntTxComp0();
+	call HplPdc.setTxPtr(INIT_BUFFER);
+	call HplPdc.setTxCounter(1);
+	call HplPdc.enablePdcTx();
+	call HplTwi.setStop0();
+	call HplPdc.disablePdcTx();
+	atomic ACTION_STATE = IDLE_STATE;
+	signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
+	call Leds.led0Toggle();
+      }
+      /*
       if(call HplPdc.getTxCounter() == 1){
 	call HplTwi.setIntTxComp0();
 	call HplTwi.setStop0();
-      }else if(call HplPdc.getTxCounter() == 0 /*&& call HplTwi.getTxCompleted0()*/){
+      }
+      */
+      else if( INIT_LEN == 1/*call HplPdc.getTxCounter() == 0 && call HplTwi.getTxCompleted0()*/){
+	call Leds.led1Toggle();
 	atomic ACTION_STATE = IDLE_STATE;
 	call HplTwi.disIntTxReady0();
 	call HplTwi.disIntTxComp0();
