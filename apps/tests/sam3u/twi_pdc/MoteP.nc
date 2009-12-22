@@ -128,7 +128,7 @@ implementation
     call ResourceConfigure.configure();
     call InternalAddr.setInternalAddrSize(1);
     call InternalAddr.setInternalAddr(1); // sensor config register
-    call TWI.write(1, 0x48, 1, (uint8_t*)&tempWrite);
+    call TWI.write(1, 0x48, 2, (uint8_t*)&tempWrite);
 
     call Draw.drawInt(140,230,TCR->bits.txctr,1,COLOR_BLUE);
     call Draw.drawInt(140,250,SR->bits.endtx,1,COLOR_BLUE);
