@@ -1,6 +1,11 @@
 #!/usr/bin/perl -w
 
+# ./sam3u-wanja-tests.pl
+# ./sam3u-wanja-tests.pl compileonly
+
 use Term::ANSIColor;
+
+my $arg = $ARGV[0];
 
 my @apps = (
 	{"name" => "apps/tosthreads/apps/Blink", "variant" => "normal", "make" => "make sam3u_ek debug threads", "expected" => "LEDs count up modulo 8"},
@@ -32,13 +37,14 @@ foreach my $app (@apps)
 
 	print color 'red'; print("(Test $num of $total) Compiling $name, variant $variant.\n"); print color 'reset';
 	system("cd \$TOSROOT/$name && $make");
-	#print color 'red'; print("Press Return to continue, CTRL-C to abort.\n"); print color 'reset';
-	#$input = <STDIN>;
 
-	print color 'red'; print("(Test $num of $total) Flashing $name, variant $variant.\n"); print color 'reset';
-	system("cd \$TOSROOT/$name && sam3u-flash.sh");
-	print color 'red'; print("Hit the NRSTB button on the board.\n"); print color 'reset';
-	print color 'red'; print("Expected behavior: $expected.\n"); print color 'reset';
+	if ($arg ne 'compileonly') {
+		print color 'red'; print("(Test $num of $total) Flashing $name, variant $variant.\n"); print color 'reset';
+		system("cd \$TOSROOT/$name && sam3u-flash.sh");
+		print color 'red'; print("Hit the NRSTB button on the board.\n"); print color 'reset';
+		print color 'red'; print("Expected behavior: $expected.\n"); print color 'reset';
+	}
+
 	print color 'red'; print("Press Return to continue, CTRL-C to abort.\n"); print color 'reset';
 	$input = <STDIN>;
 }
