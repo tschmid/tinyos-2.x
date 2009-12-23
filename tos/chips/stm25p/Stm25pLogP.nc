@@ -161,7 +161,7 @@ implementation {
     
     // don't allow appends larger than maximum record size
     if ( len > MAX_RECORD_SIZE )
-      return ESIZE;
+      return EINVAL;
     
     // move to next block if current block doesn't have enough space
     if ( sizeof( m_header ) + len > bytes_left )
