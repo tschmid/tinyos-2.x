@@ -5,7 +5,12 @@
 
 use Term::ANSIColor;
 
-my $arg = $ARGV[0];
+my $arg;
+if (defined($ARGV[0])) {
+	$arg = $ARGV[0];
+} else {
+	$arg = "";
+}
 
 my @apps = (
 	{"name" => "apps/tosthreads/apps/Blink", "variant" => "normal", "make" => "make sam3u_ek debug threads", "expected" => "LEDs count up modulo 8"},
