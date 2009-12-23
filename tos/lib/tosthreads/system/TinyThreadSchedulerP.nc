@@ -57,6 +57,7 @@ module TinyThreadSchedulerP {
     interface Timer<TMilli> as PreemptionAlarm;
 #ifdef MPU_PROTECTION
     interface HplSam3uMpu;
+    interface HplSam3uMpuSettings;
     interface SyscallInstruction;
     interface BlockingReadCallback;
     interface BlockingStdControlCallback;
@@ -134,24 +135,7 @@ implementation {
 		  uint8_t reg;
 		  for (reg = 0; reg <= 2; reg++) {
 			thread_t *t = current_thread;
-			// FIXME: optimize later (packed MPU-like structure)
-			if (call HplSam3uMpu.setupRegion(
-				reg + 1, // first region occupied by common code (textcommon)
-				t->regions[reg].enable,
-				t->regions[reg].baseAddress,
-				t->regions[reg].size,
-				t->regions[reg].enableInstructionFetch,
-				t->regions[reg].enableReadPrivileged,
-				t->regions[reg].enableWritePrivileged,
-				t->regions[reg].enableReadUnprivileged,
-				t->regions[reg].enableWriteUnprivileged,
-				t->regions[reg].cacheable,
-				t->regions[reg].bufferable,
-				t->regions[reg].disabledSubregions
-			) == FAIL) {
-				// FIXME check at configuration time, not at deployment
-				while(1);
-			}
+			call HplSam3uMpu.deployRegion(t->regions[reg].rbar, t->regions[reg].rasr);
 		  }
 
 		  // switch to unprivileged mode in thread mode (if not kernel thread)
@@ -489,18 +473,26 @@ implementation {
 #ifdef MPU_PROTECTION
     {
       uint8_t i = 1;
+	  mpu_rbar_t rbar;
+	  mpu_rasr_t rasr;
+
       call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
       call HplSam3uMpu.disableMpuDuringHardFaults();
-      // common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
+
+      // all regions are disabled for now
+      for (i = 0; i <= 7; i++) {
+        call HplSam3uMpuSettings.getMpuSettings(i, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00, &rbar, &rasr);
+	    call HplSam3uMpu.deployRegion(rbar, rasr);
+      }
+
+      // 0-2 used by threads
+      // 3 for common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
       if (&_stextcommon != &_etextcommon) {
-        call HplSam3uMpu.setupRegion(0, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00);
+        call HplSam3uMpuSettings.getMpuSettings(3, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00, &rbar, &rasr);
       } else {
-        call HplSam3uMpu.setupRegion(0, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+        call HplSam3uMpuSettings.getMpuSettings(3, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00, &rbar, &rasr);
       }
-      // all other regions are disabled for now
-      for (i = 1; i <= 7; i++) {
-        call HplSam3uMpu.setupRegion(i, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
-      }
+	  call HplSam3uMpu.deployRegion(rbar, rasr);
 	}
 #endif
 
