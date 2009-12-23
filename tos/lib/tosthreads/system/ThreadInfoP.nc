@@ -68,6 +68,9 @@ generic module ThreadInfoP(uint16_t stack_size, uint8_t thread_id) {
   }
   uses {
     interface Leds;
+#ifdef MPU_PROTECTION
+    interface HplSam3uMpuSettings;
+#endif
   }
 }
 implementation {
@@ -85,38 +88,6 @@ implementation {
     signal ThreadFunction.signalThreadRun(arg);
   }
 
-#ifdef MPU_PROTECTION
-  void setupMpuRegion(
-    uint8_t regionNumber,
-    bool enable,
-    void *baseAddress,
-    uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
-    bool enableInstructionFetch,
-    bool enableReadPrivileged,
-    bool enableWritePrivileged,
-    bool enableReadUnprivileged,
-    bool enableWriteUnprivileged,
-    bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
-    bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
-    uint8_t disabledSubregions // bit = 1: subregion disabled
-  ) {
-    // setup region info for context switch to deploy
-	atomic {
-      thread_info.regions[regionNumber].enable = enable;
-      thread_info.regions[regionNumber].baseAddress = baseAddress;
-      thread_info.regions[regionNumber].size = size;
-      thread_info.regions[regionNumber].enableInstructionFetch = enableInstructionFetch;
-      thread_info.regions[regionNumber].enableReadPrivileged = enableReadPrivileged;
-      thread_info.regions[regionNumber].enableWritePrivileged = enableWritePrivileged;
-      thread_info.regions[regionNumber].enableReadUnprivileged = enableReadUnprivileged;
-      thread_info.regions[regionNumber].enableWriteUnprivileged = enableWriteUnprivileged;
-      thread_info.regions[regionNumber].cacheable = cacheable;
-      thread_info.regions[regionNumber].bufferable = bufferable;
-      thread_info.regions[regionNumber].disabledSubregions = disabledSubregions;
-	}
-  }
-#endif
-
   error_t init() {
     atomic {
       thread_info.next_thread = NULL;
@@ -132,6 +103,7 @@ implementation {
 #ifdef MPU_PROTECTION
 	{
 		uint32_t stext = 0, etext = 0, sbss = 0, ebss = 0, sdata = 0, edata = 0;
+		error_t result = SUCCESS;
 
 		if (thread_id == 0) {
 			stext = (uint32_t) &_stextthread0; etext = (uint32_t) &_etextthread0; sbss = (uint32_t) &_sbssthread0; ebss = (uint32_t) &_ebssthread0; sdata = (uint32_t) &_sdatathread0; edata = (uint32_t) &_edatathread0;
@@ -144,22 +116,24 @@ implementation {
 		}
 
 		if (stext != etext) {
-			setupMpuRegion(0, TRUE, (void *) stext, etext - stext, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+			result = ecombine(result, call HplSam3uMpuSettings.getMpuSettings(0, TRUE, (void *) stext, etext - stext, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00, &(thread_info.regions[0].rbar), &(thread_info.regions[0].rasr)));
 		} else {
-			setupMpuRegion(0, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+			result = ecombine(result, call HplSam3uMpuSettings.getMpuSettings(0, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00, &(thread_info.regions[0].rbar), &(thread_info.regions[0].rasr)));
 		}
 
 		if (sbss != ebss) {
-			setupMpuRegion(1, TRUE, (void *) sbss, ebss - sbss, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+			result = ecombine(result, call HplSam3uMpuSettings.getMpuSettings(1, TRUE, (void *) sbss, ebss - sbss, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00, &(thread_info.regions[1].rbar), &(thread_info.regions[1].rasr)));
 		} else {
-			setupMpuRegion(1, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+			result = ecombine(result, call HplSam3uMpuSettings.getMpuSettings(1, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00, &(thread_info.regions[1].rbar), &(thread_info.regions[1].rasr)));
 		}
 
 		if (sdata != edata) {
-			setupMpuRegion(2, TRUE, (void *) sdata, edata - sdata, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00); // 512 MB, SRAM
+			result = ecombine(result, call HplSam3uMpuSettings.getMpuSettings(2, TRUE, (void *) sdata, edata - sdata, /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00, &(thread_info.regions[2].rbar), &(thread_info.regions[2].rasr)));
 		} else {
-			setupMpuRegion(2, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00);
+			result = ecombine(result, call HplSam3uMpuSettings.getMpuSettings(2, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00, &(thread_info.regions[2].rbar), &(thread_info.regions[2].rasr)));
 		}
+
+		return result;
 	}
 #endif
     return SUCCESS;

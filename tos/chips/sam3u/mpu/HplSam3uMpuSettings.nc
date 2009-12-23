@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008 Stanford University.
+ * Copyright (c) 2009 Stanford University.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,44 +28,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 /**
- * @author Kevin Klues <klueska@cs.stanford.edu>
+ * HPL interface to the SAM3U MPU settings.
+ *
+ * @author wanja@cs.fau.de
  */
 
-#include "thread.h"
+#include "sam3umpuhardware.h"
 
-generic configuration ThreadC(uint16_t stack_size) {
-  provides {
-    interface Thread;
-    interface ThreadNotification;
-    interface ThreadInfo;
-  }
-}
-implementation {
-  enum {
-    THREAD_ID = unique(UQ_TOS_THREAD),
-  };
-  
-  components MainC;
-  components new ThreadInfoP(stack_size, THREAD_ID);
-  components StaticThreadC;
-  components ThreadMapC;
-  
-  MainC.SoftwareInit -> ThreadInfoP;
-  Thread = StaticThreadC.Thread[THREAD_ID];
-  ThreadNotification = StaticThreadC.ThreadNotification[THREAD_ID];
-  ThreadInfo = ThreadInfoP;
-  
-  StaticThreadC.ThreadFunction[THREAD_ID] -> ThreadInfoP;
-  StaticThreadC.ThreadCleanup[THREAD_ID]  -> ThreadMapC.StaticThreadCleanup[THREAD_ID];
-  StaticThreadC.ThreadInfo[THREAD_ID] -> ThreadInfoP;
-  
-  components LedsC;
-  ThreadInfoP.Leds -> LedsC;
-
-#ifdef MPU_PROTECTION
-  components HplSam3uMpuSettingsC;
-  ThreadInfoP.HplSam3uMpuSettings -> HplSam3uMpuSettingsC;
-#endif
+interface HplSam3uMpuSettings
+{
+	async command error_t getMpuSettings(
+		uint8_t regionNumber,
+		bool enable,
+		void *baseAddress,
+		uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
+		bool enableInstructionFetch,
+		bool enableReadPrivileged,
+		bool enableWritePrivileged,
+		bool enableReadUnprivileged,
+		bool enableWriteUnprivileged,
+		bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
+		bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
+		uint8_t disabledSubregions, // bit = 1: subregion disabled
+		mpu_rbar_t *rbar, // RBAR register value output
+		mpu_rasr_t *rasr
+	);
 }

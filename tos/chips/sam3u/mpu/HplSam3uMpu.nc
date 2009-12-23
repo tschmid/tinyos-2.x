@@ -35,6 +35,8 @@
  * @author wanja@cs.fau.de
  */
 
+#include "sam3umpuhardware.h"
+
 interface HplSam3uMpu
 {
 	async command void enableMpu();
@@ -46,20 +48,7 @@ interface HplSam3uMpu
 	async command void enableDefaultBackgroundRegion();
 	async command void disableDefaultBackgroundRegion();
 
-	async command error_t setupRegion(
-		uint8_t regionNumber,
-		bool enable,
-		void *baseAddress,
-		uint32_t size, // in bytes (bug: 4 GB not possible with this interface)
-		bool enableInstructionFetch,
-		bool enableReadPrivileged,
-		bool enableWritePrivileged,
-		bool enableReadUnprivileged,
-		bool enableWriteUnprivileged,
-		bool cacheable, // should be turned off for periphery and sys control (definitive guide, p. 213)
-		bool bufferable, // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
-		uint8_t disabledSubregions // bit = 1: subregion disabled
-		);
+	async command void deployRegion(mpu_rbar_t rbar, mpu_rasr_t rasr);
 
 	async event void mpuFault();
 }

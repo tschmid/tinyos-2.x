@@ -93,22 +93,15 @@ struct syscall {
   void* params;                     //Pointer to a set of parameters passed to the system call once it is running in task context
 };
 
+#ifdef MPU_PROTECTION
+#include "sam3umpuhardware.h"
+
 // This is an MPU region data structure
-// Similar to HplSam3uMpu interface, just
-// w/o region number (implicit in array position)
 struct mpuregion {
-	bool enable;
-	void *baseAddress;
-	uint32_t size; // in bytes (bug: 4 GB not possible with this interface)
-	bool enableInstructionFetch;
-	bool enableReadPrivileged;
-	bool enableWritePrivileged;
-	bool enableReadUnprivileged;
-	bool enableWriteUnprivileged;
-	bool cacheable; // should be turned off for periphery and sys control (definitive guide, p. 213)
-	bool bufferable; // should be turned off for sys control to be strongly ordered (definitive guide, p. 213)
-	uint8_t disabledSubregions; // bit = 1: subregion disabled
+  mpu_rbar_t rbar;
+  mpu_rasr_t rasr;
 };
+#endif
 
 //This is a thread data structure
 struct thread {
