@@ -155,20 +155,31 @@ implementation {
       }      
       break;
     case 1:
-      if(len == 1){
-	call HplTwi.setStop1();
-      }
       call HplTwi.disMaster1();
       call HplTwi.disSlave1();
       call HplTwi.setMaster1();
+      
+      //set up PDC registers
+      call HplPdc.setRxPtr(buf);
+      call HplPdc.setRxCounter(len);
+
+      //set up master read mode
       call HplTwi.addrSize1(IASIZE);
-      call HplTwi.setDeviceAddr1((uint8_t)addr);
+      call HplTwi.setDeviceAddr1((uint8_t)addr); // this is for the connected sensor
       if(IASIZE > 0)
 	call HplTwi.setInternalAddr1(INTADDR);
-      call HplTwi.setIntRxReady1();
       call HplTwi.setDirection1(1); // read direction
-      if(flags == I2C_START)
+
+      //enable interrupt for PDC
+      call HplTwi.setIntRxReady1();
+
+      //start the read process via pdc
+      if(flags == I2C_START){
+	if(len == 1)
+	  call HplTwi.setStop1();
+	call HplPdc.enablePdcRx();
 	call HplTwi.setStart1();
+      }
       break;
     }
     return SUCCESS;
@@ -216,18 +227,24 @@ implementation {
       }
       break;
     case 1:
-      call HplTwi.setMaster1();
+      call HplPdc.setTxPtr(buf);
+      call HplPdc.setTxCounter(len);
+
       call HplTwi.disSlave1();
+      call HplTwi.setMaster1();
+
       call HplTwi.addrSize1(IASIZE);
       call HplTwi.setDeviceAddr1((uint8_t)addr);
       if(IASIZE > 0)
 	call HplTwi.setInternalAddr1(INTADDR);
-      call HplTwi.setDirection1(0); // write direction
+      call HplTwi.setDirection1(0); //write direction
+
       call HplTwi.setIntTxReady1();
+
       if(flags == I2C_START){
-	call HplTwi.setTxReg1((uint8_t)INIT_BUFFER[WRITE]);
-	if(INIT_LEN == 1){
-	  //call HplTwi.setIntTxComp1();
+	call HplPdc.enablePdcTx();
+	if(len == 1){
+	  call HplTwi.setIntTxComp1();
 	  call HplTwi.setStop1();
 	}
       }
@@ -252,22 +269,15 @@ implementation {
       if(INIT_LEN != 1 && WRITE == INIT_LEN){
 	call HplTwi.disIntTxReady0();
 	call HplTwi.disIntTxComp0();
-	call HplPdc.setTxPtr(INIT_BUFFER);
-	call HplPdc.setTxCounter(1);
-	call HplPdc.enablePdcTx();
+	//call HplPdc.setTxPtr(INIT_BUFFER);
+	//call HplPdc.setTxCounter(1);
+	//call HplPdc.enablePdcTx();
 	call HplTwi.setStop0();
 	call HplPdc.disablePdcTx();
 	atomic ACTION_STATE = IDLE_STATE;
 	signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
 	call Leds.led0Toggle();
-      }
-      /*
-      if(call HplPdc.getTxCounter() == 1){
-	call HplTwi.setIntTxComp0();
-	call HplTwi.setStop0();
-      }
-      */
-      else if( INIT_LEN == 1/*call HplPdc.getTxCounter() == 0 && call HplTwi.getTxCompleted0()*/){
+      }else if( INIT_LEN == 1){
 	call Leds.led1Toggle();
 	atomic ACTION_STATE = IDLE_STATE;
 	call HplTwi.disIntTxReady0();
@@ -279,47 +289,37 @@ implementation {
   }
 
   async event void TwiInterrupt.fired1(){
-    if(call HplTwi.getRxReady1()){
-      atomic INIT_BUFFER[READ] = call HplTwi.readRxReg1(); // read out rx buffer
-      LEN --;
-      READ ++;
-      if(LEN == 1){
-	call HplTwi.setStop1();
-      }else if(LEN > 1){
-	return;
-      }else{
-	call HplTwi.disIntRxReady1();
+    if(ACTION_STATE == RX_STATE){
+      if(call HplPdc.getRxCounter()){
+	if(call HplPdc.getRxCounter() == 1){
+	  call HplTwi.setStop1();
+	}
+      }else if(call HplPdc.getRxCounter() == 0){
 	atomic ACTION_STATE = IDLE_STATE;
+	call HplPdc.disablePdcRx();
 	signal TwiBasicAddr.readDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
       }
-    }else if(call HplTwi.getTxReady1()){
-      if(INIT_LEN != 1){
-	WRITE ++;
-	if(WRITE < INIT_LEN){
-	  if(WRITE+1 == INIT_LEN){	    
-	    call HplTwi.disIntTxReady1();
-	    call HplTwi.setIntTxComp1();
-	    call HplTwi.setStop1();
-	    call HplTwi.setTxReg1((uint8_t)INIT_BUFFER[WRITE]);
-	  }else{
-	    call HplTwi.setTxReg1((uint8_t)INIT_BUFFER[WRITE]);
-	  }
-	}else if(WRITE == INIT_LEN && call HplTwi.getTxCompleted1()){ // finished writing mutiple bytes
-	  atomic ACTION_STATE = IDLE_STATE;
-	  call HplTwi.disIntTxReady1();
-	  call HplTwi.disIntTxComp1();
-	  signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
-	}
-      }else if(INIT_LEN == 1 && call HplTwi.getTxCompleted1()){
+    }else{
+      WRITE ++;
+      if(INIT_LEN != 1 && WRITE == INIT_LEN){
+	call HplTwi.disIntTxReady1();
+	call HplTwi.disIntTxComp1();
+	//call HplPdc.setTxPtr(INIT_BUFFER);
+	//call HplPdc.setTxCounter(1);
+	//call HplPdc.enablePdcTx();
+	call HplTwi.setStop1();
+	call HplPdc.disablePdcTx();
+	atomic ACTION_STATE = IDLE_STATE;
+	signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
+	call Leds.led0Toggle();
+      }else if( INIT_LEN == 1){
+	call Leds.led1Toggle();
 	atomic ACTION_STATE = IDLE_STATE;
 	call HplTwi.disIntTxReady1();
 	call HplTwi.disIntTxComp1();
+	call HplPdc.disablePdcTx();
 	signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
       }
-    }else if(call HplTwi.getTxCompleted1() && ACTION_STATE == TX_STATE){
-      atomic ACTION_STATE = IDLE_STATE;
-      call HplTwi.disIntTxComp1();
-      signal TwiBasicAddr.writeDone(SUCCESS, ADDR, WRITE, INIT_BUFFER);
     }
   }
 
