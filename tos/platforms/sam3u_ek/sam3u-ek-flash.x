@@ -69,53 +69,6 @@ SECTIONS
 		. = ALIGN(4);
 		_stext = .;
 		KEEP(*(.vectors))
-
-		. = ALIGN(0x400);
-		_stextcommon = .;
-		*(.textcommon*)
-		. = ALIGN(0x400);
-		_etextcommon = .;
-
-		. = ALIGN(0x200);
-		_stextthread0 = .;
-		*(.text.ThreadInfoP$0$run_thread)
-		/* this will collect the definition of the thread's run() event in the app component */
-		*(.text.*$Thread0$run)
-		*(.text.TestJoinC$NullThread$run)
-		*(.text.BlinkC$NullThread$run)
-		. = ALIGN(0x200);
-		_etextthread0 = .;
-
-		. = ALIGN(0x200);
-		_stextthread1 = .;
-		*(.text.ThreadInfoP$1$run_thread)
-		/* this will collect the definition of the thread's run() event in the app component */
-		*(.text.*$Thread1$run)
-		*(.text.TestJoinC$TinyThread0$run)
-		*(.text.BlinkC$TinyThread0$run)
-		. = ALIGN(0x200);
-		_etextthread1 = .;
-
-		. = ALIGN(0x200);
-		_stextthread2 = .;
-		*(.text.ThreadInfoP$2$run_thread)
-		/* this will collect the definition of the thread's run() event in the app component */
-		*(.text.*$Thread2$run)
-		*(.text.TestJoinC$TinyThread1$run)
-		*(.text.BlinkC$TinyThread1$run)
-		. = ALIGN(0x200);
-		_etextthread2 = .;
-
-		. = ALIGN(0x200);
-		_stextthread3 = .;
-		*(.text.ThreadInfoP$3$run_thread)
-		/* this will collect the definition of the thread's run() event in the app component */
-		*(.text.*$Thread3$run)
-		*(.text.TestJoinC$TinyThread2$run)
-		*(.text.BlinkC$TinyThread2$run)
-		. = ALIGN(0x200);
-		_etextthread3 = .;
-
 		*(.text*)
 		*(.rodata*)
 		*(.glue_7) /* ARM/Thumb interworking code */
@@ -129,31 +82,6 @@ SECTIONS
 	{
 		. = ALIGN(4);
 		_sdata = .;
-
-		. = ALIGN(0x200);
-		_sdatathread0 = .;
-		*(.datathread0*)
-		. = ALIGN(0x200);
-		_edatathread0 = .;
-
-		. = ALIGN(0x200);
-		_sdatathread1 = .;
-		*(.datathread1*)
-		. = ALIGN(0x200);
-		_edatathread1 = .;
-
-		. = ALIGN(0x200);
-		_sdatathread2 = .;
-		*(.datathread2*)
-		. = ALIGN(0x200);
-		_edatathread2 = .;
-
-		. = ALIGN(0x200);
-		_sdatathread3 = .;
-		*(.datathread3*)
-		. = ALIGN(0x200);
-		_edatathread3 = .;
-
 		*(.ramfunc) /* functions linked into RAM */
 		*(.data.*)
 		*(.data)
@@ -162,43 +90,9 @@ SECTIONS
 	} > sram0
 
 	/* BSS will be zeroed by start-up code */
-	.bss (NOLOAD) :
-	{
+	.bss (NOLOAD) : {
 		. = ALIGN(4);
 		_sbss = .;
-
-		. = ALIGN(0x1000);
-		_sbssthread0 = .;
-		*(.bss.ThreadInfoP$0$stack)
-		*(.bss.ThreadInfoP$0$thread_info)
-		*(.bssthread0*)
-		. = ALIGN(0x1000);
-		_ebssthread0 = .;
-
-		. = ALIGN(0x1000);
-		_sbssthread1 = .;
-		*(.bss.ThreadInfoP$1$stack)
-		*(.bss.ThreadInfoP$1$thread_info)
-		*(.bssthread1*)
-		. = ALIGN(0x1000);
-		_ebssthread1 = .;
-
-		. = ALIGN(0x1000);
-		_sbssthread2 = .;
-		*(.bss.ThreadInfoP$2$stack)
-		*(.bss.ThreadInfoP$2$thread_info)
-		*(.bssthread2*)
-		. = ALIGN(0x1000);
-		_ebssthread2 = .;
-
-		. = ALIGN(0x1000);
-		_sbssthread3 = .;
-		*(.bss.ThreadInfoP$3$stack)
-		*(.bss.ThreadInfoP$3$thread_info)
-		*(.bssthread3*)
-		. = ALIGN(0x1000);
-		_ebssthread3 = .;
-
 		*(.bss.*)
 		*(.bss)
 		. = ALIGN(4);
