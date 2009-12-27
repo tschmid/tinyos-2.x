@@ -34,7 +34,7 @@
  * from within a preemption IRQ works.
  *
  * @author Kevin Klues (klueska@cs.stanford.edu)
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 module BlinkC {
