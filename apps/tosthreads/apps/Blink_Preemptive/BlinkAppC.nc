@@ -41,10 +41,17 @@ configuration BlinkAppC {
 }
 implementation {
   components MainC, BlinkC,  LedsC;
+#ifdef PLATFORM_SAM3U_EK
   components new ThreadC(0x200) as NullThread;
   components new ThreadC(0x200) as TinyThread0;
   components new ThreadC(0x200) as TinyThread1;
   components new ThreadC(0x200) as TinyThread2;
+#else
+  components new ThreadC(100) as NullThread;
+  components new ThreadC(100) as TinyThread0;
+  components new ThreadC(100) as TinyThread1;
+  components new ThreadC(100) as TinyThread2;
+#endif
 
   MainC.Boot <- BlinkC;
   BlinkC.NullThread -> NullThread;
