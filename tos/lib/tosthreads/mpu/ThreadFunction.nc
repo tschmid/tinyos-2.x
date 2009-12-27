@@ -30,19 +30,14 @@
  */
  
 /**
- * Adapted interface to exline run() method so that it can be
- * memory-protected properly.
+ * Adapted interface so that thread function is always inlined. This
+ * way, there will always be one ThreadInfoP$*$run_thread() function
+ * per thread, which can be memory-protected properly.
  *
  * @author Kevin Klues <klueska@cs.stanford.edu>
  * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
-interface Thread {
-  command error_t start(void* arg);
-  command error_t stop();
-  command error_t pause();
-  command error_t resume();
-  command error_t sleep(uint32_t milli);
-  event void __attribute__((noinline)) run(void* arg);
-  command error_t join();
+interface ThreadFunction {
+  event void __attribute__((always_inline)) signalThreadRun(void* arg);
 }  
