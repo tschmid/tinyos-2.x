@@ -43,9 +43,10 @@ configuration PlatformC
 
 implementation
 {
-	components PlatformP, MoteClockC;
+	components PlatformP, MoteClockC, HplNVICC;
 
 	Init = PlatformP;
 
     PlatformP.MoteClockInit -> MoteClockC;
+	PlatformP.IRQInit -> HplNVICC;
 }
