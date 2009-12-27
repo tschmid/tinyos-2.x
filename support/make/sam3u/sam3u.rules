@@ -29,7 +29,9 @@ PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
 PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c
 PFLAGS += -finline-limit=100000
 
-LDFLAGS += -L$(INCLUDE_DIRS) -T sam3u-ek-flash.x
+# can be overridden by MP-enabled linker file (see mpu.extra)
+LINKERFILE ?= sam3u-ek-flash.x
+LDFLAGS += -L$(INCLUDE_DIRS) -T $(LINKERFILE)
 
 BUILDLESS_DEPS += bytes
 
