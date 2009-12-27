@@ -30,31 +30,19 @@
  */
  
 /**
- * @author Kevin Klues (klueska@cs.stanford.edu)
+ * Adapted interface to exline run() method so that it can be
+ * memory-protected properly.
+ *
+ * @author Kevin Klues <klueska@cs.stanford.edu>
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
-configuration BlinkAppC {
-}
-implementation {
-  components MainC, BlinkC,  LedsC;
-#ifdef PLATFORM_SAM3U_EK
-  components new ThreadC(0x200) as NullThread;
-  components new ThreadC(0x200) as TinyThread0;
-  components new ThreadC(0x200) as TinyThread1;
-  components new ThreadC(0x200) as TinyThread2;
-#else
-  components new ThreadC(100) as NullThread;
-  components new ThreadC(100) as TinyThread0;
-  components new ThreadC(100) as TinyThread1;
-  components new ThreadC(100) as TinyThread2;
-#endif
-
-  MainC.Boot <- BlinkC;
-  BlinkC.NullThread -> NullThread;
-  BlinkC.TinyThread0 -> TinyThread0;
-  BlinkC.TinyThread1 -> TinyThread1; 
-  BlinkC.TinyThread2 -> TinyThread2;
-
-  BlinkC.Leds -> LedsC;
-}
-
+interface Thread {
+  command error_t start(void* arg);
+  command error_t stop();
+  command error_t pause();
+  command error_t resume();
+  command error_t sleep(uint32_t milli);
+  event void __attribute__((noinline)) run(void* arg);
+  command error_t join();
+}  
