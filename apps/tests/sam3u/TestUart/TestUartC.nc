@@ -30,7 +30,9 @@
  */
 
 /**
- * @author wanja@cs.fau.de
+ * Basic application that tests the SAM3U UART.
+ *
+ * @author Wanja Hofer <wanja@cs.fau.de>
  **/
 
 module TestUartC
