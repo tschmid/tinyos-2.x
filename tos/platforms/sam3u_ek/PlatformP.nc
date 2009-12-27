@@ -41,6 +41,7 @@ module PlatformP
 	{
 		interface Init as LedsInit;
         interface Init as MoteClockInit;
+        interface Init as IRQInit;
         interface Init as MoteTimerInit;
 	}
 }
@@ -52,6 +53,7 @@ implementation
 		/* I/O pin configuration, clock calibration, and LED configuration
 		 * (see TEP 107)
 		 */
+		call IRQInit.init();
         call MoteClockInit.init();
         call MoteTimerInit.init();
 		call LedsInit.init();

@@ -31,6 +31,7 @@
 module HplNVICCntlP
 {
     provides interface HplNVICCntl;
+    provides interface Init;
 }
 
 implementation{
@@ -129,5 +130,24 @@ implementation{
 	async command bool HplNVICCntl.isMemoryProtectionFaultActive()
 	{
 		return (SCB->SHCSR.bits.memfaultact == 0x1);
+	}
+
+	command void HplNVICCntl.setSVCallPrio(uint8_t prio)
+	{
+		(SCB->SHP)[7] = prio;
+	}
+
+	command void HplNVICCntl.setPendSVPrio(uint8_t prio)
+	{
+		(SCB->SHP)[10] = prio;
+	}
+
+	command error_t Init.init()
+	{
+		// both SVCall and PendSV have the same, lowest prio in the system
+		call HplNVICCntl.setSVCallPrio(0xff);
+		call HplNVICCntl.setPendSVPrio(0xff);
+
+		return SUCCESS;
 	}
 }

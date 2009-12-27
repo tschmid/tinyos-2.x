@@ -30,6 +30,7 @@ configuration HplNVICC
     provides
     {
         interface HplNVICCntl;
+		interface Init;
 
         interface HplNVICInterruptCntl as SUPCInterrupt;  // SUPPLY CONTROLLER
         interface HplNVICInterruptCntl as RSTCInterrupt;  // RESET CONTROLLER
@@ -100,6 +101,7 @@ implementation
 
 
     HplNVICCntl = HplNVICCntlP;
+    Init = HplNVICCntlP;
 
     SUPCInterrupt = HSUPC.Cntl;
     RSTCInterrupt = HRSTC.Cntl;

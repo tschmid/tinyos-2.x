@@ -49,4 +49,7 @@ interface HplNVICCntl
 	async command bool isUsageFaultActive();
 	async command bool isBusFaultActive();
 	async command bool isMemoryProtectionFaultActive();
+
+	command void setSVCallPrio(uint8_t prio);
+	command void setPendSVPrio(uint8_t prio);
 }

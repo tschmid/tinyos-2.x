@@ -48,5 +48,6 @@ implementation
 	Init = PlatformP;
 
     PlatformP.MoteClockInit -> MoteClockC;
+    PlatformP.IRQInit -> MoteClockC;
     PlatformP.MoteTimerInit -> MoteTimerC;
 }
