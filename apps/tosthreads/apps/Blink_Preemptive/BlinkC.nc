@@ -61,23 +61,23 @@ implementation {
     for (i = 0; i < 1000000; i++);
   }
 
-  event void NullThread.run(void* arg) __attribute__((noinline)) {
+  event void NullThread.run(void* arg) {
 	  for(;;){
     }
   }  
-  event void TinyThread0.run(void* arg) __attribute__((noinline)) {
+  event void TinyThread0.run(void* arg) {
     for(;;){
       call Leds.led0Toggle();
       wait();
     }
   }
-  event void TinyThread1.run(void* arg) __attribute__((noinline)) {
+  event void TinyThread1.run(void* arg) {
     for(;;){
       call Leds.led1Toggle();
       wait();
     }
   }
-  event void TinyThread2.run(void* arg) __attribute__((noinline)) {
+  event void TinyThread2.run(void* arg) {
     for(;;){
       call Leds.led2Toggle();
       wait();
