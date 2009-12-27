@@ -32,7 +32,7 @@
 /**
  * Abstraction of a PIO controller on the SAM3U. Has 32 pins.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 generic configuration HplSam3uGeneralIOPioP(uint32_t pio_addr)

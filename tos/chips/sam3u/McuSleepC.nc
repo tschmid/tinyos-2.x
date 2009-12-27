@@ -29,6 +29,10 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @author Wanja Hofer <wanja@cs.fau.de>
+ */
+
 #include "hardware.h"
 
 module McuSleepC
@@ -48,7 +52,7 @@ implementation
 		__nesc_enable_interrupt();
 
 		// all of memory may change at that point, because an IRQ handler
-		// can have posted a task!
+		// may have posted a task!
 		asm volatile("" : : : "memory");
 
 		__nesc_disable_interrupt();

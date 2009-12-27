@@ -29,6 +29,10 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @author Wanja Hofer <wanja@cs.fau.de>
+ */
+
 #include "hardware.h"
 
 configuration PlatformC

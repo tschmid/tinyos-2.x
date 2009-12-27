@@ -33,7 +33,7 @@
  * Linker script to run code in Flash 0.
  * Start-up code copies data into SRAM 0 and zeroes BSS segment.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 /* Output format is always little endian, irrespective of -EL or -EB flags */

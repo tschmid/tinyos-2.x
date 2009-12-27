@@ -33,7 +33,7 @@
  * Definitions of stuff specific to the SAM3U-EK board.
  * Includes definitions for the SAM3U MCU.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 #ifndef HARDWARE_H

@@ -32,7 +32,7 @@
 /**
  * Interface to control the SAM3U UART.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 interface HplSam3uUartControl

@@ -32,7 +32,7 @@
 /*
  * Connection of LEDs to the GPIO pins on the SAM3U-EK board.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 configuration PlatformLedsC

@@ -34,7 +34,7 @@
 /**
  * The hardware presentation layer for the SAM3U UART.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 module HplSam3uUartC

@@ -33,7 +33,7 @@
  * Definitions specific to the SAM3U MCU.
  * Includes interrupt enable/disable routines for nesC.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 #ifndef SAM3U_HARDWARE_H

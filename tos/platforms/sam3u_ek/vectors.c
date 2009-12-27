@@ -32,7 +32,7 @@
 /*
  * Startup code and interrupt and trap handlers for the SAM3U-EK board.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 /* Section symbols defined in linker script

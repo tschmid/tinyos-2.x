@@ -30,7 +30,7 @@
  */
 
 /**
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 interface HplSam3uGeneralIOPin
