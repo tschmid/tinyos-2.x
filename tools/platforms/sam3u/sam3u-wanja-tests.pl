@@ -13,8 +13,8 @@ if (defined($ARGV[0])) {
 }
 
 my @apps = (
-	{"name" => "apps/tosthreads/apps/Blink", "variant" => "normal", "make" => "make sam3u_ek debugopt threads", "expected" => "LEDs count up modulo 8"},
-	{"name" => "apps/tosthreads/apps/Blink", "variant" => "protected", "make" => "make sam3u_ek debugopt threads mpu", "expected" => "LEDs count up modulo 8"},
+	{"name" => "apps/tosthreads/apps/Blink", "variant" => "normal", "make" => "make sam3u_ek debugopt threads", "expected" => "LED 1 flashes, LED 2-3 with half the frequency"},
+	{"name" => "apps/tosthreads/apps/Blink", "variant" => "protected", "make" => "make sam3u_ek debugopt threads mpu", "expected" => "LED 1 flashes, LED 2-3 with half the frequency"},
 	{"name" => "apps/tosthreads/apps/Blink_Preemptive", "variant" => "normal", "make" => "make sam3u_ek debugopt threads", "expected" => "LEDs all light up, then they all go out, repeatedly (out of sync, but that's OK)"},
 	{"name" => "apps/tosthreads/apps/Blink_Preemptive", "variant" => "protected", "make" => "make sam3u_ek debugopt threads mpu", "expected" => "LEDs all light up, then they all go out, repeatedly (out of sync, but that's OK)"},
 	{"name" => "apps/tosthreads/apps/TestJoin", "variant" => "normal", "make" => "make sam3u_ek debugopt threads", "expected" => "LEDs 1-3 blink, then LEDs 2-3 blink, then LED 3 blinks, repeat"},
