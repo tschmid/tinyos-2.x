@@ -32,7 +32,7 @@
 /**
  * Pin abstraction on the SAM3U.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 generic module HplSam3uGeneralIOPinP(uint32_t pio_addr, uint8_t bit)

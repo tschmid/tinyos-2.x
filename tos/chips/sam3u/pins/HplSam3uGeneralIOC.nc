@@ -33,7 +33,7 @@
  * General-purpose I/O abstraction for the SAM3U.
  * Includes PIO controllers A, B, C with 32 pins each.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 configuration HplSam3uGeneralIOC

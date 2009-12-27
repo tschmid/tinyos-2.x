@@ -25,7 +25,7 @@
  *
  * @author Joe Polastre
  * @author Philip Levis
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  *
  * @date   March 21, 2005
  */

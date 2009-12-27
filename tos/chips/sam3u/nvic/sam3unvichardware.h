@@ -23,7 +23,7 @@
  * Header definition for the Nested Vector Interrupt Controller.
  *
  * @author Thomas Schmid
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 #ifndef SAM3UNVICHARDWARE_H

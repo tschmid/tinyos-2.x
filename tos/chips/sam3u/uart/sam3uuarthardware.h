@@ -32,7 +32,7 @@
 /**
  * Definitions specific to the SAM3U UART chip.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 #ifndef SAM3UUARTHARDWARE_H

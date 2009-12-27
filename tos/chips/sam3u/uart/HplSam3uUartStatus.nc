@@ -32,7 +32,7 @@
 /**
  * Interface to query the status of the SAM3U UART.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 interface HplSam3uUartStatus

@@ -23,7 +23,7 @@
  * NVIC Controller
  *
  * @author Thomas Schmid
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 #include "sam3unvichardware.h"

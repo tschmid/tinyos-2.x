@@ -23,7 +23,7 @@
  * Control interface for the NVIC.
  *
  * @author Thomas Schmid
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 interface HplNVICCntl

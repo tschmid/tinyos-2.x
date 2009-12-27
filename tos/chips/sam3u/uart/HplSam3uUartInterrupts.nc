@@ -32,7 +32,7 @@
 /**
  * Interface to control and query SAM3U UART interrupts.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 interface HplSam3uUartInterrupts

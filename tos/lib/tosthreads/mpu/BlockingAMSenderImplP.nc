@@ -32,6 +32,7 @@
 /**
  * @author Kevin Klues (klueska@cs.stanford.edu)
  * @author Chieh-Jan Mike Liang <cliang4@cs.jhu.edu>
+ * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
 #include "syscall_ids.h"
