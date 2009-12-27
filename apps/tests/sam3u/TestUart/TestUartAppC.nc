@@ -32,7 +32,7 @@
 /**
  * Basic application that tests the SAM3U UART.
  *
- * @author wanja@cs.fau.de
+ * @author Wanja Hofer <wanja@cs.fau.de>
  **/
 
 configuration TestUartAppC
