@@ -29,6 +29,10 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @author Wanja Hofer <wanja@cs.fau.de>
+ */
+
 // see Cortex-M3 Technical Reference Manual, p. 2-4
 typedef struct thread_regs {
 	// we store all our regs on the stack (one ARM instruction)
