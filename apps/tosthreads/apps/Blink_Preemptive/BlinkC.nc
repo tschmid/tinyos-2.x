@@ -72,14 +72,12 @@ implementation {
     }
   }
   event void TinyThread1.run(void* arg) __attribute__((noinline)) {
-      //call Leds.led1On();
     for(;;){
       call Leds.led1Toggle();
       wait();
     }
   }
   event void TinyThread2.run(void* arg) __attribute__((noinline)) {
-      //call Leds.led2On();
     for(;;){
       call Leds.led2Toggle();
       wait();
