@@ -39,7 +39,7 @@ implementation {
   components new TimerMilliC();
   components new BitVectorC(1) as PendingVector;
   components new BitVectorC(1) as ChangeVector;
-
+  
   //  Timer.Timer -> TimerMilliC;
   //Timer.Random -> RandomC;
   //Timer.Changed -> ChangeVector;
@@ -52,7 +52,7 @@ implementation {
   TestTrickleTimerAppP.TimerB -> TimerB;
   TestTrickleTimerAppP.TimerC -> TimerC;
   TestTrickleTimerAppP.TimerD -> TimerD;
-  
+  TestTrickleTimerAppP.Random -> RandomC;
 }
 
   
