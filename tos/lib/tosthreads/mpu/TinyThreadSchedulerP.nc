@@ -33,6 +33,12 @@
  * @author Kevin Klues <klueska@cs.stanford.edu>
  */
 
+#include "syscall_ids.h"
+
+// section symbols defined in the linker script
+extern unsigned int _stextcommon;
+extern unsigned int _etextcommon;
+
 module TinyThreadSchedulerP {
   provides {
     interface ThreadScheduler;
@@ -48,6 +54,16 @@ module TinyThreadSchedulerP {
     interface GeneralIO as Led2;
     interface Timer<TMilli> as PreemptionAlarm;
   }
+  uses {
+    interface HplSam3uMpu;
+    interface HplSam3uMpuSettings;
+    interface SyscallInstruction;
+    interface BlockingReadCallback;
+    interface BlockingStdControlCallback;
+    interface BlockingAMSendCallback;
+    interface LedsCallback;
+    interface ThreadCallback;
+  }
 }
 implementation {
   //Pointer to currently running thread
@@ -61,10 +77,10 @@ implementation {
   //Thread queue for keeping track of threads waiting to run
   thread_queue_t ready_queue;
 
-#ifdef PLATFORM_SAM3U_EK
   void context_switch() __attribute__((noinline));
   void restore_tcb() __attribute__((noinline));
-#endif
+  thread_t *thread_prolog() __attribute__((noinline));
+  void thread_epilog(thread_t *t) __attribute__((noinline));
   
   void task alarmTask() {
     uint8_t temp;
@@ -104,7 +120,59 @@ implementation {
  * same handler aliased. For this distinction, see the macro
  * SWITCH_CONTEXTS() in chip_thread.h.
  */
-#ifdef PLATFORM_SAM3U_EK
+  void switchMpuContexts() __attribute__((noinline))
+  {
+    // deactivate MPU
+    call HplSam3uMpu.disableMpu();
+    
+    if (current_thread->id != TOSTHREAD_TOS_THREAD_ID) {
+      // deploy MPU settings of current_thread (if not kernel thread)
+      uint8_t reg;
+      for (reg = 0; reg <= 2; reg++) {
+        thread_t *t = current_thread;
+        call HplSam3uMpu.deployRegion(t->regions[reg].rbar, t->regions[reg].rasr);
+      }
+      
+      // switch to unprivileged mode in thread mode (if not kernel thread)
+      {
+        uint32_t newState = 0x1; // MSP, user mode
+        // An ISB instruction is required to ensure instruction fetch correctness following a Thread
+        // mode privileged => unprivileged transition. (ARM7AALRM, p. B3-11)
+        asm volatile(
+          "msr control, %0\n"
+          "isb\n"
+          : // output
+          : "r" (newState) // input
+        );
+      }
+      
+      // reactivate MPU (if not kernel thread)
+      call HplSam3uMpu.enableMpu();
+    } else {
+      // switch to privileged mode in thread mode (if kernel thread)
+      {
+        uint32_t newState = 0x0; // MSP, privileged mode
+        // An ISB instruction is required to ensure instruction fetch correctness following a Thread
+        // mode privileged => unprivileged transition. (ARM7AALRM, p. B3-11)
+        asm volatile(
+          "msr control, %0\n"
+          "isb\n"
+          : // output
+          : "r" (newState) // input
+        );
+      }
+      // do not reactivate MPU (if kernel thread)
+    }
+  }
+  
+  // FIXME for now this is OK
+  // in the long term, finding and killing (?) the appropriate thread will be necessary
+  async event void HplSam3uMpu.mpuFault()
+  {
+    call Led2.set(); // LED 2 (red): MPU fault
+    while (1); // wait
+  }
+
 /**
  * The two context switch exception handlers are naked to keep the compiler
  * from using the stack. We need a manually defined stack layout here, which
@@ -122,6 +190,10 @@ implementation {
       asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
       asm volatile("ldmia r0!, {r1-r12,lr}");
       asm volatile("msr msp, r0");
+      // already runs on the new stack, in new context
+      asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
+      switchMpuContexts();
+      asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
     }
     asm volatile("bx lr"); // important because this is a naked function
   }
@@ -135,6 +207,10 @@ implementation {
       asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
       asm volatile("ldmia r0!, {r1-r12,lr}");
       asm volatile("msr msp, r0");
+      // already runs on the new stack, in new context
+      asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
+      switchMpuContexts();
+      asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
     }
     asm volatile("bx lr"); // important because this is a naked function
   }
@@ -145,6 +221,10 @@ implementation {
   	  asm volatile("ldr r0, %0" : : "m" ((current_thread)->stack_ptr));
   	  asm volatile("ldmia r0!, {r1-r12,lr}");
   	  asm volatile("msr msp, r0");
+  	  // already runs on the new stack, in new context
+  	  asm volatile("push {r0-r3,r12,lr}"); // push volatile registers (altered by function call)
+  	  switchMpuContexts();
+  	  asm volatile("pop {r0-r3,r12,lr}"); // pop volatile registers (altered by function call)
     }
     asm volatile("bx lr"); // important because this is a naked function
   }
@@ -165,10 +245,49 @@ implementation {
     svc_r3 = ((uint32_t) args[3]);
     prev_pc = ((uint32_t) args[6]);
 
+    // put result in stacked r0, which will be interpreted as the result by calling function
     if (svc_id == 0) { // context-switch syscall
 	  context_switch();
     } else if (svc_id == 1) { // restore-TCB syscall
 	  restore_tcb();
+    } else if (svc_id == 2) { // thread-prolog syscall
+	  thread_t *t = thread_prolog();
+	  args[0] = (uint32_t) t;
+    } else if (svc_id == 3) { // thread-epilog syscall
+	  thread_epilog((thread_t *) svc_r0);
+	} else if (svc_id == SYSCALL_ID_READ) {
+	  error_t result = call BlockingReadCallback.read((uint8_t) svc_r0, (uint16_t *) svc_r1);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_STDCONTROL_START) {
+	  error_t result = call BlockingStdControlCallback.start((uint8_t) svc_r0);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_STDCONTROL_STOP) {
+	  error_t result = call BlockingStdControlCallback.stop((uint8_t) svc_r0);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_AMSEND) {
+	  error_t result = call BlockingAMSendCallback.send((am_id_t) svc_r0, (am_addr_t) svc_r1, (message_t *) svc_r2, (uint8_t) svc_r3);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_LEDS) {
+	  uint32_t result = call LedsCallback.leds((uint32_t) svc_r0, (uint32_t) svc_r1);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_THREAD_SLEEP) {
+	  error_t result = call ThreadCallback.sleep((uint8_t) svc_r0, (uint32_t) svc_r1);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_THREAD_JOIN) {
+	  error_t result = call ThreadCallback.join((uint8_t) svc_r0);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_THREAD_START) {
+	  error_t result = call ThreadCallback.start((uint8_t) svc_r0, (void *) svc_r1);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_THREAD_PAUSE) {
+	  error_t result = call ThreadCallback.pause((uint8_t) svc_r0);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_THREAD_RESUME) {
+	  error_t result = call ThreadCallback.resume((uint8_t) svc_r0);
+	  args[0] = (uint32_t) result;
+    } else if (svc_id == SYSCALL_ID_THREAD_STOP) {
+	  error_t result = call ThreadCallback.stop((uint8_t) svc_r0);
+	  args[0] = (uint32_t) result;
     }
 
     return; // this will return to svc call site
@@ -185,7 +304,6 @@ implementation {
     );
     // return from ActualSVCallHandler() returns to svc call site (through lr)
   }
-#endif
   
   /* sleepWhileIdle() 
    * This routine is responsible for putting the mcu to sleep as 
@@ -302,19 +420,12 @@ implementation {
   
   /* This executes and cleans up a thread
    */
-  void threadWrapper() __attribute__((naked, noinline)) {
-    thread_t* t;
-    atomic t = current_thread;
+  void threadWrapper() __attribute__((naked, noinline, section(".textcommon"))) {
+    thread_t* t = (thread_t *) (call SyscallInstruction.syscall(2, 0, 0, 0, 0));
     
-    __nesc_enable_interrupt();
     (*(t->start_ptr))(t->start_arg_ptr);
     
-    atomic {
-      stop(t);
-      sleepWhileIdle();
-      scheduleNextThread();
-      restoreThread();
-    }
+    (void) call SyscallInstruction.syscall(3, (uint32_t) t, 0, 0, 0);
   }
   
   event void ThreadSchedulerBoot.booted() {
@@ -326,6 +437,30 @@ implementation {
     current_thread = tos_thread;
     current_thread->state = TOSTHREAD_STATE_ACTIVE;
     current_thread->init_block = NULL;
+
+    {
+      uint8_t i = 1;
+	  mpu_rbar_t rbar;
+	  mpu_rasr_t rasr;
+
+      call HplSam3uMpu.enableDefaultBackgroundRegion(); // for privileged code
+      call HplSam3uMpu.disableMpuDuringHardFaults();
+
+      // all regions are disabled for now
+      for (i = 0; i <= 7; i++) {
+        call HplSam3uMpuSettings.getMpuSettings(i, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00, &rbar, &rasr);
+	    call HplSam3uMpu.deployRegion(rbar, rasr);
+      }
+
+      // 0-2 used by threads
+      // 3 for common code: TinyThreadSchedulerP$threadWrapper(), StaticThreadP$ThreadFunction$signalThreadRun()
+      if (&_stextcommon != &_etextcommon) {
+        call HplSam3uMpuSettings.getMpuSettings(3, TRUE, (void *) &_stextcommon, (((uint32_t) &_etextcommon) - ((uint32_t) &_stextcommon)), /*X*/ TRUE, /*RP*/ TRUE, /*WP*/ TRUE, /*RU*/ TRUE, /*WU*/ TRUE, /*C*/ TRUE, /*B*/ TRUE, 0x00, &rbar, &rasr);
+      } else {
+        call HplSam3uMpuSettings.getMpuSettings(3, FALSE, (void *) 0x00000000, 32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 0x00, &rbar, &rasr);
+      }
+	  call HplSam3uMpu.deployRegion(rbar, rasr);
+	}
 
     signal TinyOSBoot.booted();
   }
@@ -447,5 +582,39 @@ implementation {
   
   default async command thread_t* ThreadInfo.get[uint8_t id]() {
     return NULL;
+  }
+
+  default command error_t BlockingReadCallback.read(uint8_t svc_r0, uint16_t *svc_r1) {
+    return FAIL;
+  }
+  default command error_t BlockingStdControlCallback.start(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t BlockingStdControlCallback.stop(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t BlockingAMSendCallback.send(am_id_t svc_r0, am_addr_t svc_r1, message_t * svc_r2, uint8_t svc_r3) {
+    return FAIL;
+  }
+  default async command uint32_t LedsCallback.leds(uint32_t svc_r0, uint32_t svc_r1) {
+    return 0;
+  }
+  default command error_t ThreadCallback.sleep(uint8_t svc_r0, uint32_t svc_r1) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.join(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.start(uint8_t svc_r0, void *svc_r1) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.pause(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.resume(uint8_t svc_r0) {
+    return FAIL;
+  }
+  default command error_t ThreadCallback.stop(uint8_t svc_r0) {
+    return FAIL;
   }
 }

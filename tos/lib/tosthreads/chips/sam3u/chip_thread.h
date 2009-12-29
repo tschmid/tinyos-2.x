@@ -110,6 +110,12 @@ typedef uint32_t* stack_ptr_t;
  * IRQ handler returns, or it invokes an SVCall with parameter 0,
  * which is executed promptly.
  *
+ * With memory protection, there is the additional case that a
+ * context switch is requested from within a running system call.
+ * That will be noticed by comparing the active vector to 0xb, which
+ * is the SVCall exception. In that case, the context switch routine
+ * is jumped to directly.
+ *
  * The restore-TCB call does the same thing, except that it uses
  * SVCall with parameter 1, which indicates that the current context
  * does not need to be saved. This should always happen with no
