@@ -21,41 +21,19 @@
 */
 
 /**
+ * ADC configuration settings (part of test application) for SAM3U's 12 bit ADC
  * @author JeongGil Ko
  */
 
-#include "sam3uadc12bhardware.h"
- 
-configuration Sam3uAdc12bP 
-{ 
-  provides {
-    interface Resource[uint8_t id]; 
-    interface Sam3uGetAdc12b[uint8_t id]; 
-  }
-} 
+configuration AdcReaderC
+{
+  provides interface ReadStream<uint16_t>;
+}
 
-implementation {
-  components Sam3uAdc12bImplP as Adc12bImpl;
-  components MainC;
-  components HplNVICC, HplSam3uClockC, HplSam3uGeneralIOC;
-  //components new Resource[uint8_t id];
-  components new SimpleRoundRobinArbiterC(SAM3UADC12_RESOURCE) as Arbiter;
+implementation
+{
+  components new AdcReadStreamClientC(), AdcReaderP;
 
-  Adc12bImpl.ADC12BInterrupt -> HplNVICC.ADC12BInterrupt;
-
-  Adc12bImpl.Adc12bPin -> HplSam3uGeneralIOC.HplPioA2;
-  Adc12bImpl.Adc12bClockControl -> HplSam3uClockC.ADC12BPPCntl;
-  Resource = Arbiter; // set this!?!
-  Sam3uGetAdc12b = Adc12bImpl.Sam3uAdc12b;
-
-  MainC.SoftwareInit -> Adc12bImpl.Init;
-  components LedsC;
-  Adc12bImpl.Leds -> LedsC;
-
-#ifdef SAM3U_ADC12B_PDC
-  components HplSam3uPdcC;
-  Adc12bImpl.HplPdc -> HplSam3uPdcC.Adc12bPdcControl;
-#endif
-
-
+  ReadStream = AdcReadStreamClientC;
+  AdcReadStreamClientC.AdcConfigure -> AdcReaderP;
 }

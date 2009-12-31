@@ -52,11 +52,12 @@ implementation {
 #ifdef SAM3U_ADC12B_PDC
   components HplSam3uPdcC;
   AdcStreamP.HplPdc -> HplSam3uPdcC.Adc12bPdcControl;
+#else
+  AdcStreamP.Alarm -> Alarm;
 #endif
 
   AdcStreamP.Init <- MainC;
   Sam3uGetAdc12b = AdcStreamP.GetAdc;
-  AdcStreamP.Alarm -> Alarm;
 
   components LedsC, NoLedsC;
   AdcStreamP.Leds -> LedsC;
