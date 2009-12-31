@@ -49,4 +49,6 @@ implementation {
   Sam3uGetAdc12b = Adc12bImpl.Sam3uAdc12b;
 
   MainC.SoftwareInit -> Adc12bImpl.Init;
+  components LedsC;
+  Adc12bImpl.Leds -> LedsC;
 }
