@@ -35,10 +35,12 @@ generic configuration AdcReadStreamClientC()
 
 implementation {
 
+#ifndef SAM3U_ADC12B_PDC
   components AdcStreamP;
+#else
+  components AdcStreamPDCP as AdcStreamP;
+#endif
   components new Sam3uAdc12bClientC();
-  //components new AlarmMilliC() as Alarm;
-  components LedsC, NoLedsC;
   components WireAdcStreamP;
 
   enum {
@@ -50,5 +52,4 @@ implementation {
 
   WireAdcStreamP.Resource[CLIENT] -> Sam3uAdc12bClientC.Resource;
   WireAdcStreamP.Sam3uGetAdc12b[CLIENT] -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
-  AdcStreamP.Leds -> NoLedsC;
 }

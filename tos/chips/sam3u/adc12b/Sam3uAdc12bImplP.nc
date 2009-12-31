@@ -37,6 +37,7 @@ module Sam3uAdc12bImplP
     interface HplSam3uGeneralIOPin as Adc12bPin;
     interface HplSam3uPeripheralClockCntl as Adc12bClockControl;
     interface HplSam3uClock as ClockConfig;
+    interface Leds;
   }
 }
 
@@ -170,7 +171,6 @@ implementation
   }
 
   async command error_t Sam3uAdc12b.getData[uint8_t id](){
-
     // CR is write-only; There is no need to read it for modification but just set the memory location
     volatile adc12b_cr_t *CR = (volatile adc12b_cr_t *) 0x400A8000;
     adc12b_cr_t cr;
@@ -204,7 +204,12 @@ implementation
     adc12b_lcdr_t lcdr = *LCDR;
 
     uint16_t data = 0;
+
+#ifndef SAM3U_ADC12B_PDC
     if(sr.bits.drdy){
+#else
+    if(sr.bits.endrx){
+#endif
       data = lcdr.bits.ldata;
       cr.bits.start = 0; // disable software trigger
       *CR = cr;

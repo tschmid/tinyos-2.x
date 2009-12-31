@@ -41,7 +41,7 @@ implementation {
   enum {
     CLIENT = unique(ADCC_SERVICE),
   };
-  
+
   Read = AdcP.Read[CLIENT];
   AdcConfigure = AdcP.Config[CLIENT];
 

@@ -33,6 +33,7 @@ configuration HplSam3uPdcC {
   provides interface HplSam3uPdc as Twi0PdcControl;
   provides interface HplSam3uPdc as Twi1PdcControl;
   provides interface HplSam3uPdc as PwmPdcControl;
+  provides interface HplSam3uPdc as Adc12bPdcControl;
 }
 
 implementation {
@@ -45,7 +46,8 @@ implementation {
     USART3_BASE = 0x4009C000,
     TWI0_BASE = 0x40084000,
     TWI1_BASE = 0x40088000,
-    PWM_BASE = 0x4008C000
+    PWM_BASE = 0x4008C000,
+    ADC12B_BASE = 0x400A8000
   };
 
   components new HplSam3uPdcP(UART_BASE) as UartPdc;
@@ -56,6 +58,7 @@ implementation {
   components new HplSam3uPdcP(TWI0_BASE) as Twi0Pdc;
   components new HplSam3uPdcP(TWI1_BASE) as Twi1Pdc;
   components new HplSam3uPdcP(PWM_BASE) as PwmPdc;
+  components new HplSam3uPdcP(ADC12B_BASE) as Adc12bPdc;
 
   UartPdcControl = UartPdc;
   Usart0PdcControl = Usart0Pdc;
@@ -65,4 +68,5 @@ implementation {
   Twi0PdcControl = Twi0Pdc;
   Twi1PdcControl = Twi1Pdc;
   PwmPdcControl = PwmPdc;
+  Adc12bPdcControl = Adc12bPdc;
 }

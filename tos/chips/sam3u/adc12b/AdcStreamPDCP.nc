@@ -21,13 +21,12 @@
 */
 
 /**
- * Implementation for ReadStream interface in Sam3u
- * (Coverted msp430 and atm128 code)
+ * Implementation for ReadStream interface with PDC in Sam3u
  * @author JeongGil Ko
  */
 
 #include "sam3uadc12bhardware.h"
-module AdcStreamP {
+module AdcStreamPDCP {
   provides {
     interface Init @atleastonce();
     interface ReadStream<uint16_t>[uint8_t client];
@@ -36,6 +35,7 @@ module AdcStreamP {
     interface Sam3uGetAdc12b as GetAdc[uint8_t client];
     interface AdcConfigure<const sam3u_adc12_channel_config_t*> as Config[uint8_t client];
     interface Alarm<TMicro, uint32_t>;
+    interface HplSam3uPdc as HplPdc;
     interface Leds;
   }
 }
@@ -45,6 +45,8 @@ implementation {
   };
 
   norace uint8_t client = NSTREAM;
+  volatile adc12b_cr_t *CR = (volatile adc12b_cr_t *) 0x400A8000;
+  adc12b_cr_t cr;
 
   struct list_entry_t {
     uint16_t count;
@@ -58,10 +60,18 @@ implementation {
   norace uint16_t * COUNT_NOK(count) buffer; 
   norace uint16_t * BND_NOK(buffer, buffer+count) pos;
   norace uint32_t now, period;
+  norace uint16_t originalLength, readLength;
+  norace uint16_t *originalPointer;
+  norace uint8_t state;
+
+  enum{
+    S_READ,
+    S_IDLE,
+  };
 
   command error_t Init.init() {
     uint8_t i;
-
+    state = S_IDLE;
     for (i = 0; i != NSTREAM; i++)
       bufferQueueEnd[i] = &bufferQueue[i];
 
@@ -69,31 +79,21 @@ implementation {
   }
 
   void sampleSingle() {
-    call GetAdc.getData[client]();
-  }
-
-  error_t postBuffer(uint8_t c, uint16_t *buf, uint16_t n)
-  {
-    if (n < sizeof(struct list_entry_t))
-      return ESIZE;
-    atomic
-    {
-      struct list_entry_t * ONE newEntry = TCAST(struct list_entry_t * ONE, buf);
-
-      if (!bufferQueueEnd[c])
-        return FAIL;
-
-      newEntry->count = n;
-      newEntry->next = NULL;
-      *bufferQueueEnd[c] = newEntry;
-      bufferQueueEnd[c] = &newEntry->next;
-    }
-
-    return SUCCESS;
+    // switch this to pdc enable
+    call HplPdc.enablePdcRx();
+    atomic cr.bits.start = 1; // enable software trigger
+    atomic *CR = cr;  
+    //call GetAdc.getData[client]();
   }
 
   command error_t ReadStream.postBuffer[uint8_t c](uint16_t *buf, uint16_t n) {
-    return postBuffer(c, buf, n);
+    // set parameters here!!!!
+    // set pdc buffers and set the length as a global parameter
+    originalLength = n;
+    originalPointer = buf;
+    call HplPdc.setRxPtr(buf);
+    call HplPdc.setRxCounter(n);
+    return SUCCESS;
   }
 
   task void readStreamDone() {
@@ -150,87 +150,36 @@ implementation {
     sampleSingle();
   }
 
-  error_t nextBuffer(bool startNextAlarm) {
-    atomic
-    {
-      struct list_entry_t *entry = bufferQueue[client];
-
-      if (!entry)
-      {
-        // all done
-        bufferQueueEnd[client] = NULL; // prevent post
-        post readStreamDone();
-        return FAIL;
-      }
-      else
-      {
-        uint16_t tmp_count;
-        bufferQueue[client] = entry->next;
-        if (!bufferQueue[client])
-          bufferQueueEnd[client] = &bufferQueue[client];
-	pos = buffer = NULL;
-        count = entry->count;
-        tmp_count = count;
-	pos = buffer = TCAST(uint16_t * COUNT_NOK(tmp_count), entry);
-        if (startNextAlarm)
-          nextAlarm();
-        return SUCCESS;
-      }
-    }
-  }
 
   command error_t ReadStream.read[uint8_t c](uint32_t usPeriod)
   {
-    /* not exactly microseconds                 */
-    /* ADC is currently based on a 1.5MHz clock */
     period = usPeriod; 
     client = c;
-    now = call Alarm.getNow();
+    readLength = 0; // Init
     call GetAdc.configureAdc[c](call Config.getConfiguration[c]());
-    if (nextBuffer(FALSE) == SUCCESS){
-       sampleSingle();
-    }
+    state = S_READ;
+    call Leds.led0Toggle();
+    sampleSingle();
     return SUCCESS;
+  }
+
+  task void signalReadDone(){
+    signal ReadStream.readDone[client](SUCCESS, period);
+  }
+
+  task void signalBufferDone(){
+    signal ReadStream.bufferDone[client](SUCCESS, originalPointer, originalLength);
   }
 
   async event error_t GetAdc.dataReady[uint8_t streamClient](uint16_t data)
   {
-    call Leds.led0Toggle();
-    if (client == NSTREAM)
-      return FAIL;
-
-    if (count == 0)
-    {
-      now = call Alarm.getNow();
-      nextBuffer(TRUE);
+    if(state == S_READ){
+      atomic state = S_IDLE;
+      call HplPdc.disablePdcRx();
+      post signalReadDone();
+      post signalBufferDone();
     }
-    else
-    {
-      *pos++ = data;
-      if (pos == buffer + count)
-      {
-        atomic
-        {
-          if (lastBuffer)
-          {
-            /* We failed to signal bufferDone in time. Fail. */
-            bufferQueueEnd[client] = NULL; // prevent post
-            post readStreamFail();
-            return FAIL;
-          }
-          else
-          {
-	    lastCount = count;
-            lastBuffer = buffer;
-          }
-        }
-        post bufferDone();
-        nextBuffer(TRUE);
-      }
-      else
-        nextAlarm();
-    }
-    return FAIL;
+    return SUCCESS;
   }
 
   const sam3u_adc12_channel_config_t defaultConfig = {
