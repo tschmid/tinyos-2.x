@@ -34,7 +34,7 @@ module AdcStreamPDCP {
   uses {
     interface Sam3uGetAdc12b as GetAdc[uint8_t client];
     interface AdcConfigure<const sam3u_adc12_channel_config_t*> as Config[uint8_t client];
-    interface Alarm<TMicro, uint32_t>;
+    //interface Alarm<TMicro, uint32_t>;
     interface HplSam3uPdc as HplPdc;
     interface Leds;
   }
@@ -60,7 +60,7 @@ implementation {
   norace uint16_t * COUNT_NOK(count) buffer; 
   norace uint16_t * BND_NOK(buffer, buffer+count) pos;
   norace uint32_t now, period;
-  norace uint16_t originalLength, readLength;
+  norace uint16_t originalLength;
   norace uint16_t *originalPointer;
   norace uint8_t state;
 
@@ -78,12 +78,11 @@ implementation {
     return SUCCESS;
   }
 
-  void sampleSingle() {
+  void samplePdc() {
     // switch this to pdc enable
     call HplPdc.enablePdcRx();
     atomic cr.bits.start = 1; // enable software trigger
     atomic *CR = cr;  
-    //call GetAdc.getData[client]();
   }
 
   command error_t ReadStream.postBuffer[uint8_t c](uint16_t *buf, uint16_t n) {
@@ -96,70 +95,13 @@ implementation {
     return SUCCESS;
   }
 
-  task void readStreamDone() {
-    uint8_t c = client;
-    uint32_t actualPeriod = period;
-
-    atomic
-    {
-      bufferQueue[c] = NULL;
-      bufferQueueEnd[c] = &bufferQueue[c];
-    }
-
-    client = NSTREAM;
-    signal ReadStream.readDone[c](SUCCESS, actualPeriod);
-  }
-
-  task void readStreamFail() {
-    struct list_entry_t *entry;
-    uint8_t c = client;
-
-    atomic entry = bufferQueue[c];
-    for (; entry; entry = entry->next) {
-      uint16_t tmp_count __DEPUTY_UNUSED__ = entry->count;
-      signal ReadStream.bufferDone[c](FAIL, TCAST(uint16_t * COUNT_NOK(tmp_count),entry), entry->count);
-    }
-
-    atomic
-    {
-      bufferQueue[c] = NULL;
-      bufferQueueEnd[c] = &bufferQueue[c];
-    }
-
-    client = NSTREAM;
-    signal ReadStream.readDone[c](FAIL, 0);
-  }
-
-  task void bufferDone() {
-    uint16_t *b, c;
-    atomic
-    {
-      b = lastBuffer;
-      c = lastCount;
-      lastBuffer = NULL;
-    }
-    signal ReadStream.bufferDone[client](SUCCESS, b, c);
-  }
-
-  void nextAlarm() {
-    call Alarm.startAt(now, period);
-    now += period;
-  }
-
-  async event void Alarm.fired() {
-    sampleSingle();
-  }
-
-
   command error_t ReadStream.read[uint8_t c](uint32_t usPeriod)
   {
     period = usPeriod; 
     client = c;
-    readLength = 0; // Init
     call GetAdc.configureAdc[c](call Config.getConfiguration[c]());
     state = S_READ;
-    call Leds.led0Toggle();
-    sampleSingle();
+    samplePdc();
     return SUCCESS;
   }
 
