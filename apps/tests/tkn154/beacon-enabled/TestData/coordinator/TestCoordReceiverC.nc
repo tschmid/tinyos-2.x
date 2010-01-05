@@ -60,6 +60,7 @@ module TestCoordReceiverC
   {
     if (status != IEEE154_SUCCESS)
       return;
+    call MLME_SET.phyTransmitPower(TX_POWER);
     call MLME_SET.macShortAddress(COORDINATOR_ADDRESS);
     call MLME_SET.macAssociationPermit(FALSE);
     call MLME_START.request(

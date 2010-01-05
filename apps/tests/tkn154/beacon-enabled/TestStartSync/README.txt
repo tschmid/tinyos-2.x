@@ -1,5 +1,5 @@
 README for TestStartSync
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
@@ -11,7 +11,8 @@ a beacon it tries to synchronize to and track all future beacons.
 
 Criteria for a successful test:
 
-After a few seconds all nodes should have (only) their second LED turned on.
+After a few seconds all nodes should have the LED1 turned on and LED2
+toggling in unison every second.
 
 
 Tools: NONE

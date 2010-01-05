@@ -42,7 +42,7 @@ enum {
   COORDINATOR_ADDRESS = 0x4331,
   BEACON_ORDER = 5,
   SUPERFRAME_ORDER = 5,
+  TX_POWER = -20, // in dBm
 };
-//#define IEEE154_DEFAULT_TRANSMITPOWER_dBm -25
 
 #endif

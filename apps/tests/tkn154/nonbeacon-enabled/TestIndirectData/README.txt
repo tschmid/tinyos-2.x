@@ -1,5 +1,5 @@
 README for TestIndirectData
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
@@ -13,8 +13,8 @@ transmissions.
 Criteria for a successful test:
 
 Assuming one coordinator and one device has been installed, the coordinator
-should briefly flash the second LED every 3 seconds. The device should briefly
-flash its third LED every 1 second. 
+should briefly flash LED1 every 3 seconds. The device should briefly flash 
+LED2 every 1 second. 
 
 
 Tools: NONE

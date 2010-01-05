@@ -52,8 +52,7 @@ module TestCoordC
   }
 } implementation {
 
-  ieee154_address_t m_lastDevice;
-  uint16_t m_shortAddress;
+  uint16_t m_assignedShortAddress;
 
   event void Boot.booted() {
     call MLME_RESET.request(TRUE);
@@ -88,7 +87,7 @@ module TestCoordC
                           ieee154_security_t *security
                         )
   {
-    call MLME_ASSOCIATE.response(DeviceAddress, m_shortAddress++, IEEE154_ASSOCIATION_SUCCESSFUL, 0);
+    call MLME_ASSOCIATE.response(DeviceAddress, m_assignedShortAddress++, IEEE154_ASSOCIATION_SUCCESSFUL, 0);
   }
 
   event void MLME_DISASSOCIATE.indication (
@@ -114,7 +113,6 @@ module TestCoordC
     if (status == IEEE154_SUCCESS){
       // association was successful
       call Leds.led1On();
-      m_lastDevice.extendedAddress = DstAddr.extendedAddress;
     } else {
       call Leds.led1Off();
     }

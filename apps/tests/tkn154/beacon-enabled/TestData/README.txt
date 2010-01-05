@@ -1,5 +1,5 @@
 README for TestData
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
@@ -13,9 +13,10 @@ transmission in the contention access period, CAP).
 
 Criteria for a successful test:
 
-Assuming a clear channel and one coordinator and one device has been installed,
-both should toggle (only) the second LED fast, about 5 times per second. They
-don't have to toggle the LED simultaneously.
+Coordinator and device should both toggle LED2 about twice per second in
+unison. They should also each toggle LED1 about 5 times per second (but
+not necessarily in unison). Note: the nodes should be close to each other, 
+because the transmission power is reduced to -20 dBm.
 
 
 Tools: NONE

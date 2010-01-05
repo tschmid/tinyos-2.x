@@ -1,5 +1,5 @@
 README for TestAssociate
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
@@ -15,8 +15,8 @@ association the device then disassociates from the PAN.
 Criteria for a successful test:
 
 Assuming one coordinator and one device has been installed, both should
-simultaneously switch on (only) the second LED. About 5 seconds later
-both should switch off the second LED. 
+simultaneously switch on LED1. About 5 seconds later both should switch LED1
+off. That's all.
 
 
 Tools: NONE

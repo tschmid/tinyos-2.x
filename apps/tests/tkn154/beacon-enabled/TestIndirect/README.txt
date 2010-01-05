@@ -1,5 +1,5 @@
 README for TestIndirect
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
@@ -14,8 +14,8 @@ DATA frame from the coordinator.
 
 Criteria for a successful test:
 
-Both nodes should simultaneously toggle (only) the second LED, about once every
-half second.
+Both nodes should toggle the LED1 in unison, about once every half second. 
+The coordinator should also toggle LED2 with the same frequency.
 
 
 Tools: NONE

@@ -1,5 +1,5 @@
 README for TestActiveScan
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
@@ -11,10 +11,8 @@ the predefined channel and expects beacon frames in return.
 
 Criteria for a successful test:
 
-On the coordinator node (only) the second LED should toggle once every 2 
-seconds. On the device the second and third LED should toggle once every 2 
-seconds, but with a small offset of half a second. On the device the first
-LED may toggle, but this should happen very rarely.
+The coordinator should toggle LED1 once every 2 seconds. The device should
+toggle LED1 and LED2 every 2 seconds (not necessarily simultaneously).
 
 
 Tools: NONE

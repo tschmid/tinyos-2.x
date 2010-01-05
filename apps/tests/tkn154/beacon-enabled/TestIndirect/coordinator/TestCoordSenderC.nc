@@ -55,32 +55,14 @@ module TestCoordSenderC
   uint8_t m_payloadLen;
 
   event void Boot.booted() {
-    char payload[] = "Hello Device!";
-    uint8_t *payloadRegion;
-    ieee154_address_t deviceShortAddress;
-
-    // construct the frame
-    m_payloadLen = strlen(payload);
-    payloadRegion = call Packet.getPayload(&m_frame, m_payloadLen);
-    deviceShortAddress.shortAddress = DEVICE_ADDRESS; // destination
-    if (m_payloadLen <= call Packet.maxPayloadLength()){
-      memcpy(payloadRegion, payload, m_payloadLen);
-      call Frame.setAddressingFields(
-          &m_frame,                
-          ADDR_MODE_SHORT_ADDRESS, // SrcAddrMode,
-          ADDR_MODE_SHORT_ADDRESS, // DstAddrMode,
-          PAN_ID,                  // DstPANId,
-          &deviceShortAddress,     // DstAddr,
-          NULL                     // security
-          );
-      call MLME_RESET.request(TRUE);
-    }
+    call MLME_RESET.request(TRUE);
   }
 
   event void MLME_RESET.confirm(ieee154_status_t status)
   {
     if (status != IEEE154_SUCCESS)
       return;
+
     call MLME_SET.macShortAddress(COORDINATOR_ADDRESS);
     call MLME_SET.macAssociationPermit(FALSE);
     call MLME_START.request(
@@ -110,8 +92,26 @@ module TestCoordSenderC
 
   event void MLME_START.confirm(ieee154_status_t status)
   {
-    if (status == IEEE154_SUCCESS)
+    char payload[] = "Hello Device!";
+    uint8_t *payloadRegion;
+    ieee154_address_t deviceShortAddress;
+
+    // construct the frame
+    m_payloadLen = strlen(payload);
+    payloadRegion = call Packet.getPayload(&m_frame, m_payloadLen);
+    deviceShortAddress.shortAddress = DEVICE_ADDRESS; // destination
+    if (status == IEEE154_SUCCESS && m_payloadLen <= call Packet.maxPayloadLength()) {
+      memcpy(payloadRegion, payload, m_payloadLen);
+      call Frame.setAddressingFields(
+          &m_frame,                
+          ADDR_MODE_SHORT_ADDRESS, // SrcAddrMode,
+          ADDR_MODE_SHORT_ADDRESS, // DstAddrMode,
+          PAN_ID,                  // DstPANId,
+          &deviceShortAddress,     // DstAddr,
+          NULL                     // security
+          );
       dataRequest();
+    }
   }
 
   event void MCPS_DATA.confirm(
