@@ -54,6 +54,8 @@ configuration ActiveMessageC {
     interface Packet;
     interface AMPacket;
     interface PacketAcknowledgements;
+    interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli; 
+    interface PacketTimeStamp<T32khz, uint32_t> as PacketTimeStamp32khz; 
   }
 }
 implementation {
@@ -67,4 +69,6 @@ implementation {
   Packet       = AM;
   AMPacket     = AM;
   PacketAcknowledgements = AM;
+  PacketTimeStampMilli   = AM;
+  PacketTimeStamp32khz   = AM;
 }
