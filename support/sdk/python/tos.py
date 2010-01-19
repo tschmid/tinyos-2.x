@@ -448,6 +448,8 @@ class AM(SimpleAM):
         r = super(AM, self).write(packet, amId, timeout, blocking)
         while not r:
             r = super(AM, self).write(packet, amId, timeout, blocking, inc=0)
+            if timeout and not r:
+               raise Timeout
         return True
 
 
