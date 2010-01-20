@@ -41,6 +41,10 @@
  *
  * @author Konrad Lorincz
  * @date May 14, 2008
+ * re-written to use interrupt-driven sfd capture; 
+ * shimmer2 does not have sfd wired to a timer pin
+ * @author Steve Ayer
+ * @date January, 2010
  */
 
 configuration HplCC2420InterruptsC {
