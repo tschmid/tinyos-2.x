@@ -105,7 +105,7 @@ implementation {
       return FAIL;
     }
     else {
-      uint8_t emptyIndex = (index + free);
+      uint16_t emptyIndex = (index + free);
       if (emptyIndex >= size) {
         emptyIndex -= size;
       }

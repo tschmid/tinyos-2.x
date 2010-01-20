@@ -75,22 +75,22 @@ implementation
 
   async command bool BitVector.get(uint16_t bitnum)
   {
-    return (m_bits[getIndex(bitnum)] & getMask(bitnum)) ? TRUE : FALSE;
+    atomic {return (m_bits[getIndex(bitnum)] & getMask(bitnum)) ? TRUE : FALSE;}
   }
 
   async command void BitVector.set(uint16_t bitnum)
   {
-    m_bits[getIndex(bitnum)] |= getMask(bitnum);
+    atomic {m_bits[getIndex(bitnum)] |= getMask(bitnum);}
   }
 
   async command void BitVector.clear(uint16_t bitnum)
   {
-    m_bits[getIndex(bitnum)] &= ~getMask(bitnum);
+    atomic {m_bits[getIndex(bitnum)] &= ~getMask(bitnum);}
   }
 
   async command void BitVector.toggle(uint16_t bitnum)
   {
-    m_bits[getIndex(bitnum)] ^= getMask(bitnum);
+    atomic {m_bits[getIndex(bitnum)] ^= getMask(bitnum);}
   }
 
   async command void BitVector.assign(uint16_t bitnum, bool value)
