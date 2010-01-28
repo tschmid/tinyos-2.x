@@ -48,10 +48,6 @@ implementation
   Msp430TimerControl[0] = Msp430TimerC.ControlB0;
   Msp430Compare[0] = Msp430TimerC.CompareB0;
 
-  // Timer pin B1 is used by the CC2420 radio's SFD pin
-  // this is the only difference between the default 32khz map
-  // and the map on telos
-
   Msp430Timer[1] = Msp430TimerC.TimerB;
   Msp430TimerControl[1] = Msp430TimerC.ControlB1;
   Msp430Compare[1] = Msp430TimerC.CompareB1;
