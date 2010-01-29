@@ -245,12 +245,6 @@ implementation {
         return (etx < ETX_THRESHOLD);
     }
 
-    /* Converts the output of the link estimator to path metric
-     * units, that can be *added* to form path metric measures */
-    uint16_t evaluateEtx(uint16_t quality) {
-        //dbg("TreeRouting","%s %d -> %d\n",__FUNCTION__,quality, quality+10);
-        return (quality + 10);
-    }
 
     /* updates the routing information, using the info that has been received
      * from neighbor beacons. Two things can cause this info to change: 
@@ -285,8 +279,8 @@ implementation {
                   i, entry->neighbor, entry->info.parent);
               continue;
             }
-            /* Compute this neighbor's path metric */
-            linkEtx = evaluateEtx(call LinkEstimator.getLinkQuality(entry->neighbor));
+
+            linkEtx = call LinkEstimator.getLinkQuality(entry->neighbor);
             dbg("TreeRouting", 
                 "routingTable[%d]: neighbor: [id: %d parent: %d etx: %d retx: %d]\n",  
                 i, entry->neighbor, entry->info.parent, linkEtx, entry->info.etx);
@@ -399,8 +393,7 @@ implementation {
             beaconMsg->etx = routeInfo.etx;
             beaconMsg->options |= CTP_OPT_PULL;
         } else {
-            beaconMsg->etx = routeInfo.etx +
-                                evaluateEtx(call LinkEstimator.getLinkQuality(routeInfo.parent));
+            beaconMsg->etx = routeInfo.etx + call LinkEstimator.getLinkQuality(routeInfo.parent);
         }
 
         dbg("TreeRouting", "%s parent: %d etx: %d\n",
@@ -543,8 +536,7 @@ implementation {
 	if (state_is_root == 1) {
 	  *etx = 0;
 	} else {
-	  // path etx = etx(parent) + etx(link to the parent)
-	  *etx = routeInfo.etx + evaluateEtx(call LinkEstimator.getLinkQuality(routeInfo.parent));
+	  *etx = routeInfo.etx + call LinkEstimator.getLinkQuality(routeInfo.parent);
 	}
         return SUCCESS;
     }
@@ -669,7 +661,6 @@ implementation {
             if (entry->neighbor == routeInfo.parent)
                 continue;
             neighEtx = entry->info.etx;
-            //neighEtx = evaluateEtx(call LinkEstimator.getLinkQuality(entry->neighbor));
             found |= (pathEtx < neighEtx); 
         }
         return found;
@@ -708,7 +699,7 @@ implementation {
     error_t routingTableUpdateEntry(am_addr_t from, am_addr_t parent, uint16_t etx)    {
         uint8_t idx;
         uint16_t  linkEtx;
-        linkEtx = evaluateEtx(call LinkEstimator.getLinkQuality(from));
+        linkEtx = call LinkEstimator.getLinkQuality(from);
 
         idx = routingTableFind(from);
         if (idx == routingTableSize) {
