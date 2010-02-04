@@ -304,7 +304,7 @@ implementation {
       if (q > 250) {
 	q = VERY_LARGE_ETX_VALUE;
       }
-      return (uint8_t)q;
+      return q;
     } else {
       return VERY_LARGE_ETX_VALUE;
     }
