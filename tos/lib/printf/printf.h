@@ -42,17 +42,18 @@
   #define PrintfQueue	Queue
 #endif
 
+#ifdef _H_msp430hardware_h
+  #include <stdio.h>
+#else
 #ifdef _H_atmega128hardware_H
   #include "avr_stdio.h"
 #else
 #ifdef __M16C62PHARDWARE_H__ 
   #include "m16c62p_printf.h"
 #else
-  #include <stdio.h>
+  #include "generic_printf.h"
 #endif
 #endif
-#ifdef PXA27X_HARDWARE_H
-  #undef putchar
 #endif
 #include "message.h"
 int printfflush();
