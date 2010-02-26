@@ -5,7 +5,7 @@ PLATFORM ?= epic
 
 # Disable MSP430 hardware multiply because it makes MSPGCC die
 PFLAGS += -mdisable-hwmul
-# OPTFLAGS += -O
+OPTFLAGS += -O
 
 # Default BSL assumes telosb-like programming interface
 MSP_BSL ?= tos-bsl
