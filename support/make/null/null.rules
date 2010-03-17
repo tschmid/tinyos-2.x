@@ -45,7 +45,7 @@ BUILDLESS_DEPS += bytes
 ifneq ($(wildcard $(VOLUMEFILE)), )
 build_storage: $(BUILDDIR)/StorageVolumes.h
 
-exe0: build_storage
+exe0: build_storage 
 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
 	$(VOLUME_ALLOCATOR) $(VOLUME_ALLOCATOR_FLAGS) <$(VOLUMEFILE) >$@
@@ -66,7 +66,7 @@ endif
 exe: exe0 bytes FORCE
 	@:
 
-exe0: builddir $(BUILD_EXTRA_DEPS) FORCE
+exe0: builddir $(BUILD_EXTRA_DEPS) $(COMPONENT).nc FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
 	$(NCC) -o $(MAIN_EXE) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS)
 	@echo "    compiled $(COMPONENT) to $(MAIN_EXE)"

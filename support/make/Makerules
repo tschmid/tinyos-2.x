@@ -187,6 +187,9 @@ endef
 $(error $(USAGE)Thank you)
 endif
 
+$(COMPONENT).nc:
+	@echo "ERROR: You need to create a top level file called $(COMPONENT).nc, or modify your local Makefile to point to the real name of your top level component."
+	@false
 
 .PHONY: FORCE
 
