@@ -50,5 +50,6 @@
 #define IRQ_PRIO_DMAC (0x84)
 #define IRQ_PRIO_TWI0 (0x83)
 #define IRQ_PRIO_TWI1 (0x82)
+#define IRQ_PRIO_HSMCI (0x89)
 
 #endif // HARDWARE_H
