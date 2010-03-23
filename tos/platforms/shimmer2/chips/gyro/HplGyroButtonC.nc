@@ -39,7 +39,7 @@
  * @date March, 2010
  */
 
-configuration HplUserButtonC {
+configuration HplGyroButtonC {
   provides interface GeneralIO;
   provides interface GpioInterrupt;
 }
