@@ -133,6 +133,10 @@ implementation {
   components IPAddressC;
   BaseStationP.IPAddress -> IPAddressC;
 
+#ifdef PLATFORM_IRIS
+  BaseStationP.RadioChannel -> Radio;
+#else
   components CC2420ControlC;
   BaseStationP.CC2420Config -> CC2420ControlC;
+#endif
 }

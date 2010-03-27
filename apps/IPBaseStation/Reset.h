@@ -44,7 +44,7 @@
 
 void resetMote()
 {
-#if defined(PLATFORM_MICA) || defined(PLATFORM_MICA2) || defined(PLATFORM_MICA2DOT) || defined(PLATFORM_MICAZ)
+#if defined(PLATFORM_MICA) || defined(PLATFORM_MICA2) || defined(PLATFORM_MICA2DOT) || defined(PLATFORM_MICAZ) || defined(PLATFORM_IRIS)
     	cli(); 
   	wdt_enable(0); 
   	while (1) { 

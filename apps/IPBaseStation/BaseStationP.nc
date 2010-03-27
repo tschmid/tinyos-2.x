@@ -65,7 +65,6 @@
  */
 
 #ifndef SIM
-#include "CC2420.h"
 #endif
 #include "AM.h"
 #include "Serial.h"
@@ -95,7 +94,12 @@ module BaseStationP {
 
     interface PacketLink;
     interface LowPowerListening;
+
+#ifdef PLATFORM_IRIS
+    interface RadioChannel;
+#else
     interface CC2420Config;
+#endif
 
     interface Leds;
 
@@ -410,10 +414,16 @@ implementation
     case CONFIG_ECHO:
       break;
     case CONFIG_SET_PARM:
+#ifdef PLATFORM_IRIS
+      // we should check the return value, hope it works
+      call RadioChannel.setChannel(cmd->rf.channel);
+      call IPAddress.setShortAddr(cmd->rf.addr);
+#else
       call CC2420Config.setChannel(cmd->rf.channel);
       // IPAddress calls sync() for you, I think, so we'll put it second 
       call IPAddress.setShortAddr(cmd->rf.addr);
       call CC2420Config.sync();
+#endif
       radioRetries = cmd->retx.retries;
       radioDelay   = cmd->retx.delay;
       break;
@@ -430,10 +440,12 @@ implementation
     return msg;
   }
 
-
+#ifdef PLATFORM_IRIS
+  event void RadioChannel.setChannelDone() { }
+#else
   event void CC2420Config.syncDone(error_t error) {
-
   }
+#endif
 
   event void ConfigureSend.sendDone(message_t *msg, error_t error) {
     echo_busy = FALSE;
