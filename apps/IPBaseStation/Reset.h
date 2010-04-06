@@ -50,7 +50,7 @@ void resetMote()
   	while (1) { 
   		__asm__ __volatile__("nop" "\n\t" ::);
   	}
-#elif defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC) || defined(PLATFORM_SHIMMER) || defined(PLATFORM_SHIMMER2)
+#elif defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC) || defined(PLATFORM_SHIMMER) || defined(PLATFORM_SHIMMER2) || defined(PLATFORM_SPAN)
         WDTCTL = 0;
 #else
 #error "Reset.h not defined/supported for your platform, aborting..."
