@@ -34,7 +34,7 @@ module SerialPacketInfo802_15_4P {
   provides interface SerialPacketInfo as Info;
 }
 implementation {
-#ifdef PLATFORM_IRIS
+#if defined(PLATFORM_IRIS) || defined(PLATFORM_MULLE)
   enum {
     HEADER_SIZE = sizeof(rf230packet_header_t),
     FOOTER_SIZE = sizeof(rf230packet_footer_t),
