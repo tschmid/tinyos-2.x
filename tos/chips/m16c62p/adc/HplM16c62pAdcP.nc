@@ -34,6 +34,13 @@ module HplM16c62pAdcP
 {
   provides interface HplM16c62pAdc;
   uses interface McuPowerState;
+  
+#ifdef THREADS
+  uses interface PlatformInterrupt;
+#define POST_AMBLE() call PlatformInterrupt.postAmble()
+#else 
+#define POST_AMBLE()
+#endif 
 }
 implementation
 {
@@ -140,6 +147,7 @@ implementation
     
     __nesc_enable_interrupt();
     signal HplM16c62pAdc.dataReady(data);
+    POST_AMBLE();
   }
 
   async command bool HplM16c62pAdc.cancel() { 

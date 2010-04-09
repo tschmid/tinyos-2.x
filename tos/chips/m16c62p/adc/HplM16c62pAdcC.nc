@@ -40,4 +40,9 @@ implementation {
 
   HplM16c62pAdc = HplM16c62pAdcP;
   HplM16c62pAdcP.McuPowerState -> McuSleepC;
+  
+#ifdef THREADS
+  components PlatformInterruptC;
+    HplM16c62pAdcP.PlatformInterrupt -> PlatformInterruptC;
+#endif
 }
