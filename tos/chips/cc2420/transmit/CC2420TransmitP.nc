@@ -258,8 +258,10 @@ implementation {
   
   inline uint32_t getTime32(uint16_t time)
   {
-    uint32_t recent_time=call BackoffTimer.getNow();
-    return recent_time + (int16_t)(time - recent_time);
+    uint32_t recent_time = call BackoffTimer.getNow();
+
+    // time is always in the past
+    return recent_time - (uint16_t)(recent_time - time);
   }
 
   /**
