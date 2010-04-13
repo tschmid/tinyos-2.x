@@ -255,13 +255,13 @@ implementation {
   async command void RadioBackoff.setCca(bool useCca) {
   }
   
-  
-  inline uint32_t getTime32(uint16_t time)
+  // this method converts a 16-bit timestamp into a 32-bit one
+  inline uint32_t getTime32(uint16_t captured_time)
   {
-    uint32_t recent_time = call BackoffTimer.getNow();
+    uint32_t now = call BackoffTimer.getNow();
 
-    // time is always in the past
-    return recent_time - (uint16_t)(recent_time - time);
+    // the captured_time is always in the past
+    return now - (uint16_t)(now - captured_time);
   }
 
   /**
