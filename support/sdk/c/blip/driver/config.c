@@ -30,10 +30,10 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#include "ip.h"
+#include <lib6lowpan/ip.h>
 #include "config.h"
 #include "logging.h"
-#include "vty.h"
+#include "vty/vty.h"
 
 #define BUF_LEN 200
 struct config *lastconfig;
@@ -96,7 +96,9 @@ int config_parse(const char *file, struct config *c) {
   if (gotargs != 3) return 1;
 
   info("Read config from '%s'\r\n", file);
-  info("Proxying neighbor advertisements to %s\r\n", c->proxy_dev);
+  if (strncmp(c->proxy_dev, "lo", 3) != 0) {
+    info("Proxying neighbor advertisements to %s\r\n", c->proxy_dev);
+  }
   info("Using channel %i\r\n", c->channel);
   info("Retries: %i\r\n", c->retries);
   lastconfig = c;

@@ -22,7 +22,7 @@
 #ifndef __ROUTING_H_
 #define __ROUTING_H_
 
-#include <ip.h>
+#include <lib6lowpan/ip.h>
 #include <string.h>
 #include "nwstate.h"
 #include "config.h"
@@ -82,5 +82,9 @@ ieee154_saddr_t routing_get_nexthop(struct split_ip_msg *msg);
  */
 int routing_add_report(node_id_t reporter, struct tlv_hdr *tlv);
 
+ 
+uint16_t routing_get_seqno();
+
+uint16_t routing_incr_seqno();
 
 #endif 

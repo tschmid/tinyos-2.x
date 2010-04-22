@@ -30,7 +30,7 @@
  *
  * @author Jonathan Hui <jhui@archrock.com>
  * @author David Moss
- * @version $Revision: 1.13 $ $Date: 2008/09/05 20:39:00 $
+ * @version $Revision: 1.16 $ $Date: 2009/08/29 04:21:37 $
  */
 
 #ifndef __CC2420_H__
@@ -38,8 +38,12 @@
 
 typedef uint8_t cc2420_status_t;
 
-#ifndef TFRAMES_ENABLED
+#if !defined(TFRAMES_ENABLED) && !defined(IEEE154FRAMES_ENABLED)
 #define CC2420_IFRAME_TYPE
+#endif
+
+#if defined(TFRAMES_ENABLED) && defined(IEEE154FRAMES_ENABLED)
+#error "Both TFRAMES and IEEE154FRAMES enabled!"
 #endif
 
 /**
@@ -81,6 +85,17 @@ typedef uint8_t cc2420_status_t;
  * All of these fields will be filled in automatically by the radio stack 
  * when you attempt to send a message.
  */
+/**
+ * CC2420 Security Header
+ */
+typedef nx_struct security_header_t {
+  nx_uint8_t secLevel:3;
+  nx_uint8_t keyMode:2;
+  nx_uint8_t reserved:3;
+  nx_uint32_t frameCounter;
+  nx_uint8_t keyID[1]; // One byte for now
+} security_header_t;
+
 typedef nx_struct cc2420_header_t {
   nxle_uint8_t length;
   nxle_uint16_t fcf;
@@ -88,18 +103,22 @@ typedef nx_struct cc2420_header_t {
   nxle_uint16_t destpan;
   nxle_uint16_t dest;
   nxle_uint16_t src;
+  /** CC2420 802.15.4 header ends here */
+#ifdef CC2420_HW_SECURITY
+  security_header_t secHdr;
+#endif
   
-  /** I-Frame 6LowPAN interoperability byte */
 #ifdef CC2420_IFRAME_TYPE
+  /** I-Frame 6LowPAN interoperability byte */
   nxle_uint8_t network;
 #endif
 
-#ifndef TINYOS_IP
+#if defined(TFRAMES_ENABLED) || defined(CC2420_IFRAME_TYPE)
   nxle_uint8_t type;
 #endif
 
 } cc2420_header_t;
-  
+
 /**
  * CC2420 Packet Footer
  */
@@ -128,7 +147,6 @@ typedef nx_struct cc2420_metadata_t {
   nx_uint16_t maxRetries;
   nx_uint16_t retryDelay;
 #endif
-
 } cc2420_metadata_t;
 
 
@@ -165,7 +183,6 @@ typedef nx_struct cc2420_packet_t {
 #define TINYOS_6LOWPAN_NETWORK_ID 0x3f
 #endif
 
-
 enum {
   // size of the header not including the length byte
   MAC_HEADER_SIZE = sizeof( cc2420_header_t ) - 1,
@@ -174,8 +191,19 @@ enum {
   // MDU
   MAC_PACKET_SIZE = MAC_HEADER_SIZE + TOSH_DATA_LENGTH + MAC_FOOTER_SIZE,
 
-  CC2420_SIZE = MAC_HEADER_SIZE + MAC_FOOTER_SIZE,
+  AM_OVERHEAD = 0
+#if defined(TFRAMES_ENABLED) || defined(CC2420_IFRAME_TYPE)
+  + 1 // add one for the AM byte
+#if defined(CC2420_IFRAME_TYPE)
+  + 1 // and one for the network byte
+#endif
+#endif    
+  ,
+
+  CC2420_SIZE = MAC_HEADER_SIZE + MAC_FOOTER_SIZE - AM_OVERHEAD,
 };
+
+#define CC2420_PAYLOAD(mbuf)  (((uint8_t *)(mbuf)->data) - AM_OVERHEAD)
 
 enum cc2420_enums {
   CC2420_TIME_ACK_TURNAROUND = 7, // jiffies
@@ -406,6 +434,22 @@ enum cc2420_sfdmux_enums {
   CC2420_SFDMUX_SFD = 0,
   CC2420_SFDMUX_XOSC16M_STABLE = 24,
 };
+
+enum cc2420_security_enums{
+  CC2420_NO_SEC = 0,
+  CC2420_CBC_MAC = 1,
+  CC2420_CTR = 2,
+  CC2420_CCM = 3,
+  NO_SEC = 0,
+  CBC_MAC_4 = 1,
+  CBC_MAC_8 = 2,
+  CBC_MAC_16 = 3,
+  CTR = 4,
+  CCM_4 = 5,
+  CCM_8 = 6,
+  CCM_16 = 7
+};
+norace uint8_t SECURITYLOCK = 0;
 
 enum
 {

@@ -64,8 +64,8 @@
 #include <linux/if_ether.h>
 
 #include <netinet/in.h>
+#include <lib6lowpan/lib6lowpan.h>
 
-#include "lib6lowpan.h"
 #include "tun_dev.h"
 #include "logging.h"
 

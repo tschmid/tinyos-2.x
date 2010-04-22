@@ -30,7 +30,6 @@
  */
 
 uint8_t linklocal_prefix [] = {0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-uint8_t multicast_prefix [] = {0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 struct in6_addr __my_address       = {{{0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x65}}};
@@ -134,8 +133,10 @@ static inline int decompressShortAddress(uint8_t dispatch, uint8_t *s_addr, uint
   }
   // otherwise we either have an invalid compression, or else it's a
   // multicast address
-  ip_memcpy(dest, multicast_prefix, 8);
-  ip_memclr(dest + 8, 8);
+  // ip_memcpy(dest, multicast_prefix, 8);
+  ip_memclr(dest, 16);
+  dest[0] = 0xff;
+  dest[1] = 0x02;
   switch (*s_addr & LOWPAN_IPHC_SHORT_LONG_MASK) {
   case LOWPAN_IPHC_HC1_MCAST:
     dest[14] = (*s_addr) & ~LOWPAN_IPHC_SHORT_LONG_MASK;
@@ -192,12 +193,11 @@ static inline int decompressAddress(uint8_t dispatch, uint16_t src, uint8_t addr
 
 void adjustPlen(struct ip6_hdr *ip, unpack_info_t *u_info) {
   uint16_t adjust_amt = u_info->payload_offset;
-  /*
-  switch (u_info->nxt_hdr) {
+  
+  switch (ip->nxt_hdr) {
   case IANA_UDP:
     adjust_amt -= sizeof(struct udp_hdr); break;
   }
-  */
   ip->plen = htons(ntohs(ip->plen) - adjust_amt);
 }
 
@@ -334,7 +334,7 @@ uint8_t *unpackHeaders(packed_lowmsg_t *pkt, unpack_info_t *u_info,
       dest += sizeof(struct udp_hdr);
 
       u_info->nxt_hdr = IANA_UDP;
-      // u_info->payload_offset += sizeof(struct udp_hdr);
+      u_info->payload_offset += sizeof(struct udp_hdr);
       u_info->transport_ptr = (uint8_t *)udp;
 
     } else {
@@ -484,7 +484,8 @@ uint8_t packHeaders(struct split_ip_msg *msg,
   }
 
   nxt_hdr = hdr->nxt_hdr;
-  if (hdr->nxt_hdr == IANA_UDP /* or other compressed values... */) {
+  if (hdr->nxt_hdr == IANA_UDP && /* or other compressed values... */
+      msg->headers != NULL) {
     // we will add the HCNH encoding at the end of the header
     *encoding |= LOWPAN_IPHC_NH_MASK;
   } else {

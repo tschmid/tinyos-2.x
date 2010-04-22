@@ -44,8 +44,8 @@ module IPRoutingP {
 } implementation {
 
 #ifdef PRINTFUART_ENABLED
-/* #undef dbg */
-/* #define dbg(X, fmt, args...)  printfUART(fmt, ## args) */
+// #undef dbg
+// #define dbg(X, fmt, args...)  printfUART(fmt, ## args)
 #endif
 
   enum {
@@ -58,8 +58,6 @@ module IPRoutingP {
   uint16_t last_qual;
   uint8_t last_hops;
   uint16_t reportSeqno;
-
-  uint8_t num_low_neigh;
 
   bool soliciting;
 
@@ -121,6 +119,7 @@ module IPRoutingP {
     traffic_interval += (call Random.rand16()) % (TGEN_BASE_TIME);
     if (call TrafficGenTimer.isRunning())
       call TrafficGenTimer.stop();
+    traffic_sent = FALSE;
 
     call TrafficGenTimer.startOneShot(traffic_interval);
   }
@@ -128,9 +127,12 @@ module IPRoutingP {
   event void TrafficGenTimer.fired() {
     struct split_ip_msg *msg;
     if (traffic_sent) goto done;
-    traffic_sent = FALSE;
     msg = (struct split_ip_msg *)ip_malloc(sizeof(struct split_ip_msg));
-    if (msg == NULL) goto done;
+    if (msg == NULL) {
+      printfUART("malloc fail\n");
+      goto done;
+    }
+    traffic_sent = FALSE;
 
     ip_memclr((uint8_t *)&msg->hdr, sizeof(struct ip6_hdr));
     inet_pton6("ff05::1", &msg->hdr.ip6_dst);
@@ -158,7 +160,7 @@ module IPRoutingP {
 
   }
 
-  event void Boot.booted() {
+  command void IPRouting.reset() {
     int i;
 
     for (i = 0; i < N_NEIGH; i++) {
@@ -174,7 +176,10 @@ module IPRoutingP {
 #endif
 
     // current_epoch = 0;
-    soliciting = FALSE;
+    if (!soliciting) {
+      call ICMP.sendSolicitations();
+      soliciting = TRUE;
+    }
     //reRouting = FALSE;
     default_route_failures = 0;
     default_route = &neigh_table[0];
@@ -182,14 +187,18 @@ module IPRoutingP {
     // associated from us when it gets the first packet.
     last_qual = 0xffff;
     last_hops = 0xff;
-    num_low_neigh = 0;
+
+    traffic_sent = FALSE;
+    restartTrafficGen();
+  }
+
+  event void Boot.booted() {
+    call IPRouting.reset();
     reportSeqno = call Random.rand16();
 
     call Statistics.clear();
     call SortTimer.startPeriodic(1024L * 60);
 
-    traffic_sent = FALSE;
-    restartTrafficGen();
   }
   
   command bool IPRouting.isForMe(struct ip6_hdr *hdr) {
@@ -198,9 +207,11 @@ module IPRoutingP {
     // me.
     struct in6_addr *my_address = call IPAddress.getPublicAddr();
     return (((cmpPfx(my_address->s6_addr, hdr->ip6_dst.s6_addr) || 
-              cmpPfx(linklocal_prefix, hdr->ip6_dst.s6_addr)) 
-             && cmpPfx(&my_address->s6_addr[8], &hdr->ip6_dst.s6_addr[8])) 
-            || cmpPfx(multicast_prefix, hdr->ip6_dst.s6_addr));
+              cmpPfx(linklocal_prefix, hdr->ip6_dst.s6_addr)) &&
+             cmpPfx(&my_address->s6_addr[8], &hdr->ip6_dst.s6_addr[8])) ||
+            (hdr->ip6_dst.s6_addr[0] == 0xff && 
+             (hdr->ip6_dst.s6_addr[1] & 0x0f) <= 3))
+;
   }
 
 #ifdef CENTRALIZED_ROUTING
@@ -777,8 +788,8 @@ module IPRoutingP {
     struct flow_entry *r = getFlowEntry_Header(hdr);
 #endif
     prev_hop = 0;
-    ret->retries = N_RETRIES;;
-    ret->delay = 30;
+    ret->retries = BLIP_L2_RETRIES;
+    ret->delay = (BLIP_L2_DELAY % (call Random.rand16())) + BLIP_L2_DELAY;
     ret->current = 0;
     ret->nchoices = 0;
  
@@ -802,7 +813,8 @@ module IPRoutingP {
       ret->dest[0] = ntohs(sh->hops[ROUTE_NENTRIES(sh) - sh->segs_remain]);
       ret->nchoices = 1;
 
-    } else if (hdr->ip6_dst.s6_addr16[0] == htons(0xff02)) {
+    } else if (hdr->ip6_dst.s6_addr[0] == 0xff &&
+               (hdr->ip6_dst.s6_addr[1] & 0xf) <= 0x03) {
       //hdr->dst_addr[0] == 0xff && (hdr->dst_addr[1] & 0xf) == 0x2) {
       // if it's multicast, for now, we send it to the local broadcast
       ret->dest[0] = 0xffff;
@@ -911,8 +923,7 @@ module IPRoutingP {
     //bool recount = FALSE;
     struct neigh_entry *neigh_slot =  NULL;
     dbg("IPRouting", "report adv: 0x%x 0x%x 0x%x 0x%x\n", neigh, hops, lqi, cost);
-    dbg("IPRouting", "my Cost: 0x%x, num_low_neigh: 0x%x, N_LOW_NEIGH: 0x%x\n", 
-               getMetric(&(neigh_table[0])), num_low_neigh, N_LOW_NEIGH);
+    dbg("IPRouting", "my Cost: 0x%x\n", getMetric(&(neigh_table[0])));
    
     // If neighbor does not exist in table 
     if ((neigh_slot = getNeighEntry(neigh)) == NULL) {
@@ -1160,6 +1171,11 @@ module IPRoutingP {
     tlv->len = sizeof(struct tlv_hdr) + sizeof(struct topology_header);
     tlv->type = TLV_TYPE_TOPOLOGY;
 
+    if (iph->ip6_dst.s6_addr[0] == 0xff &&
+        (iph->ip6_dst.s6_addr[1] & 0xf) <= 3) {
+      return NULL;
+    }
+
     printfUART("inserting destination options header\n");
 
     // AT: We theoretically only want to attach this topology header if we're
@@ -1170,7 +1186,8 @@ module IPRoutingP {
     // only attach the topology information if we are.  This still isn't
     // perfect since somebody further down the tree may have a route and the
     // packet might not get to the controller.
-    if (iph->nxt_hdr == IANA_UDP || iph->nxt_hdr == IPV6_NONEXT) {
+    if (iph->nxt_hdr == IANA_UDP || 
+        iph->nxt_hdr == IPV6_NONEXT) {
       int i,j = 0;
       if (iph->ip6_dst.s6_addr16[0] == htons(0xff02)) return NULL;
       if (traffic_sent) return NULL;

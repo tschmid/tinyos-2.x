@@ -1,5 +1,5 @@
 /*
- *   $Id: device.c,v 1.2 2009/08/09 23:36:05 sdhsdh Exp $
+ *   $Id: device.c,v 1.4 2009/09/11 21:44:25 sdhsdh Exp $
  *
  *   Authors:
  *    Lars Fenneberg		<lf@elemental.net>	 
@@ -13,11 +13,11 @@
  *
  */
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
-#include <defaults.h>
-#include <pathnames.h>		/* for PATH_PROC_NET_IF_INET6 */
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
+#include "defaults.h"
+#include "pathnames.h"		/* for PATH_PROC_NET_IF_INET6 */
 
 #ifndef IPV6_ADDR_LINKLOCAL
 #define IPV6_ADDR_LINKLOCAL   0x0020U

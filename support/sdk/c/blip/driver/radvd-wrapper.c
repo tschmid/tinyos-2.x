@@ -45,9 +45,9 @@
  */
 
 
-#include <includes.h>
-#include <radvd.h>
-#include <pathnames.h>
+#include "radvd-1.0/includes.h"
+#include "radvd-1.0/radvd.h"
+#include "radvd-1.0/pathnames.h"
 
 #include "logging.h"
 #include "config.h"
@@ -71,6 +71,19 @@ void radvd_timer_handler(void *data) {
   }
 
   set_timer(&iface->tm, next);
+}
+
+void radvd_reset_adverts(void) {
+  if (iface->AdvSendAdvert) {
+    /* send an initial advertisement */
+    send_ra(sock, iface, NULL);
+    
+    iface->init_racount = 0;
+
+    set_timer(&iface->tm,
+              min(MAX_INITIAL_RTR_ADVERT_INTERVAL,
+                  iface->MaxRtrAdvInterval));
+  }
 }
 
 

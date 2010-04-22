@@ -26,12 +26,13 @@
 #include <float.h>
 #include <time.h>
 #include <sys/time.h>
+#include "lib6lowpan/lib6lowpan.h"
+
 #include "nwstate.h"
 #include "hashtable.h"
 #include "logging.h"
-#include "lib6lowpan.h"
 #include "routing.h"
-#include "vty.h"
+#include "vty/vty.h"
 
 struct hashtable *links;
 struct hashtable *routers;
@@ -131,8 +132,13 @@ void nw_print_links(int fd, int argc, char **argv) {
   router_t *r;
   link_t *l;
 
-  if (argc == 2)
-    target = atoi(argv[1]);
+  if (argc == 2) {
+    if (sscanf(argv[1], "%i", &target) == 0) {
+      VTY_printf("invalid node\r\n");
+      VTY_flush();
+      return;
+    }
+  }
 
   for (r = router_list; r != NULL; r = r->next) {
     char flags[16]; int pos = 0;
@@ -183,7 +189,7 @@ void nw_add_sticky_edge(int fd, int argc, char **argv) {
     l = nw_add_incr_edge(v1, &te);
     l->marked = L_STICKY;
   } else {
-    VTY_printf("add a link: 'a <n1> <n2>'\r\n");
+    VTY_printf("add a link: '%s <n1> <n2>'\r\n", argv[0]);
   }
   VTY_flush();
 }
@@ -212,6 +218,7 @@ router_t *get_insert_router(node_id_t rid) {
   if (ret == NULL) {
     key = (router_key_t *)malloc(sizeof(router_key_t));
     ret = (router_t *)malloc(sizeof(router_t));
+    memset(ret, 0, sizeof(router_t));
 
     ret->id = rid;
     ret->links = NULL;
@@ -265,6 +272,7 @@ link_t *nw_add_incr_edge(node_id_t v1, struct topology_entry *te) {
     router_t *r1 = get_insert_router(v1);
     router_t *r2 = get_insert_router(v2);
     link_str = (link_t *)malloc(sizeof(link_t));
+    memset(link_str, 0, sizeof(link_t));
 
     new_key->r1 = v1;
     new_key->r2 = v2;

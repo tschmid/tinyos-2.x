@@ -17,7 +17,8 @@
 #include "mac_func.h"
 
 module MacM {
- 
+
+#ifndef TKN154_MAC 
 	provides interface Init;
 	
 	provides interface MLME_START;
@@ -42,6 +43,7 @@ module MacM {
 	//MCPS
 	provides interface MCPS_DATA;
 	provides interface MCPS_PURGE;
+#endif
 		
 	
 	uses interface Timer<TMilli> as T_ackwait;	
@@ -515,6 +517,7 @@ on top of this file*/
 
 
    atomic{
+
 	//inicialize the mac PIB
 	init_MacPIB();
 	
@@ -757,7 +760,7 @@ async event error_t TimerAsync.sd_fired()
 	}
 	else
 	{
-	//temporariamente aqui //atenção quando for para o cluster-tree é preciso mudar para fora
+	//temporariamente aqui //atenï¿½ï¿½o quando for para o cluster-tree ï¿½ preciso mudar para fora
 	//e necessario destinguir ZC de ZR (que tem que manter a sync com o respectivo pai)
 	if (on_sync == 0)
 	{
@@ -2190,7 +2193,7 @@ void indication_cmd(MPDU *pdu, int8_t ppduLinkQuality)
 											
 											if ( PANCoordinator==0 )
 											{
-												//////////printfUART("i´m not a pan\n", ""); 
+												//////////printfUART("iï¿½m not a pan\n", ""); 
 												return;
 											}
 									atomic{
@@ -3871,7 +3874,7 @@ return SUCCESS;
 
 command error_t MLME_RESET.request(uint8_t set_default_PIB)
 {
-
+printfUART("MLME_RESET.request\n", "");
 
 return SUCCESS;
 }
@@ -3908,7 +3911,7 @@ command error_t MLME_START.request(uint32_t PANId, uint8_t LogicalChannel, uint8
 	uint32_t BO_EXPONENT;
 	uint32_t SO_EXPONENT;
 
-	////////printfUART("MLME_START.request\n", "");
+	printfUART("MLME_START.request\n", "");
 	//pag 102
 	atomic {
 	PANCoordinator=1;

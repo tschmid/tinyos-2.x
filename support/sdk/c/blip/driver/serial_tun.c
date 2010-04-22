@@ -66,24 +66,24 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "TrackFlows.h"
+#include <lib6lowpan/TrackFlows.h>
+#include <lib6lowpan/6lowpan.h>
+#include <lib6lowpan/ip.h>
+#include <lib6lowpan/lib6lowpan.h>
+#include <lib6lowpan/devconf.h>
+#include <lib6lowpan/IEEE154Packet.h>
 
-#include "tun_dev.h"
 #include "serialsource.h"
 #include "serialpacket.h"
 #include "serialprotocol.h"
 #include "sfsource.h"
 
-#include "6lowpan.h"
-#include "ip.h"
-#include "lib6lowpan.h"
-#include "IEEE154.h"
+#include "tun_dev.h"
 #include "routing.h"
-#include "devconf.h"
 #include "logging.h"
 #include "config.h"
 #include "nwstate.h"
-#include "vty.h"
+#include "vty/vty.h"
 
 #define min(a,b) ( (a>b) ? b : a )
 #define max(a,b) ( (a>b) ? a : b )
@@ -93,6 +93,7 @@ int opt_listenonly = 0, opt_trackflows = 0;
 
 int radvd_init(char *ifname, struct config *c);
 void radvd_process();
+void radvd_reset_adverts(void);
 
 #ifndef SF_SRC
 serial_source ser_src;
@@ -163,7 +164,7 @@ void print_ip_packet(struct split_ip_msg *msg) {
   struct generic_header *g_hdr;
   if (log_getlevel() > LOGLVL_DEBUG) return;
 
-  printf("  nxthdr: 0x%x hlim: 0x%x\n", msg->hdr.nxt_hdr, msg->hdr.hlim);
+  printf("  nxthdr: 0x%x hlim: 0x%x plen: %i\n", msg->hdr.nxt_hdr, msg->hdr.hlim, ntohs(msg->hdr.plen));
   printf("  src: ");
   for (i = 0; i < 16; i++) printf("0x%x ", msg->hdr.ip6_src.s6_addr[i]);
   printf("\n");
@@ -1123,11 +1124,12 @@ void print_stats(int fd, int argc, char **argv) {
   VTY_HEAD;
   
   VTY_printf("Up since %s", ctime(&stats.boot_time));
-  VTY_printf("  receive  packets: %lu fragments: %lu bytes: %lu\n",
+  VTY_printf("  receive  packets: %lu fragments: %lu bytes: %lu\r\n",
              stats.rx_pkts, stats.rx_frags, stats.rx_bytes);
-  VTY_printf("  transmit packets: %lu fragments: %lu bytes: %lu\n",
+  VTY_printf("  transmit packets: %lu fragments: %lu bytes: %lu\r\n",
              stats.tx_pkts, stats.tx_frags, stats.tx_bytes);
-  VTY_printf("  forward  packets: %lu\n", stats.fw_pkts);
+  VTY_printf("  forward  packets: %lu\r\n", stats.fw_pkts);
+  VTY_printf("  dag seqno: %hi\r\n", routing_get_seqno());
   VTY_flush();
 }
 
@@ -1147,6 +1149,7 @@ void print_help(int fd, int argc, char **argv) {
   VTY_printf("  links          : print link detail\r\n");
   VTY_printf("  routes         : print routes\r\n");
   VTY_printf("  newroutes      : recalculate routes\r\n");
+  VTY_printf("  rebuild        : initiate a DAG recomputation\r\n");
   VTY_printf("  controller <n> : add a new controller\r\n");
 #ifdef CENTRALIZED_ROUTING
   VTY_printf("  install <HOP | SRC> <n1> <n2> [reverse]: install a route between n1 and n2\r\n");
@@ -1264,10 +1267,18 @@ void sh_controller(int fd, int argc, char **argv) {
   VTY_flush();
 }
 
+void sh_incr_seqno(int fd, int argc, char **argv) {
+  VTY_HEAD;
+  VTY_printf("DAG seqno now %i\r\n", routing_incr_seqno());
+  radvd_reset_adverts();
+
+  VTY_flush();
+}
+
 struct vty_cmd vty_cmd_list[] = {{"help", print_help},
                                  {"stats",  print_stats},
                                  {"links", nw_print_links},
-                                 {"route", nw_print_routes},
+                                 {"routes", nw_print_routes},
                                  {"newroutes", nw_test_routes},
                                  {"add", nw_add_sticky_edge},
                                  {"inval", nw_inval_node_sh},
@@ -1275,6 +1286,7 @@ struct vty_cmd vty_cmd_list[] = {{"help", print_help},
                                  {"log", sh_loglevel},
                                  {"dot", sh_dotfile},
                                  {"chan", sh_chan},
+                                 {"rebuild", sh_incr_seqno},
 #ifdef CENTRALIZED_ROUTING
                                  {"install", sh_install},
                                  {"uninstall", sh_uninstall},
@@ -1328,7 +1340,7 @@ int serial_tunnel(int tun_fd) {
     }
     usecs_remain -= (KEEPALIVE_TIMEOUT - tv.tv_usec);
     if (usecs_remain <= 0) {
-      if (keepalive_needed) {
+      if (keepalive_needed && !opt_listenonly) {
         configure_setparms(&driver_config, CONFIG_KEEPALIVE);
       } else keepalive_needed = 1;
 
@@ -1374,6 +1386,7 @@ int main(int argc, char **argv) {
       break;
     case 'l':
       opt_listenonly = 1;
+      info("Listen Only: will not attach to interface device\n");
       break;
     case 't':
       info("TrackFlows: will insert flow id on outgoing packets\n");
@@ -1385,9 +1398,9 @@ int main(int argc, char **argv) {
     }
   }
 
-  if (argc - optind != 2) {
+  if (argc - optind != 2 && !opt_listenonly) {
 #ifndef SF_SRC
-    fatal("usage: %s [-c config] [-n] <device> <rate>\n", argv[0]);
+    fatal("usage: %s [-c config] [-l] <device> <rate>\n", argv[0]);
 #else
     fatal("usage: %s [-c config] <host> <port>\n", argv[0]);
 #endif
