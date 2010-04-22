@@ -24,13 +24,13 @@
 #define IP_MALLOC_H_
 
 #include <stdint.h>
+#include <blip-platform.h>
 
 // align on this number of byte boundarie#s
 #define IP_MALLOC_ALIGN   2
 #define IP_MALLOC_LEN     0x0fff
 #define IP_MALLOC_FLAGS   0x7000
 #define IP_MALLOC_INUSE   0x8000
-#define IP_MALLOC_HEAP_SIZE 1500
 
 extern uint8_t heap[IP_MALLOC_HEAP_SIZE];
 typedef uint16_t bndrt_t;

@@ -189,6 +189,14 @@ implementation
 		call Ieee154PacketLayer.setDestPan(msg, grp);
 	}
 
+	command error_t ActiveMessageConfig.checkFrame(message_t* msg)
+	{
+		if( ! call Ieee154PacketLayer.isDataFrame(msg) )
+			call Ieee154PacketLayer.createDataFrame(msg);
+
+		return SUCCESS;
+	}
+
 /*----------------- CsmaConfig -----------------*/
 
 	async command bool CsmaConfig.requiresSoftwareCCA(message_t* msg)
@@ -312,7 +320,12 @@ implementation
 
 #ifdef LOW_POWER_LISTENING
 
-	async command bool LowPowerListeningConfig.getAckRequired(message_t* msg)
+	command bool LowPowerListeningConfig.needsAutoAckRequest(message_t* msg)
+	{
+		return call Ieee154PacketLayer.getDestAddr(msg) != TOS_BCAST_ADDR;
+	}
+
+	command bool LowPowerListeningConfig.ackRequested(message_t* msg)
 	{
 		return call Ieee154PacketLayer.getAckRequired(msg);
 	}
