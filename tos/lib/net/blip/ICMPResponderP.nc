@@ -222,7 +222,9 @@ module ICMPResponderP {
 
       printfUART("beacon seqno: %i my seqno: %i\n", beacon->seqno, nd_seqno);
 
-      if (beacon->seqno > nd_seqno || (nd_seqno > 0 && beacon->seqno == 0)) {
+      if (beacon->seqno > nd_seqno || 
+          (nd_seqno > 0 && beacon->seqno == 0) ||
+          !call IPRouting.hasRoute()) {
         call IPRouting.reset();
         nd_seqno = beacon->seqno;
       }
@@ -358,12 +360,9 @@ module ICMPResponderP {
         msg.headers = NULL;
         msg.data = payload;
         msg.data_len = len;
-        if (iph->ip6_src.s6_addr[0] == 0xfe) {
-          call IPAddress.getLLAddr(&msg.hdr.ip6_src);
-        } else {
-          call IPAddress.getIPAddr(&msg.hdr.ip6_src);
-        }
+
         memcpy(&msg.hdr.ip6_dst, &iph->ip6_src, 16);      
+        call IPAddress.setSource(&msg.hdr);
         
         req->type = ICMP_TYPE_ECHO_REPLY;
         req->code = 0;

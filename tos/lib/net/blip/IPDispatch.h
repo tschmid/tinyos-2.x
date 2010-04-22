@@ -32,7 +32,6 @@ enum {
   N_EPOCHS_COUNTED = 1,
   N_RECONSTRUCTIONS = 2,
   N_FORWARD_ENT = IP_NUMBER_FRAGMENTS,
-  N_RETRIES = 5,
 };
 
 enum {
@@ -42,10 +41,13 @@ enum {
   PATH_COST_DIFF_THRESH = 10, // Threshold for 'similar' path costs
   LQI_DIFF_THRESH = 10, // Threshold for 'similar' LQI's
   LINK_EVICT_THRESH = 50, // ETX * 10
-  LQI_ADMIT_THRESH = 0x200, 
-  RSSI_ADMIT_THRESH = 0,
   RANDOM_ROUTE = 20, //Percentage of time to select random default route
+  LQI_ADMIT_THRESH = 0x200, 
 };
+
+/* chip-specific lqi values */
+uint16_t adjustLQI(uint8_t val);
+
 
 enum {
   WITHIN_THRESH = 1,
@@ -60,8 +62,8 @@ enum {
 };
 #else
 enum {
+  TGEN_BASE_TIME = 16384L,
   TGEN_MAX_INTERVAL = 60L * 1024L * 5L,
-  TGEN_BASE_TIME = TGEN_MAX_INTERVAL,
 };
 #endif
 
@@ -113,7 +115,7 @@ typedef struct {
   uint8_t   nchoices:4;
   uint8_t   retries;
   uint8_t   actRetries;
-  uint8_t   delay;
+  uint16_t  delay;
 } send_policy_t;
 
 typedef struct {

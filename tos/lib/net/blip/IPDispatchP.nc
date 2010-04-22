@@ -102,16 +102,11 @@ module IPDispatchP {
     interface Boot;
     interface SplitControl as RadioControl;
 
-    interface CC2420Packet;
+    interface ReadLqi;
     interface Packet;
 
-#ifndef SIM
     interface Ieee154Send;
     interface Ieee154Packet;
-#else
-    interface AMSend as Ieee154Send;
-    interface AMPacket as Ieee154Packet;
-#endif
     interface Receive as Ieee154Receive;
 
     interface PacketLink;
@@ -137,8 +132,6 @@ module IPDispatchP {
   }
 } implementation {
   
-#include "table.c"
-
 #ifdef PRINTFUART_ENABLED
 #undef dbg
 #define dbg(X, fmt, args...)  printfUART(fmt, ## args)
@@ -244,7 +237,7 @@ module IPDispatchP {
 
   event void RadioControl.startDone(error_t error) {
 #ifdef LPL_SLEEP_INTERVAL
-    call LowPowerListening.setLocalSleepInterval(LPL_SLEEP_INTERVAL);
+    call LowPowerListening.setLocalWakeupInterval(LPL_SLEEP_INTERVAL);
 #endif
     if (error == SUCCESS) {
       call ICMP.sendSolicitations();
@@ -486,7 +479,7 @@ module IPDispatchP {
       //   - if not, dispatch from here.
 
       metadata.sender = call Ieee154Packet.source(msg);
-      metadata.lqi = call CC2420Packet.getLqi(msg);
+      metadata.lqi = call ReadLqi.read(msg);
 
       real_payload_length = ntohs(ip->plen);
       adjustPlen(ip, &u_info);
@@ -670,7 +663,7 @@ module IPDispatchP {
     BLIP_STATS_INCR(stats.rx_total);
 
     call IPRouting.reportReception(call Ieee154Packet.source(msg),
-                                   call CC2420Packet.getLqi(msg));
+                                   call ReadLqi.read(msg));
 
     lowmsg.headers = getHeaderBitmap(&lowmsg);
     if (lowmsg.headers == LOWPAN_NALP_PATTERN) {
@@ -798,10 +791,12 @@ module IPDispatchP {
     call PacketLink.setRetries(s_entry->msg, s_entry->info->policy.retries);
     call PacketLink.setRetryDelay(s_entry->msg, s_entry->info->policy.delay);
 #ifdef LPL_SLEEP_INTERVAL
-    call LowPowerListening.setRxSleepInterval(s_entry->msg, LPL_SLEEP_INTERVAL);
+    call LowPowerListening.setRemoteWakeupInterval(s_entry->msg, 
+            call LowPowerListening.getLocalWakeupInterval());
 #endif
 
-    dbg("IPDispatch", "sendTask dest: 0x%x len: 0x%x \n", call Ieee154Packet.destination(s_entry->msg),
+    dbg("IPDispatch", "sendTask dest: 0x%x len: 0x%x \n", 
+        call Ieee154Packet.destination(s_entry->msg),
         call Packet.payloadLength(s_entry->msg));
     
     if (s_entry->info->failed) {
@@ -977,7 +972,6 @@ module IPDispatchP {
   }
 
   event void Ieee154Send.sendDone(message_t *msg, error_t error) {
-    ip_statistics_t stat;
     send_entry_t *s_entry = call SendQueue.head();
 
     radioBusy = FALSE;
@@ -1017,6 +1011,7 @@ module IPDispatchP {
     s_entry->info->failed = TRUE;
     if (s_entry->info->policy.dest[0] != 0xffff)
       dbg("Drops", "drops: sendDone: frag was not delivered\n");
+    BLIP_STATS_INCR(stats.tx_drop);
 
   done:
     s_entry->info->policy.actRetries = call PacketLink.getRetries(msg);
@@ -1028,7 +1023,6 @@ module IPDispatchP {
     call SendQueue.dequeue();
 
     post sendTask();
-    call Statistics.get(&stat);
   }
 
   command struct tlv_hdr *IPExtensions.findTlv(struct ip6_ext *ext, uint8_t tlv_val) {

@@ -12,7 +12,10 @@ CFLAGS += -DNO_IP_MALLOC
 # memmove.  This doesn't mean that motes running blip also need this--
 # they can use IFRAMES or IEEE154FRAMES
 CFLAGS += -DIEEE154FRAMES_ENABLED
-CFLAGS += -DTOSH_DATA_LENGTH=104
+
+# if you're worried about your interface mote crashing, enable this to
+# turn on a hardware watchdog that will reset it if it does.  CFLAGS
+# += -DBLIP_WATCHDOG
 #
 # debugging
 #

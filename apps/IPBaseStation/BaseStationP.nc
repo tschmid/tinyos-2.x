@@ -19,7 +19,7 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  *
  */
-// $Id: BaseStationP.nc,v 1.2 2009/08/09 23:36:05 sdhsdh Exp $
+// $Id: BaseStationP.nc,v 1.5 2009/09/19 21:13:26 sdhsdh Exp $
 
 /*									tab:4
  * "Copyright (c) 2000-2005 The Regents of the University  of California.  
@@ -54,7 +54,7 @@
  * @author Phil Buonadonna
  * @author Gilman Tolle
  * @author David Gay
- * Revision:	$Id: BaseStationP.nc,v 1.2 2009/08/09 23:36:05 sdhsdh Exp $
+ * Revision:	$Id: BaseStationP.nc,v 1.5 2009/09/19 21:13:26 sdhsdh Exp $
  */
   
 /* 
@@ -111,7 +111,7 @@ implementation
   };
 
   uint16_t radioRetries = BLIP_L2_RETRIES;
-  uint16_t radioDelay   = 30;
+  uint16_t radioDelay   = BLIP_L2_DELAY;
 
   uint16_t serial_read;
   uint16_t radio_read;
@@ -303,10 +303,9 @@ implementation
     bool reflectToken = FALSE;
     CHECK_NODE_ID msg;
     dbg("base", "uartreceive len %i of 0x%x\n", len, call SerialAMPacket.destination(msg));
-#if defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC)
+#if defined(BLIP_WATCHDOG) && (defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC))
     WDTCTL = WDT_ARST_1000;
 #endif
-
     atomic
       if (!radioFull)
 	{
@@ -359,7 +358,7 @@ implementation
       call PacketLink.setRetries(msg, 0);
     }
 #ifdef LPL_SLEEP_INTERVAL
-    call LowPowerListening.setRxSleepInterval(msg, LPL_SLEEP_INTERVAL);
+    call LowPowerListening.setRemoteWakeupInterval(msg, LPL_SLEEP_INTERVAL);
 #endif
     dbg("base", "radio send to: 0x%x len: %i\n", addr, len);
     if (call RadioSend.send(addr, msg, len) == SUCCESS)
@@ -398,7 +397,7 @@ implementation
                                             uint8_t len) {
     config_cmd_t *cmd;
     uint8_t error = CONFIG_ERROR_OK;
-#if defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC)
+#if defined(BLIP_WATCHDOG) && (defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC))
     WDTCTL = WDT_ARST_1000;
 #endif
 
