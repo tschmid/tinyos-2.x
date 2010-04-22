@@ -458,7 +458,7 @@ implementation
 		atomic
 		{
 			call SLP_TR.set();
-			time = call RadioAlarm.getNow() + TX_SFD_DELAY;
+			time = call RadioAlarm.getNow();
 		}
 		call SLP_TR.clr();
 #endif
@@ -493,12 +493,12 @@ implementation
 		atomic
 		{
 			call SLP_TR.set();
-			time = call RadioAlarm.getNow() + TX_SFD_DELAY;
+			time = call RadioAlarm.getNow();
 		}
 		call SLP_TR.clr();
 #endif
 
-		time32 += (int16_t)(time) - (int16_t)(time32);
+		time32 += (int16_t)(time + TX_SFD_DELAY) - (int16_t)(time32);
 
 		if( timesync != 0 )
 			*(timesync_relative_t*)timesync = (*(timesync_absolute_t*)timesync) - time32;
@@ -525,23 +525,24 @@ implementation
 		// go back to RX_ON state when finished
 		writeRegister(RF230_TRX_STATE, RF230_RX_ON);
 
+		if( timesync != 0 )
+			*(timesync_absolute_t*)timesync = (*(timesync_relative_t*)timesync) + time32;
+
+		call PacketTimeStamp.set(msg, time32);
+
 #ifdef RADIO_DEBUG_MESSAGES
 		if( call DiagMsg.record() )
 		{
 			length = getHeader(msg)->length;
 
-			call DiagMsg.str("tx");
-			call DiagMsg.uint16(time);
-			call DiagMsg.uint8(length);
+			call DiagMsg.chr('t');
+			call DiagMsg.uint32(call PacketTimeStamp.isValid(rxMsg) ? call PacketTimeStamp.timestamp(rxMsg) : 0);
+			call DiagMsg.uint16(call RadioAlarm.getNow());
+			call DiagMsg.int8(length);
 			call DiagMsg.hex8s(getPayload(msg), length - 2);
 			call DiagMsg.send();
 		}
 #endif
-
-		if( timesync != 0 )
-			*(timesync_absolute_t*)timesync = (*(timesync_relative_t*)timesync) + time32;
-
-		call PacketTimeStamp.set(msg, time32);
 
 		// wait for the TRX_END interrupt
 		state = STATE_BUSY_TX_2_RX_ON;
@@ -637,12 +638,13 @@ implementation
 		{
 			length = getHeader(rxMsg)->length;
 
-			call DiagMsg.str("rx");
+			call DiagMsg.chr('r');
 			call DiagMsg.uint32(call PacketTimeStamp.isValid(rxMsg) ? call PacketTimeStamp.timestamp(rxMsg) : 0);
 			call DiagMsg.uint16(call RadioAlarm.getNow());
-			call DiagMsg.uint8(crc != 0);
-			call DiagMsg.uint8(length);
+			call DiagMsg.int8(crc == 0 ? length : -length);
 			call DiagMsg.hex8s(getPayload(rxMsg), length - 2);
+			call DiagMsg.int8(call PacketRSSI.isSet(rxMsg) ? call PacketRSSI.get(rxMsg) : -1);
+			call DiagMsg.uint8(call PacketLinkQuality.isSet(rxMsg) ? call PacketLinkQuality.get(rxMsg) : 0);
 			call DiagMsg.send();
 		}
 #endif
@@ -697,6 +699,17 @@ implementation
 					call DiagMsg.uint8(cmd);
 					call DiagMsg.send();
 				}
+			}
+#endif
+
+#ifdef RF230_RSSI_ENERGY
+			if( irq & RF230_IRQ_TRX_END )
+			{
+				if( irq == RF230_IRQ_TRX_END || 
+					(irq == (RF230_IRQ_RX_START | RF230_IRQ_TRX_END) && cmd == CMD_NONE) )
+					call PacketRSSI.set(rxMsg, readRegister(RF230_PHY_ED_LEVEL));
+				else
+					call PacketRSSI.clear(rxMsg);
 			}
 #endif
 
@@ -782,12 +795,7 @@ implementation
 				else if( cmd == CMD_RECEIVE )
 				{
 					ASSERT( state == STATE_RX_ON || state == STATE_PLL_ON_2_RX_ON );
-#ifdef RF230_RSSI_ENERGY
-					if( irq == RF230_IRQ_TRX_END )
-						call PacketRSSI.set(rxMsg, readRegister(RF230_PHY_ED_LEVEL));
-					else
-						call PacketRSSI.clear(rxMsg);
-#endif
+
 					if( state == STATE_PLL_ON_2_RX_ON )
 					{
 						ASSERT( (readRegister(RF230_TRX_STATUS) & RF230_TRX_STATUS_MASK) == RF230_PLL_ON );

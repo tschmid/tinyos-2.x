@@ -45,8 +45,9 @@
 
 
 typedef enum {
-  TOS_UART_1200   = 0,
-  TOS_UART_57600  = 7,
+  TOS_UART_1200,
+  TOS_UART_9600,
+  TOS_UART_57600,
 } uart_speed_t;
 
 typedef enum {

@@ -27,8 +27,8 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * - Revision -------------------------------------------------------------
- * $Revision: 1.9 $
- * $Date: 2009/10/16 12:25:45 $
+ * $Revision: 1.11 $
+ * $Date: 2009/12/14 16:46:49 $
  * @author Jan Hauer <hauer@tkn.tu-berlin.de>
  * ========================================================================
  */
@@ -266,6 +266,7 @@ implementation
   BeaconTransmitP.GetSetRealignmentFrame -> CoordRealignmentP;
   BeaconTransmitP.IsBroadcastReady -> CoordBroadcastP.IsBroadcastReady;
   BeaconTransmitP.TimeCalc -> PibP;
+  BeaconTransmitP.Random = Random;
   BeaconTransmitP.Leds = Leds;
 
   /* ------------------ Beacon Tracking (MLME-SYNC) ------------------ */
@@ -423,6 +424,7 @@ implementation
   DeviceCap.TimeCalc -> PibP;
   DeviceCap.Leds = Leds;
   DeviceCap.TrackSingleBeacon -> BeaconSynchronizeP.TrackSingleBeacon;
+  DeviceCap.MLME_SYNC_LOSS -> BeaconSynchronizeP;
 
   /* ---------------------- CAP (outgoing superframe) ------------------- */
 

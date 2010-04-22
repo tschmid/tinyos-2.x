@@ -46,12 +46,12 @@ configuration RF230TimeSyncMessageC
 
 implementation
 {
-	components RF230DriverLayerC, RF230ActiveMessageC, TimeSyncMessageLayerC;
+	components RF230ActiveMessageC, TimeSyncMessageLayerC;
   
 	SplitControl	= RF230ActiveMessageC;
-  	Receive		= RF230ActiveMessageC.Receive;
-	Snoop		= RF230ActiveMessageC.Snoop;
-	AMPacket	= RF230ActiveMessageC;
+	AMPacket	= TimeSyncMessageLayerC;
+  	Receive		= TimeSyncMessageLayerC.Receive;
+	Snoop		= TimeSyncMessageLayerC.Snoop;
 	Packet		= TimeSyncMessageLayerC;
 
 	PacketTimeStampRadio	= RF230ActiveMessageC;
@@ -65,6 +65,11 @@ implementation
 	TimeSyncMessageLayerC.PacketTimeStampRadio -> RF230ActiveMessageC;
 	TimeSyncMessageLayerC.PacketTimeStampMilli -> RF230ActiveMessageC;
 
+#ifdef RF230_HARDWARE_ACK
+	components RF230DriverHwAckC as RF230DriverLayerC;
+#else
+	components RF230DriverLayerC;
+#endif
 	TimeSyncMessageLayerC.LocalTimeRadio -> RF230DriverLayerC;
 	TimeSyncMessageLayerC.PacketTimeSyncOffset -> RF230DriverLayerC.PacketTimeSyncOffset;
 }

@@ -56,7 +56,7 @@ implementation {
   components ActiveMessageAddressC;
   NetProgM.setAmAddress -> ActiveMessageAddressC;
 
-#if !defined(PLATFORM_MULLE)
+#if !defined(PLATFORM_TINYNODE)
   components CC2420ControlP;
   NetProgM.CC2420Config -> CC2420ControlP;
 #endif

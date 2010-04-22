@@ -55,7 +55,8 @@ implementation
   Irq.HplM16c62pInterrupt -> Irqs.Int0;
 
   RTC = RTCP;
-  RTCP -> IOs.PortP47;
+  RTCP.CLKOE -> IOs.PortP47;
+  RTCP.CLKOUT -> IOs.PortP92;
   RTCP.GpioInterrupt -> Irq;
   RTCP.I2C -> I2C;
   RTCP.I2CResource -> I2C;

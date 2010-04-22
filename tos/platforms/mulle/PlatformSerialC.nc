@@ -50,12 +50,17 @@ configuration PlatformSerialC {
 implementation {
 
   components M16c62pUartC as Uart,
-      CounterMicro16C;
+      PlatformSerialP, CounterMicro16C;
       
-  StdControl = Uart.StdControl1;
+  StdControl = PlatformSerialP;
+  PlatformSerialP -> Uart.Uart1Control;
   UartStream = Uart.Uart1Stream;
   UartByte = Uart.Uart1Byte;
   
   Uart.Counter -> CounterMicro16C;
+  
+  components MainC;
+  
+  MainC.SoftwareInit -> PlatformSerialP;
   
 }

@@ -18,15 +18,22 @@ import string
 import commands
 #New way of handling arguments........
 try:
-  opts, args = getopt(argv[1:], "t", [])
+  opts, args = getopt(argv[1:], "ts:f:", [])
 except GetoptError, err:
   print str(err) # will print something like "option -a not recognized"
-  stderr.write("Usage: tos-storage-at45db [-t] <platform directory>\n")
+  stderr.write("Usage: tos-storage-at45db [-t] [-s <sector size>] [-f <flash size in sectors>] <platform directory>\n")
   
+sector_size = 256
+flash_size = 2048 # in sectors
+
 cthreads = False
 for o, a in opts:
   if o == "-t":
     cthreads = True
+  elif o == "-s":
+    sector_size = int(a)
+  elif o == "-f":
+    flash_size = int(a)
   else:
     assert False, "unhandled option"
 
@@ -44,9 +51,6 @@ else:
 def nfail(s):
   stderr.write(s + "\n")
   exit(2)
-
-sector_size = 256
-flash_size = 2048 # in sectors
 
 volumes = {}
 volmap = []

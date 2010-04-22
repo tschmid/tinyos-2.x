@@ -98,9 +98,9 @@ implementation
   async command void I2C.off()
   {
     // TODO(henrik): Exactly what should be set if I2C bus should be turned off?
-    call I2CData.makeInput();
-    call I2CClk.makeInput();
-    call I2CCtrl.makeInput();
+    call I2CData.makeOutput();
+    call I2CClk.makeOutput();
+    call I2CCtrl.makeOutput();
     call I2CCtrl.clr();
     call I2CClk.clr();
     call I2CData.clr();
@@ -180,8 +180,14 @@ implementation
       }
 
       call I2CClk.clr();
-      if (ack) call I2C.masterAck();
-      else     call I2C.masterNack();
+      if (ack) 
+      {
+        call I2C.masterAck();
+      }
+      else
+      {
+        call I2C.masterNack();
+      }
     }
     return retChar;
   }
@@ -219,13 +225,6 @@ implementation
       transition();
       call I2CClk.clr();
 
-      // ...Check the ACK from the receiver....  
-
-      //  if(SDA2==1){ACK=0;} /* ACK received£¿*/    
-      //  else  ACK= 1;
-
-      //  SCL2 = LOW;
-      //  transition();
       idle(); 
     }
   }
@@ -234,6 +233,7 @@ implementation
   {
     atomic
     {
+      call I2CData.makeOutput();
       call I2CClk.clr();
       call I2CData.clr(); // Low for ack
       transition();
@@ -249,6 +249,7 @@ implementation
   {
     atomic 
     {
+      call I2CData.makeOutput();
       call I2CClk.clr();
 
       call I2CData.set(); // High for nack

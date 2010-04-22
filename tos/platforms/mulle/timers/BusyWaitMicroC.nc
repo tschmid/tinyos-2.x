@@ -40,15 +40,36 @@
  *
  * @author Henrik Makitaavola <henrik.makitaavola@gmail.com>
  */
-configuration BusyWaitMicroC
+module BusyWaitMicroC
 {
   provides interface BusyWait<TMicro, uint16_t>;
 }
 implementation
 {
-  components CounterMicro16C,
-      new BusyWaitCounterC(TMicro, uint16_t);
-
-  BusyWait = BusyWaitCounterC;
-  BusyWaitCounterC.Counter -> CounterMicro16C;
+  // TODO(henrik) This will now only work on 10Mhz speed, easy to
+  //              add a signal from the control module of the mcu
+  //              to signal the change of speed and the wait function
+  //              can adjust to it.
+  // The wait function can not be inlined because then the code alignment may
+  // go lost thus making the busy wait around 30% slower.
+  async command void BusyWait.wait(uint16_t dt ) __attribute__((noinline)) {
+    atomic {
+      asm("nop"); // Nop needed to align function
+      asm volatile (
+          "sub.w #1,%[t]\n\t"
+          "jeq 2f\n\t"
+          "sub.w #1,%[t]\n\t"
+          "jeq 2f\n\t"
+          "1:\n\t"
+          "nop\n\t"
+          "add.w #1,%[t]\n\t"
+          "sub.w #1,%[t]\n\t"
+          "sub.w #1,%[t]\n\t"
+          "jgtu 1b\n\t"
+          "2:"
+          :   
+          : [t] "r" (dt)
+          );  
+    } 
+  } 
 }

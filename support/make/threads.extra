@@ -86,6 +86,12 @@ ifneq ($(filter telos telosa telosb tmote,$(MAKECMDGOALS)),)
   CFLAGS += $(THREADS_MSP430_INCLUDE_DIRS)
   CFLAGS += $(THREADS_CC2420_INCLUDE_DIRS)
   CFLAGS += $(THREADS_TELOS_INCLUDE_DIRS)
+  
+  #Since Telosb has some sensors not on other platforms, this helps us figure out
+  #what components should be included
+  ifneq ($(filter telosb,$(MAKECMDGOALS)),)
+    CFLAGS += -DPLATFORM_TELOSB
+  endif
 endif
 ifneq ($(filter mica2,$(MAKECMDGOALS)),)
   CFLAGS += $(THREADS_ATM128_INCLUDE_DIRS)
