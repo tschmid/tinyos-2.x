@@ -31,6 +31,9 @@
 #include "sam3uwdtchardware.h"
 #include "sam3umatrixhardware.h"
 
+// Define clock timeout
+#define CLOCK_TIMEOUT           0xFFFFFFFF
+
 extern void SetDefaultMaster(unsigned char enable);
 
 
