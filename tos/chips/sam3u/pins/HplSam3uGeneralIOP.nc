@@ -1,0 +1,93 @@
+/**
+ * "Copyright (c) 2009 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement
+ * is hereby granted, provided that the above copyright notice, the following
+ * two paragraphs and the author appear in all copies of this software.
+ *
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY
+ * OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ */
+
+/**
+ * This module is only used to dispatch the IRQ to the correct module.
+ * @author Thomas Schmid
+ */
+
+module HplSam3uGeneralIOP
+{
+    provides
+    {
+        interface HplSam3uGeneralIOPort as HplPortA;
+        interface HplSam3uGeneralIOPort as HplPortB;
+        interface HplSam3uGeneralIOPort as HplPortC;
+    }
+    uses
+    {
+        interface LocalTime<TMilli>;
+    }
+}
+implementation
+{
+    __attribute__((interrupt)) void PioAIrqHandler() @C() @spontaneous()
+    {
+        uint32_t time = call LocalTime.get();
+        signal HplPortA.fired(time);
+    }
+
+    __attribute__((interrupt)) void PioBIrqHandler() @C() @spontaneous()
+    {
+        uint32_t time = call LocalTime.get();
+        signal HplPortA.fired(time);
+    }
+
+    __attribute__((interrupt)) void PioCIrqHandler() @C() @spontaneous()
+    {
+        uint32_t time = call LocalTime.get();
+        signal HplPortA.fired(time);
+    }
+
+    /**
+     * Does nothing!
+     */
+    async command void HplPortA.enableInterrupt()
+    {
+    }
+    async command void HplPortA.disableInterrupt()
+    {
+    }
+
+    /**
+     * Does nothing!
+     */
+    async command void HplPortB.enableInterrupt()
+    {
+    }
+    async command void HplPortB.disableInterrupt()
+    {
+    }
+
+    /**
+     * Does nothing!
+     */
+    async command void HplPortC.enableInterrupt()
+    {
+    }
+    async command void HplPortC.disableInterrupt()
+    {
+    }
+
+    default async event void HplPortA.fired(uint32_t time) {}
+    default async event void HplPortB.fired(uint32_t time) {}
+    default async event void HplPortC.fired(uint32_t time) {}
+}

@@ -30,46 +30,17 @@
  */
 
 /**
- * @author Wanja Hofer <wanja@cs.fau.de>
+ * @author Thomas Schmid
  */
 
-interface HplSam3uGeneralIOPin
+interface HplSam3uGeneralIOPort
 {
-	async command void enablePioControl();
-	/**
-	 * Disables the PIO controller from driving the pin. The connected
-	 * peripheral (if any) will do that.
-	 */
-	async command void disablePioControl();
-	async command bool isEnabledPioControl();
+    // signals that the interrupt for a specific pin happened
+    async event void fired(uint32_t time);
 
-	async command void enableMultiDrive();
-	async command void disableMultiDrive();
-	async command bool isEnabledMultiDrive();
-
-	async command void enablePullUpResistor();
-	async command void disablePullUpResistor();
-	async command bool isEnabledPullUpResistor();
-
-	async command void selectPeripheralA();
-	async command void selectPeripheralB();
-	/**
-	 * Returns TRUE if peripheral A is selected, returns FALSE if
-	 * peripheral B is selected.
-	 */
-	async command bool isSelectedPeripheralA();
-
-    // interrupt
+    // enables the interrupt on this port
     async command void enableInterrupt();
+
+    // disable the interrupt on this port
     async command void disableInterrupt();
-    async command bool isEnabledInterrupt();
-
-    // edge selection
-    async command void enableEdgeDetection();
-    async command bool isEnabledEdgeDetection();
-    async command void fallingEdgeDetection();
-    async command bool isFallingEdgeDetection();
-    async command void risingEdgeDetection();
-
-	/* TODO: input, and filter functions */
 }

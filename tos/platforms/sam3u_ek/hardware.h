@@ -45,5 +45,6 @@
 
 #define IRQ_PRIO_UART (0x88)
 #define IRQ_PRIO_SPI (0x87)
+#define IRQ_PRIO_PIO (0x86)
 
 #endif // HARDWARE_H

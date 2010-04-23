@@ -40,8 +40,13 @@ generic module HplSam3uGeneralIOPinP(uint32_t pio_addr, uint8_t bit)
 	provides
 	{
 		interface GeneralIO as IO;
+        interface GpioInterrupt as Interrupt;
 		interface HplSam3uGeneralIOPin as HplPin;
 	}
+    uses
+    {
+        interface HplSam3uGeneralIOPort as HplPort;
+    }
 }
 implementation
 {
@@ -193,4 +198,74 @@ implementation
 		uint32_t currentpin = (currentport & (1 << bit)) >> bit;
 		return ((currentpin & 1) == 0);
 	}
+
+    // interrupt
+    async command void HplPin.enableInterrupt()
+    {
+        *((volatile uint32_t *) (pio_addr + 0x040)) = 1 << bit;
+        call HplPort.enableInterrupt();
+    }
+    async command void HplPin.disableInterrupt()
+    {
+        *((volatile uint32_t *) (pio_addr + 0x044)) = 1 << bit;
+        call HplPort.disableInterrupt();
+    }
+    async command bool HplPin.isEnabledInterrupt()
+    {
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x048));
+        uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+        return ((currentpin & 1) == 1);
+    }
+
+    // edge selection
+    async command void HplPin.enableEdgeDetection()
+    {
+        *((volatile uint32_t *) (pio_addr + 0x0C0)) = 1 << bit;
+    }
+    async command bool HplPin.isEnabledEdgeDetection()
+    {
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x0C8));
+        uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+        return ((currentpin & 1) == 0);
+    }
+    async command void HplPin.fallingEdgeDetection()
+    {
+        *((volatile uint32_t *) (pio_addr + 0x0D0)) = 1 << bit;
+    }
+    async command bool HplPin.isFallingEdgeDetection()
+    {
+		uint32_t currentport = *((volatile uint32_t *) (pio_addr + 0x0D8));
+        uint32_t currentpin = (currentport & (1 << bit)) >> bit;
+        return ((currentpin & 1) == 0);
+    }
+    async command void HplPin.risingEdgeDetection()
+    {
+		*((volatile uint32_t *) (pio_addr + 0x0D4)) = 1 << bit;
+    }
+
+    async event void HplPort.fired(uint32_t time)
+    {
+        signal Interrupt.fired();
+    }
+
+    async command error_t Interrupt.disable()
+    {
+        call HplPin.disableInterrupt();
+        return SUCCESS;
+    }
+    async command error_t Interrupt.enableFallingEdge()
+    {
+        call HplPin.enableEdgeDetection();
+        call HplPin.risingEdgeDetection();
+        call HplPin.enableInterrupt();
+    }
+    async command error_t Interrupt.enableRisingEdge()
+    {
+        call HplPin.enableEdgeDetection();
+        call HplPin.fallingEdgeDetection();
+        call HplPin.enableInterrupt();
+    }
+
+    default async event void Interrupt.fired() {}
 }
+
