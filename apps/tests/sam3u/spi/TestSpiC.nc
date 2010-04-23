@@ -29,13 +29,33 @@ module TestSpiC
 	uses interface Boot;
 	uses interface StdControl as SpiControl;
 	uses interface SpiByte;
+    uses interface SpiPacket;
     uses interface HplSam3uSpiConfig as SpiConfig;
 }
 implementation
 {
+    task void transferPacketTask()
+    {
+        uint8_t tx_buf[10];
+        uint8_t rx_buf[10];
+        uint8_t i;
+
+        for(i=0; i<10; i++)
+        {
+            tx_buf[i] = 0xCD;
+            rx_buf[i] = 0;
+        }
+
+        call SpiControl.start();
+
+        call SpiPacket.send(tx_buf, rx_buf, 10);
+    }
+
 	task void transferTask()
 	{
 		uint8_t byte;
+
+		call SpiControl.start();
         
         byte = call SpiByte.write(0xCD);
         if(byte == 0xCD)
@@ -44,16 +64,40 @@ implementation
         } else {
             call Leds.led1Toggle();
         }
+
+        call SpiControl.stop();
+
+        post transferPacketTask();
         //post transferTask();
 	}
 
 	event void Boot.booted()
 	{
-		call SpiControl.start();
 
         call SpiConfig.enableLoopBack();
 
 		post transferTask();
 	}
 
+    async event void SpiPacket.sendDone(uint8_t* tx_buf, uint8_t* rx_buf, uint16_t len, error_t error)
+    {
+        uint8_t i;
+
+        if(error == SUCCESS)
+        {
+            if(len == 10)
+            {
+                for(i=0; i<10; i++){
+                    if(rx_buf[i] != 0xCD)
+                    {
+                        call Leds.led1Toggle();
+                        return;
+                    }
+                }
+                call Leds.led0Toggle();
+                return;
+            }
+        }
+        call Leds.led1Toggle();
+    }
 }

@@ -36,9 +36,13 @@ configuration HplSam3uSpiC
        interface HplSam3uSpiInterrupts; 
        interface HplSam3uSpiStatus; 
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig0;
+       interface Resource as ResourceCS0;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig1;
+       interface Resource as ResourceCS1;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig2;
+       interface Resource as ResourceCS2;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig3;
+       interface Resource as ResourceCS3;
     }
 }
 implementation
@@ -49,6 +53,12 @@ implementation
     HplSam3uSpiControl = HplSam3uSpiP;
     HplSam3uSpiInterrupts = HplSam3uSpiP;
     HplSam3uSpiStatus = HplSam3uSpiP;
+    
+    components new ArbiterP(0) as Arbiter;
+    ResourceCS0 = Arbiter.Resource[0];
+    ResourceCS1 = Arbiter.Resource[1];
+    ResourceCS2 = Arbiter.Resource[2];
+    ResourceCS3 = Arbiter.Resource[3];
 
     components
         new HplSam3uSpiChipSelP(0x40008030) as CS0,
