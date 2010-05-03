@@ -44,8 +44,8 @@
 
 enum
 {
-  TOS_MIC_POT_ADDR = 0x5A,
-  TOS_MAG_POT_ADDR = 0x58,
+  TOS_MIC_POT_ADDR = 0x2D,
+  TOS_MAG_POT_ADDR = 0x2C,
 };
 
 // debug leds
