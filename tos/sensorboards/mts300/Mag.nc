@@ -60,12 +60,10 @@ interface Mag {
   command error_t gainAdjustY(uint8_t val);
 
   /* Pot adjustment on the X axis of the magnetometer is finished.
-   * Returns:  return SUCCESS.
    */
-  event error_t gainAdjustXDone(bool result);
+  event void gainAdjustXDone(error_t result);
 
   /* Pot adjustment on the Y axis of the magnetometer is finished.
-   * Returns:  return SUCCESS.
    */
-  event error_t gainAdjustYDone(bool result);
+  event void gainAdjustYDone(error_t result);
 }
