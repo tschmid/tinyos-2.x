@@ -42,6 +42,9 @@
   #define PrintfQueue	Queue
 #endif
 
+#ifdef SAM3U_HARDWARE_H
+  #include <stdio.h>
+#endif
 #ifdef _H_msp430hardware_h
   #include <stdio.h>
 #endif
