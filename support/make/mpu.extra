@@ -3,4 +3,5 @@
 # Put global data items in sections of their own (especially stacks) so that linker script can group and align them
 PFLAGS += -DMPU_PROTECTION -ffunction-sections -fdata-sections
 
-CFLAGS := -I$(TOSDIR)/lib/tosthreads/mpu $(CFLAGS)
+# Include dir needs to be at the beginning of the command line!
+PFLAGS := -I$(TOSDIR)/lib/tosthreads/mpu $(PFLAGS)
