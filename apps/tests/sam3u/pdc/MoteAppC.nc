@@ -21,40 +21,38 @@
 */
 
 /**
+ * Simple test program for SAM3U's 12 bit ADC Read with LCD
+ * @author Chieh-Jan Mike Liang
  * @author JeongGil Ko
  */
 
-configuration Sam3uDmaC {
-  provides interface Sam3uDmaControl as Control;
-  provides interface Sam3uDmaChannel as Channel0;
-  provides interface Sam3uDmaChannel as Channel1;
-  provides interface Sam3uDmaChannel as Channel2;
-  provides interface Sam3uDmaChannel as Channel3;
-}
+configuration MoteAppC {}
 
-implementation {
-  components new Sam3uDmaChannelP() as Channel0P;
-  components new Sam3uDmaChannelP() as Channel1P;
-  components new Sam3uDmaChannelP() as Channel2P;
-  components new Sam3uDmaChannelP() as Channel3P;
-  components Sam3uDmaControlP as ControlP;
-  components HplSam3uDmaC as DmaC;
+implementation
+{
+  components MainC,
+    LedsC, NoLedsC,
+    new TimerMilliC() as TimerC,
+    SerialActiveMessageC,
+    LcdC,
+    Sam3uDmaC,
+    HplNVICC,
+    HplSam3uClockC,
+    HplSam3uPdcC,
+    MoteP;
 
-  Control = ControlP;
-  Channel0 = Channel0P;
-  Channel1 = Channel1P;
-  Channel2 = Channel2P;
-  Channel3 = Channel3P;
+  MoteP.Boot -> MainC;
+  MoteP.Leds -> LedsC;
+  MoteP.SerialSplitControl -> SerialActiveMessageC;
+  MoteP.Packet -> SerialActiveMessageC;
+  MoteP.Timer -> TimerC;
 
-  ControlP.DmaControl -> DmaC;
-  //ControlP.DmaChannel0 -> DmaC.Channel0;
-  //ControlP.DmaChannel1 -> DmaC.Channel1;
-  //ControlP.DmaChannel2 -> DmaC.Channel2;
-  //ControlP.DmaChannel3 -> DmaC.Channel3;
+  //MoteP.ClockControl -> HplSam3uClockC.DBGUPPCntl;
+  //MoteP.PDC -> HplSam3uPdcC.UartPdcControl;
 
-  Channel0P.DmaChannel -> DmaC.Channel0;
-  Channel1P.DmaChannel -> DmaC.Channel1;
-  Channel2P.DmaChannel -> DmaC.Channel2;
-  Channel3P.DmaChannel -> DmaC.Channel3;
+  MoteP.ClockControl -> HplSam3uClockC.TWI0PPCntl;
+  MoteP.PDC -> HplSam3uPdcC.Twi0PdcControl;
 
+  MoteP.Lcd -> LcdC;
+  MoteP.Draw -> LcdC;
 }

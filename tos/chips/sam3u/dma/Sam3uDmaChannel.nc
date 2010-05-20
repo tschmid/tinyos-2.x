@@ -28,8 +28,7 @@
 
 interface Sam3uDmaChannel {
 
-  async command error_t setupTransfer( /*dma_transfer_mode_t transfer_mode,*/ /* tx type -- check header file */
-				       uint8_t channel,
+  async command error_t setupTransfer( uint8_t channel,
 				       void *src_addr, /* Source Address */
 				       void *dst_addr, /* Destination Address */
 				       uint16_t btsize, /* Size of buffer transfer */
@@ -37,9 +36,9 @@ interface Sam3uDmaChannel {
 				       dmac_chunk_t dcsize, /* Destination chunk transfer size -- details in header file */
 				       dmac_width_t src_width, /* details in header file */
 				       dmac_width_t dst_width, /* details in header file */
-				       dmac_fc_t fc, /* Flow Controller -- deatils in header file */
 				       dmac_dscr_t src_dscr, /* Source address descripter method */
 				       dmac_dscr_t dst_dscr, /* Destination address descripter method */
+				       dmac_fc_t fc, /* Flow Controller -- deatils in header file */
 				       dmac_inc_t src_inc, /* Source addressing mode */
 				       dmac_inc_t dst_inc, /* Source addressing mode */ 
 				       uint8_t src_per, /* Handshake peripheral, for HW handshakes -- 4 bits */
@@ -54,16 +53,16 @@ interface Sam3uDmaChannel {
 				       dmac_fifocfg_t fifocfg /* Configure FIFO -- Details in header file */ 
 				       );
 
-  async command error_t startTransfer(uint8_t channel, bool s2d); /* set enable bit */
+  async command error_t startTransfer(uint8_t channel); /* set enable bit */
 
   async command error_t repeatTransfer( void *src_addr, void *dst_addr, 
-					uint16_t size, uint8_t channel, bool s2d ); /* repeat trasfer with the previous settings */
+					uint16_t size, uint8_t channel); /* repeat trasfer with the previous settings */
 
-  async command error_t swTrigger(uint8_t channel, bool s2d); /* set SW trigger high */
+  async command error_t swTransferRequest(uint8_t channel, bool s2d); /* set source or destination tranfer request for channel */
 
   async command error_t stopTransfer(uint8_t channel); /* Perform all fuctions needed to disable/stop transfer*/
 
-  async command error_t resetAll();
+  async command error_t resetAll(uint8_t channel);
 
   async event void transferDone(error_t success);
 

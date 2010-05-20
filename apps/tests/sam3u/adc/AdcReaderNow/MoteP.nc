@@ -26,6 +26,7 @@
  * @author JeongGil Ko
  */
 
+#include "sam3uDmahardware.h"
 #include <color.h>
 #include <lcd.h>
 
@@ -90,7 +91,12 @@ implementation
   }
 
   event void Resource.granted(){
-     call ReadNow.read();
+    /* FOR dma testing ONLY*//*
+    DMAC->saddr0.bits.saddrx = (uint32_t) 0x20180000;
+    call Draw.fill(COLOR_GREEN);
+    call Draw.drawInt(100, 100, DMAC->saddr0.bits.saddrx, 1, COLOR_BLACK);
+    */
+    call ReadNow.read();
   }
 
   task void drawResult(){

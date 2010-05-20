@@ -24,37 +24,28 @@
  * @author JeongGil Ko
  */
 
-configuration Sam3uDmaC {
-  provides interface Sam3uDmaControl as Control;
-  provides interface Sam3uDmaChannel as Channel0;
-  provides interface Sam3uDmaChannel as Channel1;
-  provides interface Sam3uDmaChannel as Channel2;
-  provides interface Sam3uDmaChannel as Channel3;
-}
+interface HplSam3uPdc {
 
-implementation {
-  components new Sam3uDmaChannelP() as Channel0P;
-  components new Sam3uDmaChannelP() as Channel1P;
-  components new Sam3uDmaChannelP() as Channel2P;
-  components new Sam3uDmaChannelP() as Channel3P;
-  components Sam3uDmaControlP as ControlP;
-  components HplSam3uDmaC as DmaC;
+  /* Pointer Registers */
+  command void setRxPtr(void* addr);
+  command void setTxPtr(void* addr);
+  command void setNextRxPtr(void* addr);
+  command void setNextTxPtr(void* addr);
 
-  Control = ControlP;
-  Channel0 = Channel0P;
-  Channel1 = Channel1P;
-  Channel2 = Channel2P;
-  Channel3 = Channel3P;
+  /* Counter Registers */
+  command void setRxCounter(uint16_t counter);
+  command void setTxCounter(uint16_t counter);
+  command void setNextRxCounter(uint16_t counter);
+  command void setNextTxCounter(uint16_t counter);
 
-  ControlP.DmaControl -> DmaC;
-  //ControlP.DmaChannel0 -> DmaC.Channel0;
-  //ControlP.DmaChannel1 -> DmaC.Channel1;
-  //ControlP.DmaChannel2 -> DmaC.Channel2;
-  //ControlP.DmaChannel3 -> DmaC.Channel3;
+  /* Enable / Disable Register */
+  command void enablePdcRx();
+  command void enablePdcTx();
+  command void disablePdcRx();
+  command void disablePdcTx();
 
-  Channel0P.DmaChannel -> DmaC.Channel0;
-  Channel1P.DmaChannel -> DmaC.Channel1;
-  Channel2P.DmaChannel -> DmaC.Channel2;
-  Channel3P.DmaChannel -> DmaC.Channel3;
+  /* Status Registers  - Checks status */
+  command bool rxEnabled();
+  command bool txEnabled();
 
 }

@@ -27,15 +27,13 @@
 #include "sam3uDmahardware.h"
 
 generic module Sam3uDmaChannelP() {
-
   provides interface Sam3uDmaChannel as Channel;
   uses interface HplSam3uDmaChannel as DmaChannel;
 }
 
 implementation {
 
-  async command error_t Channel.setupTransfer( /*dma_transfer_mode_t transfer_mode,*/
-					       uint8_t channel,
+  async command error_t Channel.setupTransfer( uint8_t channel,
 					       void *src_addr,
 					       void *dst_addr,
 					       uint16_t btsize,
@@ -43,9 +41,9 @@ implementation {
 					       dmac_chunk_t dcsize,
 					       dmac_width_t src_width,
 					       dmac_width_t dst_width,
-					       dmac_fc_t fc,
 					       dmac_dscr_t src_dscr,
 					       dmac_dscr_t dst_dscr,
+					       dmac_fc_t fc,
 					       dmac_inc_t src_inc,
 					       dmac_inc_t dst_inc,
 					       uint8_t src_per,
@@ -59,119 +57,64 @@ implementation {
 					       dmac_ahbprot_t ahbprot,
 					       dmac_fifocfg_t fifocfg)
   {
-
-    call DmaChannel.setSrcAddr(src_addr);
-    call DmaChannel.setDstAddr(dst_addr);
-    call DmaChannel.setBtsize(btsize);
-    call DmaChannel.setScsize(scsize);
-    call DmaChannel.setDcsize(dcsize);
-    call DmaChannel.setSrcWidth(src_width);
-    call DmaChannel.setDstWidth(dst_width);
-    call DmaChannel.setFc(fc);
-    call DmaChannel.setSrcDscr(src_dscr);
-    call DmaChannel.setDstDscr(dst_dscr);
-    call DmaChannel.setSrcInc(src_inc);
-    call DmaChannel.setDstInc(dst_inc);
-
-    call DmaChannel.setSrcPer(src_per);
-    call DmaChannel.setDstPer(dst_per);
-
-    if(srcSwHandshake){
-      call DmaChannel.setSrcHandshake(0);
-    }else{
-      call DmaChannel.setSrcHandshake(1);
-    }
-
-    if(dstSwHandshake){
-      call DmaChannel.setDstHandshake(0);
-    }else{
-      call DmaChannel.setDstHandshake(1);
-    }
-
-    if(stopOnDone){
-      call DmaChannel.setSOD();
-    }else{
-      call DmaChannel.clrSOD();
-    }
-
-    if(lockIF){
-      call DmaChannel.setLockIF();
-    }else{
-      call DmaChannel.clrLockIF();
-    }
-
-    if(lockB){
-      call DmaChannel.setLockB();
-    }else{
-      call DmaChannel.clrLockB();
-    }
-
-    call DmaChannel.setLockIFL(lockIFL);
-    call DmaChannel.setAhbprot(ahbprot);
-    call DmaChannel.setFifoCfg(fifocfg);
-
-    return SUCCESS;
-
-  }
-
-  async command error_t Channel.startTransfer(uint8_t channel, bool s2d)
-  {
-    call DmaChannel.enableChannelInterrupt(channel);
     call DmaChannel.enable();
-    call DmaChannel.enableChannel(channel, s2d);
+    call DmaChannel.disableChannelInterrupt(channel);
+    call DmaChannel.setSrcAddr(src_addr);
+    call DmaChannel.setDstAddr(dst_addr);
+    call DmaChannel.setCtrlA(btsize, scsize, dcsize, src_width, dst_width);
+    call DmaChannel.setCtrlB(src_dscr, dst_dscr, fc, src_inc, dst_inc);
+    call DmaChannel.setCfg(src_per, dst_per, srcSwHandshake,
+			   dstSwHandshake, stopOnDone, lockIF,
+			   lockB, lockIFL, ahbprot,
+			   fifocfg);
     return SUCCESS;
   }
 
-  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel, bool s2d)
+  async command error_t Channel.startTransfer(uint8_t channel)
   {
-    call DmaChannel.setSrcAddr(src_addr);
-    call DmaChannel.setDstAddr(dst_addr);
-    call DmaChannel.setBtsize(size);    
-    return call Channel.startTransfer(channel, s2d);
+    call DmaChannel.enable();
+    call DmaChannel.enableChannelInterrupt(channel);
+    call DmaChannel.enableChannel(channel);
+    return SUCCESS;
   }
 
-  async command error_t Channel.swTrigger(uint8_t channel, bool s2d)
+  async command error_t Channel.repeatTransfer( void *src_addr, void *dst_addr, uint16_t size, uint8_t channel)
   {
-    // call DmaChannel.enableChannel(channel, s2d); // start tx!
+    call DmaChannel.setBtsize(size);
+    call DmaChannel.enable();
+    call DmaChannel.enableChannelInterrupt(channel);
+    call DmaChannel.enableChannel(channel);
+    return SUCCESS;
+  }
+
+  async command error_t Channel.swTransferRequest(uint8_t channel, bool s2d)
+  {
+    // Only used for peripheral transmissions and not for memory-memory transfers
+    call DmaChannel.enableTransferRequest(channel, s2d);
     return SUCCESS;
   }
 
   async command error_t Channel.stopTransfer(uint8_t channel)
   {
-    /* Check Chapter 40.3.6 */
-    //call DmaChannel.readChsrEnable()
-
+    if(call DmaChannel.getChannelStatus(channel)){
+      call DmaChannel.suspendChannel(channel);
+    }
+    call DmaChannel.disableChannel(channel);
   }
 
-  async command error_t Channel.resetAll()
+  async command error_t Channel.resetAll(uint8_t channel)
   {
-    /*
+    call DmaChannel.enable();
+    call DmaChannel.disableChannelInterrupt(channel);
     call DmaChannel.setSrcAddr(0);
     call DmaChannel.setDstAddr(0);
-    call DmaChannel.setBtsize(0);
-    call DmaChannel.setScsize(0);
-    call DmaChannel.setDcsize(0);
-    call DmaChannel.setSrcWidth(0);
-    call DmaChannel.setDstWidth(0);
-    call DmaChannel.setFc(0);
-    call DmaChannel.setSrcDscr(1);
-    call DmaChannel.setDstDscr(1);
-    call DmaChannel.setSrcInc(0);
-    call DmaChannel.setDstInc(0);
-    call DmaChannel.setSrcPer(0);
-    call DmaChannel.setDstPer(0);
-    call DmaChannel.setSrcHandshake(0);
-    call DmaChannel.setDstHandshake(0);
-    call DmaChannel.clrSOD();
-    call DmaChannel.setLockIF();
-    call DmaChannel.setLockB();
-    call DmaChannel.setLockIFL(0);
-    call DmaChannel.setAhbprot(1);
-    call DmaChannel.setFifoCfg(0);
-    */
+    call DmaChannel.setCtrlA(0, 0, 0, 0, 0);
+    call DmaChannel.setCtrlB(0, 0, 0, 0, 0);
+    call DmaChannel.setCfg(0, 0, 0, 0, 0,
+			   0, 0, 0, 1, 0);
+    call DmaChannel.disable();
     return SUCCESS;
   }
-
 
   async event void DmaChannel.transferDone(error_t success){
     signal Channel.transferDone(success);

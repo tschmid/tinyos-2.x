@@ -40,259 +40,150 @@ implementation {
 
   async event void Interrupt.fired(){
     // Disable channel and send signal up
+    call Dma.disableChannel(DMACHANNEL);
+    call Dma.disableChannelInterrupt(DMACHANNEL);
+    call Dma.disable();
     signal Dma.transferDone(SUCCESS);
   }
 
-  async command void Dma.setSrcAddr(void* src_addr){
+  async command error_t Dma.setSrcAddr(void* src_addr){
     volatile dmac_saddrx_t *SADDRX = (volatile dmac_saddrx_t *)(0x400B0000 + CHANNEL_OFFSET);
     dmac_saddrx_t saddrxx;
     saddrxx.bits.saddrx = (uint32_t) src_addr;
     *SADDRX = saddrxx;
+    return SUCCESS;
   }
 
-  async command void Dma.setDstAddr(void* dst_addr){
+  async command error_t Dma.setDstAddr(void* dst_addr){
     volatile dmac_daddrx_t *DADDRX = (volatile dmac_daddrx_t *)(0x400B0004 + CHANNEL_OFFSET);
     dmac_daddrx_t daddrxx;
     daddrxx.bits.daddrx = (uint32_t) dst_addr;
     *DADDRX = daddrxx;
+    return SUCCESS;
   }
 
-  async command void Dma.setBtsize(uint16_t btsize){
-    /*Done*/
+  async command error_t Dma.setCtrlA(uint16_t btsize, dmac_chunk_t scsize, dmac_chunk_t dcsize, dmac_width_t src_width, dmac_width_t dst_width){
+    volatile dmac_ctrlax_t *CTRLAX = (volatile dmac_ctrlax_t *)(0x400B000C + CHANNEL_OFFSET);
+    dmac_ctrlax_t ctrlax = *CTRLAX;
+    ctrlax.bits.btsize = btsize;
+    ctrlax.bits.scsize = scsize;
+    ctrlax.bits.dcsize = dcsize;
+    ctrlax.bits.src_width = src_width;
+    ctrlax.bits.dst_width = dst_width;
+    *CTRLAX = ctrlax;
+    return SUCCESS;
+  }
+
+  async command error_t Dma.setCtrlB(dmac_dscr_t src_dscr, dmac_dscr_t dst_dscr, dmac_fc_t fc, dmac_inc_t src_inc, dmac_inc_t dst_inc){
+    volatile dmac_ctrlbx_t *CTRLBX = (volatile dmac_ctrlbx_t *)(0x400B0010 + CHANNEL_OFFSET);
+    dmac_ctrlbx_t ctrlbx = *CTRLBX;
+    ctrlbx.bits.src_dscr = src_dscr;
+    ctrlbx.bits.dst_dscr = dst_dscr;
+    ctrlbx.bits.fc = fc;
+    ctrlbx.bits.src_incr = src_inc;
+    ctrlbx.bits.dst_incr = dst_inc;
+    *CTRLBX = ctrlbx;
+    return SUCCESS;
+  }
+
+  async command uint32_t Dma.setBtsize(uint16_t btsize){
     volatile dmac_ctrlax_t *CTRLAX = (volatile dmac_ctrlax_t *)(0x400B000C + CHANNEL_OFFSET);
     dmac_ctrlax_t ctrlax = *CTRLAX;
     ctrlax.bits.btsize = btsize;
     *CTRLAX = ctrlax;
+    return (0x400B000C + CHANNEL_OFFSET);
   }
 
-  async command void Dma.setScsize(dmac_chunk_t scsize){
-    /*Done*/
-    volatile dmac_ctrlax_t *CTRLAX = (volatile dmac_ctrlax_t *)(0x400B000C + CHANNEL_OFFSET);
-    dmac_ctrlax_t ctrlax = *CTRLAX;
-    ctrlax.bits.scsize = scsize;
-    *CTRLAX = ctrlax;
-  }
-
-  async command void Dma.setDcsize(dmac_chunk_t dcsize){
-    /*Done*/
-    volatile dmac_ctrlax_t *CTRLAX = (volatile dmac_ctrlax_t *)(0x400B000C + CHANNEL_OFFSET);
-    dmac_ctrlax_t ctrlax = *CTRLAX;
-    ctrlax.bits.dcsize = dcsize;
-    *CTRLAX = ctrlax;
-  }
-
-  async command void Dma.setSrcWidth(dmac_width_t src_width){
-    /*Done*/
-    volatile dmac_ctrlax_t *CTRLAX = (volatile dmac_ctrlax_t *)(0x400B000C + CHANNEL_OFFSET);
-    dmac_ctrlax_t ctrlax = *CTRLAX;
-    ctrlax.bits.src_width = src_width;
-    *CTRLAX = ctrlax;
-  }
-
-  async command void Dma.setDstWidth(dmac_width_t dst_width){
-    /*Done*/
-    volatile dmac_ctrlax_t *CTRLAX = (volatile dmac_ctrlax_t *)(0x400B000C + CHANNEL_OFFSET);
-    dmac_ctrlax_t ctrlax = *CTRLAX;
-    ctrlax.bits.dst_width = dst_width;
-    *CTRLAX = ctrlax;
-  }
-
-  async command void Dma.setFc(dmac_fc_t fc){
-    /*Done*/
-    volatile dmac_ctrlbx_t *CTRLBX = (volatile dmac_ctrlbx_t *)(0x400B0010 + CHANNEL_OFFSET);
-    dmac_ctrlbx_t ctrlbx = *CTRLBX;
-    ctrlbx.bits.fc = fc;
-    *CTRLBX = ctrlbx;
-  }
-
-  async command void Dma.setSrcDscr(dmac_dscr_t src_dscr){
-    /*Done*/
-    volatile dmac_ctrlbx_t *CTRLBX = (volatile dmac_ctrlbx_t *)(0x400B0010 + CHANNEL_OFFSET);
-    dmac_ctrlbx_t ctrlbx = *CTRLBX;
-    ctrlbx.bits.src_dscr = src_dscr;
-    *CTRLBX = ctrlbx;
-  }
-
-  async command void Dma.setDstDscr(dmac_dscr_t dst_dscr){
-    /*Done*/
-    volatile dmac_ctrlbx_t *CTRLBX = (volatile dmac_ctrlbx_t *)(0x400B0010 + CHANNEL_OFFSET);
-    dmac_ctrlbx_t ctrlbx = *CTRLBX;
-    ctrlbx.bits.dst_dscr = dst_dscr;
-    *CTRLBX = ctrlbx;
-  }
-
-  async command void Dma.setSrcInc(dmac_inc_t src_inc){
-    /*Done*/
-    volatile dmac_ctrlbx_t *CTRLBX = (volatile dmac_ctrlbx_t *)(0x400B0010 + CHANNEL_OFFSET);
-    dmac_ctrlbx_t ctrlbx = *CTRLBX;
-    ctrlbx.bits.src_incr = src_inc;
-    *CTRLBX = ctrlbx;
-  }
-
-  async command void Dma.setDstInc(dmac_inc_t dst_inc){
-    /*Done*/
-    volatile dmac_ctrlbx_t *CTRLBX = (volatile dmac_ctrlbx_t *)(0x400B0010 + CHANNEL_OFFSET);
-    dmac_ctrlbx_t ctrlbx = *CTRLBX;
-    ctrlbx.bits.dst_incr = dst_inc;
-    *CTRLBX = ctrlbx;
-  }
-
-  async command void Dma.setSrcPer(uint8_t src_per){
-    /*Done*/
+  async command error_t Dma.setCfg(uint8_t src_per, uint8_t dst_per, bool srcSwHandshake,
+		  bool dstSwHandshake, bool stopOnDone, bool lockIF,
+		  bool lockB, dmac_IFL_t lockIFL, dmac_ahbprot_t ahbprot,
+		  dmac_fifocfg_t fifocfg){
     volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
     dmac_cfgx_t cfgx = *CFGX;
     cfgx.bits.src_per = src_per;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setDstPer(uint8_t dst_per){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
     cfgx.bits.dst_per = dst_per;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setSrcHandshake(bool swhandshake){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    if(swhandshake == TRUE){
-      cfgx.bits.src_h2sel = 0;
-    }else{
-      cfgx.bits.src_h2sel = 1;
-    }
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setDstHandshake(bool swhandshake){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    if(swhandshake == TRUE){
-      cfgx.bits.src_h2sel = 0;
-    }else{
-      cfgx.bits.src_h2sel = 1;
-    }
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setSOD(){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    cfgx.bits.lock_b = 1;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.clrSOD(){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    cfgx.bits.sod = 0;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setLockIF(){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    cfgx.bits.lock_if = 1;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.clrLockIF(){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    cfgx.bits.lock_if = 0;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setLockB(){    
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    cfgx.bits.lock_b = 1;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.clrLockB(){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
-    cfgx.bits.lock_b = 0;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setLockIFL(dmac_IFL_t lockIFL){
-    /*Done*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
+    cfgx.bits.src_h2sel = !srcSwHandshake;
+    cfgx.bits.dst_h2sel = !dstSwHandshake;
+    cfgx.bits.sod = stopOnDone;
+    cfgx.bits.lock_if = lockIF;
+    cfgx.bits.lock_b = lockB;
     cfgx.bits.lock_if_l = lockIFL;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setAhbprot(dmac_ahbprot_t ahbprot){
-    /*DONE*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
     cfgx.bits.ahb_prot = ahbprot;
-    *CFGX = cfgx;
-  }
-
-  async command void Dma.setFifoCfg(dmac_fifocfg_t fifocfg){
-    /*DONE*/
-    volatile dmac_cfgx_t *CFGX = (volatile dmac_cfgx_t *)(0x400B0014 + CHANNEL_OFFSET);
-    dmac_cfgx_t cfgx = *CFGX;
     cfgx.bits.fifocfg = fifocfg;
     *CFGX = cfgx;
+    return SUCCESS;
   }
-  
+
   async command void Dma.enable(){
-    /*DONE!*/
     volatile dmac_en_t *EN = (volatile dmac_en_t *) 0x400B0004;
     dmac_en_t en = *EN;
     en.bits.enable = 1;
     *EN = en;
   }
 
-  async command void Dma.disable(uint8_t channel){
-    /*
+  async command void Dma.disable(){
     volatile dmac_en_t *EN = (volatile dmac_en_t *) 0x400B0004;
     dmac_en_t en = *EN;
-    volatile dmac_chdr_t *CHDR = (volatile dmac_chdr_t *) 0x400B002C;
-    dmac_chdr_t chdr = *CHDR;
-    switch(DMACHANNEL){
-    case 0:
-      chdr.bits.dis0 = 0;
-    case 1:
-      chdr.bits.dis1 = 0;
-    case 2:
-      chdr.bits.dis2 = 0;
-    case 3:
-      chdr.bits.dis3 = 0;
-    default:
-      chdr.bits.dis0 = 0;      
-    }
-
     en.bits.enable = 0;
-
-    *CHDR = chdr;
     *EN = en;
-    */
   }
 
-  async command void Dma.enableChannel(uint8_t channel, bool s2d){
-    /*DONE!*/
+  async command void Dma.enableChannel(uint8_t channel){
+    volatile dmac_cher_t *CHER = (volatile dmac_cher_t *) 0x400B0028;
+    dmac_cher_t cher;
+
+    switch(DMACHANNEL){
+    case 0:
+      cher.bits.ena0 = 1;
+      break;
+    case 1:
+      cher.bits.ena1 = 1;
+      break;
+    case 2:
+      cher.bits.ena2 = 1;
+      break;
+    case 3:
+      cher.bits.ena3 = 1;
+      break;
+    default:
+      cher.bits.ena0 = 1;
+      break;
+    }
+    *CHER = cher;
+  }
+
+  async command void Dma.disableChannel(uint8_t channel){
+    volatile dmac_chdr_t *CHDR = (volatile dmac_chdr_t *) 0x400B002C;
+    dmac_chdr_t chdr;
+
+    switch(DMACHANNEL){
+    case 0:
+      chdr.bits.dis0 = 1;
+      break;
+    case 1:
+      chdr.bits.dis1 = 1;
+      break;
+    case 2:
+      chdr.bits.dis2 = 1;
+      break;
+    case 3:
+      chdr.bits.dis3 = 1;
+      break;
+    default:
+      chdr.bits.dis0 = 1;
+      break;
+    }
+    *CHDR = chdr;
+  }
+
+
+  async command void Dma.enableTransferRequest(uint8_t channel, bool s2d){
     volatile dmac_sreq_t *SREQ = (volatile dmac_sreq_t *) 0x400B0008;
     dmac_sreq_t sreq = *SREQ;
     volatile dmac_last_t *LAST = (volatile dmac_last_t *) 0x400B0010;
     dmac_last_t last = *LAST;
     volatile dmac_creq_t *CREQ = (volatile dmac_creq_t *) 0x400B000C;
     dmac_creq_t creq = *CREQ;
-    volatile dmac_cher_t *CHER = (volatile dmac_cher_t *) 0x400B0028;
-    dmac_cher_t cher;// = *CHER;
 
     switch(DMACHANNEL){
     case 0:
@@ -303,7 +194,7 @@ implementation {
 	last.bits.dlast0 = 1;
 	sreq.bits.dsreq0 = 1;
       }
-      cher.bits.ena0 = 1;
+      break;
     case 1:
       if(s2d){
 	sreq.bits.ssreq1 = 1;
@@ -312,7 +203,7 @@ implementation {
 	sreq.bits.dsreq1 = 1;
 	last.bits.dlast1 = 1;
       }
-      cher.bits.ena1 = 1;
+      break;
     case 2:
       if(s2d){
 	sreq.bits.ssreq2dash = 1;
@@ -321,7 +212,7 @@ implementation {
 	sreq.bits.dsreq2dash = 1;
 	last.bits.dlast2 = 1;
       }
-      cher.bits.ena2 = 1;
+      break;
     case 3:
       if(s2d){
 	sreq.bits.ssreq3 = 1;
@@ -330,7 +221,7 @@ implementation {
 	sreq.bits.dsreq3 = 1;
 	last.bits.slast3 = 1;
       }
-      cher.bits.ena3 = 1;
+      break;
     default:
       if(s2d){
 	sreq.bits.ssreq0 = 1;
@@ -339,13 +230,13 @@ implementation {
 	sreq.bits.dsreq0 = 1;
 	last.bits.dlast0 = 1;
       }
-      cher.bits.ena0 = 1;
+      break;
     }
     *LAST = last;
     *CREQ = creq;
     *SREQ = sreq;
-    *CHER = cher;
   }
+
 
   async command void Dma.enableChannelInterrupt(uint8_t channel){
     volatile dmac_ebcier_t *EBCIER = (volatile dmac_ebcier_t *) 0x400B0018;
@@ -353,20 +244,87 @@ implementation {
     switch(DMACHANNEL){
     case 0:    
       ebcier.bits.btc0 = 1;
-      ebcier.bits.err0 = 1;
+      //ebcier.bits.err0 = 1;
+      break;
     case 1:    
       ebcier.bits.btc1 = 1;
-      ebcier.bits.err1 = 1;
+      //ebcier.bits.err1 = 1;
+      break;
     case 2:    
       ebcier.bits.btc2 = 1;
-      ebcier.bits.err2 = 1;
+      //ebcier.bits.err2 = 1;
+      break;
     case 3:    
       ebcier.bits.btc3 = 1;
-      ebcier.bits.err3 = 1;
+      //ebcier.bits.err3 = 1;
+      break;
     }
     *EBCIER = ebcier;
   }
 
-  async command void Dma.reset(){
+
+  async command void Dma.disableChannelInterrupt(uint8_t channel){
+    volatile dmac_ebcidr_t *EBCIDR = (volatile dmac_ebcidr_t *) 0x400B001C;
+    dmac_ebcidr_t ebcidr;// = *EBCIER;
+    switch(DMACHANNEL){
+    case 0:
+      ebcidr.bits.btc0 = 1;
+      //ebcier.bits.err0 = 1;
+      break;
+    case 1:
+      ebcidr.bits.btc1 = 1;
+      //ebcier.bits.err1 = 1;
+      break;
+    case 2:
+      ebcidr.bits.btc2 = 1;
+      //ebcier.bits.err2 = 1;
+      break;
+    case 3:
+      ebcidr.bits.btc3 = 1;
+      //ebcier.bits.err3 = 1;
+      break;
+    }
+    *EBCIDR = ebcidr;
+  }
+
+  async command bool Dma.getChannelStatus(uint8_t channel){
+    volatile dmac_chsr_t *CHSR = (volatile dmac_chsr_t *) 0x400B0030;
+
+    switch(DMACHANNEL){
+    case 0:
+      return CHSR->bits.ena0;
+    case 1:
+      return CHSR->bits.ena1;
+    case 2:
+      return CHSR->bits.ena2;
+    case 3:
+      return CHSR->bits.ena3;
+    default:
+      return CHSR->bits.ena0;
+    }
+  }
+
+  async command void Dma.suspendChannel(uint8_t channel){
+    volatile dmac_cher_t *CHER = (volatile dmac_cher_t *) 0x400B0028;
+    dmac_cher_t cher;
+
+    switch(DMACHANNEL){
+    case 0:
+      cher.bits.susp0 = 1;
+      break;
+    case 1:
+      cher.bits.susp1 = 1;
+      break;
+    case 2:
+      cher.bits.susp2 = 1;
+      break;
+    case 3:
+      cher.bits.susp3 = 1;
+      break;
+    default:
+      cher.bits.susp0 = 1;
+      break;
+    }
+    *CHER = cher;
   }
 }
