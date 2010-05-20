@@ -30,6 +30,7 @@ generic module HplSam3uSpiChipSelP(uint32_t csrp)
     provides
     {
        interface HplSam3uSpiChipSelConfig;
+       interface GeneralIO as PinCS;
     }
 }
 implementation
@@ -43,9 +44,11 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setClockPolarity(uint8_t p)
     {
+        spi_csr_t reg = *csr;
         if(p > 1)
             return FAIL;
-        csr->bits.cpol = p;
+        reg.bits.cpol = p;
+        *csr = reg;
         return SUCCESS;
     }
 
@@ -56,9 +59,11 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setClockPhase(uint8_t p)
     {
+        spi_csr_t reg = *csr;
         if(p > 1)
             return FAIL;
-        csr->bits.ncpha = p;
+        reg.bits.ncpha = p;
+        *csr = reg;
         return SUCCESS;
     }
 
@@ -68,7 +73,9 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.disableAutoCS()
     {
-        csr->bits.csnaat = 0;
+        spi_csr_t reg = *csr;
+        reg.bits.csnaat = 0;
+        *csr = reg;
         return SUCCESS;
     }
 
@@ -77,7 +84,9 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.enableAutoCS()
     {
-        csr->bits.csnaat = 1;
+        spi_csr_t reg = *csr;
+        reg.bits.csnaat = 1;
+        *csr = reg;
         return SUCCESS;
     }
 
@@ -86,7 +95,9 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.enableCSActive()
     {
-        csr->bits.csaat= 0;
+        spi_csr_t reg = *csr;
+        reg.bits.csaat= 0;
+        *csr = reg;
         return SUCCESS;
     }
 
@@ -95,7 +106,9 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.disableCSActive()
     {
-        csr->bits.csaat= 1;
+        spi_csr_t reg = *csr;
+        reg.bits.csaat= 1;
+        *csr = reg;
         return SUCCESS;
     }
 
@@ -104,9 +117,11 @@ implementation
      */
     async command error_t HplSam3uSpiChipSelConfig.setBitsPerTransfer(uint8_t b)
     {
+        spi_csr_t reg = *csr;
         if(b > 8)
             return FAIL;
-        csr->bits.bits = b;
+        reg.bits.bits = b;
+        *csr = reg;
         return SUCCESS;
     }
 
@@ -149,6 +164,18 @@ implementation
         *csr = tcsr;
         return SUCCESS;
     }
+
+    // these are just dummy variables to make the SAM3U compatible with chips
+    // that don't have auto CS
+    async command void PinCS.set() {}
+    async command void PinCS.clr() {}
+    async command void PinCS.toggle() {}
+    async command bool PinCS.get() {}
+    async command void PinCS.makeInput() {}
+    async command bool PinCS.isInput() {}
+    async command void PinCS.makeOutput() {}
+    async command bool PinCS.isOutput() {}
+
 }
 
 

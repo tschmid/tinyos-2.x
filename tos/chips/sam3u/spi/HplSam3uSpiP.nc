@@ -44,7 +44,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.setMaster()
     {
-        SPI->mr.bits.mstr = 1;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.mstr = 1;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -53,7 +55,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.setSlave()
     {
-        SPI->mr.bits.mstr = 0;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.mstr = 0;
+        SPI->mr = mr;
         return SUCCESS;
     }
     
@@ -62,7 +66,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.setFixedCS()
     {
-        SPI->mr.bits.ps = 0;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.ps = 0;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -71,7 +77,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.setVariableCS()
     {
-        SPI->mr.bits.ps = 1;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.ps = 1;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -81,7 +89,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.setDirectCS()
     {
-        SPI->mr.bits.pcsdec = 0;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.pcsdec = 0;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -90,7 +100,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.setMultiplexedCS()
     {
-        SPI->mr.bits.pcsdec = 1;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.pcsdec = 1;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -99,7 +111,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.enableModeFault()
     {
-        SPI->mr.bits.modfdis = 0;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.modfdis = 0;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -108,7 +122,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.disableModeFault()
     {
-        SPI->mr.bits.modfdis = 1;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.modfdis = 1;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -118,7 +134,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.disableWaitTx()
     {
-        SPI->mr.bits.wdrbt = 0;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.wdrbt = 0;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -127,7 +145,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.enableWaitTx()
     {
-        SPI->mr.bits.wdrbt = 1;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.wdrbt = 1;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -136,7 +156,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.disableLoopBack()
     {
-        SPI->mr.bits.llb = 0;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.llb = 0;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -145,7 +167,9 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.enableLoopBack()
     {
-        SPI->mr.bits.llb = 1;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.llb = 1;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -154,21 +178,22 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.selectChip(uint8_t pcs)
     {
+        spi_mr_t mr = SPI->mr;
         if(SPI->mr.bits.pcsdec == 0)
         {
             switch(pcs)
             {
                 case 0:
-                    SPI->mr.bits.pcs = 0;
+                    mr.bits.pcs = 0;
                     break;
                 case 1:
-                    SPI->mr.bits.pcs = 1;
+                    mr.bits.pcs = 1;
                     break;
                 case 2:
-                    SPI->mr.bits.pcs = 3;
+                    mr.bits.pcs = 3;
                     break;
                 case 3:
-                    SPI->mr.bits.pcs = 7;
+                    mr.bits.pcs = 7;
                     break;
                 default:
                     return EINVAL;
@@ -176,8 +201,9 @@ implementation
         } else {
             if(pcs > 15)
                 return EINVAL;
-            SPI->mr.bits.pcs = pcs;
+            mr.bits.pcs = pcs;
         }
+        SPI->mr = mr;
         return SUCCESS;
     }
 
@@ -186,29 +212,39 @@ implementation
      */
     async command error_t HplSam3uSpiConfig.setChipSelectDelay(uint8_t n)
     {
-        SPI->mr.bits.dlybcs = n;
+        spi_mr_t mr = SPI->mr;
+        mr.bits.dlybcs = n;
+        SPI->mr = mr;
         return SUCCESS;
     }
 
 
     async command void HplSam3uSpiControl.resetSpi()
     {
-        SPI->cr.bits.swrst = 1;
+        spi_cr_t cr = SPI->cr;
+        cr.bits.swrst = 1;
+        SPI->cr = cr;
     }
 
     async command void HplSam3uSpiControl.enableSpi()
     {
-        SPI->cr.bits.spien = 1;
+        spi_cr_t cr = SPI->cr;
+        cr.bits.spien = 1;
+        SPI->cr = cr;
     }
 
     async command void HplSam3uSpiControl.disableSpi()
     {
-        SPI->cr.bits.spidis = 1;
+        spi_cr_t cr = SPI->cr;
+        cr.bits.spidis = 1;
+        SPI->cr = cr;
     }
 
     async command void HplSam3uSpiControl.lastTransfer()
     {
-        SPI->cr.bits.lastxfer = 1;
+        spi_cr_t cr = SPI->cr;
+        cr.bits.lastxfer = 1;
+        SPI->cr = cr;
     }
 
     __attribute__((interrupt)) void SpiIrqHandler() @C() @spontaneous()
@@ -235,11 +271,15 @@ implementation
     // RDRF
     async command void HplSam3uSpiInterrupts.enableRxFullIrq()
     {
-        SPI->ier.bits.rdrf = 1;
+        spi_ier_t ier = SPI->ier;
+        ier.bits.rdrf = 1;
+        SPI->ier = ier;
     }
     async command void HplSam3uSpiInterrupts.disableRxFullIrq()
     {
-        SPI->idr.bits.rdrf = 1;
+        spi_idr_t idr = SPI->idr;
+        idr.bits.rdrf = 1;
+        SPI->idr = idr;
     }
     async command bool HplSam3uSpiInterrupts.isEnabledRxFullIrq()
     {
@@ -249,11 +289,15 @@ implementation
     // TDRE
     async command void HplSam3uSpiInterrupts.enableTxDataEmptyIrq()
     {
-        SPI->ier.bits.tdre = 1;
+        spi_ier_t ier = SPI->ier;
+        ier.bits.tdre = 1;
+        SPI->ier = ier;
     }
     async command void HplSam3uSpiInterrupts.disableTxDataEmptyIrq()
     {
-        SPI->idr.bits.tdre = 1;
+        spi_idr_t idr = SPI->idr;
+        idr.bits.tdre = 1;
+        SPI->idr = idr;
     }
     async command bool HplSam3uSpiInterrupts.isEnabledTxDataEmptyIrq()
     {
@@ -263,11 +307,16 @@ implementation
     // MODF
     async command void HplSam3uSpiInterrupts.enableModeFaultIrq()
     {
-        SPI->ier.bits.modf = 1;
+        spi_ier_t ier = SPI->ier;
+        ier.bits.modf = 1;
+        SPI->ier = ier;
+
     }
     async command void HplSam3uSpiInterrupts.disableModeFaultIrq()
     {
-        SPI->idr.bits.modf = 1;
+        spi_idr_t idr = SPI->idr;
+        idr.bits.modf = 1;
+        SPI->idr = idr;
     }
     async command bool HplSam3uSpiInterrupts.isEnabledModeFaultIrq()
     {
@@ -277,11 +326,15 @@ implementation
     // OVRES
     async command void HplSam3uSpiInterrupts.enableOverrunIrq()
     {
-        SPI->ier.bits.ovres = 1;
+        spi_ier_t ier = SPI->ier;
+        ier.bits.ovres = 1;
+        SPI->ier = ier;
     }
     async command void HplSam3uSpiInterrupts.disableOverrunIrq()
     {
-        SPI->idr.bits.ovres = 1;
+        spi_idr_t idr = SPI->idr;
+        idr.bits.ovres = 1;
+        SPI->idr = idr;
     }
     async command bool HplSam3uSpiInterrupts.isEnabledOverrunIrq()
     {
@@ -291,11 +344,15 @@ implementation
     // NSSR
     async command void HplSam3uSpiInterrupts.enableNssRisingIrq()
     {
-        SPI->ier.bits.nssr = 1;
+        spi_ier_t ier = SPI->ier;
+        ier.bits.nssr = 1;
+        SPI->ier = ier;
     }
     async command void HplSam3uSpiInterrupts.disableNssRisingIrq()
     {
-        SPI->idr.bits.nssr = 1;
+        spi_idr_t idr = SPI->idr;
+        idr.bits.nssr = 1;
+        SPI->idr = idr;
     }
     async command bool HplSam3uSpiInterrupts.isEnabledNssRisingIrq()
     {
@@ -305,11 +362,15 @@ implementation
     // TXEMPTY
     async command void HplSam3uSpiInterrupts.enableTxEmptyIrq()
     {
-        SPI->ier.bits.txempty = 1;
+        spi_ier_t ier = SPI->ier;
+        ier.bits.txempty = 1;
+        SPI->ier = ier;
     }
     async command void HplSam3uSpiInterrupts.disableTxEmptyIrq()
     {
-        SPI->idr.bits.txempty = 1;
+        spi_idr_t idr = SPI->idr;
+        idr.bits.txempty = 1;
+        SPI->idr = idr;
     }
     async command bool HplSam3uSpiInterrupts.isEnabledTxEmptyIrq()
     {
@@ -319,18 +380,20 @@ implementation
     // UNDES
     async command void HplSam3uSpiInterrupts.enableUnderrunIrq()
     {
-        SPI->ier.bits.undes = 1;
+        spi_ier_t ier = SPI->ier;
+        ier.bits.undes = 1;
+        SPI->ier = ier;
     }
     async command void HplSam3uSpiInterrupts.disableUnderrunIrq()
     {
-        SPI->idr.bits.undes = 1;
+        spi_idr_t idr = SPI->idr;
+        idr.bits.undes = 1;
+        SPI->idr = idr;
     }
     async command bool HplSam3uSpiInterrupts.isEnabledUnderrunIrq()
     {
         return (SPI->imr.bits.undes == 1);
     }
-
-
 
 
     async command uint16_t HplSam3uSpiStatus.getReceivedData()
@@ -381,7 +444,9 @@ implementation
 
     async command void HplSam3uSpiStatus.setDataToTransmit(uint16_t txchr)
     {
-        SPI->tdr.bits.td = txchr;
+        spi_tdr_t tdr = SPI->tdr;
+        tdr.bits.td = txchr;
+        SPI->tdr = tdr;
     }
 
     async command bool HplSam3uSpiStatus.isRxFull()

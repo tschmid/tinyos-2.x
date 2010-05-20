@@ -259,10 +259,23 @@ implementation
         return CH_CAPTURE->ra.bits.ra;
     }
 
+    async command void CaptureA.clearPendingEvent()
+    {
+        sr.flat |= CH_CAPTURE->sr.flat;
+        sr.bits.ldras = 0;
+    }
+
     async command void CaptureA.setEdge(uint8_t cm)
     {
         tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
         cmr.bits.ldra = (cm & 0x3);
+        CH_CAPTURE->cmr = cmr;
+    }
+
+    async command void CaptureA.setExternalTrigger(uint8_t cm )
+    {
+        tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
+        cmr.bits.abetrg = (cm & 0x1);
         CH_CAPTURE->cmr = cmr;
     }
 
@@ -309,12 +322,26 @@ implementation
         return CH_CAPTURE->rb.bits.rb;
     }
 
+    async command void CaptureB.clearPendingEvent()
+    {
+        sr.flat |= CH_CAPTURE->sr.flat;
+        sr.bits.ldrbs = 0;
+    }
+
     async command void CaptureB.setEdge(uint8_t cm)
     {
         tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
         cmr.bits.ldrb = (cm & 0x3);
         CH_CAPTURE->cmr = cmr;
     }
+
+    async command void CaptureB.setExternalTrigger(uint8_t cm )
+    {
+        tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
+        cmr.bits.abetrg = (cm & 0x1);
+        CH_CAPTURE->cmr = cmr;
+    }
+
 
     async command bool CaptureB.isOverrunPending()
     {

@@ -23,11 +23,12 @@ EXTRA_MODULES = $(TOSDIR)/platforms/sam3u_ek/vectors.c
 
 OPTFLAGS ?= -O3 -g
 CFLAGS += -mcpu=cortex-m3 -mthumb
-CFLAGS += -I$(INCLUDE_DIRS)
-CFLAGS += $(EXTRA_MODULES)
+PFLAGS += $(EXTRA_MODULES)
+PFLAGS += -I$(INCLUDE_DIRS)
 PFLAGS += -Wall -Wshadow $(NESC_FLAGS)
 PFLAGS += -target=$(PLATFORM) -fnesc-cfile=$(BUILDDIR)/app.c
 PFLAGS += -finline-limit=100000
+PFLAGS += -board=$(SENSORBOARD)
 
 # can be overridden by MP-enabled linker file (see mpu.extra)
 LINKERFILE ?= sam3u-ek-flash.x
@@ -40,6 +41,14 @@ ifndef BUILD_DEPS
     BUILD_DEPS = bin bytes $(POST_BUILD_EXTRA_DEPS)
   endif
 endif
+
+ifdef MSG_SIZE
+PFLAGS += -DTOSH_DATA_LENGTH=$(MSG_SIZE)
+endif
+ifdef DEFAULT_LOCAL_GROUP
+PFLAGS += -DDEFINED_TOS_AM_GROUP=$(DEFAULT_LOCAL_GROUP)
+endif
+
 
 DEFAULT_PROGRAM ?= sam-ba
 
