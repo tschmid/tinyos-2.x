@@ -37,6 +37,10 @@ module Sam3uAdc12bImplP
     interface HplSam3uGeneralIOPin as Adc12bPin;
     interface HplSam3uPeripheralClockCntl as Adc12bClockControl;
     interface HplSam3uClock as ClockConfig;
+#ifdef SAM3U_ADC12B_PDC
+    interface HplSam3uPdc as HplPdc;
+#endif
+    interface Leds;
   }
 }
 
@@ -170,7 +174,6 @@ implementation
   }
 
   async command error_t Sam3uAdc12b.getData[uint8_t id](){
-
     // CR is write-only; There is no need to read it for modification but just set the memory location
     volatile adc12b_cr_t *CR = (volatile adc12b_cr_t *) 0x400A8000;
     adc12b_cr_t cr;
@@ -199,11 +202,12 @@ implementation
     volatile adc12b_sr_t *SR = (volatile adc12b_sr_t *) 0x400A801C;
     adc12b_sr_t sr = *SR;
 
+    uint16_t data = 0;
+
+#ifndef SAM3U_ADC12B_PDC
     // Read LCDR
     volatile adc12b_lcdr_t *LCDR = (volatile adc12b_lcdr_t *) 0x400A8020;
     adc12b_lcdr_t lcdr = *LCDR;
-
-    uint16_t data = 0;
     if(sr.bits.drdy){
       data = lcdr.bits.ldata;
       cr.bits.start = 0; // disable software trigger
@@ -212,6 +216,18 @@ implementation
       atomic state = S_IDLE;
       signal Sam3uAdc12b.dataReady[clientID](data);
     }
+#else
+    if(sr.bits.endrx){
+      atomic state = S_IDLE;
+      atomic cr.bits.start = 0; // enable software trigger
+      atomic *CR = cr;        
+      signal Sam3uAdc12b.dataReady[clientID](data);
+    }else{
+      call HplPdc.enablePdcRx();
+      atomic cr.bits.start = 1; // enable software trigger
+      atomic *CR = cr;        
+    }
+#endif
   }
 
   /* Default functions */

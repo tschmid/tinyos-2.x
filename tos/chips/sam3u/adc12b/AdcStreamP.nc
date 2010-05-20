@@ -188,7 +188,6 @@ implementation {
     now = call Alarm.getNow();
     call GetAdc.configureAdc[c](call Config.getConfiguration[c]());
     if (nextBuffer(FALSE) == SUCCESS){
-      call Leds.led0Toggle();
        sampleSingle();
     }
     return SUCCESS;
@@ -196,6 +195,7 @@ implementation {
 
   async event error_t GetAdc.dataReady[uint8_t streamClient](uint16_t data)
   {
+    call Leds.led0Toggle();
     if (client == NSTREAM)
       return FAIL;
 

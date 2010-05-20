@@ -1,0 +1,912 @@
+// implementation file
+#include <sam3uhsmcihardware.h>
+
+module HplSam3uHsmciP {
+  provides {
+    interface HplSam3uHsmci;
+    interface HplSam3uHsmciInterrupt as Interrupt;
+  } 
+  uses {
+    interface HplSam3uPeripheralClockCntl as HSMCIClockControl;
+    interface HplNVICInterruptCntl as HSMCIInterrupt;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCCDA;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCCK;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA0;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA1;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA2;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA3;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA4;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA5;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA6;
+    interface HplSam3uGeneralIOPin as HSMCIPinMCDA7;
+    interface HplSam3uClock as ClockConfig;
+
+    interface Leds;
+  }
+}
+implementation {
+
+  uint16_t *RCA_address; // this is the address space for where to save the 16 bit address
+  uint16_t CARDADDR = 0;
+  uint8_t responseType = 0;
+  uint16_t WORDS_LEFT = 0;
+  uint16_t CURRENT_WORDS = 0;
+  uint8_t commandType = 0xFF;
+  uint8_t AcommandType = 0xFF;
+  uint32_t AcommandArg = 0;
+
+  uint32_t BLOCK_LENGTH = 512; // default to 512;
+
+  uint32_t* RX_PTR;
+  uint32_t* TX_PTR;
+
+  uint8_t count = 0;
+  uint8_t state;
+
+  enum {
+    STATE_IDLE = 0x00,
+    STATE_WRITE = 0x01,
+    STATE_READ = 0x02,
+    STATE_TRANS = 0x03,
+    STATE_OTHER = 0x04,
+    STATE_WRITE_SET = 0x5,
+    STATE_READ_SET = 0x6,
+  };
+
+  void getResponse();
+
+  uint16_t ii;
+
+  void signalDone(error_t error){
+    signal Interrupt.initDone(error);  
+  }
+
+  void Delay(uint16_t loop)
+  {
+    for(ii=loop;ii > 0; ii --);
+  }
+
+  uint32_t ARGUMENT = 1075806208;
+
+  __attribute__((interrupt)) void HsmciIrqHandler() @C() @spontaneous() {
+    // Handle events
+
+    volatile hsmci_sr_t *SR = (volatile hsmci_sr_t *) 0x40000040;
+    
+    volatile hsmci_idr_t *IDR = (volatile hsmci_idr_t *) 0x40000048;
+    hsmci_idr_t idr;
+
+    volatile hsmci_ier_t *IER = (volatile hsmci_ier_t *) 0x40000044;
+    hsmci_ier_t ier;
+
+    volatile hsmci_tdr_t *TDR = (volatile hsmci_tdr_t *) 0x40000034;
+    hsmci_tdr_t tdr;
+
+    volatile hsmci_rdr_t *RDR = (volatile hsmci_rdr_t *) 0x40000030;
+    hsmci_rdr_t rdr;
+
+    uint32_t response = 0;
+
+    uint32_t targetState = CARDADDR ? STATUS_TRAN : STATUS_STBY;
+    uint32_t srcState    = CARDADDR ? STATUS_STBY : STATUS_TRAN;
+    uint32_t currState;
+
+    call HSMCIInterrupt.disable();
+
+    response = (uint32_t) HSMCI->rspr[0].bits.rsp;
+
+    if(commandType == CMD_PON){
+      count = 0;
+      call HplSam3uHsmci.sendCommand(CMD0, 0);
+      return;
+    }
+
+    if(commandType == CMD0){
+      if(count < 10){
+	count ++;
+	call HplSam3uHsmci.sendCommand(CMD0, 0);
+      }else{
+	count = 0;
+	Delay(10000);
+	call HplSam3uHsmci.sendCommand(CMD8, 0);
+      }
+      return;
+    }
+
+    if(commandType == CMD8){
+      if(SR->bits.rtoe){ // no response then old type sd
+	Delay(10000);
+	//1GB 2064384;
+	AcommandArg = 2064384;
+	AcommandType = ACMD41;
+	call HplSam3uHsmci.sendCommand(CMD55, 0);
+      }else{
+	// 2GB 1075806208	
+	// newer type sd
+	AcommandArg = 1075806208;
+	AcommandType = ACMD41;
+	call HplSam3uHsmci.sendCommand(CMD55, 0);
+      }
+      return;
+    }
+
+    if(commandType == CMD55){
+      if(!SR->bits.rtoe){
+	if(AcommandType != 0xFF)
+	  call HplSam3uHsmci.sendCommand(AcommandType, AcommandArg);
+      }else{
+	signalDone(FAIL);
+	DEBUG[2] = CMD55;
+	DEBUG[3] = AcommandType;
+      }
+      AcommandType = 0xFF;
+      return;
+    }
+
+    if(commandType == ACMD41){
+      if(!SR->bits.rtoe){
+	if( (response & AT91C_CARD_POWER_UP_BUSY) == AT91C_CARD_POWER_UP_BUSY){	
+	  call HplSam3uHsmci.sendCommand(CMD2, 0);
+	}else{
+	  AcommandType = ACMD41;
+	  call HplSam3uHsmci.sendCommand(CMD55, 0);
+	}
+      }else{
+	signalDone(FAIL);
+	DEBUG[2] = ACMD41;
+	DEBUG[3] = AcommandType;
+      }
+      return;
+    }
+
+    if(commandType == CMD2){
+      // no need to save the CID information here
+      //DEBUG[9] = response;
+      if(!SR->bits.rtoe){
+	call HplSam3uHsmci.sendCommand(CMD3, 0);
+      }else{
+	signalDone(FAIL);
+	DEBUG[2] = CMD2;
+      }
+      return;
+    }
+
+    if(commandType == CMD3){
+      // need to save the addr information
+      // TODO: if response == 0 return FAIL instead of just return;
+      CARDADDR = (uint16_t)((response >> 16) & 0xFFFF);
+      DEBUG[8] = CARDADDR;
+      if(!SR->bits.rtoe){
+	call HplSam3uHsmci.sendCommand(CMD9, CARDADDR);
+      }else{
+	signalDone(FAIL);
+	DEBUG[2] = CMD3;
+      }
+      return;
+    }
+
+    if(commandType == CMD9){
+      // no need to save the CID information here
+      //DEBUG[9] = response;
+      if(!SR->bits.rtoe){
+	call HplSam3uHsmci.sendCommand(CMD13, CARDADDR);
+      }else{
+	signalDone(FAIL);
+	DEBUG[2] = CMD9;
+      }
+      return;
+    }
+
+    if(commandType == CMD13){
+      // no need to save the CID information here
+      DEBUG[9] = response;
+
+      if(state == STATE_OTHER){
+	// init period
+	if(!SR->bits.rtoe){
+	  if(response & STATUS_READY_FOR_DATA){
+	    currState = response & STATUS_STATE;
+	    if(currState == targetState){
+	      return;
+	    }
+	    if(currState != srcState){
+	      return;
+	    }
+	    // Pass!! MOVE ON!! 
+	    call HplSam3uHsmci.sendCommand(CMD7, CARDADDR);
+	  }else{
+	    call HplSam3uHsmci.sendCommand(CMD13, CARDADDR);
+	  }
+	}else{
+	  signalDone(FAIL);
+	  DEBUG[2] = CMD13;
+	}
+      }else if(state == STATE_TRANS){
+	// trans state
+	if(!SR->bits.rtoe){
+	  if(((response & STATUS_STATE) == STATUS_IDLE) ||((response & STATUS_STATE) == STATUS_READY) ||((response & STATUS_STATE) == STATUS_IDENT)) {
+	    return;
+	  }
+	  if( !( ((response & STATUS_READY_FOR_DATA) == 0) || ((response & STATUS_STATE) != STATUS_TRAN)) ){
+	    signal Interrupt.setTransDone();
+	  }else{
+	    call HplSam3uHsmci.sendCommand(CMD13, CARDADDR);
+	  }
+	}else{
+	  //signalDone(FAIL);
+	  DEBUG[2] = CMD13;
+	}
+      }else if(state == STATE_WRITE_SET){
+	if(!SR->bits.rtoe){
+	  if((response & STATUS_READY_FOR_DATA) == 0){
+	    call HplSam3uHsmci.sendCommand(CMD13, CARDADDR);
+	  }else{
+	    signal Interrupt.setTransDone();
+	  }
+
+	}else{
+	  //signalDone(FAIL);
+	  DEBUG[2] = CMD13;
+	}
+      }else if(state == STATE_READ_SET){
+	if(!SR->bits.rtoe){
+	  if(((response & STATUS_STATE) == STATUS_IDLE) ||((response & STATUS_STATE) == STATUS_READY) ||((response & STATUS_STATE) == STATUS_IDENT)) {
+	    return;
+	  }
+	  if( !( ((response & STATUS_READY_FOR_DATA) == 0) || ((response & STATUS_STATE) != STATUS_TRAN)) ){
+	    signal Interrupt.setTransDone();
+	  }else{
+	    call HplSam3uHsmci.sendCommand(CMD13, CARDADDR);
+	  }
+	}else{
+	  //signalDone(FAIL);
+	  DEBUG[2] = CMD13;
+	}
+      }
+      return;
+    }
+
+    if(commandType == CMD7){
+      DEBUG[9] = response;
+      if(!SR->bits.rtoe){
+	AcommandArg = SD_STAT_DATA_BUS_WIDTH_4BIT;
+	AcommandType = ACMD6;
+	call HplSam3uHsmci.sendCommand(CMD55, 0);
+	//signalDone(SUCCESS);
+      }else{
+	signalDone(FAIL);
+	DEBUG[2] = CMD7;
+      }
+      return;
+    }
+
+    if(commandType == ACMD6){
+      DEBUG[9] = response;
+      if(!SR->bits.rtoe){
+	if(CARDADDR != 0)
+	  signalDone(SUCCESS);
+	else
+	  signalDone(FAIL);
+      }else{
+	signalDone(FAIL);
+	DEBUG[2] = ACMD6;
+      }
+      return;
+    }
+
+    if(commandType == CMD16){
+      count = 0; // reset for debug in read/write functions
+      DEBUG[9] = response;
+      if(!SR->bits.rtoe){
+	signal Interrupt.lengthConfigDone(SUCCESS);
+      }else{
+	DEBUG[2] = CMD7;
+      }
+      return;
+    }
+
+    /***************************************************************************************************/
+
+    if(commandType == CMD12){
+      if(state == STATE_IDLE){
+	signal Interrupt.fired(TX_PTR);
+	return;
+      }else if(/*!SR->bits.rtoe && */SR->bits.notbusy && !SR->bits.dtip){
+        call HplSam3uHsmci.sendCommand(CMD13, CARDADDR);
+      }else{
+        call Leds.led2Toggle();
+        DEBUG[2] = CMD12;
+        DEBUG[3] = SR->bits.notbusy;
+        DEBUG[4] = SR->bits.dtip;
+        signal Interrupt.fired(TX_PTR);
+      }
+      return;
+    }
+
+    if(commandType == CMD17 || commandType == CMD18){
+      //call Leds.led0Toggle();
+      //DEBUG[3] = RDR->bits.data;
+      idr.bits.cmdrdy = 1;
+      *IDR = idr;
+      ier.bits.rxrdy = 1;
+      *IER = ier;
+      commandType = 0xFF;
+      call HSMCIInterrupt.enable();
+      return;
+    }
+
+    if(commandType == CMD24 || commandType == CMD25){
+      //call Leds.led1Toggle();
+      
+      idr.bits.cmdrdy = 1;
+      *IDR = idr;
+      ier.bits.txrdy = 1;
+      *IER = ier;
+      commandType = 0xFF;
+      call HSMCIInterrupt.enable();
+      return;
+    }
+
+    // Deal with data transfer realted commands and events
+    //if(sr.bits.txrdy == 1 || sr.bits.rxrdy == 1){
+    if(state == STATE_READ || state == STATE_WRITE){
+      idr.bits.cmdrdy = 1;
+      *IDR = idr;
+
+      // enable interrupts for write/read (TODO: Maybe I want to try the xfrdone interrupt bit instead?)
+      // write or read register with TX_PTR[CURRENT_WORDS] and RX_PTR[CURRENT_WORDS]
+      count ++;
+
+      if(state == STATE_READ){
+
+	ier.bits.rxrdy = 1;
+	RX_PTR[CURRENT_WORDS] = RDR->bits.data;
+
+	if(WORDS_LEFT > 0){
+	  CURRENT_WORDS ++;;
+	  WORDS_LEFT --;
+	}
+
+	if(WORDS_LEFT){
+	  *IER = ier;
+	  call HSMCIInterrupt.enable();
+	  return;
+	}
+
+      }else if(state == STATE_WRITE){
+
+	ier.bits.txrdy = 1;
+	tdr.bits.data = TX_PTR[CURRENT_WORDS];
+
+	if(CURRENT_WORDS == 0)
+	  DEBUG[0] = TX_PTR[CURRENT_WORDS];
+
+	if(WORDS_LEFT > 0){
+	  CURRENT_WORDS ++;;
+	  WORDS_LEFT --;
+	}
+
+	if(WORDS_LEFT){
+	  *TDR = tdr;
+	  *IER = ier;
+	  DEBUG[7] = SR->bits.txrdy;
+	  call HSMCIInterrupt.enable();
+	  return;
+	}
+
+      }
+
+      // keep track of data sent or received
+      //no return here because if this is the last one we need to exit :)
+      //return;
+      if(!WORDS_LEFT) { 
+	// nothing left to send/receive to/from sd
+	// send signal back that all is over
+	// !! At this point I have written/read a full BLOCK, if there is more to send/read the upper layer will let me know about it
+	idr.bits.txrdy = 1;
+	idr.bits.rxrdy = 1;
+	*IDR = idr;
+
+	if(state == STATE_READ){
+	  DEBUG[4] = count;
+	  count = 0;
+	  state = STATE_IDLE;
+	  signal Interrupt.fired(RX_PTR);
+	}else if(state == STATE_WRITE){
+	  DEBUG[1] = count;
+	  count = 0;
+	  state = STATE_IDLE;
+	  signal Interrupt.fired(TX_PTR);
+	}
+        //call Leds.led0Toggle();
+	//call HplSam3uHsmci.sendCommand(CMD12, 0);
+	//ier.bits.cmdrdy = 1;
+	//*IER = ier;
+	//call HSMCIInterrupt.enable();
+	return;
+      }
+    }    
+  }
+
+  command void HplSam3uHsmci.setTransState(uint8_t write){
+    if(write){
+      state = STATE_WRITE_SET;
+    }else{
+      state = STATE_READ_SET;
+    }
+    call HplSam3uHsmci.sendCommand(CMD12, 0);
+  }
+
+  void getResponse(){
+    /*
+    volatile hsmci_sr_t *SR = (volatile hsmci_sr_t *) 0x40000040;
+    struct Response1_t r1;
+    struct Response6_t r6;
+    uint8_t i;
+
+    for(i=0;i<4;i++){
+      RESPONSE_PTR[i] = HSMCI->rspr[0].bits.rsp;
+    }
+
+    switch(responseType)
+      {
+      case 1:
+	memcpy(&r1, RESPONSE_PTR, 6);
+	responseType = 0;
+	break;
+      case 6:
+	memcpy(&r6, RESPONSE_PTR, 6);
+	*RCA_address = r6.rca;
+	responseType = 0;
+	break;
+      default:
+	break;
+      }
+    */
+  }
+
+  command void HplSam3uHsmci.initConfigReg(){
+    volatile hsmci_dtor_t *DTOR = (volatile hsmci_dtor_t *) 0x40000008;
+    hsmci_dtor_t dtor;
+    volatile hsmci_sdcr_t *SDCR = (volatile hsmci_sdcr_t *) 0x4000000C;
+    hsmci_sdcr_t sdcr;
+    volatile hsmci_cr_t *CR = (volatile hsmci_cr_t *) 0x40000000;
+    hsmci_cr_t cr = *CR;
+    volatile hsmci_mr_t *MR = (volatile hsmci_mr_t *) 0x40000004;
+    hsmci_mr_t mr = *MR;
+    volatile hsmci_cfg_t *CFG = (volatile hsmci_cfg_t *) 0x40000054;
+    hsmci_cfg_t cfg = *CFG;
+    volatile hsmci_idr_t *IDR = (volatile hsmci_idr_t *) 0x40000048;
+    hsmci_idr_t idr;
+    volatile hsmci_dma_t *DMA = (volatile hsmci_dma_t *) 0x40000050;
+    hsmci_dma_t dma;
+
+    //cr.bits.swrst = 1;
+    //*CR = cr;
+
+    //cr.bits.hsmcidis = 1;
+    //cr.bits.pwsdis = 1;
+    //*CR = cr;
+
+    cr.bits.mcien = 1;
+    *CR = cr;
+
+    idr = (hsmci_idr_t) (uint32_t) 0xFFFFFFFF;
+    *IDR = idr;
+
+    dtor.bits.dtocyc = 0xF;
+    dtor.bits.dtomul = 0x7;
+    *DTOR = dtor;
+
+    mr.bits.clkdiv = 58;
+    mr.bits.pwsdiv = 7;
+    *MR = mr;
+
+    sdcr.bits.sdcsel = 0;
+    sdcr.bits.sdcbus = 2; // 4bit width
+    //sdcr.bits.sdcbus = 0; // 1bit width
+    *SDCR = sdcr;
+
+    dma.bits.dmaen = 0;
+    *DMA = dma;
+
+    cfg.bits.fifomode = 1;
+    cfg.bits.ferrctrl = 0;
+    *CFG = cfg;
+
+  }
+
+  command void HplSam3uHsmci.configureHsmci(){
+    // start clock, start interrupt, start pin
+    call HSMCIClockControl.enable();
+
+    call HSMCIInterrupt.configure(IRQ_PRIO_HSMCI);
+    //call HSMCIInterrupt.enable();
+
+    call HSMCIPinMCCDA.disablePioControl();
+    call HSMCIPinMCCDA.selectPeripheralA();
+
+    call HSMCIPinMCCK.disablePioControl();
+    call HSMCIPinMCCK.selectPeripheralA();
+
+    call HSMCIPinMCDA0.disablePioControl();
+    call HSMCIPinMCDA0.selectPeripheralA();
+
+    call HSMCIPinMCDA1.disablePioControl();
+    call HSMCIPinMCDA1.selectPeripheralA();
+
+    call HSMCIPinMCDA2.disablePioControl();
+    call HSMCIPinMCDA2.selectPeripheralA();
+
+    call HSMCIPinMCDA3.disablePioControl();
+    call HSMCIPinMCDA3.selectPeripheralA();
+
+    call HSMCIPinMCDA4.disablePioControl();
+    call HSMCIPinMCDA4.selectPeripheralB();
+
+    call HSMCIPinMCDA5.disablePioControl();
+    call HSMCIPinMCDA5.selectPeripheralB();
+
+    call HSMCIPinMCDA6.disablePioControl();
+    call HSMCIPinMCDA6.selectPeripheralB();
+
+    call HSMCIPinMCDA7.disablePioControl();
+    call HSMCIPinMCDA7.selectPeripheralB();
+
+    state = STATE_IDLE;
+
+  }
+
+  command void HplSam3uHsmci.unlockRegisters(){
+    // set write protection registers
+    volatile hsmci_wpmr_t *WPMR = (volatile hsmci_wpmr_t *) 0x400000E4;
+    hsmci_wpmr_t wpmr;
+    wpmr.bits.wp_key = 0xFFFFFF;//0x4D4349;
+    wpmr.bits.wp_en = 0;
+    *WPMR = wpmr;
+  }
+
+  command void HplSam3uHsmci.swReset(){
+    // set sw reset register
+    volatile hsmci_cr_t *CR = (volatile hsmci_cr_t *) 0x40000000;
+    hsmci_cr_t cr = *CR;
+    cr.bits.swrst = 1;
+    *CR = cr;
+  }
+
+  command void HplSam3uHsmci.setTxReg(uint32_t *data){
+    // receive data with the size of the legth that has been set and compute the number of words to send
+    WORDS_LEFT = BLOCK_LENGTH/4;
+    CURRENT_WORDS = 0;
+    TX_PTR = data;
+  }
+
+  command void HplSam3uHsmci.setRxReg(uint32_t *data){
+    // receive the pointer to where the data should be stored and compute the number of words to receive
+    WORDS_LEFT = BLOCK_LENGTH/4;
+    CURRENT_WORDS = 0;
+    RX_PTR = data;
+  }
+
+  //command void HplSam3uHsmci.getRxReg(){}
+
+  command void HplSam3uHsmci.sendCommand(uint8_t command_number, uint32_t arg){
+    // set argument register and set command register to send command to card
+    volatile hsmci_argr_t *ARGR = (volatile hsmci_argr_t *) 0x40000010;
+    hsmci_argr_t argr;
+    volatile hsmci_cmdr_t *CMDR = (volatile hsmci_cmdr_t *) 0x40000014;
+    hsmci_cmdr_t cmdr;
+    volatile hsmci_ier_t *IER = (volatile hsmci_ier_t *) 0x40000044;
+    hsmci_ier_t ier = *IER;
+    volatile hsmci_idr_t *IDR = (volatile hsmci_idr_t *) 0x40000048;
+    hsmci_idr_t idr = *IDR;
+    volatile hsmci_blkr_t *BLKR = (volatile hsmci_blkr_t *) 0x40000018;
+    hsmci_blkr_t blkr = *BLKR;
+    volatile hsmci_sr_t *SR = (volatile hsmci_sr_t *) 0x40000040;
+    hsmci_sr_t sr = *SR;
+    volatile hsmci_cfg_t *CFG = (volatile hsmci_cfg_t *) 0x40000054;
+    hsmci_cfg_t cfg = *CFG;
+    volatile hsmci_mr_t *MR = (volatile hsmci_mr_t *) 0x40000004;
+    hsmci_mr_t mr = *MR;
+    //volatile hsmci_tdr_t *TDR = (volatile hsmci_tdr_t *) 0x40000034;
+    //hsmci_tdr_t tdr;
+    uint32_t temp = 0xFFFFFFFF;
+    responseType = 0;
+    commandType = 0xFF;
+
+    // disable all interrupts to begin with
+    idr = (hsmci_idr_t) temp;
+    *IDR = idr;
+
+    switch(command_number)
+      {
+      case CMD_PON:
+	//call HSMCIClockControl.enable();
+	CARDADDR = 0;
+	responseType = 0;
+	commandType = CMD_PON;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+	argr.bits.arg = 0;
+	temp = (uint32_t) AT91C_POWER_ON_INIT;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_OTHER;
+
+	break;
+      case CMD0:
+	// do this first
+	cfg.bits.hsmode = 0;
+	*CFG = cfg;
+	responseType = 0;
+	commandType = CMD0;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+	argr.bits.arg = 0;
+	temp = (uint32_t) AT91C_GO_IDLE_STATE_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_OTHER;
+
+	break;
+      case CMD2:
+	commandType = CMD2;
+	responseType = 2;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	argr.bits.arg = 0;
+	temp = (uint32_t) AT91C_ALL_SEND_CID_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_OTHER;
+	*MR = mr;
+
+	break;
+      case CMD3:
+	// Save the addr of the card in the address provided in arg
+	// The command is sent with an empty argument and the RCAddr comes in the response
+	// Details in SD specs pp. 59 (Sec. 4.9.5)
+	RCA_address = (void*) arg;
+	responseType = 6;
+	commandType = CMD3;
+	argr.bits.arg = 1 << 16;
+	temp = (uint32_t) AT91C_SET_RELATIVE_ADDR_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_OTHER;
+
+	break;
+
+      case ACMD6:
+	responseType = 1;
+	commandType = ACMD6;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+	argr.bits.arg = SD_STAT_DATA_BUS_WIDTH_4BIT; //(uint32_t) (AT91C_MMC_HOST_VOLTAGE_RANGE | (0 << 30));
+	temp = (uint32_t) AT91C_SD_SET_BUS_WIDTH_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+
+	break;
+
+      case CMD7:
+	//select/deselect card
+	// argument set as the card address collected using CMD3 (pp. 49 SD specs)
+	//card_addr = (uint16_t) *RCA_address;
+	state = STATE_OTHER;
+	responseType = 1;
+	commandType = CMD7;
+	argr.bits.arg = CARDADDR << 16;
+	temp = (uint32_t) AT91C_SEL_DESEL_CARD_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+
+	break;
+      case CMD8:
+	commandType = CMD8;
+	responseType = 7;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+	argr.bits.arg = 426; //(arg /*supply voltage*/ << 8) | (0xAA);
+	temp = (uint32_t) AT91C_SEND_IF_COND;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_OTHER;
+	//*ARGR = argr;
+
+	break;
+      case CMD9:
+	commandType = CMD9;
+	responseType = 2;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+	argr.bits.arg = CARDADDR << 16;
+	temp = (uint32_t) AT91C_SEND_CSD_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_OTHER;
+
+	break;
+
+      case CMD12:
+	commandType = CMD12;
+	responseType = 1;
+	argr.bits.arg = 0;
+	temp = (uint32_t) AT91C_STOP_TRANSMISSION_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+
+	break;
+
+      case CMD13:
+	commandType = CMD13;
+	responseType = 1;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+	argr.bits.arg = CARDADDR << 16;
+	temp = (uint32_t) AT91C_SEND_STATUS_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+
+	break;
+      case CMD16:
+	//set block length
+	// Block length is the argument
+	commandType = CMD16;
+	responseType = 1;
+	argr.bits.arg = arg;
+	temp = (uint32_t) AT91C_SET_BLOCKLEN_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	cmdr.bits.maxlat = 1;
+	blkr.bits.blklen = (uint16_t) arg;
+	mr.bits.blklen = (uint16_t) arg;
+	BLOCK_LENGTH = arg;
+	state = STATE_OTHER;
+
+	*MR = mr;
+	*BLKR = blkr;
+
+	break;
+      case CMD17:
+	//read single block
+	// Argument is the data addr on the card
+	
+	argr.bits.arg = arg; // sector number * 512
+	responseType = 1;
+	commandType = CMD17;
+	temp = (uint32_t) AT91C_READ_SINGLE_BLOCK_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_READ;
+
+	blkr.bits.bcnt = 1;
+	*BLKR = blkr;
+
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 512;
+	*MR = mr;
+
+
+	break;
+
+      case CMD18:
+
+	argr.bits.arg = arg; // sector number * 512
+	responseType = 1;
+	commandType = CMD18;
+	temp = (uint32_t) AT91C_READ_MULTIPLE_BLOCK_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_READ;
+
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 512;
+	*MR = mr;
+
+	blkr.bits.bcnt = 1;
+	blkr.bits.blklen = 512;
+	*BLKR = blkr;
+
+	break;
+
+      case CMD24:
+	//send single block
+	// Argument is the data addr on the card
+	argr.bits.arg = arg;
+	responseType = 1;
+	commandType = CMD24;
+	temp = (uint32_t) AT91C_WRITE_BLOCK_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_WRITE;
+
+	blkr.bits.bcnt = 1;
+	*BLKR = blkr;
+
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 512;
+	*MR = mr;
+
+	//tdr.bits.data = TX_PTR[CURRENT_WORDS];
+	//*TDR = tdr;
+
+	break;
+
+      case CMD25:
+	argr.bits.arg = arg;//512;
+	responseType = 1;
+	commandType = CMD25;
+	temp = (uint32_t) AT91C_WRITE_MULTIPLE_BLOCK_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+	state = STATE_WRITE;
+
+	blkr.bits.bcnt = 1;
+	blkr.bits.blklen = 512;
+	*BLKR = blkr;
+
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 512;
+	*MR = mr;
+
+	break;
+
+      case CMD55:
+	responseType = 0;
+	commandType = CMD55;
+
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+
+	argr.bits.arg = CARDADDR << 16;
+
+	temp = (uint32_t) AT91C_APP_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+
+	break;
+      case ACMD41:
+	responseType = 3;
+	commandType = ACMD41;
+	mr.bits.wrproof = 1;
+	mr.bits.rdproof = 1;
+	mr.bits.blklen = 0xFFFF;
+	*MR = mr;
+	argr.bits.arg = arg; //(uint32_t) (AT91C_MMC_HOST_VOLTAGE_RANGE | (0 << 30));
+	temp = (uint32_t) AT91C_SD_APP_OP_COND_CMD;
+	cmdr = (hsmci_cmdr_t) temp;
+
+	break;
+      default:
+	commandType = 0xFF;
+	responseType = 0;
+	state = STATE_IDLE;
+	break;
+      }
+
+    if(SR->bits.cmdrdy){
+      // pass!
+    }else{
+      //call Leds.led1Toggle();
+      return;
+    }
+
+    *ARGR = argr;
+    *CMDR = cmdr;
+
+    call HSMCIInterrupt.enable();
+    ier.bits.cmdrdy = 1;
+    *IER = ier;
+
+  }
+  async event void ClockConfig.mainClockChanged(){}
+
+ default event void Interrupt.setTransDone(){}
+ default event void Interrupt.fired(uint32_t* buffer){}
+ default event void Interrupt.initDone(error_t error){}
+ default event void Interrupt.lengthConfigDone(error_t error){}
+}

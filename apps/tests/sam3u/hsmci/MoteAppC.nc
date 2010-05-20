@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2009 Johns Hopkins University.
+* Copyright (c) 2010 Johns Hopkins University.
 * All rights reserved.
 *
 * Permission to use, copy, modify, and distribute this software and its
@@ -21,32 +21,30 @@
 */
 
 /**
+ * Simple test program for SAM3U's HSMCI with LCD
  * @author JeongGil Ko
  */
 
-#include "sam3uadc12bhardware.h"
-generic configuration AdcReadClientC()
+configuration MoteAppC {}
+
+implementation
 {
-  provides {
-    interface Read<uint16_t>;
-  }
-  uses interface AdcConfigure<const sam3u_adc12_channel_config_t*>;
-} 
+  components MainC,
+    LedsC, NoLedsC,
+    new TimerMilliC() as TimerC,
+    SerialActiveMessageC,
+    LcdC, Sam3uHsmciC, HplSam3uClockC,
+    MoteP;
 
-implementation {
-  components AdcP;
-  components new Sam3uAdc12bClientC();
-  components LedsC, NoLedsC;
+  MoteP.Boot -> MainC;
+  MoteP.Leds -> LedsC;
+  MoteP.HSMC -> Sam3uHsmciC;
+  MoteP.SerialSplitControl -> SerialActiveMessageC;
+  MoteP.Packet -> SerialActiveMessageC;
+  MoteP.Timer -> TimerC;
+  MoteP.Lcd -> LcdC;
+  MoteP.Draw -> LcdC;
 
-  enum {
-    CLIENT = unique(ADCC_SERVICE),
-  };
+  MoteP.HSMCIClockControl -> HplSam3uClockC.MCI0PPCntl;
 
-  Read = AdcP.Read[CLIENT];
-  AdcConfigure = AdcP.Config[CLIENT];
-
-  AdcP.GetAdc[CLIENT] -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
-  AdcP.ResourceRead[CLIENT] -> Sam3uAdc12bClientC.Resource;
-  AdcP.Leds -> NoLedsC;
-  
 }

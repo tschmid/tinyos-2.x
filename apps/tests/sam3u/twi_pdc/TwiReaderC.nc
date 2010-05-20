@@ -21,32 +21,27 @@
 */
 
 /**
+ * ADC configuration settings (part of test application) for SAM3U's 12 bit ADC
  * @author JeongGil Ko
  */
 
-#include "sam3uadc12bhardware.h"
-generic configuration AdcReadClientC()
+configuration TwiReaderC
 {
-  provides {
-    interface Read<uint16_t>;
-  }
-  uses interface AdcConfigure<const sam3u_adc12_channel_config_t*>;
-} 
+  provides interface I2CPacket<TI2CBasicAddr>;
+  provides interface Resource;
+  provides interface ResourceConfigure[uint8_t id];
+  provides interface Sam3uTwiInternalAddress;
+}
 
-implementation {
-  components AdcP;
-  components new Sam3uAdc12bClientC();
-  components LedsC, NoLedsC;
+implementation
+{
+  components Sam3uTwiC as TwiC;
+  components TwiReaderP;
 
-  enum {
-    CLIENT = unique(ADCC_SERVICE),
-  };
+  I2CPacket = TwiC.TwiBasicAddr0;
+  Resource = TwiC;
+  ResourceConfigure = TwiC.Configure0;
+  Sam3uTwiInternalAddress = TwiC.InternalAddress0;
 
-  Read = AdcP.Read[CLIENT];
-  AdcConfigure = AdcP.Config[CLIENT];
-
-  AdcP.GetAdc[CLIENT] -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
-  AdcP.ResourceRead[CLIENT] -> Sam3uAdc12bClientC.Resource;
-  AdcP.Leds -> NoLedsC;
-  
+  TwiC.TwiConfig0 -> TwiReaderP;
 }

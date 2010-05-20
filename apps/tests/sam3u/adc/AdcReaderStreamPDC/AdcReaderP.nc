@@ -21,32 +21,32 @@
 */
 
 /**
+ * ADC configuration settings (part of test application) for SAM3U's 12 bit ADC
  * @author JeongGil Ko
  */
 
 #include "sam3uadc12bhardware.h"
-generic configuration AdcReadClientC()
+
+module AdcReaderP
 {
-  provides {
-    interface Read<uint16_t>;
-  }
-  uses interface AdcConfigure<const sam3u_adc12_channel_config_t*>;
-} 
+  provides interface AdcConfigure<const sam3u_adc12_channel_config_t*>;
+}
 
 implementation {
-  components AdcP;
-  components new Sam3uAdc12bClientC();
-  components LedsC, NoLedsC;
-
-  enum {
-    CLIENT = unique(ADCC_SERVICE),
+  const sam3u_adc12_channel_config_t config = {
+  channel: 0,
+  diff: 0,
+  prescal: 4,
+  lowres: 0,
+  shtim: 15,
+  ibctl: 1,
+  sleep: 0,
+  startup: 104,
+  trgen: 0,
+  trgsel: 0
   };
 
-  Read = AdcP.Read[CLIENT];
-  AdcConfigure = AdcP.Config[CLIENT];
-
-  AdcP.GetAdc[CLIENT] -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
-  AdcP.ResourceRead[CLIENT] -> Sam3uAdc12bClientC.Resource;
-  AdcP.Leds -> NoLedsC;
-  
+  async command const sam3u_adc12_channel_config_t* AdcConfigure.getConfiguration() {
+    return &config;
+  }
 }

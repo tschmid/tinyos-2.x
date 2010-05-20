@@ -21,32 +21,31 @@
 */
 
 /**
+ * Simple test program for SAM3U's TWI with LCD
  * @author JeongGil Ko
  */
 
-#include "sam3uadc12bhardware.h"
-generic configuration AdcReadClientC()
+configuration MoteAppC {}
+
+implementation
 {
-  provides {
-    interface Read<uint16_t>;
-  }
-  uses interface AdcConfigure<const sam3u_adc12_channel_config_t*>;
-} 
+  components MainC,
+    LedsC, NoLedsC,
+    new TimerMilliC() as TimerC,
+    SerialActiveMessageC,
+    TwiReaderC,
+    LcdC,
+    MoteP;
 
-implementation {
-  components AdcP;
-  components new Sam3uAdc12bClientC();
-  components LedsC, NoLedsC;
-
-  enum {
-    CLIENT = unique(ADCC_SERVICE),
-  };
-
-  Read = AdcP.Read[CLIENT];
-  AdcConfigure = AdcP.Config[CLIENT];
-
-  AdcP.GetAdc[CLIENT] -> Sam3uAdc12bClientC.Sam3uGetAdc12b;
-  AdcP.ResourceRead[CLIENT] -> Sam3uAdc12bClientC.Resource;
-  AdcP.Leds -> NoLedsC;
-  
+  MoteP.Boot -> MainC;
+  MoteP.Leds -> LedsC;
+  MoteP.TWI -> TwiReaderC;
+  MoteP.Resource -> TwiReaderC;
+  MoteP.SerialSplitControl -> SerialActiveMessageC;
+  MoteP.Packet -> SerialActiveMessageC;
+  MoteP.Timer -> TimerC;
+  MoteP.Lcd -> LcdC;
+  MoteP.Draw -> LcdC;
+  MoteP.ResourceConfigure -> TwiReaderC.ResourceConfigure[0];
+  MoteP.InternalAddr -> TwiReaderC;
 }

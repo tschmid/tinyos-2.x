@@ -35,7 +35,12 @@ configuration WireAdcStreamP {
   }
 }
 implementation {
-  components AdcStreamP, MainC, new AlarmTMicro32C() as Alarm,
+#ifndef SAM3U_ADC12B_PDC
+  components AdcStreamP;
+#else
+  components AdcStreamPDCP as AdcStreamP;
+#endif
+  components MainC, new AlarmTMicro32C() as Alarm,
     new ArbitratedReadStreamC(uniqueCount(ADCC_READ_STREAM_SERVICE), uint16_t) as ArbitrateReadStream;
 
   ReadStream = ArbitrateReadStream;
@@ -44,7 +49,16 @@ implementation {
 
   ArbitrateReadStream.Service -> AdcStreamP;
 
+#ifdef SAM3U_ADC12B_PDC
+  components HplSam3uPdcC;
+  AdcStreamP.HplPdc -> HplSam3uPdcC.Adc12bPdcControl;
+#else
+  AdcStreamP.Alarm -> Alarm;
+#endif
+
   AdcStreamP.Init <- MainC;
   Sam3uGetAdc12b = AdcStreamP.GetAdc;
-  AdcStreamP.Alarm -> Alarm;
+
+  components LedsC, NoLedsC;
+  AdcStreamP.Leds -> LedsC;
 }
