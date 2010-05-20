@@ -133,4 +133,3 @@ endif
 ifneq ($(filter sam3u_ek,$(MAKECMDGOALS)),)
   CFLAGS += $(THREADS_SAM3U_INCLUDE_DIRS)
 endif
-
