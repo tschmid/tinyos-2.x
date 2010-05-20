@@ -20,25 +20,22 @@
  */
 
 /**
- * Interface to query the status of the SAM3U SPI.
- *
+ * Heavily inspired by the at91 library.
  * @author Thomas Schmid
- */
+ **/
 
-interface HplSam3uSpiStatus
+interface Hx8347
 {
-    async command uint16_t getReceivedData();
-    async command void setDataToTransmit(uint16_t txchr);
-    async command error_t setDataToTransmitCS(uint16_t txchr, uint8_t pcs, bool lastXfer);
-
-    async command bool isRxFull();
-    async command bool isTxDataEmpty();
-    async command bool isModeFault();
-    async command bool isOverrunError();
-    async command bool isNssRising();
-    async command bool isTxEmpty();
-    async command bool isUnderrunError();
-    async command bool isSpiEnabled();
+    command void writeReg(void *pLcdBase, uint8_t reg, uint16_t data);
+    command uint16_t readReg(void *pLcdBase, uint8_t reg);
+    command uint16_t readStatus(void *pLcdBase);
+    command void writeRAM_Prepare(void *pLcdBase);
+    command void writeRAM(void *pLcdBase, uint16_t color);
+    command uint16_t readRAM(void *pLcdBase);
+    command void initialize(void *pLcdBase);
+    event void initializeDone(error_t err);
+    command void setCursor(void *pLcdBase, uint16_t x, uint16_t y);
+    command void on(void *pLcdBase);
+    event void onDone();
+    command void off(void *pLcdBase);
 }
-
-
