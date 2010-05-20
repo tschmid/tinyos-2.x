@@ -444,12 +444,10 @@ implementation
 	new HplSam3uGeneralIOPioC(0x400e0e00) as PioB,
 	new HplSam3uGeneralIOPioC(0x400e1000) as PioC;
 
-    components HplSam3uGeneralIOP, HilTimerMilliC;
+    components HplSam3uGeneralIOP;
     PioA.HplPort -> HplSam3uGeneralIOP.HplPortA;
     PioB.HplPort -> HplSam3uGeneralIOP.HplPortB;
     PioC.HplPort -> HplSam3uGeneralIOP.HplPortC;
-
-    HplSam3uGeneralIOP.LocalTime -> HilTimerMilliC;
 
     components HplNVICC, HplSam3uClockC;
     PioA.PIOIrqControl -> HplNVICC.PIOAInterrupt;

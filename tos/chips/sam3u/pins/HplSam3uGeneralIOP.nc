@@ -32,28 +32,24 @@ module HplSam3uGeneralIOP
         interface HplSam3uGeneralIOPort as HplPortB;
         interface HplSam3uGeneralIOPort as HplPortC;
     }
-    uses
-    {
-        interface LocalTime<TMilli>;
-    }
 }
 implementation
 {
     __attribute__((interrupt)) void PioAIrqHandler() @C() @spontaneous()
     {
-        uint32_t time = call LocalTime.get();
+        uint32_t time = 0;
         signal HplPortA.fired(time);
     }
 
     __attribute__((interrupt)) void PioBIrqHandler() @C() @spontaneous()
     {
-        uint32_t time = call LocalTime.get();
+        uint32_t time = 0;
         signal HplPortB.fired(time);
     }
 
     __attribute__((interrupt)) void PioCIrqHandler() @C() @spontaneous()
     {
-        uint32_t time = call LocalTime.get();
+        uint32_t time = 0;
         signal HplPortC.fired(time);
     }
 
