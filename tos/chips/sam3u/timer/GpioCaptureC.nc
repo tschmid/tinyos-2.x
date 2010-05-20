@@ -47,7 +47,6 @@ implementation {
       call GeneralIO.selectPeripheralA();
 
       call TCCapture.setEdge( mode );
-      call TCCapture.setExternalTrigger(TC_CMR_ABETRG_TIOB);
       call TCCapture.clearPendingEvent();
       call TCCapture.clearOverrun();
       call TCCapture.enable();

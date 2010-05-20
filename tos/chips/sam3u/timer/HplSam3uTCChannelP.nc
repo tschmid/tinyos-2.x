@@ -31,8 +31,7 @@ generic module HplSam3uTCChannelP(uint32_t tc_channel_base) @safe()
 {
     provides {
         interface HplSam3uTCChannel;
-        interface HplSam3uTCCapture as CaptureA;
-        interface HplSam3uTCCapture as CaptureB;
+        interface HplSam3uTCCapture as Capture;
         interface HplSam3uTCCompare as CompareA;
         interface HplSam3uTCCompare as CompareB;
         interface HplSam3uTCCompare as CompareC;
@@ -185,9 +184,9 @@ implementation
             if(sr.bits.lovrs){
                 // only signal if the corresponding capture is enabled
                 if(CH_CAPTURE->imr.bits.ldras)
-                    signal CaptureA.overrun();
+                    signal Capture.overrun();
                 if(CH_CAPTURE->imr.bits.ldrbs)
-                    signal CaptureB.overrun();
+                    signal Capture.overrun();
                 sr.bits.lovrs = 0;
             }
             if(sr.bits.cpas){
@@ -203,11 +202,11 @@ implementation
                 sr.bits.cpcs = 0;
             }
             if(sr.bits.ldras){
-                signal CaptureA.captured(call CaptureA.getEvent());
+                signal Capture.captured(call Capture.getEventRA());
                 sr.bits.ldras = 0;
             }
             if(sr.bits.ldrbs){
-                signal CaptureB.captured(call CaptureB.getEvent());
+                signal Capture.captured(call Capture.getEventRB());
                 sr.bits.ldrbs = 0;
             }
         }
@@ -232,131 +231,81 @@ implementation
     default async event void HplSam3uTCChannel.overflow(){ }
 
     /******************************************
-     * Capture A
+     * Capture
      ******************************************/
 
-    async command void CaptureA.enable()
+    async command void Capture.enable()
     {
         tc_ier_t ier;
         ier.bits.ldras = 1;
-        ier.bits.lovrs = 1;
-        CH_CAPTURE->ier = ier;
-    }
-
-    async command void CaptureA.disable()
-    {
-        tc_idr_t idr;
-        // enable interrupt plus overrun
-        idr.bits.ldras = 1;
-        // if we were the only one enabled, then disable lovrs
-        if(CH_CAPTURE->imr.bits.ldrbs == 0)
-            idr.bits.lovrs = 1;
-        CH_CAPTURE->idr = idr;
-    }
-
-    async command uint16_t CaptureA.getEvent()
-    {
-        return CH_CAPTURE->ra.bits.ra;
-    }
-
-    async command void CaptureA.clearPendingEvent()
-    {
-        sr.flat |= CH_CAPTURE->sr.flat;
-        sr.bits.ldras = 0;
-    }
-
-    async command void CaptureA.setEdge(uint8_t cm)
-    {
-        tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
-        cmr.bits.ldra = (cm & 0x3);
-        CH_CAPTURE->cmr = cmr;
-    }
-
-    async command void CaptureA.setExternalTrigger(uint8_t cm )
-    {
-        tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
-        cmr.bits.abetrg = (cm & 0x1);
-        CH_CAPTURE->cmr = cmr;
-    }
-
-    async command bool CaptureA.isOverrunPending()
-    {
-        sr.flat |= CH_CAPTURE->sr.flat;
-        return (sr.bits.lovrs & 0x01);
-    }
-
-    async command void CaptureA.clearOverrun()
-    {
-        sr.flat |= CH_CAPTURE->sr.flat;
-        sr.bits.lovrs = 0;
-    }
-
-    default async event void CaptureA.overrun() { }
-    default async event void CaptureA.captured(uint16_t time) { }
-
-    /******************************************
-     * Capture B
-     ******************************************/
-
-    async command void CaptureB.enable()
-    {
-        tc_ier_t ier;
         ier.bits.ldrbs = 1;
         ier.bits.lovrs = 1;
         CH_CAPTURE->ier = ier;
     }
 
-    async command void CaptureB.disable()
+    async command void Capture.disable()
     {
         tc_idr_t idr;
-        // enable interrupt plus overrun
+        // disable interrupt plus overrun
+        idr.bits.ldras = 1;
         idr.bits.ldrbs = 1;
-        // if we were the only one enabled, then disable lovrs
-        if(CH_CAPTURE->imr.bits.ldras == 0)
-            idr.bits.lovrs = 1;
+        idr.bits.lovrs = 1;
         CH_CAPTURE->idr = idr;
     }
 
-    async command uint16_t CaptureB.getEvent()
+    async command uint16_t Capture.getEventRA()
+    {
+        return CH_CAPTURE->ra.bits.ra;
+    }
+
+    async command uint16_t Capture.getEventRB()
     {
         return CH_CAPTURE->rb.bits.rb;
     }
 
-    async command void CaptureB.clearPendingEvent()
+    async command void Capture.clearPendingEvent()
     {
         sr.flat |= CH_CAPTURE->sr.flat;
+        sr.bits.ldras = 0;
         sr.bits.ldrbs = 0;
     }
 
-    async command void CaptureB.setEdge(uint8_t cm)
+    async command void Capture.setEdge(uint8_t cm)
     {
         tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
+        cmr.bits.ldra = (cm & 0x3);
         cmr.bits.ldrb = (cm & 0x3);
         CH_CAPTURE->cmr = cmr;
     }
 
-    async command void CaptureB.setExternalTrigger(uint8_t cm )
+    async command void Capture.setExternalTriggerEdge(uint8_t cm)
+    {
+        tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
+        cmr.bits.etrgedg = (cm & 0x3);
+        CH_CAPTURE->cmr = cmr;
+    }
+
+    async command void Capture.setExternalTrigger(uint8_t cm )
     {
         tc_cmr_capture_t cmr = CH_CAPTURE->cmr;
         cmr.bits.abetrg = (cm & 0x1);
         CH_CAPTURE->cmr = cmr;
     }
 
-
-    async command bool CaptureB.isOverrunPending()
+    async command bool Capture.isOverrunPending()
     {
         sr.flat |= CH_CAPTURE->sr.flat;
         return (sr.bits.lovrs & 0x01);
     }
 
-    async command void CaptureB.clearOverrun()
+    async command void Capture.clearOverrun()
     {
         sr.flat |= CH_CAPTURE->sr.flat;
         sr.bits.lovrs = 0;
     }
 
-    default async event void CaptureB.overrun() { }
-    default async event void CaptureB.captured(uint16_t time) { }
+    default async event void Capture.overrun() { }
+    default async event void Capture.captured(uint16_t time) { }
 
     /******************************************
      * Compare A
