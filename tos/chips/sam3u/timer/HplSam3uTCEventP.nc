@@ -1,4 +1,5 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/**
+ * "Copyright (c) 2009 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +20,41 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
+ * SAM3U TC Event dispatcher.
  *
  * @author Thomas Schmid
  */
 
-#include "sam3upmchardware.h"
+#include "sam3utchardware.h"
 
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+module HplSam3uTCEventP @safe()
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
+    provides {
+        interface HplSam3uTCEvent as TC0Event;
+        interface HplSam3uTCEvent as TC1Event;
+        interface HplSam3uTCEvent as TC2Event;
     }
 }
-
 implementation
 {
-    async command void Cntl.enable()
+
+    void TC0IrqHandler() @C() @spontaneous() 
     {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
+        signal TC0Event.fired();
     }
 
-    async command void Cntl.disable()
+    void TC1IrqHandler() @C() @spontaneous() 
     {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
-
+        signal TC1Event.fired();
     }
 
-    async command bool Cntl.status()
+    void TC2IrqHandler() @C() @spontaneous() 
     {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
+        signal TC2Event.fired();
     }
+
+    default async event void TC0Event.fired() {}
+    default async event void TC1Event.fired() {}
+    default async event void TC2Event.fired() {}
 }
+

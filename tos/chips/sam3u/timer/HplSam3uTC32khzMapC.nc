@@ -1,4 +1,4 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +19,27 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
+ * HplSam3uTC32khzMapC presents as paramaterized interfaces all of the 32khz
+ * channels on the SAM3U that are available for compile time allocation
+ * by "new Alarm32khz16C()", "new AlarmMilli32C()", and so on.
+ *
+ * Platforms based on the SAM3U are encouraged to copy in and override this
+ * file, presenting only the hardware timers that are available for allocation
+ * on that platform.
  *
  * @author Thomas Schmid
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+configuration HplSam3uTC32khzMapC
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
+  provides interface HplSam3uTCChannel[ uint8_t id ];
+  provides interface HplSam3uTCCompare[ uint8_t id ];
 }
-
 implementation
 {
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+  components HplSam3uTCC;
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
-
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+  HplSam3uTCChannel[0] = HplSam3uTCC.TC0;
+  HplSam3uTCCompare[0] = HplSam3uTCC.TC0CompareC;
 }
+

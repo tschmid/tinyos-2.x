@@ -1,4 +1,4 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +19,20 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
- *
  * @author Thomas Schmid
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+configuration HplSam3uTC32khzC
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
+  provides interface HplSam3uTCChannel;
+  provides interface HplSam3uTCCompare;
 }
-
 implementation
 {
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+  components HplSam3uTC32khzMapC as Map;
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
-
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+  enum { ALARM_ID = unique("Sam3uTC32khzMapC") };
+  HplSam3uTCChannel = Map.HplSam3uTCChannel[ ALARM_ID ];
+  HplSam3uTCCompare = Map.HplSam3uTCCompare[ ALARM_ID ];
 }
+

@@ -1,4 +1,4 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +19,26 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
- *
+ * Alarm32khzC is the alarm for async 32khz alarms
  * @author Thomas Schmid
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+generic configuration Alarm32khz16C()
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
+  provides interface Init;
+  provides interface Alarm<T32khz,uint16_t>;
 }
-
 implementation
 {
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+  components HplSam3uTC32khzC as HplSam3uTCChannel;
+  components new HilSam3uTCAlarmC(T32khz) as HilSam3uTCAlarm;
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
+  Init = HilSam3uTCAlarm;
+  Alarm = HilSam3uTCAlarm;
 
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+  HilSam3uTCAlarm.HplSam3uTCChannel -> HplSam3uTCChannel;
+  HilSam3uTCAlarm.HplSam3uTCCompare -> HplSam3uTCChannel;
 }
+

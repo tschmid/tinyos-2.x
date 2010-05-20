@@ -1,4 +1,5 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/**
+ * "Copyright (c) 2009 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +20,12 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
+ * SAM3U TC general event interface.
  *
  * @author Thomas Schmid
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+interface HplSam3uTCEvent
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
-}
-
-implementation
-{
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
-
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
-
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+    async event void fired();
 }

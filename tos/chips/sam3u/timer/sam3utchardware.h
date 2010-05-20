@@ -56,7 +56,7 @@ typedef union
         uint8_t tc0xc0s    : 2; // external clock signal 0 selection
         uint8_t tc1xc1s    : 2; // external clock signal 1 selection
         uint8_t tc2xc2s    : 2; // external clock signal 2 selection
-        uint8_t reserved0  : 0;
+        uint8_t reserved0  : 2;
         uint8_t qden       : 1; // quadrature decoder enabled
         uint8_t posen      : 1; // position enabled
         uint8_t speeden    : 1; // speed enabled
@@ -191,6 +191,22 @@ typedef union
     } bits;
 } tc_cmr_capture_t;
 
+#define TC_CMR_ETRGEDG_NONE     0 
+#define TC_CMR_ETRGEDG_RISING   1
+#define TC_CMR_ETRGEDG_FALLING  2
+#define TC_CMR_ETRGEDG_EACH     3
+
+#define TC_CMR_CAPTURE          0
+#define TC_CMR_WAVE             1
+
+#define TC_CMR_CLK_TC1          0
+#define TC_CMR_CLK_TC2          1
+#define TC_CMR_CLK_TC3          2
+#define TC_CMR_CLK_TC4          3
+#define TC_CMR_CLK_SLOW         4
+#define TC_CMR_CLK_XC0          5
+#define TC_CMR_CLK_XC1          6
+#define TC_CMR_CLK_XC2          7
 /**
  *  TC Channel Mode Register Waveform Mode, AT91 ARM Cortex-M3 based Microcontrollers
  *  SAM3U Series, Preliminary 9/1/09, p. 838
@@ -219,7 +235,7 @@ typedef union
         uint8_t beevt     : 2; // external event effect on tiob
         uint8_t bswtrg    : 2; // software trigger effect on tiob
     } bits;
-} tc_cmr_wave_t
+} tc_cmr_wave_t;
 
 /**
  *  TC Counter Value Register, AT91 ARM Cortex-M3 based Microcontrollers
@@ -370,49 +386,70 @@ typedef union
 } tc_imr_t;
 
 /**
+ * Channel definition capture mode
+ */
+typedef struct
+{
+    volatile tc_ccr_t ccr;
+    volatile tc_cmr_capture_t cmr;
+    uint32_t reserved[2];
+    volatile tc_cv_t cv;
+    volatile tc_ra_t ra;
+    volatile tc_rb_t rb;
+    volatile tc_rc_t rc;
+    volatile tc_sr_t sr;
+    volatile tc_ier_t ier;
+    volatile tc_idr_t idr;
+    volatile tc_imr_t imr;
+} tc_channel_capture_t;
+
+/**
+ * Channel definition wave mode
+ */
+typedef struct
+{
+    volatile tc_ccr_t ccr;
+    volatile tc_cmr_wave_t cmr;
+    uint32_t reserved[2];
+    volatile tc_cv_t cv;
+    volatile tc_ra_t ra;
+    volatile tc_rb_t rb;
+    volatile tc_rc_t rc;
+    volatile tc_sr_t sr;
+    volatile tc_ier_t ier;
+    volatile tc_idr_t idr;
+    volatile tc_imr_t imr;
+} tc_channel_wave_t;
+
+/**
+ * TC definition capture mode
+ */
+typedef struct
+{
+    volatile tc_channel_capture_t ch0;
+    uint32_t reserved0[4];
+    volatile tc_channel_capture_t ch1;
+    uint32_t reserved1[4];
+    volatile tc_channel_capture_t ch2;
+    uint32_t reserved2[4];
+    volatile tc_bcr_t bcr;
+    volatile tc_bmr_t bmr;
+    volatile tc_qier_t qier;
+    volatile tc_qidr_t qidr;
+    volatile tc_qimr_t qimr;
+    volatile tc_qisr_t qisr;
+} tc_t;
+
+/**
  * TC Register definitions, AT91 ARM Cortex-M3 based Microcontrollers SAM3U
  * Series, Preliminary 9/1/09, p. 827
  */
-volatile uint32_t* TC_BASE = (volatile uint32_t*)   0x40080000;
-// Channel 0
-volatile tc_ccr_t*    TC_CCR0 = (volatile tc_ccr_t*)  0x40080000;
-volatile tc_cmr_t*    TC_CMR0 = (volatile tc_cmr_t*)  0x40080004;
-volatile tc_cv_t*     TC_CV0  = (volatile tc_cv_t*)   0x40080010;
-volatile tc_ra_t*     TC_RA0  = (volatile tc_ra_t*)   0x40080014;
-volatile tc_rb_t*     TC_RB0  = (volatile tc_rb_t*)   0x40080018;
-volatile tc_rc_t*     TC_RC0  = (volatile tc_rc_t*)   0x4008001C;
-volatile tc_sr_t*     TC_SR0  = (volatile tc_sr_t*)   0x40080020;
-volatile tc_ier_t*    TC_IER0 = (volatile tc_ier_t*)  0x40080024;
-volatile tc_idr_t*    TC_IDR0 = (volatile tc_idr_t*)  0x40080028;
-volatile tc_imr_t*    TC_IMR0 = (volatile tc_imr_t*)  0x4008002C;
-// Channel 1
-volatile tc_ccr_t*    TC_CCR1 = (volatile tc_ccr_t*)  0x40080040;
-volatile tc_cmr_t*    TC_CMR1 = (volatile tc_cmr_t*)  0x40080044;
-volatile tc_cv_t*     TC_CV1  = (volatile tc_cv_t*)   0x40080050;
-volatile tc_ra_t*     TC_RA1  = (volatile tc_ra_t*)   0x40080054;
-volatile tc_rb_t*     TC_RB1  = (volatile tc_rb_t*)   0x40080058;
-volatile tc_rc_t*     TC_RC1  = (volatile tc_rc_t*)   0x4008005C;
-volatile tc_sr_t*     TC_SR1  = (volatile tc_sr_t*)   0x40080060;
-volatile tc_ier_t*    TC_IER1 = (volatile tc_ier_t*)  0x40080064;
-volatile tc_idr_t*    TC_IDR1 = (volatile tc_idr_t*)  0x40080068;
-volatile tc_imr_t*    TC_IMR1 = (volatile tc_imr_t*)  0x4008006C;
-// Channel 2
-volatile tc_ccr_t*    TC_CCR2 = (volatile tc_ccr_t*)  0x40080080;
-volatile tc_cmr_t*    TC_CMR2 = (volatile tc_cmr_t*)  0x40080084;
-volatile tc_cv_t*     TC_CV2  = (volatile tc_cv_t*)   0x40080090;
-volatile tc_ra_t*     TC_RA2  = (volatile tc_ra_t*)   0x40080094;
-volatile tc_rb_t*     TC_RB2  = (volatile tc_rb_t*)   0x40080098;
-volatile tc_rc_t*     TC_RC2  = (volatile tc_rc_t*)   0x4008009C;
-volatile tc_sr_t*     TC_SR2  = (volatile tc_sr_t*)   0x400800A0;
-volatile tc_ier_t*    TC_IER2 = (volatile tc_ier_t*)  0x400800A4;
-volatile tc_idr_t*    TC_IDR2 = (volatile tc_idr_t*)  0x400800A8;
-volatile tc_imr_t*    TC_IMR2 = (volatile tc_imr_t*)  0x400800AC;
+#define TC_BASE     0x40080000
+#define TC_CH0_BASE 0x40080000
+#define TC_CH1_BASE 0x40080040
+#define TC_CH2_BASE 0x40080080
 
-volatile tc_bcr_t*    TC_BCR  = (volatile tc_bcr_t*)  0x400800C0;
-volatile tc_bmr_t*    TC_BMR  = (volatile tc_bmr_t*)  0x400800C4;
-volatile tc_qier_t*   TC_QIER = (volatile tc_qier_t*) 0x400800C8;
-volatile tc_qidr_t*   TC_QIDR = (volatile tc_qidr_t*) 0x400800CC;
-volatile tc_qimr_t*   TC_QIMR = (volatile tc_qimr_t*) 0x400800D0;
-volatile tc_qisr_t*   TC_QISR = (volatile tc_qisr_t*) 0x400800D4;
+volatile tc_t* TC = (volatile tc_t*)TC_BASE;
+
 #endif //SAM3UTCHARDWARE_H
 

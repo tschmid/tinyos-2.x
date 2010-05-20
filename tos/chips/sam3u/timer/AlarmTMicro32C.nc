@@ -1,4 +1,4 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +19,28 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
+ * AlarmTMicroC is the alarm for async TMicro alarms
  *
- * @author Thomas Schmid
+ * @author Cory Sharp <cssharp@eecs.berkeley.edu>
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+generic configuration AlarmTMicro32C()
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
+  provides interface Init;
+  provides interface Alarm<TMicro,uint32_t>;
 }
-
 implementation
 {
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+  components new AlarmTMicro16C() as AlarmC;
+  components CounterTMicro32C as Counter;
+  components new TransformAlarmC(TMicro,uint32_t,TMicro,uint16_t,0) as Transform;
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
+  Init = AlarmC;
+  Alarm = Transform;
 
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+  Transform.AlarmFrom -> AlarmC;
+  Transform.Counter -> Counter;
 }
+

@@ -1,4 +1,4 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +19,24 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
+ * CounterTMicro32C provides a 32-bit counter about 1M ticks per second.
  *
  * @author Thomas Schmid
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+configuration CounterTMicro32C
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
+  provides interface Counter<TMicro,uint32_t>;
 }
-
 implementation
 {
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+  components HilSam3uTCCounterTMicroC as CounterFrom;
+  components new TransformCounterC(TMicro,uint32_t,TMicro,uint16_t,0,uint16_t) as Transform;
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
+  Counter = Transform;
 
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+  Transform.CounterFrom -> CounterFrom;
 }
+

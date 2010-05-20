@@ -1,4 +1,4 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +19,31 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
+ * HilSam3uTCCounterTMicroC provides the an approximate TMicro counter for the
+ * SAM3U.
  *
  * @author Thomas Schmid
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+configuration HilSam3uTCCounterTMicroC
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
+  provides {
+      interface Counter<TMicro,uint16_t> as HilSam3uTCCounterTMicro;
+      interface HplSam3uTCChannel;
+      interface HplSam3uTCCompare;
+  }
 }
-
 implementation
 {
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+  components HplSam3uTCC;
+  components new HilSam3uTCCounterC(TMicro) as Counter;
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
+  HilSam3uTCCounterTMicro = Counter;
+  Counter.HplSam3uTCChannel -> HplSam3uTCC.TC2;
 
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+  HplSam3uTCChannel = HplSam3uTCC.TC2;
+  HplSam3uTCCompare = HplSam3uTCC.TC2CompareC;
 }
+

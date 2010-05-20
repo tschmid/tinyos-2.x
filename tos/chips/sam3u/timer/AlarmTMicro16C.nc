@@ -1,4 +1,4 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/* "Copyright (c) 2000-2003 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +19,26 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
- *
+ * AlarmTMicroC is the alarm for TMicro alarms
  * @author Thomas Schmid
+ * @see  Please refer to TEP 102 for more information about this component and its
+ *          intended use.
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+generic configuration AlarmTMicro16C()
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
+  provides interface Init;
+  provides interface Alarm<TMicro,uint16_t>;
 }
-
 implementation
 {
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+  components HilSam3uTCCounterTMicroC as HplSam3uTCChannel;
+  components new HilSam3uTCAlarmC(TMicro) as HilSam3uTCAlarm;
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
+  Init = HilSam3uTCAlarm;
+  Alarm = HilSam3uTCAlarm;
 
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
+  HilSam3uTCAlarm.HplSam3uTCChannel -> HplSam3uTCChannel;
+  HilSam3uTCAlarm.HplSam3uTCCompare -> HplSam3uTCChannel;
 }
+

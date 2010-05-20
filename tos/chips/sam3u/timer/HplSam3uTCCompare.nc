@@ -1,4 +1,5 @@
-/* "Copyright (c) 2009 The Regents of the University of California.
+/**
+ * "Copyright (c) 2009 The Regents of the University of California.
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,43 +20,22 @@
  */
 
 /**
- * Generic module representing a peripheral clock.
+ * SAM3U TC compare interface.
  *
  * @author Thomas Schmid
  */
 
-#include "sam3upmchardware.h"
-
-generic module HplSam3uPeripheralClockP (uint8_t pid) @safe()
+interface HplSam3uTCCompare
 {
-    provides
-    {
-        interface HplSam3uPeripheralClockCntl as Cntl;
-    }
-}
+    async command void enable();
+    async command void disable();
+    async command bool isEnabled();
+    async command void clearPendingEvent();
+    async command uint16_t getEvent();
+    async command void setEvent( uint16_t time );
+    async command void setEventFromPrev( uint16_t delta );
+    async command void setEventFromNow( uint16_t delta );
 
-implementation
-{
-    async command void Cntl.enable()
-    {
-        pmc_pcer_t pcer = PMC->pcer;
-        pcer.flat |= ( 1 << pid );
-        PMC->pcer = pcer;
-    }
+    async event void fired();
 
-    async command void Cntl.disable()
-    {
-        pmc_pcdr_t pcdr = PMC->pcdr;
-        pcdr.flat |= ( 1 << pid );
-        PMC->pcdr = pcdr;
-
-    }
-
-    async command bool Cntl.status()
-    {
-        if(PMC->pcsr.flat & (1 << pid))
-            return TRUE;
-        else
-            return FALSE;
-    }
 }
