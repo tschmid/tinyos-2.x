@@ -38,16 +38,19 @@ generic module HplSam3uGeneralIOPortP(uint32_t pio_addr)
 }
 implementation
 {
-    norace uint32_t isr = 0;
+    uint32_t isr = 0;
 
     bool isPending(uint8_t bit)
     {
         uint32_t currentpin;
         // make sure to not loose state for other bits!
-        isr |= *((volatile uint32_t *) (pio_addr + 0x04C));
-        currentpin = (isr & (1 << bit)) >> bit;
-        // remove bit
-        isr &= ~( 1 << bit);
+        atomic
+        {
+            isr |= *((volatile uint32_t *) (pio_addr + 0x04C));
+            currentpin = (isr & (1 << bit)) >> bit;
+            // remove bit
+            isr &= ~( 1 << bit);
+        }
         return ((currentpin & 1) == 1);
     }
 
@@ -56,21 +59,24 @@ implementation
         uint8_t i;
         uint32_t isrMasked;
 
-        // make sure to not loose state for other bits!
-        isr |= *((volatile uint32_t *) (pio_addr + 0x04C));
+        atomic
+        {
+            // make sure to not loose state for other bits!
+            isr |= *((volatile uint32_t *) (pio_addr + 0x04C));
 
-        // only look at pins where the interrupt is enabled
-        isrMasked = isr & *((volatile uint32_t *) (pio_addr + 0x048));
+            // only look at pins where the interrupt is enabled
+            isrMasked = isr & *((volatile uint32_t *) (pio_addr + 0x048));
 
-        // find out which port
-        for(i=0; i<32; i++){
-            if(isrMasked & (1 << i))
-            {
-                signal Bits.fired[i](time);
-            }
-        } 
-        // remove signaled bits from isr
-        isr &= ~isrMasked;
+            // find out which port
+            for(i=0; i<32; i++){
+                if(isrMasked & (1 << i))
+                {
+                    signal Bits.fired[i](time);
+                }
+            } 
+            // remove signaled bits from isr
+            isr &= ~isrMasked;
+        }
     }
 
     async command void Bits.enableInterrupt[uint8_t bit]()

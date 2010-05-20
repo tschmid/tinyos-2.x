@@ -267,6 +267,7 @@ implementation
     }
     async command error_t Interrupt.enableFallingEdge()
     {
+        call HplPin.enablePioControl();
         call HplPin.enableEdgeDetection();
         call HplPin.fallingEdgeDetection();
         call HplPin.enableInterrupt();
@@ -274,6 +275,7 @@ implementation
     }
     async command error_t Interrupt.enableRisingEdge()
     {
+        call HplPin.enablePioControl();
         call HplPin.enableEdgeDetection();
         call HplPin.risingEdgeDetection();
         call HplPin.enableInterrupt();

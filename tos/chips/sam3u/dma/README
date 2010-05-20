@@ -1,0 +1,11 @@
+DMA Controller Implementation for SAM3U
+
+@author JeongGil Ko <jgko@cs.jhu.edu>
+
+The implementations are based on the preliminary specifications.
+
+- ToDos
+: Not yet tested on actual application file
+: Address register must be aligned with the transfer width?
+: Differetiate single and chunk transfer in HplSam3uDmaXP.nc
+: Any issues related to NOT using multiple buffer transfer?

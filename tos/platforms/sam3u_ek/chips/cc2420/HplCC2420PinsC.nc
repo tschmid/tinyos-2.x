@@ -64,9 +64,8 @@ implementation {
   VREN = GeneralIOC.PioC26;
 
   // dummy connection for CSN
-  components HplSam3uSpiC;
-  // CSN = GeneralIOC.PioA16;
-  CSN = HplSam3uSpiC.PinCS0;
+  components HilSam3uSpiC;
+  CSN = HilSam3uSpiC.CSN;
   
 }
 

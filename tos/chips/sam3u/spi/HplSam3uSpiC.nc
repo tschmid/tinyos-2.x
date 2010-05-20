@@ -37,15 +37,16 @@ configuration HplSam3uSpiC
        interface HplSam3uSpiStatus; 
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig0;
        interface Resource as ResourceCS0;
+       interface GeneralIO as CSN0;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig1;
        interface Resource as ResourceCS1;
+       interface GeneralIO as CSN1;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig2;
        interface Resource as ResourceCS2;
+       interface GeneralIO as CSN2;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig3;
        interface Resource as ResourceCS3;
-
-       // provide a dummy chip select
-       interface GeneralIO as PinCS0;
+       interface GeneralIO as CSN3;
     }
 }
 implementation
@@ -70,10 +71,13 @@ implementation
         new HplSam3uSpiChipSelP(0x4000803C) as CS3;
 
     HplSam3uSpiChipSelConfig0 = CS0;
-    PinCS0 = CS0;
+    CSN0 = CS0;
     HplSam3uSpiChipSelConfig1 = CS1;
+    CSN1 = CS1;
     HplSam3uSpiChipSelConfig2 = CS2;
+    CSN2 = CS2;
     HplSam3uSpiChipSelConfig3 = CS3;
+    CSN3 = CS3;
 }
 
 
