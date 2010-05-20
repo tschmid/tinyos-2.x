@@ -24,7 +24,7 @@
  * @author JeongGil Ko
  */
 
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
 module Sam3uAdc12bImplP
 {
   provides {
@@ -71,74 +71,116 @@ implementation
   }
 
   async command error_t Sam3uAdc12b.configureAdc[uint8_t id](const sam3u_adc12_channel_config_t *config){
-    // channel
+
+    // Since CHER is write-only read the information in CHSR in CHER format
+    volatile adc12b_cher_t *CHSR = (volatile adc12b_cher_t *) 0x400A8018;
+    volatile adc12b_cher_t *CHER = (volatile adc12b_cher_t *) 0x400A8010;
+    adc12b_cher_t cher = *CHSR;
+
+    // Since IER is write-only read the information in IMR in IER format
+    volatile adc12b_ier_t *IMR = (volatile adc12b_ier_t *) 0x400A802C;
+    volatile adc12b_ier_t *IER =  (volatile adc12b_ier_t *) 0x400A8024;
+    adc12b_ier_t ier = *IMR;
+
+    // CR is write-only; There is no need to read it for modification but just set the memory location
+    volatile adc12b_cr_t *CR = (volatile adc12b_cr_t *) 0x400A8000;
+    adc12b_cr_t cr;
+
+    // MR is read-write
+    volatile adc12b_mr_t *MR = (volatile adc12b_mr_t *) 0x400A8004;
+    adc12b_mr_t mr = *MR;
+
+    // ACR is read-write
+    volatile adc12b_acr_t *ACR = (volatile adc12b_acr_t *) 0x400A8064;
+    adc12b_acr_t acr = *ACR;
+
+    // EMR is read-write
+    volatile adc12b_emr_t *EMR = (volatile adc12b_emr_t *) 0x400A8068;
+    adc12b_emr_t emr = *EMR;
+
     switch(config->channel) {
     case 0:
-      ADC12B->cher.bits.ch0 = 1;
-      ADC12B->ier.bits.eoc0 = 1;
+      cher.bits.ch0 = 1;
+      ier.bits.eoc0 = 1;
       break;
     case 1:
-      ADC12B->cher.bits.ch1 = 1;
-      ADC12B->ier.bits.eoc1 = 1;
+      cher.bits.ch1 = 1;
+      ier.bits.eoc1 = 1;
       break;
     case 2:
-      ADC12B->cher.bits.ch2 = 1;
-      ADC12B->ier.bits.eoc2 = 1;
+      cher.bits.ch2 = 1;
+      ier.bits.eoc2 = 1;
       break;
     case 3:
-      ADC12B->cher.bits.ch3 = 1;
-      ADC12B->ier.bits.eoc3 = 1;
+      cher.bits.ch3 = 1;
+      ier.bits.eoc3 = 1;
       break;
     case 4:
-      ADC12B->cher.bits.ch4 = 1;
-      ADC12B->ier.bits.eoc4 = 1;
+      cher.bits.ch4 = 1;
+      ier.bits.eoc4 = 1;
       break;
     case 5:
-      ADC12B->cher.bits.ch5 = 1;
-      ADC12B->ier.bits.eoc5 = 1;
+      cher.bits.ch5 = 1;
+      ier.bits.eoc5 = 1;
       break;
     case 6:
-      ADC12B->cher.bits.ch6 = 1;
-      ADC12B->ier.bits.eoc6 = 1;
+      cher.bits.ch6 = 1;
+      ier.bits.eoc6 = 1;
       break;
     case 7:
-      ADC12B->cher.bits.ch7 = 1;
-      ADC12B->ier.bits.eoc7 = 1;
+      cher.bits.ch7 = 1;
+      ier.bits.eoc7 = 1;
       break;
     default:
-      ADC12B->cher.bits.ch0 = 0;
-      ADC12B->ier.bits.eoc0 = 0;
+      // Just return FAIL?
+      cher.bits.ch0 = 0;
+      ier.bits.eoc0 = 0;
       break;
     }
 
-    ADC12B->cr.bits.swrst = 0;
-    ADC12B->cr.bits.start = 0; // disable start bit for the configuration stage
+    cr.bits.swrst = 0;
+    cr.bits.start = 0; // disable start bit for the configuration stage
 
-    ADC12B->mr.bits.prescal = config->prescal;
-    ADC12B->mr.bits.shtim = config->shtim;
-    ADC12B->mr.bits.lowres = config->lowres;
-    ADC12B->mr.bits.trgen = config->trgen;
-    ADC12B->mr.bits.trgsel = config->trgsel;
-    ADC12B->mr.bits.sleep = config->sleep;
-    ADC12B->mr.bits.startup = config->startup;
+    mr.bits.prescal = config->prescal;
+    mr.bits.shtim = config->shtim;
+    mr.bits.lowres = config->lowres;
+    mr.bits.trgen = config->trgen;
+    mr.bits.trgsel = config->trgsel;
+    mr.bits.sleep = config->sleep;
+    mr.bits.startup = config->startup;
 
-    ADC12B->acr.bits.ibctl = config->ibctl;
-    ADC12B->acr.bits.gain = 0;
-    ADC12B->acr.bits.diff = config->diff;
-    ADC12B->acr.bits.offset = 0;
+    acr.bits.ibctl = config->ibctl;
+    acr.bits.gain = 0;
+    acr.bits.diff = config->diff;
+    acr.bits.offset = 0;
 
-    ADC12B->emr.bits.offmodes = 0;
-    ADC12B->emr.bits.off_mode_startup_time = config->startup;
+    emr.bits.offmodes = 0;
+    emr.bits.off_mode_startup_time = config->startup;
+
+    // We have now locally modified all the register values
+    // Write the register back in its respective memory space
+    *CHER = cher;
+    *IER = ier;
+    *CR = cr;
+    *MR = mr;
+    *ACR = acr;
+    *EMR = emr;
 
     return SUCCESS;
   }
 
   async command error_t Sam3uAdc12b.getData[uint8_t id](){
+
+    // CR is write-only; There is no need to read it for modification but just set the memory location
+    volatile adc12b_cr_t *CR = (volatile adc12b_cr_t *) 0x400A8000;
+    adc12b_cr_t cr;
+
     atomic clientID = id;
     if(state != S_IDLE){
       return EBUSY;
     }else{
-      ADC12B->cr.bits.start = 1; // enable software trigger
+      cr.bits.start = 1; // enable software trigger
+      *CR = cr;
       atomic state = S_ADC;
       return SUCCESS;
     }
@@ -148,10 +190,24 @@ implementation
 
   /* Get events (signals) from chips here! */
   void Adc12BIrqHandler() @C() @spontaneous() {
+
+    // CR is write-only; There is no need to read it for modification but just set the memory location
+    volatile adc12b_cr_t *CR = (volatile adc12b_cr_t *) 0x400A8000;
+    adc12b_cr_t cr;
+
+    // Read SR
+    volatile adc12b_sr_t *SR = (volatile adc12b_sr_t *) 0x400A801C;
+    adc12b_sr_t sr = *SR;
+
+    // Read LCDR
+    volatile adc12b_lcdr_t *LCDR = (volatile adc12b_lcdr_t *) 0x400A8020;
+    adc12b_lcdr_t lcdr = *LCDR;
+
     uint16_t data = 0;
-    if(ADC12B->sr.bits.drdy){
-      data = ADC12B->lcdr.bits.ldata;
-      ADC12B->cr.bits.start = 0; // disable software trigger
+    if(sr.bits.drdy){
+      data = lcdr.bits.ldata;
+      cr.bits.start = 0; // disable software trigger
+      *CR = cr;
       //get data from register
       atomic state = S_IDLE;
       signal Sam3uAdc12b.dataReady[clientID](data);

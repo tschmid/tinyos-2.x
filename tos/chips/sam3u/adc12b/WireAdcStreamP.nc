@@ -24,7 +24,8 @@
  * @author JeongGil Ko
  */
 
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
+
 configuration WireAdcStreamP {
   provides interface ReadStream<uint16_t>[uint8_t client];
   uses {
@@ -34,7 +35,7 @@ configuration WireAdcStreamP {
   }
 }
 implementation {
-  components AdcStreamP, MainC, new AlarmMilliC() as Alarm, 
+  components AdcStreamP, MainC, new AlarmTMicro32C() as Alarm,
     new ArbitratedReadStreamC(uniqueCount(ADCC_READ_STREAM_SERVICE), uint16_t) as ArbitrateReadStream;
 
   ReadStream = ArbitrateReadStream;

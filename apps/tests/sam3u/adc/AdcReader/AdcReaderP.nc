@@ -25,7 +25,7 @@
  * @author JeongGil Ko
  */
 
-#include "sa3uadc12bhardware.h"
+#include "sam3uadc12bhardware.h"
 
 module AdcReaderP
 {
