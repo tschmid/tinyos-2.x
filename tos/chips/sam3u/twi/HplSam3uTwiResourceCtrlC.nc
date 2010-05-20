@@ -24,28 +24,22 @@
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
+#include "sam3utwihardware.h"
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+configuration HplSam3uTwiResourceCtrlC {
+  provides interface Resource;
+  provides interface ResourceRequested;
+  uses interface ResourceConfigure;
+}
+implementation{
 
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
+  enum {
+    CLIENT_ID = unique( SAM3U_HPLTWI_RESOURCE ),
+  };
 
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
-
+  components HplSam3uTwiResourceCtrlP as TwiP;
+  
+  Resource = TwiP.Resource[ CLIENT_ID ];
+  ResourceRequested = TwiP.ResourceRequested[ CLIENT_ID ];
+  ResourceConfigure = TwiP.ResourceConfigure[ CLIENT_ID ];
 }

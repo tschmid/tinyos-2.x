@@ -24,28 +24,16 @@
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
+configuration HplSam3uTwiResourceCtrlP {
+  provides interface Resource[uint8_t id];
+  provides interface ResourceRequested[uint8_t id];
+  uses interface ResourceConfigure[uint8_t id];
+}
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+implementation {
 
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
-
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
-
+  components new FcfsArbiterC( SAM3U_HPLTWI_RESOURCE ) as Arbiter;
+  Resource = Arbiter;
+  ResourceConfigure = Arbiter;
+  ResourceRequested = Arbiter;
 }

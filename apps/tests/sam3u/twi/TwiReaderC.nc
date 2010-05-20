@@ -21,31 +21,27 @@
 */
 
 /**
+ * ADC configuration settings (part of test application) for SAM3U's 12 bit ADC
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
+configuration TwiReaderC
+{
+  provides interface I2CPacket<TI2CBasicAddr>;
+  provides interface Resource;
+  provides interface ResourceConfigure[uint8_t id];
+  provides interface Sam3uTwiInternalAddress;
+}
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+implementation
+{
+  components Sam3uTwiC as TwiC;
+  components TwiReaderP;
 
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
+  I2CPacket = TwiC.TwiBasicAddr0;
+  Resource = TwiC;
+  ResourceConfigure = TwiC.Configure0;
+  Sam3uTwiInternalAddress = TwiC.InternalAddress0;
 
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
-
+  TwiC.TwiConfig0 -> TwiReaderP;
 }

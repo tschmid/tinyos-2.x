@@ -24,28 +24,26 @@
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
+configuration HplSam3uTwiP {
+  provides interface HplSam3uTwi;
+  provides interface HplSam3uTwiInterrupt;
+}
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+implementation {
 
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
+  components HplSam3uTwiImplP as HplTwiP;
+  HplSam3uTwi = HplTwiP;
+  HplSam3uTwiInterrupt = HplTwiP;
 
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
-
+  // make and connect pins/clock/interrupt for this dude
+  components HplNVICC, HplSam3uClockC, HplSam3uGeneralIOC, LedsC, NoLedsC;
+  HplTwiP.Twi0Interrupt -> HplNVICC.TWI0Interrupt;
+  HplTwiP.Twi1Interrupt -> HplNVICC.TWI1Interrupt;
+  HplTwiP.Twi0ClockControl -> HplSam3uClockC.TWI0PPCntl;
+  HplTwiP.Twi1ClockControl -> HplSam3uClockC.TWI1PPCntl;
+  HplTwiP.Twd0Pin -> HplSam3uGeneralIOC.HplPioA9;
+  HplTwiP.Twd1Pin -> HplSam3uGeneralIOC.HplPioA24;
+  HplTwiP.Twck0Pin -> HplSam3uGeneralIOC.HplPioA10;
+  HplTwiP.Twck1Pin -> HplSam3uGeneralIOC.HplPioA25;
+  HplTwiP.Leds -> NoLedsC;  
 }

@@ -24,28 +24,14 @@
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
-
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
-
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
-
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
-
+configuration Sam3uTwiResourceCtrlC {
+  provides interface Resource[ uint8_t id ];
+  uses interface Resource as TwiResource[ uint8_t id ];
+}
+implementation {
+  components Sam3uTwiResourceCtrlP as TwiP;
+  components LedsC, NoLedsC;
+  Resource = TwiP.Resource;
+  TwiResource = TwiP.TwiResource;
+  TwiP.Leds -> NoLedsC;
 }

@@ -1,4 +1,4 @@
-// $Id: RadioCountToLedsC.nc,v 1.6 2008/06/24 05:32:31 regehr Exp $
+// $Id$
 
 /*									tab:4
  * "Copyright (c) 2000-2005 The Regents of the University  of California.  

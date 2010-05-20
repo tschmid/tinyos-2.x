@@ -24,28 +24,36 @@
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
+#include "sam3utwihardware.h"
+module Sam3uTwiResourceCtrlP{
+  provides interface Resource[ uint8_t id ];
+  uses interface Resource as TwiResource[ uint8_t id ];
+  uses interface Leds;
+}
+implementation{
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+  async command error_t Resource.immediateRequest[ uint8_t id ]() {
+    return call TwiResource.immediateRequest[ id ]();
+  }
 
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
+  async command error_t Resource.request[ uint8_t id ]() {
+    return call TwiResource.request[ id ]();
+  }
 
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
+  async command uint8_t Resource.isOwner[ uint8_t id ]() {
+    return call TwiResource.isOwner[ id ]();
+  }
 
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
+  async command error_t Resource.release[ uint8_t id ]() {
+    return call TwiResource.release[ id ]();
+  }
 
+  event void TwiResource.granted[ uint8_t id ]() {
+    signal Resource.granted[ id ]();
+  }
+
+  default async command error_t TwiResource.request[ uint8_t id ]() { return FAIL; }
+  default async command error_t TwiResource.immediateRequest[ uint8_t id ]() { return FAIL; }
+  default async command error_t TwiResource.release[ uint8_t id ]() {return FAIL;}
+  default event void Resource.granted[ uint8_t id ]() {}
 }

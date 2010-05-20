@@ -24,28 +24,20 @@
  * @author JeongGil Ko
  */
 
-interface HplSam3uPdc {
+configuration HplSam3uTwiC {
+  provides interface HplSam3uTwiInterrupt;
+  provides interface HplSam3uTwi;
+}
+implementation{
 
-  /* Pointer Registers */
-  async command void setRxPtr(void* addr);
-  async command void setTxPtr(void* addr);
-  async command void setNextRxPtr(void* addr);
-  async command void setNextTxPtr(void* addr);
+  enum {
+    CLIENT_ID = unique( SAM3U_HPLTWI_RESOURCE ),
+  };
 
-  /* Counter Registers */
-  async command void setRxCounter(uint16_t counter);
-  async command void setTxCounter(uint16_t counter);
-  async command void setNextRxCounter(uint16_t counter);
-  async command void setNextTxCounter(uint16_t counter);
+  components HplSam3uTwiP as TwiP;
+  
+  HplSam3uTwiInterrupt = TwiP.HplSam3uTwiInterrupt;
+  HplSam3uTwi = TwiP.HplSam3uTwi;
 
-  /* Enable / Disable Register */
-  async command void enablePdcRx();
-  async command void enablePdcTx();
-  async command void disablePdcRx();
-  async command void disablePdcTx();
-
-  /* Status Registers  - Checks status */
-  async command bool rxEnabled();
-  async command bool txEnabled();
 
 }
