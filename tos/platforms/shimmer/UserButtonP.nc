@@ -62,7 +62,7 @@ implementation {
   }
 
   task void debounce() {
-    call debounceTimer.startOneShot(125);
+    call debounceTimer.startOneShot(250);
   }
 
   event void NotifyLower.notify( bool val ) {
