@@ -380,13 +380,11 @@ implementation
   }
 
   async command void Usart.tx(uint8_t data) {
-    atomic U0TXBUF = data;
+    U0TXBUF = data;
   }
 
   async command uint8_t Usart.rx() {
-    uint8_t value;
-    atomic value = U0RXBUF;
-    return value;
+    return U0RXBUF;
   }
 
   default async event void I2CInterrupts.fired() {}

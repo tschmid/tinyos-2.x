@@ -382,13 +382,11 @@ implementation
   }
 
   async command void Usart.tx(uint8_t data) {
-    atomic U1TXBUF = data;
+    U1TXBUF = data;
   }
 
   async command uint8_t Usart.rx() {
-    uint8_t value;
-    atomic value = U1RXBUF;
-    return value;
+    return U1RXBUF;
   }
 
 }
