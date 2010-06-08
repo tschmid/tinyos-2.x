@@ -1,0 +1,14 @@
+README
+======
+
+This platform is tied together using as many components available in TOS itself
+as possible. If any component can be found in the chips directory or other
+platforms we should use it from there.
+
+Missing still:
+	- Flash driver (still experimental glue code)
+    - Some ADC readings as solar in, battery voltage and current
+
+Contact for defects, fixes and device driver additions:
+
+  Christian.Richter@csiro.au

@@ -1,0 +1,12 @@
+TODO
+====
+
+General todo's
+ - Need to test everything working together (Radio / Sensor / Flash)
+ - All the Init interfaces should be wird to MotePlatform's SubInit
+   and before this all pins should be set to a mode where tehy save
+   power
+
+Flash driver
+ - There is still an issue with the SPI interface as it looks like
+ 
