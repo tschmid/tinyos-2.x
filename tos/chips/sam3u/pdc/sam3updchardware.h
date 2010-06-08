@@ -170,12 +170,13 @@ typedef union
   struct
   {
     uint8_t rxten       :  1;
-    uint8_t reserved0   :  7;
+    uint8_t reserved0  :  7;
     uint8_t txten       :  1;
-    uint8_t reserved1   :  7;
-    uint16_t reserved2  : 16;
+    uint8_t reserved1  :  7;
+    uint16_t reserved2 : 16;
   } __attribute__((__packed__)) bits;
-} periph_ptsr_t;
+} periph_ptsr_t; 
+
 
 /**
  * PDC Register definitions, AT91 ARM Cortex-M3 based Microcontrollers SAM3U

@@ -303,3 +303,4 @@ typedef struct {
 } sam3u_twi_union_config_t;
 
 #endif // _SAM3UTWIHARDWARE_H
+

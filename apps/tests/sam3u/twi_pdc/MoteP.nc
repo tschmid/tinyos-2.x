@@ -49,6 +49,7 @@ implementation
 {
   norace uint8_t resultError;
   norace uint32_t resultValue;
+  uint8_t rx_len,tx_len;
   uint8_t temp[4];
   uint8_t tempWrite[2];// = 0x60606060; // for 12bit resolution on temp sensor
   uint16_t tempWriteLimit = 0x4680;
@@ -128,7 +129,7 @@ implementation
     call ResourceConfigure.configure();
     call InternalAddr.setInternalAddrSize(1);
     call InternalAddr.setInternalAddr(1); // sensor config register
-    call TWI.write(1, 0x48, 2, (uint8_t*)&tempWrite);
+    call TWI.write(1, 0x48, 1, (uint8_t*)&tempWrite);
 
     call Draw.drawInt(140,230,TCR->bits.txctr,1,COLOR_BLUE);
     call Draw.drawInt(140,250,SR->bits.endtx,1,COLOR_BLUE);
@@ -177,18 +178,19 @@ implementation
       call Draw.drawInt(140,170,TCR->bits.txctr,1,COLOR_RED);
       call Draw.drawInt(140,190,PTSR->bits.txten,1,COLOR_BLACK);
 
-      call Draw.drawInt(30,180,resultValue,1,COLOR_BLACK);
-      call Draw.drawInt(30,200,resultError,1,COLOR_BLACK);
+      call Draw.drawInt(30,180,resultValue,1,COLOR_DARKCYAN);
+      call Draw.drawInt(30,200,resultError,1,COLOR_DARKCYAN);
       //call Draw.drawInt(30,100,temp[0],1,COLOR_BLACK);
       //call Draw.drawInt(30,120,temp[1],1,COLOR_BLACK);
     }
   }
 
-  task void readread(){  
-    call Draw.drawInt(30,100,temp[0],1,COLOR_BLACK);
-    call Draw.drawInt(30,120,temp[1],1,COLOR_BLACK);
-    call Draw.drawInt(30,140,temp[2],1,COLOR_BLACK);
-    call Draw.drawInt(30,160,temp[3],1,COLOR_BLACK);
+  task void readread(){ 
+    call Draw.drawInt(30,80,rx_len,1,COLOR_DARKGREEN);
+    call Draw.drawInt(30,100,temp[0],1,COLOR_DARKGREEN);
+    call Draw.drawInt(30,120,temp[1],1,COLOR_DARKGREEN);
+    call Draw.drawInt(30,140,temp[2],1,COLOR_DARKGREEN);
+    call Draw.drawInt(30,160,temp[3],1,COLOR_DARKGREEN);
   }
 
   task void callRead(){
@@ -210,6 +212,7 @@ implementation
     //resultError = error;
     //resultValue = *data;
     //post drawResult();
+    rx_len=length;
     post readread();
   }
 

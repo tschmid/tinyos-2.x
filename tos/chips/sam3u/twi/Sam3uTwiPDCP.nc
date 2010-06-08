@@ -148,8 +148,8 @@ implementation {
 
       //start the read process via pdc
       if(flags == I2C_START){
-	if(len == 1)
-	  call HplTwi.setStop0();
+      if(len == 1)
+        call HplTwi.setStop0();
 	call HplPdc.enablePdcRx();
 	call HplTwi.setStart0();
       }      
@@ -264,9 +264,30 @@ implementation {
 	call HplPdc.disablePdcRx();
 	signal TwiBasicAddr.readDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
       }
-    }else{
+    }else { // using PDC instead of TWI next block
+      /***/
+      if(call HplPdc.getTxCounter()){
+	if(call HplPdc.getTxCounter() == 1){
+	  call HplTwi.setStop0();
+          atomic ACTION_STATE = IDLE_STATE;
+	  call HplTwi.disIntTxReady0();
+	  call HplTwi.disIntTxComp0();
+	  call HplPdc.disablePdcTx();
+	  signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
+	}
+      }else if(call HplPdc.getTxCounter() == 0){
+	atomic ACTION_STATE = IDLE_STATE;
+	call HplTwi.disIntTxReady0();
+	call HplTwi.disIntTxComp0();
+	call HplPdc.disablePdcTx();
+        call Leds.led2Toggle();
+	signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
+      }
+      /***/
+   /****  
       WRITE ++;
       if(INIT_LEN != 1 && WRITE == INIT_LEN){
+      //if(INIT_LEN != 1 && call HplPdc.getTxCounter() == 0 ){
 	call HplTwi.disIntTxReady0();
 	call HplTwi.disIntTxComp0();
 	//call HplPdc.setTxPtr(INIT_BUFFER);
@@ -276,7 +297,7 @@ implementation {
 	call HplPdc.disablePdcTx();
 	atomic ACTION_STATE = IDLE_STATE;
 	signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
-	call Leds.led0Toggle();
+	call Leds.led2Toggle();
       }else if( INIT_LEN == 1){
 	call Leds.led1Toggle();
 	atomic ACTION_STATE = IDLE_STATE;
@@ -284,7 +305,8 @@ implementation {
 	call HplTwi.disIntTxComp0();
 	call HplPdc.disablePdcTx();
 	signal TwiBasicAddr.writeDone(SUCCESS, ADDR, INIT_LEN, INIT_BUFFER);
-      }
+      } 
+   ****/
     }
   }
 

@@ -83,7 +83,7 @@ implementation
 
   event void Lcd.startDone(){
     post sample();
-    call Timer.startPeriodic(2*1024U);
+    call Timer.startPeriodic(4*1024U);
   }
 
   event void SerialSplitControl.startDone(error_t error)
@@ -100,9 +100,9 @@ implementation
 
   task void read(){
     const char *start = "TWI!!";
-
+    call Draw.fill(COLOR_GREEN);
     call Draw.fill(COLOR_WHITE);
-    call Draw.drawString(10,50,start,COLOR_BLACK);
+    call Draw.drawString(10,30,start,COLOR_BLACK);
 
     call ResourceConfigure.configure();
     call InternalAddr.setInternalAddrSize(1);
@@ -110,9 +110,9 @@ implementation
     call InternalAddr.setInternalAddr(1); // temp Limit register
     call TWI.write(1, 0x48, 1, (uint8_t*)&tempWrite);
 
-    call Draw.drawInt(180,70,MMR->bits.dadr,1,COLOR_BLUE);
-    call Draw.drawInt(180,90,MMR->bits.mread,1,COLOR_BLUE);
-    call Draw.drawInt(180,110,CWGR->bits.cldiv,1,COLOR_BLUE);
+    call Draw.drawInt(180,50,MMR->bits.dadr,1,COLOR_BLUE);
+    call Draw.drawInt(180,70,MMR->bits.mread,1,COLOR_BLUE);
+    call Draw.drawInt(180,90,CWGR->bits.cldiv,1,COLOR_BLUE);
   }
 
   event void Resource.granted(){
@@ -122,16 +122,16 @@ implementation
   task void drawResult(){
     const char *fail = "Done error";
     const char *good = "Done success";
-    call Draw.fill(COLOR_GREEN);
+    //call Draw.fill(COLOR_GREEN);
     if (resultError != SUCCESS) {
-      atomic call Draw.drawString(10,70,fail,COLOR_BLACK);
+      atomic call Draw.drawString(10,150,fail,COLOR_BLACK);
     }else{
-      call Draw.drawString(10,70,good,COLOR_BLACK);
-      call Draw.drawInt(100,100,temp[0],1,COLOR_BLACK);
-      call Draw.drawInt(100,120,temp[1],1,COLOR_BLACK);
-      call Draw.drawInt(100,140,temp[2],1,COLOR_BLACK);
-      call Draw.drawInt(100,160,temp[3],1,COLOR_BLACK);
-      call Draw.drawInt(100,180,resultValue,1,COLOR_BLACK);
+      call Draw.drawString(10,150,good,COLOR_BLACK);
+      call Draw.drawInt(100,170,temp[0],1,COLOR_BLACK);
+      call Draw.drawInt(100,190,temp[1],1,COLOR_BLACK);
+      call Draw.drawInt(100,210,temp[2],1,COLOR_BLACK);
+      call Draw.drawInt(100,230,temp[3],1,COLOR_BLACK);
+      call Draw.drawInt(100,250,resultValue,1,COLOR_BLACK);
     }
   }
 
