@@ -1,0 +1,6 @@
+#ifndef __CC2520XDRIVERLAYER_H__
+#define __CC2520XDRIVERLAYER_H__
+
+#include "CC2520.h"
+
+#endif // __CC2520XDRIVERLAYER_H__
