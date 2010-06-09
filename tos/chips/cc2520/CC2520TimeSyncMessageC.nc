@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Vanderbilt University
+ * Copyright (c) 2010, Vanderbilt University
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -18,12 +18,13 @@
  * ON AN "AS IS" BASIS, AND THE VANDERBILT UNIVERSITY HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
- * Author: Miklos Maroti
+ * Author: Miklos Maroti, Janos Sallai
+ * Author: Thomas Schmid (adapted to CC2520)
  */
 
 #include <RadioConfig.h>
 
-configuration Cc2420XTimeSyncMessageC
+configuration CC2520TimeSyncMessageC
 {
 	provides
 	{
@@ -46,7 +47,7 @@ configuration Cc2420XTimeSyncMessageC
 
 implementation
 {
-	components Cc2420XActiveMessageC as ActiveMessageC, TimeSyncMessageLayerC;
+	components CC2520ActiveMessageC as ActiveMessageC, TimeSyncMessageLayerC;
 
 	SplitControl	= ActiveMessageC;
 	AMPacket	= TimeSyncMessageLayerC;
@@ -66,9 +67,9 @@ implementation
 	TimeSyncMessageLayerC.PacketTimeStampMilli -> ActiveMessageC;
 
 #ifdef RF230_HARDWARE_ACK
-	components Cc2420XDriverHwAckC as DriverLayerC;
+	components CC2520DriverHwAckC as DriverLayerC;
 #else
-	components Cc2420XDriverLayerC as DriverLayerC;
+	components CC2520DriverLayerC as DriverLayerC;
 #endif
 	TimeSyncMessageLayerC.LocalTimeRadio -> DriverLayerC;
 	TimeSyncMessageLayerC.PacketTimeSyncOffset -> DriverLayerC.PacketTimeSyncOffset;

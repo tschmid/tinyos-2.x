@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (c) 2010, Vanderbilt University
  * All rights reserved.
  *
@@ -19,49 +19,21 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  * Author: Janos Sallai
+ * Author: Thomas Schmid (adapted to sam3u)
  */
 
-#ifndef __CC2420XRADIO_H__
-#define __CC2420XRADIO_H__
+#include <Timer.h>
 
-#include <RadioConfig.h>
-#include <TinyosNetworkLayer.h>
-#include <Ieee154PacketLayer.h>
-#include <ActiveMessageLayer.h>
-#include <MetadataFlagsLayer.h>
-#include <Cc2420XDriverLayer.h>
-#include <TimeStampingLayer.h>
-#include <LowPowerListeningLayer.h>
-#include <PacketLinkLayer.h>
-
-typedef nx_struct cc2420xpacket_header_t
+configuration LocalTimeMicroC
 {
-	cc2420x_header_t cc2420x;
-	ieee154_header_t ieee154;
-#ifndef TFRAMES_ENABLED
-	network_header_t network;
-#endif
-#ifndef IEEE154FRAMES_ENABLED
-	activemessage_header_t am;
-#endif
-} cc2420xpacket_header_t;
+	provides interface LocalTime<TMicro>;
+}
 
-typedef nx_struct cc2420xpacket_footer_t
+implementation
 {
-	// the time stamp is not recorded here, time stamped messaged cannot have max length
-} cc2420xpacket_footer_t;
+	components CounterTMicro32C;
+	components new CounterToLocalTimeC(TMicro);
 
-typedef struct cc2420xpacket_metadata_t
-{
-#ifdef LOW_POWER_LISTENING
-	lpl_metadata_t lpl;
-#endif
-#ifdef PACKET_LINK
-	link_metadata_t link;
-#endif
-	timestamp_metadata_t timestamp;
-	flags_metadata_t flags;
-	cc2420x_metadata_t cc2420x;
-} cc2420xpacket_metadata_t;
-
-#endif//__CC2420XRADIO_H__
+	LocalTime = CounterToLocalTimeC;
+	CounterToLocalTimeC.Counter -> CounterTMicro32C;
+}

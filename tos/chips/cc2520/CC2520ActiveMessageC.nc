@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Vanderbilt University
+ * Copyright (c) 2010, Vanderbilt University
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -18,7 +18,8 @@
  * ON AN "AS IS" BASIS, AND THE VANDERBILT UNIVERSITY HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
- * Author: Miklos Maroti
+ * Author: Janos Sallai, Miklos Maroti
+ * Author: Thomas Schmid (adapted to CC2520)
  */
 
 #include <RadioConfig.h>
@@ -27,7 +28,7 @@
 #error "You cannot use ActiveMessageC with IEEE154FRAMES_ENABLED defined"
 #endif
 
-configuration Cc2420XActiveMessageC
+configuration CC2520ActiveMessageC
 {
 	provides
 	{
@@ -61,7 +62,7 @@ configuration Cc2420XActiveMessageC
 
 implementation
 {
-	components Cc2420XRadioC as RadioC;
+	components CC2520RadioC as RadioC;
 
 	SplitControl = RadioC;
 
