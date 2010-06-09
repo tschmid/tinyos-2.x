@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Vanderbilt University
+ * Copyright (c) 2010, Vanderbilt University
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -18,18 +18,19 @@
  * ON AN "AS IS" BASIS, AND THE VANDERBILT UNIVERSITY HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
- * Author: Miklos Maroti
+ * Author: Miklos Maroti, Janos Sallai
+ * Author: Thomas Schmid (adapted to CC2520)
  */
 
-#include <Cc2420XRadio.h>
+#include <CC2520Radio.h>
 #include <RadioConfig.h>
 #include <Tasklet.h>
 
-module Cc2420XRadioP
+module CC2520RadioP
 {
 	provides
 	{
-		interface Cc2420XDriverConfig;
+		interface CC2520DriverConfig;
 		interface SoftwareAckConfig;
 		interface UniqueConfig;
 		interface CsmaConfig;
@@ -48,7 +49,7 @@ module Cc2420XRadioP
 	{
 		interface Ieee154PacketLayer;
 		interface RadioAlarm;
-		interface RadioPacket as Cc2420XPacket;
+		interface RadioPacket as CC2520Packet;
 
 		interface PacketTimeStamp<TRadio, uint32_t>;
 	}
@@ -57,30 +58,30 @@ module Cc2420XRadioP
 implementation
 {
 
-/*----------------- Cc2420XDriverConfig -----------------*/
+/*----------------- CC2520DriverConfig -----------------*/
 
-	async command uint8_t Cc2420XDriverConfig.headerLength(message_t* msg)
+	async command uint8_t CC2520DriverConfig.headerLength(message_t* msg)
 	{
-		return offsetof(message_t, data) - sizeof(cc2420xpacket_header_t);
+		return offsetof(message_t, data) - sizeof(cc2520packet_header_t);
 	}
 
-	async command uint8_t Cc2420XDriverConfig.maxPayloadLength()
+	async command uint8_t CC2520DriverConfig.maxPayloadLength()
 	{
-		return sizeof(cc2420xpacket_header_t) + TOSH_DATA_LENGTH;
+		return sizeof(cc2520packet_header_t) + TOSH_DATA_LENGTH;
 	}
 
-	async command uint8_t Cc2420XDriverConfig.metadataLength(message_t* msg)
+	async command uint8_t CC2520DriverConfig.metadataLength(message_t* msg)
 	{
 		return 0;
 	}
 
-	async command uint8_t Cc2420XDriverConfig.headerPreloadLength()
+	async command uint8_t CC2520DriverConfig.headerPreloadLength()
 	{
 		// we need the fcf, dsn, destpan and dest
 		return 7;
 	}
 
-	async command bool Cc2420XDriverConfig.requiresRssiCca(message_t* msg)
+	async command bool CC2520DriverConfig.requiresRssiCca(message_t* msg)
 	{
 		return call Ieee154PacketLayer.isDataFrame(msg);
 	}
@@ -226,7 +227,7 @@ implementation
 		 * ack required: 8-16 byte separation, 11 bytes airtime, 5-10 bytes separation
 		 */
 
-		uint8_t len = call Cc2420XPacket.payloadLength(msg);
+		uint8_t len = call CC2520Packet.payloadLength(msg);
 		return call Ieee154PacketLayer.getAckRequired(msg) ? len + 6 + 16 + 11 + 10 : len + 6 + 10;
 	}
 

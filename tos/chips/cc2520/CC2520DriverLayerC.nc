@@ -19,16 +19,16 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  * Author: Janos Sallai, Miklos Maroti
+ * Author: Thomas Schmid (adapted to CC2520)
  */
 
 #include <RadioConfig.h>
-#include <Cc2420XDriverLayer.h>
+#include <CC2520DriverLayer.h>
 
-configuration Cc2420XDriverLayerC
+configuration CC2520DriverLayerC
 {
 	provides
 	{
-		interface Init as PlatformInit;
 		interface Init as SoftwareInit;
 		interface RadioState;
 		interface RadioSend;
@@ -46,22 +46,21 @@ configuration Cc2420XDriverLayerC
 
 	uses
 	{
-		interface Cc2420XDriverConfig as Config;
+		interface CC2520DriverConfig as Config;
 		interface PacketTimeStamp<TRadio, uint32_t>;
 	}
 }
 
 implementation
 {
-	components Cc2420XDriverLayerP as DriverLayerP,
+	components CC2520DriverLayerP as DriverLayerP,
 		BusyWaitMicroC,
 		TaskletC,
 		MainC,
 		RadioAlarmC,
-		HplCc2420XC as HplC;
+		HplCC2520C as HplC;
 
 	SoftwareInit = DriverLayerP.SoftwareInit;
-	PlatformInit = DriverLayerP.PlatformInit;
 
 	RadioState = DriverLayerP;
 	RadioSend = DriverLayerP;
@@ -100,7 +99,7 @@ implementation
 	RadioAlarmC.Alarm -> HplC.Alarm;
 
 	DriverLayerP.SpiResource -> HplC.SpiResource;
-	DriverLayerP.FastSpiByte -> HplC;
+	DriverLayerP.SpiByte -> HplC;
 
 	DriverLayerP.SfdCapture -> HplC;
 	DriverLayerP.FifopInterrupt -> HplC;

@@ -7,3 +7,5 @@ tools/tinyos
 tools/platforms/mica
 tools/platforms/msp430
 apps/tests/TestSerial/TestSerialMsg.java
+apps/RadioCountToLeds/RadioCountMsg.java
+apps/RadioCountToLeds/RadioCountMsg.py

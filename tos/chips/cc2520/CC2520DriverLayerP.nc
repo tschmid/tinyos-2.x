@@ -22,7 +22,7 @@
  * Author: Thomas Schmid (port to CC2520)
  */
 
-#include <CC2520.h>
+#include <CC2520DriverLayer.h>
 #include <Tasklet.h>
 #include <RadioAssert.h>
 #include <TimeSyncMessageLayer.h>
@@ -83,7 +83,7 @@ module CC2520DriverLayerP
 
 implementation
 {
-    cc2520x_header_t* getHeader(message_t* msg)
+    cc2520_header_t* getHeader(message_t* msg)
     {
         return ((void*)msg) + call Config.headerLength(msg);
     }
@@ -93,7 +93,7 @@ implementation
         return ((void*)msg) /* + call RadioPacket.headerLength(msg)*/;
     }
 
-    cc2520x_metadata_t* getMeta(message_t* msg)
+    cc2520_metadata_t* getMeta(message_t* msg)
     {
         return ((void*)msg) + sizeof(message_t) - call RadioPacket.metadataLength(msg);
     }
@@ -178,7 +178,7 @@ implementation
 
     inline cc2520_status_t writeRegister(uint8_t reg, uint8_t value)
     {
-        cc2420_status_t status;
+        cc2520_status_t status;
         uint8_t v;
         
         ASSERT( call SpiResource.isOwner() );
@@ -268,7 +268,7 @@ implementation
     inline uint8_t waitForRxFifo() {
         // wait for fifo to go high or timeout
         // timeout is now + 2 byte time (4 symbol time)
-        uint16_t timeout = call RadioAlarm.getNow() + 4 * CC2520_SYMBOL_TIM;
+        uint16_t timeout = call RadioAlarm.getNow() + 4 * CC2520_SYMBOL_TIME;
 
         while(call FIFO.get() == 0 && (timeout - call RadioAlarm.getNow() < 0x7FFF));
         return call FIFO.get();
@@ -276,7 +276,7 @@ implementation
 
     inline cc2520_status_t readLengthFromRxFifo(uint8_t* lengthPtr)
     {
-        cc2420_status_t status;
+        cc2520_status_t status;
 
         ASSERT( call SpiResource.isOwner() );
         ASSERT( call CSN.get() == 1 );
@@ -416,17 +416,17 @@ implementation
         call RSTN.set();
 
         // update default values of registers
-        writeRegister(CC2520_TXPOWER, cc2520_txpower_default.value)
-        writeRegister(CC2520_CCACTRL0, cc2520_ccactrl0_default.value)
-        writeRegister(CC2520_MDMCTRL0, cc2520_mdmctrl0_default.value)
-        writeRegister(CC2520_MDMCTRL1, cc2520_mdmctrl1_default.value)
-        writeRegister(CC2520_RXCTRL, cc2520_rxctrl_default.value)
-        writeRegister(CC2520_FSCTRL, cc2520_fsctrl_default.value)
-        writeRegister(CC2520_FSCAL1, cc2520_fscal1_default.value)
-        writeRegister(CC2520_AGCCTRL1, cc2520_agcctrl1_default.value)
-        writeRegister(CC2520_ADCTEST0, cc2520_adctest0_default.value)
-        writeRegister(CC2520_ADCTEST1, cc2520_adctest1_default.value)
-        writeRegister(CC2520_ADCTEST2, cc2520_adctest2_default.value)
+        writeRegister(CC2520_TXPOWER, cc2520_txpower_default.value);
+        writeRegister(CC2520_CCACTRL0, cc2520_ccactrl0_default.value);
+        writeRegister(CC2520_MDMCTRL0, cc2520_mdmctrl0_default.value);
+        writeRegister(CC2520_MDMCTRL1, cc2520_mdmctrl1_default.value);
+        writeRegister(CC2520_RXCTRL, cc2520_rxctrl_default.value);
+        writeRegister(CC2520_FSCTRL, cc2520_fsctrl_default.value);
+        writeRegister(CC2520_FSCAL1, cc2520_fscal1_default.value);
+        writeRegister(CC2520_AGCCTRL1, cc2520_agcctrl1_default.value);
+        writeRegister(CC2520_ADCTEST0, cc2520_adctest0_default.value);
+        writeRegister(CC2520_ADCTEST1, cc2520_adctest1_default.value);
+        writeRegister(CC2520_ADCTEST2, cc2520_adctest2_default.value);
 
         // setup fifop threshold
         fifopctrl.f.fifop_thr = 127;
@@ -434,7 +434,7 @@ implementation
               
         // accept reserved frames
         frmfilt1 = cc2520_frmfilt1_default;
-        frmfilt1.accept_ft_4to7_reserved = 1;
+        frmfilt1.f.accept_ft_4to7_reserved = 1;
         writeRegister(CC2520_FRMFILT1, frmfilt1.value);
 
         // disable src address decoding
@@ -488,6 +488,8 @@ implementation
         call SpiResource.request();
         return FALSE;
     }
+
+    async event void SpiPacket.sendDone(uint8_t* txBuf, uint8_t* rxBuf, uint16_t len, error_t error) {};
 
 /*----------------- CHANNEL -----------------*/
 
@@ -558,7 +560,7 @@ implementation
         {
 
             // start oscillator
-            strobe(CC2520_SXOSCON); 
+            strobe(CC2520_CMD_SXOSCON); 
 
             call RadioAlarm.wait(PD_2_IDLE_TIME); // .86ms OSC startup time
             state = STATE_PD_2_IDLE;
@@ -569,7 +571,7 @@ implementation
             setChannel();
 
             // start receiving
-            strobe(CC2520_SRXON); 
+            strobe(CC2520_CMD_SRXON); 
             call RadioAlarm.wait(IDLE_2_RX_ON_TIME); // 12 symbol periods               
             state = STATE_IDLE_2_RX_ON;
         }
@@ -577,7 +579,7 @@ implementation
             && state == STATE_RX_ON && isSpiAcquired() )
         {
             // stop receiving
-            strobe(CC2520_SRFOFF); 
+            strobe(CC2520_CMD_SRFOFF); 
             
             state = STATE_IDLE;
         }
@@ -585,7 +587,7 @@ implementation
         if( cmd == CMD_TURNOFF && state == STATE_IDLE  && isSpiAcquired() )
         {
             // stop oscillator
-            strobe(CC2520_SXOSCOFF); 
+            strobe(CC2520_CMD_SXOSCOFF); 
 
             // do a reset
             initRadio();
@@ -688,7 +690,7 @@ implementation
 
             txPower = p;
 
-            txpower.f.pa_level = txPower;
+            txpower.f.pa_power = txPower;
             writeRegister(CC2520_TXPOWER, txpower.value);
         }
 
@@ -704,7 +706,7 @@ implementation
             return EBUSY;
         else
             // stop receiving
-            strobe(CC2520_SRFOFF);
+            strobe(CC2520_CMD_SRFOFF);
 
         ASSERT( ! radioIrq );
 
@@ -724,7 +726,7 @@ implementation
 
 
         atomic {
-            strobe(CC2520_STXON);
+            strobe(CC2520_CMD_STXON);
             time = call RadioAlarm.getNow();
             call SfdCapture.captureFallingEdge();
             state = STATE_TX_ON;
@@ -811,7 +813,7 @@ implementation
         ASSERT(state == STATE_PD);
 
         // start oscillator
-        strobe(CC2520_SXOSCON);
+        strobe(CC2520_CMD_SXOSCON);
 
         // going idle in PD_2_IDLE_TIME
         state = STATE_PD_2_IDLE;
@@ -834,7 +836,7 @@ implementation
         setChannel();
 
         // start receiving
-        strobe(CC2520_SRXON);
+        strobe(CC2520_CMD_SRXON);
         state = STATE_IDLE_2_RX_ON;
 
         call SfdCapture.captureRisingEdge();
@@ -850,6 +852,7 @@ implementation
         uint8_t* data;
         uint8_t rssi;
         uint8_t crc_ok_lqi;
+        uint16_t sfdTime;
                 
         state = STATE_RX_DOWNLOAD;
         
@@ -883,7 +886,7 @@ implementation
             
             state = STATE_RX_ON;
             cmd = CMD_NONE;
-            call SfdCapture.caputreRisingEdge();
+            call SfdCapture.captureRisingEdge();
             return;
         }
         
@@ -1270,4 +1273,5 @@ implementation
     {
         getMeta(msg)->lqi = value;
     }
+
 }

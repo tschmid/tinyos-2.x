@@ -19,24 +19,25 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  * Author: Janos Sallai
+ * Author: Thomas Schmid (adapted to CC2520)
  */
 
-#ifndef __CC2420XRADIO_H__
-#define __CC2420XRADIO_H__
+#ifndef __CC2520RADIO_H__
+#define __CC2520RADIO_H__
 
 #include <RadioConfig.h>
 #include <TinyosNetworkLayer.h>
 #include <Ieee154PacketLayer.h>
 #include <ActiveMessageLayer.h>
 #include <MetadataFlagsLayer.h>
-#include <Cc2420XDriverLayer.h>
+#include <CC2520DriverLayer.h>
 #include <TimeStampingLayer.h>
 #include <LowPowerListeningLayer.h>
 #include <PacketLinkLayer.h>
 
-typedef nx_struct cc2420xpacket_header_t
+typedef nx_struct cc2520packet_header_t
 {
-	cc2420x_header_t cc2420x;
+	cc2520_header_t cc2520;
 	ieee154_header_t ieee154;
 #ifndef TFRAMES_ENABLED
 	network_header_t network;
@@ -44,14 +45,14 @@ typedef nx_struct cc2420xpacket_header_t
 #ifndef IEEE154FRAMES_ENABLED
 	activemessage_header_t am;
 #endif
-} cc2420xpacket_header_t;
+} cc2520packet_header_t;
 
-typedef nx_struct cc2420xpacket_footer_t
+typedef nx_struct cc2520packet_footer_t
 {
 	// the time stamp is not recorded here, time stamped messaged cannot have max length
-} cc2420xpacket_footer_t;
+} cc2520packet_footer_t;
 
-typedef struct cc2420xpacket_metadata_t
+typedef struct cc2520packet_metadata_t
 {
 #ifdef LOW_POWER_LISTENING
 	lpl_metadata_t lpl;
@@ -61,7 +62,7 @@ typedef struct cc2420xpacket_metadata_t
 #endif
 	timestamp_metadata_t timestamp;
 	flags_metadata_t flags;
-	cc2420x_metadata_t cc2420x;
-} cc2420xpacket_metadata_t;
+	cc2520_metadata_t cc2520;
+} cc2520packet_metadata_t;
 
-#endif//__CC2420XRADIO_H__
+#endif//__CC2520RADIO_H__
