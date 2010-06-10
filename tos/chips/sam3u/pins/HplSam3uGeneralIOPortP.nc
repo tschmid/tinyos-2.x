@@ -95,8 +95,6 @@ implementation
     async command void Bits.disableInterrupt[uint8_t bit]()
     {
         // if all the interrupts are disabled, disable the NVIC.
-        // FIXME: we can not turn off the peripheral clock. We have to check
-        // if someone uses it as an input!
         if(*((volatile uint32_t *) (pio_addr + 0x048)) == 0)
         {
             call PIOIrqControl.disable();
@@ -107,15 +105,18 @@ implementation
     async command void Bits.enableClock[uint8_t bit]()
     {
             call PIOClockControl.enable();
-            clocks |= (1<<bit);
+            atomic clocks |= (1<<bit);
     }
 
     async command void Bits.disableClock[uint8_t bit]()
     {
-        clocks &= ~(1<<bit);
-        // only disable the peripheral clock if no one else uses it.
-        if(!clocks)
-            call PIOClockControl.disable();
+        atomic
+        {
+            clocks &= ~(1<<bit);
+            // only disable the peripheral clock if no one else uses it.
+            if(!clocks)
+                call PIOClockControl.disable();
+        }
     }
 
     default async event void Bits.fired[uint8_t bit](uint32_t time) {}
