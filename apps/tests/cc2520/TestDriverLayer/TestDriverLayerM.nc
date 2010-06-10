@@ -35,7 +35,10 @@ implementation
 		if( error != SUCCESS )
 			post serialPowerUp();
 		else
+        {
+			call RadioState.turnOn();
 			call Timer.startPeriodic(1000);
+        }
 	}
 
 	event void SplitControl.stopDone(error_t error)
@@ -126,7 +129,7 @@ implementation
             call DiagMsg.uint8(seqNo);
 			call DiagMsg.send();
 		}
-		testStateTransitions(seqNo);
+		//testStateTransitions(seqNo);
 		//testTransmission(seqNo);
 	}
 }
