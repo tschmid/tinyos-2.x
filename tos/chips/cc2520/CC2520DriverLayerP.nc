@@ -456,6 +456,7 @@ implementation
     inline void resetRadio() {
         // now register access is enabled: set up defaults
         cc2520_fifopctrl_t fifopctrl;
+        cc2520_frmfilt0_t frmfilt0;
         cc2520_frmfilt1_t frmfilt1;
         cc2520_srcmatch_t srcmatch;
 
@@ -481,6 +482,11 @@ implementation
         // setup fifop threshold
         fifopctrl.f.fifop_thr = 127;
         writeRegister(CC2520_FIFOPCTRL, fifopctrl.value);
+
+        // FIXME: disable frame filtering for now
+        frmfilt0 = cc2520_frmfilt0_default;
+        frmfilt0.f.frame_filter_en = 0;
+        writeRegister(CC2520_FRMFILT0, frmfilt0.value);
               
         // accept reserved frames
         frmfilt1 = cc2520_frmfilt1_default;
