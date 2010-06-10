@@ -62,6 +62,12 @@ implementation
     async command void HplPortA.disableInterrupt()
     {
     }
+    async command void HplPortA.enableClock()
+    {
+    }
+    async command void HplPortA.disableClock()
+    {
+    }
 
     /**
      * Does nothing!
@@ -72,6 +78,12 @@ implementation
     async command void HplPortB.disableInterrupt()
     {
     }
+    async command void HplPortB.enableClock()
+    {
+    }
+    async command void HplPortB.disableClock()
+    {
+    }
 
     /**
      * Does nothing!
@@ -80,6 +92,12 @@ implementation
     {
     }
     async command void HplPortC.disableInterrupt()
+    {
+    }
+    async command void HplPortC.enableClock()
+    {
+    }
+    async command void HplPortC.disableClock()
     {
     }
 

@@ -43,4 +43,10 @@ interface HplSam3uGeneralIOPort
 
     // disable the interrupt on this port
     async command void disableInterrupt();
+
+    // enables the peripheral clock
+    async command void enableClock();
+
+    // disables the clock if it is not used by anyone
+    async command void disableClock();
 }
