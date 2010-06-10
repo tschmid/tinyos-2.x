@@ -91,12 +91,17 @@ implementation
 	{
 		/* Set bit in Output Disable Register */
 		*((volatile uint32_t *) (pio_addr + 0x014)) = (1 << bit);
+
+        call HplPort.enableClock();
     }
 
 	async command void IO.makeOutput()
 	{
 		/* Set bit in Output Enable Register */
 		*((volatile uint32_t *) (pio_addr + 0x010)) = (1 << bit);
+
+        // we don't need the clock in output mode
+        call HplPort.disableClock();
     }
 
 	async command bool IO.isOutput()
