@@ -37,7 +37,6 @@ configuration HplCC2520C {
 		interface GpioCapture as SfdCapture;	
 		interface GpioInterrupt as FifopInterrupt;
 		interface LocalTime<TRadio> as LocalTimeRadio;
-		//interface Init;		
 		interface Alarm<TRadio,uint16_t>;
 	}
 }
@@ -45,13 +44,11 @@ implementation {
 
 	components HilSam3uSpiC as SpiC, HplSam3uGeneralIOC as IO;
 	
-	//Init = SpiC; 
-
 	SpiResource = SpiC.Resource;
     SpiByte = SpiC;
     SpiPacket = SpiC;
 	
-	CCA    = IO.PioA17;
+	CCA    = IO.PioA18;
 	CSN    = IO.PioA19;
 	FIFO   = IO.PioA2;
 	FIFOP  = IO.PioA0;

@@ -118,8 +118,15 @@ implementation
 	uint8_t seqNo;
 	event void Timer.fired()
 	{
+        call Leds.led1Toggle();
 		++seqNo;
+		if( call DiagMsg.record() )
+		{
+			call DiagMsg.str("fire");
+            call DiagMsg.uint8(seqNo);
+			call DiagMsg.send();
+		}
 		testStateTransitions(seqNo);
-		testTransmission(seqNo);
+		//testTransmission(seqNo);
 	}
 }
