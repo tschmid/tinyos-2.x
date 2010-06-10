@@ -77,7 +77,7 @@ implementation
 
 	async command uint8_t CC2520DriverConfig.headerPreloadLength()
 	{
-		// we need the fcf, dsn, destpan and dest
+		// we need the fcf, dsn, destpan, and dest
 		return 7;
 	}
 

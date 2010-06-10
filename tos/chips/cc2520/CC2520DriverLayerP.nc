@@ -88,9 +88,12 @@ implementation
         return ((void*)msg) + call Config.headerLength(msg);
     }
 
+    /*
+     * Return a pointer to the data portion of the message.
+     */
     void* getPayload(message_t* msg)
     {
-        return ((void*)msg) /* + call RadioPacket.headerLength(msg)*/;
+        return ((void*)msg)  + call RadioPacket.headerLength(msg);
     }
 
     cc2520_metadata_t* getMeta(message_t* msg)
@@ -725,7 +728,6 @@ implementation
         void* timesync;
         cc2520_status_t status;
 
-        uint8_t tmp1, tmp2;
 
         if( cmd != CMD_NONE || (state != STATE_IDLE && state != STATE_RX_ON) || ! isSpiAcquired() || radioIrq )
             return EBUSY;
@@ -743,25 +745,27 @@ implementation
             writeRegister(CC2520_TXPOWER, txpower.value);
         }
 
-        tmp1 = call Config.requiresRssiCca(msg);
-        tmp2 = call CCA.get();
 #ifdef RADIO_DEBUG_MESSAGES
-        if( call DiagMsg.record() )
         {
-            length = getHeader(msg)->length;
+            uint8_t tmp1, tmp2;
+            tmp1 = call Config.requiresRssiCca(msg);
+            tmp2 = call CCA.get();
+            if( call DiagMsg.record() )
+            {
+                length = getHeader(msg)->length;
 
-            call DiagMsg.str("cca");
-            call DiagMsg.int8(tmp1);
-            call DiagMsg.int8(tmp2);
-            call DiagMsg.send();
+                call DiagMsg.str("cca");
+                call DiagMsg.int8(tmp1);
+                call DiagMsg.int8(tmp2);
+                call DiagMsg.send();
+            }
+            if( tmp1 && !tmp2)
+                return EBUSY;
         }
-#endif
-        if( tmp1 && !tmp2)
-            return EBUSY;
-        /*
+#else
         if( call Config.requiresRssiCca(msg) && !call CCA.get() )
             return EBUSY;
-            */  
+#endif
 
         // there's a chance that there was a receive SFD interrupt in such a
         // short time.
@@ -780,6 +784,12 @@ implementation
 
         // length | data[0] ... data[length-3] | automatically generated FCS
 
+        atomic writeTxFifo(&length, 1);
+
+        // FCS is automatically generated
+        length -= 2;
+
+        // preload fcf, dsn, destpan, and dest
         header = call Config.headerPreloadLength();
         if( header > length )
             header = length;
@@ -834,7 +844,7 @@ implementation
             call DiagMsg.uint32(call PacketTimeStamp.isValid(msg) ? call PacketTimeStamp.timestamp(msg) : 0);
             call DiagMsg.uint16(call RadioAlarm.getNow());
             call DiagMsg.int8(length);
-            call DiagMsg.hex8s(getPayload(msg), length);
+            call DiagMsg.hex8s(getPayload(msg), length - 2);
             call DiagMsg.send();
         }
 #endif
@@ -928,7 +938,7 @@ implementation
         atomic sfdTime = capturedTime;
 
         // data starts after the length field
-        data = getPayload(rxMsg) + sizeof(cc2520_header_t);
+        data = getPayload(rxMsg);
 
         // read the length byte
         readLengthFromRxFifo(&length);
