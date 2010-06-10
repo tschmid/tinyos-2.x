@@ -126,6 +126,19 @@ typedef union cc2520_fifopctrl {
     } f;
 } cc2520_fifopctrl_t;
 
+typedef union cc2520_frmfilt0 {
+    uint8_t value;
+    struct {
+        unsigned frame_filter_en         : 1;
+        unsigned pan_coordinator         : 1;
+        unsigned max_frame_version       : 2;
+        unsigned fcf_reserved_mask       : 3;
+        unsigned reserved                : 1;
+    } f;
+} cc2520_frmfilt0_t;
+
+static cc2520_frmfilt0_t cc2520_frmfilt0_default = {.f.max_frame_version = 2, .f.frame_filter_en = 1};
+
 typedef union cc2520_frmfilt1 {
     uint8_t value;
     struct {
