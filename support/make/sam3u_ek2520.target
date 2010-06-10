@@ -5,6 +5,10 @@ ifdef CC2420_CHANNEL
 PFLAGS += -DCC2520_DEF_CHANNEL=$(CC2420_CHANNEL)
 endif
 
+#string.h clashes with the rf2xx layer driver if we don't define strict ansi
+CFLAGS += -D__STRICT_ANSI__
+
+
 $(call TOSMake_include_platform,sam3u)
 
 sam3u_ek2520: $(BUILD_DEPS)
