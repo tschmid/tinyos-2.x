@@ -127,6 +127,7 @@ implementation
 
         // do we really have to start it??? It seems that the CC2420 driver
         // doesn't do that!
+        // the grant/release should take care of this!
         call StdControl.start();
 
         return SUCCESS;
