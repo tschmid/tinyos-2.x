@@ -52,9 +52,10 @@ typedef TMicro TRadio;
 
 /**
  * The number of radio alarm ticks per one microsecond .
+ *
+ * Removed three '0s because of overflow...
  */
-// FIXME: this needs to be calibrated!
-#define RADIO_ALARM_MICROSEC    48000000 / 32 / 1000000
+#define RADIO_ALARM_MICROSEC    48000 / 32 / 1000
 
 /**
  * The base two logarithm of the number of radio alarm ticks per one millisecond
