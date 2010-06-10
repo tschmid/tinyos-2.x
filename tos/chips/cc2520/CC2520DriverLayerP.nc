@@ -951,6 +951,7 @@ implementation
             call DiagMsg.uint16(call RadioAlarm.getNow());
             call DiagMsg.uint16(call PacketTimeStamp.isValid(rxMsg) ? call PacketTimeStamp.timestamp(rxMsg) : 0);
             call DiagMsg.int8(length);
+            call DiagMsg.hex8s(getPayload(rxMsg), length - 2);
             call DiagMsg.send();
         }
 #endif
