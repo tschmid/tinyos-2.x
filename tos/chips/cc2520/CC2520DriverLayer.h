@@ -23,25 +23,24 @@ enum cc2520_timing_enums {
 };
 
 enum cc2520_reg_access_enums {
-	CC2520_CMD_REGISTER_MASK = 0x3F,
-	CC2520_CMD_REGISTER_READ = 0x80,
-	CC2520_CMD_REGISTER_WRITE = 0xC0,
-	CC2520_CMD_TXRAM_WRITE	= 0x80, // FIXME: not sure... might need to change
+    CC2520_FREG_MASK      = 0x3F,    // highest address in FREG
+    CC2520_SREG_MASK      = 0x7F,    // highest address in SREG
+    CC2520_CMD_TXRAM_WRITE	  = 0x80, // FIXME: not sure... might need to change
 };
 
 typedef union cc2520_status {
 	uint16_t value;
 	struct {
-	  unsigned  rx_active:1;
-	  unsigned  tx_active:1;
-	  unsigned  dpu_l_active:1;
-	  unsigned  dpu_h_active:1;
+	  unsigned  rx_active    :1;
+	  unsigned  tx_active    :1;
+	  unsigned  dpu_l_active :1;
+	  unsigned  dpu_h_active :1;
 
-	  unsigned  exception_b:1;
-	  unsigned  exception_a:1;
-	  unsigned  rssi_valid:1;
-	  unsigned  xosc_stable:1;
-	} f;
+	  unsigned  exception_b  :1;
+	  unsigned  exception_a  :1;
+	  unsigned  rssi_valid   :1;
+	  unsigned  xosc_stable  :1;
+	};
 } cc2520_status_t;
 
 typedef union cc2520_frmctrl0 {
@@ -75,8 +74,12 @@ typedef union cc2520_ccactrl0 {
     } f;
 } cc2520_ccactrl0_t;
 
-// Raises CCA threshold from -108dBm to 84dBm
-static cc2520_ccactrl0_t cc2520_ccactrl0_default = { .f.cca_thr = 0xF8 };
+// Raises CCA threshold from -108dBm to -8 - 76 = -84dBm
+//static cc2520_ccactrl0_t cc2520_ccactrl0_default = { .f.cca_thr = 0xF8 };
+// FIXME: This might be a problem in the EK devkit. But the threshold has to
+// be really high!
+// Raises CCA threshold from -108dBm to 10 - 76dBm
+static cc2520_ccactrl0_t cc2520_ccactrl0_default = { .f.cca_thr = 0x1A };
 
 typedef union cc2520_mdmctrl0 {
     uint8_t value;
@@ -351,6 +354,8 @@ enum cc2520_spi_command_enums
     CC2520_CMD_ECBX           = 0x74, //
     CC2520_CMD_INC            = 0x78, //
     CC2520_CMD_ABORT          = 0x7F, //
+	CC2520_CMD_REGISTER_READ  = 0x80, //
+	CC2520_CMD_REGISTER_WRITE = 0xC0, //
 };
 
 #endif // __CC2520XDRIVERLAYER_H__

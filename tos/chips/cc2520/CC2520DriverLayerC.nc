@@ -29,7 +29,6 @@ configuration CC2520DriverLayerC
 {
 	provides
 	{
-		interface Init as SoftwareInit;
 		interface RadioState;
 		interface RadioSend;
 		interface RadioReceive;
@@ -60,7 +59,7 @@ implementation
 		RadioAlarmC,
 		HplCC2520C as HplC;
 
-	SoftwareInit = DriverLayerP.SoftwareInit;
+	MainC.SoftwareInit -> DriverLayerP.SoftwareInit;
 
 	RadioState = DriverLayerP;
 	RadioSend = DriverLayerP;

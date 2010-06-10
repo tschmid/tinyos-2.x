@@ -51,13 +51,10 @@
 typedef TMicro TRadio;
 
 /**
- * The number of radio alarm ticks per one microsecond (0.9216).
- * We use integers and no parentheses just to make deputy happy.
- * Ok, further hacks were required for deputy, I removed 00 from the
- * beginning and end to be able to handle longer wait periods.
+ * The number of radio alarm ticks per one microsecond .
  */
 // FIXME: this needs to be calibrated!
-#define RADIO_ALARM_MICROSEC    1
+#define RADIO_ALARM_MICROSEC    48000000 / 32 / 1000000
 
 /**
  * The base two logarithm of the number of radio alarm ticks per one millisecond

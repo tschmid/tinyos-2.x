@@ -136,6 +136,9 @@ implementation
     tasklet_norace uint8_t channel;
 
     tasklet_norace message_t* rxMsg;
+#ifdef RADIO_DEBUG_MESSAGES
+    tasklet_norace message_t* txMsg;
+#endif
     message_t rxMsgBuffer;
 
     uint16_t capturedTime;  // the current time when the last interrupt has occured
@@ -146,8 +149,8 @@ implementation
 
     enum
     { // FIXME: need to check these for CC2520
-        TX_SFD_DELAY = (uint16_t)(176 * RADIO_ALARM_MICROSEC),
-        RX_SFD_DELAY = (uint16_t)(8 * RADIO_ALARM_MICROSEC),
+        TX_SFD_DELAY = (uint16_t)(0 * RADIO_ALARM_MICROSEC),
+        RX_SFD_DELAY = (uint16_t)(0 * RADIO_ALARM_MICROSEC),
     };
 
 
@@ -182,15 +185,36 @@ implementation
         uint8_t v;
 
         ASSERT( call SpiResource.isOwner() );
-        ASSERT( reg == (reg & CC2520_CMD_REGISTER_MASK) );
 
         call CSN.set();
         call CSN.clr();
 
-        status.value = call SpiByte.write(CC2520_CMD_REGISTER_WRITE | reg);
-        v = call SpiByte.write(value);
+        if( reg <= CC2520_FREG_MASK)
+        {
+            // we can use 1 byte less to write this register using the
+            // register write command
 
-        ASSERT( v == value );
+            ASSERT( reg == (reg & CC2520_FREG_MASK) );
+
+
+            status.value = call SpiByte.write(CC2520_CMD_REGISTER_WRITE | reg);
+
+        }
+        else
+        {
+            // we have to use the memory write command as the register is in
+            // SREG
+
+            ASSERT( reg == (reg & CC2520_SREG_MASK) );
+
+            // the register has to be below the 0x100 memory address. Thus, we
+            // don't have to add anything to the MEMORY_WRITE command.
+            status.value = call SpiByte.write(CC2520_CMD_MEMORY_WRITE);
+            status.value = call SpiByte.write(reg);
+
+        }
+        // v is the value previously in the register
+        v = call SpiByte.write(value);
 
         call CSN.set();
 
@@ -198,17 +222,20 @@ implementation
 
     }
 
+    /*
+     * Strobes changed a lot between CC2420 and CC2520. They are now just an
+     * other command, without any parameters.
+     */
     inline cc2520_status_t strobe(uint8_t reg)
     {
         cc2520_status_t status;
 
         ASSERT( call SpiResource.isOwner() );
-        ASSERT( reg == (reg & CC2520_CMD_REGISTER_MASK) );
 
         call CSN.set();
         call CSN.clr();
 
-        status.value = call SpiByte.write(CC2520_CMD_REGISTER_WRITE | reg);
+        status.value = call SpiByte.write(reg);
 
         call CSN.set();
         return status;
@@ -224,12 +251,26 @@ implementation
         uint8_t value = 0;
 
         ASSERT( call SpiResource.isOwner() );
-        ASSERT( reg == (reg & CC2520_CMD_REGISTER_MASK) );
 
         call CSN.set();
         call CSN.clr();
 
-        call SpiByte.write(CC2520_CMD_REGISTER_READ | reg);
+        if( reg <= CC2520_FREG_MASK )
+        {
+            ASSERT( reg == (reg & CC2520_FREG_MASK) );
+
+
+            call SpiByte.write(CC2520_CMD_REGISTER_READ | reg);
+
+        }
+        else
+        {
+            ASSERT( reg == (reg & CC2520_SREG_MASK) );
+
+            call SpiByte.write(CC2520_CMD_MEMORY_WRITE);
+            call SpiByte.write(reg);
+        }
+
         value = call SpiByte.write(0);
         call CSN.set();
 
@@ -388,12 +429,16 @@ implementation
         call CSN.set();
 
         // start up voltage regulator
+        call VREN.clr();
         call VREN.set();
-        call BusyWait.wait( 600 ); // .6ms VR startup time
-
         // do a reset
         call RSTN.clr();
+        // hold line low for Tdres
+        call BusyWait.wait( 200 ); // typical .1ms VR startup time
+
         call RSTN.set();
+        // wait another .2ms for xosc to stabilize
+        call BusyWait.wait( 200 );
 
 
         rxMsg = &rxMsgBuffer;
@@ -413,9 +458,11 @@ implementation
 
         // do a reset
         call RSTN.clr();
+        call BusyWait.wait( 200 ); //
         call RSTN.set();
 
         // update default values of registers
+        // given from SWRS068, December 2007, Section 28.1
         writeRegister(CC2520_TXPOWER, cc2520_txpower_default.value);
         writeRegister(CC2520_CCACTRL0, cc2520_ccactrl0_default.value);
         writeRegister(CC2520_MDMCTRL0, cc2520_mdmctrl0_default.value);
@@ -524,7 +571,7 @@ implementation
         if( call DiagMsg.record() )
         {
             call DiagMsg.str("freqctrl");
-            call DiagMsg.uint16(freqctrl.value);
+            call DiagMsg.uint8(freqctrl.value);
             call DiagMsg.send();
         }
 #endif
@@ -678,6 +725,8 @@ implementation
         void* timesync;
         cc2520_status_t status;
 
+        uint8_t tmp1, tmp2;
+
         if( cmd != CMD_NONE || (state != STATE_IDLE && state != STATE_RX_ON) || ! isSpiAcquired() || radioIrq )
             return EBUSY;
 
@@ -694,9 +743,25 @@ implementation
             writeRegister(CC2520_TXPOWER, txpower.value);
         }
 
+        tmp1 = call Config.requiresRssiCca(msg);
+        tmp2 = call CCA.get();
+#ifdef RADIO_DEBUG_MESSAGES
+        if( call DiagMsg.record() )
+        {
+            length = getHeader(msg)->length;
+
+            call DiagMsg.str("cca");
+            call DiagMsg.int8(tmp1);
+            call DiagMsg.int8(tmp2);
+            call DiagMsg.send();
+        }
+#endif
+        if( tmp1 && !tmp2)
+            return EBUSY;
+        /*
         if( call Config.requiresRssiCca(msg) && !call CCA.get() )
             return EBUSY;
-
+            */
 
         // there's a chance that there was a receive SFD interrupt in such a
         // short time.
@@ -731,6 +796,10 @@ implementation
             call SfdCapture.captureFallingEdge();
             state = STATE_TX_ON;
         }
+
+#ifdef RADIO_DEBUG_MESSAGES
+        txMsg = msg;
+#endif
 
         // do something useful, just to wait a little (12 symbol periods)
         time32 = call LocalTime.get();
