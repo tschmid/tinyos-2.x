@@ -46,6 +46,16 @@ module HplM16c62pUartInterruptP
   provides interface HplM16c62pUartInterrupt as Uart0;
   provides interface HplM16c62pUartInterrupt as Uart1;
   provides interface HplM16c62pUartInterrupt as Uart2;
+<<<<<<< HEAD
+=======
+  
+#ifdef THREADS
+  uses interface PlatformInterrupt;
+#define POST_AMBLE() call PlatformInterrupt.postAmble()
+#else 
+#define POST_AMBLE()
+#endif 
+>>>>>>> master
 }
 implementation
 {
@@ -53,12 +63,20 @@ implementation
   M16C_INTERRUPT_HANDLER(M16C_UART0_NACK)
   {
     signal Uart0.tx();
+<<<<<<< HEAD
+=======
+    POST_AMBLE();
+>>>>>>> master
   }
 
   default async event void Uart0.rx() { } 
   M16C_INTERRUPT_HANDLER(M16C_UART0_ACK)
   {
     signal Uart0.rx();
+<<<<<<< HEAD
+=======
+    POST_AMBLE();
+>>>>>>> master
   }
 
 
@@ -66,12 +84,20 @@ implementation
   M16C_INTERRUPT_HANDLER(M16C_UART1_NACK)
   {
     signal Uart1.tx();
+<<<<<<< HEAD
+=======
+    POST_AMBLE();
+>>>>>>> master
   }
 
   default async event void Uart1.rx() { } 
   M16C_INTERRUPT_HANDLER(M16C_UART1_ACK)
   {
     signal Uart1.rx();
+<<<<<<< HEAD
+=======
+    POST_AMBLE();
+>>>>>>> master
   }
 
 
@@ -79,11 +105,19 @@ implementation
   M16C_INTERRUPT_HANDLER(M16C_UART2_NACK)
   {
     signal Uart2.tx();
+<<<<<<< HEAD
+=======
+    POST_AMBLE();
+>>>>>>> master
   }
 
   default async event void Uart2.rx() { } 
   M16C_INTERRUPT_HANDLER(M16C_UART2_ACK)
   {
     signal Uart2.rx();
+<<<<<<< HEAD
+=======
+    POST_AMBLE();
+>>>>>>> master
   }
 }

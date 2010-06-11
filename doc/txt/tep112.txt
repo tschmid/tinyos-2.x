@@ -251,6 +251,14 @@ mcu_power_t means that this command can have fan-out calls.
 Section 5 describes one example use of McuPowerOverride, in the
 timer stack for the Atmega128 microcontroller family.
 
+As part of power state override, a platform MUST define the enum
+TOS_SLEEP_NONE in its hardware.h file. This enum defines the highest
+power state of the platform's microcontroller in a chip-independent
+way. If a component wires to McuPowerOverride and returns TOS_SLEEP_NONE,
+this will cause TinyOS to never put the microcontroller into a power
+saving state. This enum allows a component to prevent sleep in a
+platform-independent way.
+
 4. Peripherals and Subsystems
 ====================================================================
 
@@ -277,13 +285,26 @@ include power management into shared non-virtualized devices.
 An implementation of McuSleepC can be found in ``tinyos-2.x/tos/chips/atm128``, 
 ``tinyos-2.x/tos/chips/msp430``, and ``tinyos-2.x/tos/chips/px27ax``. 
 
-An example of a use of McuPowerOverride can be found in the atmega128 timer
+An example use of McuPowerOverride can be found in the atmega128 timer
 system. Because some low-power states have much longer wakeup latencies than
 others, the timer system does not allow long latencies if it has a timer
 that is going to fire soon.  The implementation can be found in 
 ``tinyos-2.x/tos/chips/atm128/timer/HplAtm128Timer0AsyncP.nc``, and
 ``tinyos-2.x/tos/chips/atm128/timer/HplAtm128Timer0AsyncC.nc`` automatically
 wires it to McuSleepC if it is included.
+
+For the atmega128 microcontroller, TOS_SLEEP_NONE is the "idle" power
+state.
+
+A second example use of McuPowerOverride is in the msp430 timer system.
+By default, the msp430 lowest power state is LPM4, which does not keep
+clocks enabled. If ``tinyos-2.x/tos/chips/msp430/timer/Msp430ClockC.nc''
+is included in the component graph, however, this configuration wires
+the McuPowerOverride of ``tinyos-2.x/tos/chips/msp430/timer/Msp430ClockP.nc``
+to McuSleepC. This implemementation of McuPowerOverride raises the lowest
+power state to LPM3, which keeps clocks enabled.
+
+For msp430 microcontrollers, TOS_SLEEP_NONE is the "active" power state.
 
 6. Author's Address
 ====================================================================

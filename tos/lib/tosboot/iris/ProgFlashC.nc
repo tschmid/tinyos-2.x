@@ -29,7 +29,7 @@
  */
 #include <avr/boot.h>
 
-module ProgFlashM {
+module ProgFlashC {
   provides {
     interface ProgFlash;
   }

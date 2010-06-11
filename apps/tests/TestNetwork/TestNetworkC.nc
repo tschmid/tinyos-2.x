@@ -20,7 +20,7 @@ module TestNetworkC {
   uses interface SplitControl as SerialControl;
   uses interface StdControl as RoutingControl;
   uses interface StdControl as DisseminationControl;
-  uses interface DisseminationValue<uint16_t> as DisseminationPeriod;
+  uses interface DisseminationValue<uint32_t> as DisseminationPeriod;
   uses interface Send;
   uses interface Leds;
   uses interface Read<uint16_t> as ReadSensor;
@@ -87,7 +87,7 @@ implementation {
   void sendMessage() {
     TestNetworkMsg* msg = (TestNetworkMsg*)call Send.getPayload(&packet, sizeof(TestNetworkMsg));
     uint16_t metric;
-    am_addr_t parent;
+    am_addr_t parent = 0;
 
     call CtpInfo.getParent(&parent);
     call CtpInfo.getEtx(&metric);
@@ -113,10 +113,9 @@ implementation {
 
  
   event void Timer.fired() {
-    uint16_t nextInt;
-    call Leds.led0Toggle();
+    uint32_t nextInt;
     dbg("TestNetworkC", "TestNetworkC: Timer fired.\n");
-    nextInt = call Random.rand16() % SEND_INTERVAL;
+    nextInt = call Random.rand32() % SEND_INTERVAL;
     nextInt += SEND_INTERVAL >> 1;
     call Timer.startOneShot(nextInt);
     if (!sendBusy)
@@ -125,25 +124,38 @@ implementation {
 
   event void Send.sendDone(message_t* m, error_t err) {
     if (err != SUCCESS) {
-	//      call Leds.led0On();
+      call Leds.led0On();
     }
     sendBusy = FALSE;
     dbg("TestNetworkC", "Send completed.\n");
   }
   
   event void DisseminationPeriod.changed() {
-    const uint16_t* newVal = call DisseminationPeriod.get();
+    const uint32_t* newVal = call DisseminationPeriod.get();
     call Timer.stop();
     call Timer.startPeriodic(*newVal);
   }
 
+
+  uint8_t prevSeq = 0;
+  uint8_t firstMsg = 0;
+
   event message_t* 
   Receive.receive(message_t* msg, void* payload, uint8_t len) {
     dbg("TestNetworkC", "Received packet at %s from node %hhu.\n", sim_time_string(), call CollectionPacket.getOrigin(msg));
-    call Leds.led1Toggle();    
-    if (!call Pool.size() <= (TEST_NETWORK_QUEUE_SIZE < 4)? 1:3)  {
-      //      call CtpCongestion.setClientCongested(TRUE);
+    call Leds.led1Toggle();
+
+    if (call CollectionPacket.getOrigin(msg) == 1) {
+      if (firstMsg == 1) {
+	if (call CollectionPacket.getSequenceNumber(msg) - prevSeq > 1) {
+	  call Leds.led2On();
+	}
+      } else {
+	firstMsg = 1;
+      }
+      prevSeq = call CollectionPacket.getSequenceNumber(msg);
     }
+
     if (!call Pool.empty() && call Queue.size() < call Queue.maxSize()) {
       message_t* tmp = call Pool.get();
       call Queue.enqueue(msg);

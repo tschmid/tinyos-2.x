@@ -36,11 +36,11 @@ configuration PluginC {
 
 implementation {
 
-  components ExtFlashC, LedsC, PowerOffM;
+  components ExtFlashC, LedsC, PowerOffC;
 
-  StdControl = PowerOffM;
+  StdControl = PowerOffC;
 
-  PowerOffM.Leds -> LedsC;
-  PowerOffM.SubControl -> ExtFlashC;
+  PowerOffC.Leds -> LedsC;
+  PowerOffC.SubControl -> ExtFlashC;
 
 }

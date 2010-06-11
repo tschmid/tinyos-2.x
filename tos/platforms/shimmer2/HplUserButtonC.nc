@@ -33,7 +33,11 @@
  * Implementation of the user button for the telos platform
  *
  * @author Gilman Tolle <gtolle@archrock.com>
+<<<<<<< HEAD
  * @version $Revision: 1.1 $
+=======
+ * @version $Revision$
+>>>>>>> master
  *
  * @author Mike Healy
  * @date May 9, 2009 - modified for use with SHIMMER2

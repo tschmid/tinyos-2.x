@@ -45,9 +45,9 @@ implementation {
   components new TimerMilliC();
 #if defined(PLATFORM_MICA2) || defined(PLATFORM_MICA2DOT)
   components CC1000CsmaRadioC as LplRadio;
-#elif defined(PLATFORM_MICAZ) || defined(PLATFORM_TELOSB) || defined(PLATFORM_SHIMMER) || defined(PLATFORM_INTELMOTE2)
+#elif defined(PLATFORM_MICAZ) || defined(PLATFORM_TELOSB) || defined(PLATFORM_SHIMMER) || defined(PLATFORM_SHIMMER2) || defined(PLATFORM_INTELMOTE2) || defined(PLATFORM_EPIC)
   components CC2420ActiveMessageC as LplRadio;
-#elif defined(PLATFORM_IRIS)
+#elif defined(PLATFORM_IRIS) || defined(PLATFORM_MULLE)
   components RF230ActiveMessageC as LplRadio;
 #elif defined(PLATFORM_EYESIFXV1) || defined(PLATFORM_EYESIFXV2)
   components LplC as LplRadio;

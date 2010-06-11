@@ -1,4 +1,4 @@
-// $Id: BaseStationC.nc,v 1.2 2009/09/11 21:20:20 jgko Exp $
+// $Id$
 
 /*									tab:4
  * "Copyright (c) 2000-2003 The Regents of the University  of California.  

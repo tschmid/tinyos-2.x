@@ -1,4 +1,4 @@
-// $Id: ExtFlashC.nc,v 1.1 2009/11/10 07:03:34 rflury Exp $
+// $Id$
 
 /*
  *

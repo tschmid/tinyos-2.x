@@ -56,6 +56,7 @@ module NoDisassociateP
     interface Pool<ieee154_txframe_t> as TxFramePool;
     interface Pool<ieee154_txcontrol_t> as TxControlPool;
     interface MLME_GET;
+    interface MLME_SET;
     interface FrameUtility;
     interface IEEE154Frame as Frame;
     interface Get<uint64_t> as LocalExtendedAddress;

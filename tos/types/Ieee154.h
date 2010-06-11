@@ -22,7 +22,7 @@
  /*
  *
  * @author Stephen Dawson-Haggerty <stevedh@eecs.berkeley.edu>
- * @version $Revision: 1.1 $ $Date: 2009/08/19 17:54:35 $
+ * @version $Revision$ $Date$
  */
 
 #ifndef __IEEE154_H__

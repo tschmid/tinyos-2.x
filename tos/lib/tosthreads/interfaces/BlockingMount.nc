@@ -11,7 +11,7 @@
  * Mount a volume.
  *
  * @author David Gay
- * @version $Revision: 1.1 $ $Date: 2009/09/10 19:08:50 $
+ * @version $Revision$ $Date$
  */
 
 /*

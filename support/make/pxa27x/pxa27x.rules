@@ -58,7 +58,7 @@ $(if $(PROGRAM),,$(call TOSMake_include,pxa27x/$(DEFAULT_PROGRAM).extra))
 ifneq ($(wildcard $(VOLUME_FILE)), )
 build_storage: $(BUILDDIR)/StorageVolumes.h
 
-exe0: build_storage
+exe0: build_storage 
 
 VOLUME_ALLOCATOR_FLAGS ?= 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUME_FILE)
@@ -87,7 +87,7 @@ bin: exe FORCE
 exe: exe0 bytes FORCE
 	@:
 
-exe0: builddir asms $(BUILD_EXTRA_DEPS) FORCE
+exe0: builddir asms $(BUILD_EXTRA_DEPS) $(COMPONENT).nc FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
 	$(NCC) -o $(MAIN_EXE) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS) $(ASSEMBLY_OBJS) $(LIBRARY_OBJS)
 ifdef WIRING_CHECK_FILE

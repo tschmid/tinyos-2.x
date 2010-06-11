@@ -1,4 +1,4 @@
-// $Id: DirectAMSenderC.nc,v 1.1 2009/09/16 00:51:51 razvanm Exp $
+// $Id$
 /*
  * "Copyright (c) 2006 Stanford University. All rights reserved.
  *

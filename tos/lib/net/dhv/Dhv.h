@@ -26,7 +26,7 @@
 #define DHV_VERSION_LENGTH 4
 
 #define VBIT_LENGTH 8
-
+#define INFO_THRESHOLD 1
 enum {
   AM_DHV_TEST_MSG = 0xAB
 };
@@ -50,10 +50,10 @@ enum{
 };
 
 enum {
-  AM_DHV = 0x62,
-  AM_DHV_DATA_MSG = 0x62, // For MIG tool
-  AM_DHV_MSG = 0x62, // For MIG tool
-  AM_DHV_DATA = 0x62 // For MIG tool
+  AM_DHV = 0x63,
+  AM_DHV_DATA_MSG = 0x63, // For MIG tool
+  AM_DHV_MSG = 0x63, // For MIG tool
+  AM_DHV_DATA = 0x63 // For MIG tool
 };
 
 typedef uint16_t dhv_key_t;

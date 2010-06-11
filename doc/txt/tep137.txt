@@ -10,8 +10,8 @@ Traffic Control
 :Author: David Moss, Mark Hays, and Mark Siner
 
 :Draft-Created: 3-Sept-2009
-:Draft-Version: $Revision: 1.1 $
-:Draft-Modified: $Date: 2009/10/01 21:09:49 $
+:Draft-Version: $Revision$
+:Draft-Modified: $Date$
 :Draft-Discuss: TinyOS Developer List <tinyos-devel at mail.millennium.berkeley.edu>
 
 .. Note::

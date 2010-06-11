@@ -65,11 +65,8 @@ implementation
         LinkLayerC as Llc;                       //The Link Layer Control module to use
     
     //Don't change wirings below this point, just change which components
-    //They are compposed of in the list above             
+    //They are compposed of in the list above
     
-    components MainC;
-    MainC.SoftwareInit -> PacketSerializer;
-            
     SplitControl = Llc;
     Llc.MacSplitControl -> Mac.SplitControl;
     Llc.RadioSplitControl -> Radio.SplitControl;
@@ -95,7 +92,14 @@ implementation
     PacketSerializer.PhyPacketRx -> UartPhy.PhyPacketRx;
     
     UartPhy.RadioByteComm -> Radio.RadioByteComm;
+
 #ifndef RADIO_UART_VCO
     components SmclkManagerC;
 #endif
+
+#ifdef PACKETSERIALIZER_DEBUG
+    components new SerialDebugC() as SD;
+    PacketSerializer.SerialDebug -> SD;
+#endif
+
 }

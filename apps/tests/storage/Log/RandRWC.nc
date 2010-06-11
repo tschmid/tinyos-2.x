@@ -138,8 +138,16 @@ implementation {
       scheck(call LogWrite.sync());
     else
       {
+	error_t result;
 	setParameters();
-	scheck(call LogWrite.append(data + offset, len));
+	result = call LogWrite.append(data + offset, len);
+	if (result == ESIZE) {
+	  // We have reached the end of the log, sync it
+	  scheck(call LogWrite.sync());
+	}
+	else {
+	  scheck(result);
+	}
       }
   }
 

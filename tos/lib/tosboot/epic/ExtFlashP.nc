@@ -26,14 +26,14 @@
  * @author Razvan Musaloiu-E. <razvanm@cs.jhu.edu>
  */
 
-module ExtFlashM {
+module ExtFlashP {
   provides {
     interface StdControl;
     interface Init;
     interface ExtFlash;
   }
   uses {
-    interface HPLUSARTControl as USARTControl;
+    interface HplUsartControl as UsartControl;
   }
 }
 
@@ -44,7 +44,7 @@ implementation {
   command error_t Init.init() {
     TOSH_MAKE_FLASH_CS_OUTPUT();
     TOSH_SET_FLASH_CS_PIN();
-    call USARTControl.setModeSPI();
+    call UsartControl.setModeSPI();
     return SUCCESS;
   }
 
@@ -53,7 +53,7 @@ implementation {
   }
 
   command error_t StdControl.stop() { 
-    call USARTControl.disableSPI();
+    call UsartControl.disableSPI();
     return SUCCESS; 
   }
 
@@ -74,8 +74,8 @@ implementation {
     TOSH_CLR_FLASH_CS_PIN();
 
     for ( i = 0; i < sizeof(cmd); i++ ) {
-      call USARTControl.tx(cmd[i]);
-      while(call USARTControl.isTxEmpty() != SUCCESS);
+      call UsartControl.tx(cmd[i]);
+      while(call UsartControl.isTxEmpty() != SUCCESS);
     }
   }
 
@@ -85,10 +85,10 @@ implementation {
       call ExtFlash.startRead(addr);
     }
     addr++;
-    call USARTControl.rx();
-    call USARTControl.tx(0);
-    while(call USARTControl.isRxIntrPending() != SUCCESS);
-    return call USARTControl.rx();
+    call UsartControl.rx();
+    call UsartControl.tx(0);
+    while(call UsartControl.isRxIntrPending() != SUCCESS);
+    return call UsartControl.rx();
   }
 
   command void ExtFlash.stopRead() {

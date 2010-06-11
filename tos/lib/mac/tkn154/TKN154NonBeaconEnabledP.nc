@@ -231,6 +231,7 @@ implementation
   DisassociateP.TxFramePool -> TxFramePoolP;
   DisassociateP.TxControlPool -> TxControlPoolP;
   DisassociateP.MLME_GET -> PibP;
+  DisassociateP.MLME_SET -> PibP;
   DisassociateP.FrameUtility -> PibP;
   DisassociateP.Frame -> PibP;
   DisassociateP.LocalExtendedAddress -> PibP.GetLocalExtendedAddress;
@@ -269,7 +270,7 @@ implementation
   IndirectTxP.CoordCapTx -> DispatchQueueP.FrameTx[unique(CAP_TX_CLIENT)];
   IndirectTxP.DataRequestRx -> DispatchP.FrameRx[FC1_FRAMETYPE_CMD + CMD_FRAME_DATA_REQUEST];
   IndirectTxP.MLME_GET -> PibP;
-  IndirectTxP.FrameUtility -> PibP;
+  IndirectTxP.IEEE154Frame -> PibP;
   IndirectTxP.IndirectTxTimeout = Timer3;
   IndirectTxP.TimeCalc -> PibP;
   IndirectTxP.Leds = Leds;

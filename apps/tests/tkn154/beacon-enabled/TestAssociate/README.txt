@@ -1,28 +1,23 @@
 README for TestAssociate
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
 In this application one node takes the role of a PAN coordinator in a
-beacon-enabled 802.15.4 PAN; it transmits periodic beacons and waits for
+beacon-enabled 802.15.4 PAN, it transmits periodic beacons and waits for
 devices to request association to its PAN. Whenever a device tries to
-associate, the PAN coordinator allows association and assigns to the device a
-unique short address (starting from zero, incremented for every device
-requesting association). 
+associate, the PAN coordinator accepts the association and assigns to the
+device a unique short address (starting from zero, incremented for every new
+association request). A second node acts as a device, it first scans the
+pre-defined channel for beacons from the coordinator and once it finds a beacon
+it tries to associate to the PAN. A short time after association the device
+then disassociates from the PAN. 
 
-A second node acts as a device; it first scans the pre-defined channel for
-beacons from the coordinator and once it finds a beacon it tries to associate
-to the PAN and synchronize to and track all future beacons. A short time after
-association the device then disassociates from the PAN. 
+Criteria for a successful test:
 
-The third LED (Telos: blue) is toggled whenever the coordinator has transmitted
-a beacon or whenever a device has received a beacon. On the coordinator the
-second LED (Telos: green) is switched on whenever an association request was
-successful and it is switched off, whenever a disassociation request was
-received. On a device the second LED is switched on while the device is
-associated to the PAN, i.e. it is switched off after disassociation. The first
-LED (Telos: red) is used for debugging, it denotes an error in the protocol
-stack and should never be on.
+Both, coordinator and device, should toggle LED1 in unison about once every 5 
+seconds. The coordinator should also toggle LED2 every second.
+
 
 Tools: NONE
 

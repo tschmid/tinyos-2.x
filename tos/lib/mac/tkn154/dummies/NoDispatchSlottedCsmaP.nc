@@ -74,6 +74,7 @@ generic module NoDispatchSlottedCsmaP(uint8_t sfDirection)
     interface SetNow<ieee154_cap_frame_backup_t*> as FrameBackup;
     interface GetNow<ieee154_cap_frame_backup_t*> as FrameRestore;
     interface StdControl as TrackSingleBeacon;
+    interface MLME_SYNC_LOSS;
   }
 }
 implementation
@@ -116,4 +117,12 @@ implementation
   event void PIBUpdateMacRxOnWhenIdle.notify( const void* val ) {}
   async event void RadioTokenRequested.requested(){ }
   async event void RadioTokenRequested.immediateRequested(){ }
+ 
+  event void MLME_SYNC_LOSS.indication (
+                          ieee154_status_t lossReason,
+                          uint16_t PANId,
+                          uint8_t LogicalChannel,
+                          uint8_t ChannelPage,
+                          ieee154_security_t *security
+                        ){ }
 }

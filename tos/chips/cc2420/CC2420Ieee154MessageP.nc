@@ -46,7 +46,7 @@
 /**
  *
  * @author Stephen Dawson-Haggerty
- * @version $Revision: 1.2 $ $Date: 2009/09/17 23:36:36 $
+ * @version $Revision$ $Date$
  */
  
 #include "CC2420.h"

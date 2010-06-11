@@ -48,11 +48,11 @@ implementation {
   }  
   
   async command bool FcfsQueue.isEmpty() {
-    return (qHead == NO_ENTRY);
+    atomic return (qHead == NO_ENTRY);
   }
   	
   async command bool FcfsQueue.isEnqueued(resource_client_id_t id) {
-  	return resQ[id] != NO_ENTRY || qTail == id; 
+  	atomic return resQ[id] != NO_ENTRY || qTail == id; 
   }
 
   async command resource_client_id_t FcfsQueue.dequeue() {

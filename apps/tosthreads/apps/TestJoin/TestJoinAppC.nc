@@ -30,6 +30,22 @@
  */
  
 /**
+ * TestJoin is a simple application used to test the basic functionality of
+ * the join() system call for waiting on a set of threads in a TOSThreads 
+ * based application.
+ * 
+ * Upon a successful burn, you should see all LEDs toggle in the following pattern,
+ * repeating every 8 seconds:
+ * 
+ * 0s: (110) LED0  ON, LED1  ON, LED2 OFF  <br>
+ * 1s: (000) LED0 OFF, LED1 OFF, LED2 OFF  <br>
+ * 2s: (010) LED0 OFF, LED1  ON, LED2 OFF  <br>
+ * 3s: (000) LED0 OFF, LED1 OFF, LED2 OFF  <br>
+ * 4s: (111) LED0  ON, LED1  ON, LED2  ON  <br>
+ * 5s: (001) LED0 OFF, LED1 OFF, LED2  ON  <br>
+ * 6s: (011) LED0 OFF, LED1  ON, LED2  ON  <br>
+ * 7s: (001) LED0 OFF, LED1 OFF, LED2  ON  <br>
+ *
  * @author Kevin Klues (klueska@cs.stanford.edu)
  */
 
@@ -37,6 +53,7 @@ configuration TestJoinAppC {
 }
 implementation {
   components MainC, TestJoinC,  LedsC;
+<<<<<<< HEAD
 #ifdef PLATFORM_SAM3U_EK
   components new ThreadC(0x200) as NullThread;
   components new ThreadC(0x200) as TinyThread0;
@@ -48,12 +65,16 @@ implementation {
   components new ThreadC(0x200) as TinyThread1;
   components new ThreadC(0x200) as TinyThread2;
 #endif
+=======
+  components new ThreadC(100) as NullThread;
+  components new ThreadC(100) as TinyThread0;
+  components new ThreadC(100) as TinyThread1;
+>>>>>>> master
 
   MainC.Boot <- TestJoinC;
   TestJoinC.NullThread -> NullThread;
   TestJoinC.TinyThread0 -> TinyThread0;
   TestJoinC.TinyThread1 -> TinyThread1; 
-  TestJoinC.TinyThread2 -> TinyThread2;
 
   TestJoinC.Leds -> LedsC;
 }

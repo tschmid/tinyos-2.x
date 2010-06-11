@@ -1,4 +1,4 @@
-/* $Id: UartControl.nc,v 1.2 2009/09/14 00:25:59 scipio Exp $ */
+/* $Id$ */
 /*
  * Copyright (c) 2009 Stanford University.
  * All rights reserved.
@@ -39,7 +39,7 @@
  *  error.
  *
  *  @author Philip Levis
- *  @date   $Date: 2009/09/14 00:25:59 $
+ *  @date   $Date$
  */
 
 

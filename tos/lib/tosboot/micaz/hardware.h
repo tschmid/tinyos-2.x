@@ -77,6 +77,12 @@
 #include <atm128hardware.h>
 #include <avrhardware.h>
 
+#ifndef MHZ
+/* Clock rate is ~8MHz except if specified by user 
+   (this value must be a power of 2, see MicaTimer.h and MeasureClockC.nc) */
+#define MHZ 8
+#endif 
+
 typedef uint32_t in_flash_addr_t;
 typedef uint32_t ex_flash_addr_t;
 

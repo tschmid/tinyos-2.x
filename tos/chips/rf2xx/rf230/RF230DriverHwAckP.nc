@@ -186,8 +186,16 @@ implementation
 		PLL_CALIBRATION_TIME = (uint16_t)(180 * RADIO_ALARM_MICROSEC),
 		CCA_REQUEST_TIME = (uint16_t)(140 * RADIO_ALARM_MICROSEC),
 
+<<<<<<< HEAD
 		TX_SFD_DELAY = (uint16_t)((128 + 5*32 + 16) * RADIO_ALARM_MICROSEC),
 		RX_SFD_DELAY = (uint16_t)((16 + 32) * RADIO_ALARM_MICROSEC),
+=======
+		// 8 undocumented delay, 128 for CSMA, 16 for delay, 5*32 for preamble and SFD
+		TX_SFD_DELAY = (uint16_t)((8 + 128 + 16 + 5*32) * RADIO_ALARM_MICROSEC),
+		
+		// 32 for frame length, 16 for delay
+		RX_SFD_DELAY = (uint16_t)((32 + 16) * RADIO_ALARM_MICROSEC),
+>>>>>>> master
 	};
 
 	tasklet_async event void RadioAlarm.fired()
@@ -689,7 +697,22 @@ tasklet_async command uint8_t RadioState.getChannel()
 		if( crcValid && call PacketTimeStamp.isValid(rxMsg) )
 		{
 			uint32_t time32 = call PacketTimeStamp.timestamp(rxMsg);
+<<<<<<< HEAD
 			time32 -= RX_SFD_DELAY + (length << (RADIO_ALARM_MILLI_EXP - 5));
+=======
+			length = getHeader(rxMsg)->length;
+
+/*
+ * If you hate floating point arithmetics and do not care of up to 400 microsecond time stamping errors,
+ * then define RF230_HWACK_SLOPPY_TIMESTAMP, which will be significantly faster.
+ */
+#ifdef RF230_HWACK_SLOPPY_TIMESTAMP
+			time32 -= (uint16_t)(RX_SFD_DELAY) + ((uint16_t)(length) << (RADIO_ALARM_MILLI_EXP - 5));
+#else
+			time32 -= (uint16_t)(RX_SFD_DELAY) + (uint16_t)(32.0 * RADIO_ALARM_MICROSEC * (uint16_t)length);
+#endif
+
+>>>>>>> master
 			call PacketTimeStamp.set(rxMsg, time32);
 		}
 
@@ -872,7 +895,11 @@ tasklet_async command uint8_t RadioState.getChannel()
 
 	async command uint8_t RadioPacket.maxPayloadLength()
 	{
+<<<<<<< HEAD
 		ASSERT( call Config.maxPayloadLength() <= 125 );
+=======
+		ASSERT( call Config.maxPayloadLength() - sizeof(rf230_header_t) <= 125 );
+>>>>>>> master
 
 		return call Config.maxPayloadLength() - sizeof(rf230_header_t);
 	}

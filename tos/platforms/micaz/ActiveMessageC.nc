@@ -37,11 +37,11 @@
 
 /**
  *
- * The Active Message layer on the micaZ platform. This is a naming wrapper
+ * The Active Message layer on the Telos platform. This is a naming wrapper
  * around the CC2420 Active Message layer.
  *
  * @author Philip Levis
- * @date June 19 2005
+ * @version $Revision$ $Date$
  */
 #include "Timer.h"
 
@@ -58,11 +58,12 @@ configuration ActiveMessageC {
     interface PacketAcknowledgements;
     interface PacketTimeStamp<T32khz, uint32_t> as PacketTimeStamp32khz;
     interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
+    interface LowPowerListening;
   }
 }
 implementation {
   components CC2420ActiveMessageC as AM;
-  
+
   SplitControl = AM;
   
   AMSend       = AM;
@@ -71,6 +72,7 @@ implementation {
   Packet       = AM;
   AMPacket     = AM;
   PacketAcknowledgements = AM;
+  LowPowerListening = AM;
 
   components CC2420PacketC;
   PacketTimeStamp32khz = CC2420PacketC;

@@ -1,4 +1,4 @@
-/* $Id: Adc.h,v 1.1 2009/09/07 14:12:25 r-studio Exp $
+/* $Id$
  * Copyright (c) 2005 Intel Corporation
  * All rights reserved.
  *

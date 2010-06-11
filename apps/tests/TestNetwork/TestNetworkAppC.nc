@@ -17,7 +17,7 @@ configuration TestNetworkAppC {}
 implementation {
   components TestNetworkC, MainC, LedsC, ActiveMessageC;
   components DisseminationC;
-  components new DisseminatorC(uint16_t, SAMPLE_RATE_KEY) as Object16C;
+  components new DisseminatorC(uint32_t, SAMPLE_RATE_KEY) as Object32C;
   components CollectionC as Collector;
   components new CollectionSenderC(CL_TEST);
   components new TimerMilliC();
@@ -39,7 +39,7 @@ implementation {
   TestNetworkC.DisseminationControl -> DisseminationC;
   TestNetworkC.Leds -> LedsC;
   TestNetworkC.Timer -> TimerMilliC;
-  TestNetworkC.DisseminationPeriod -> Object16C;
+  TestNetworkC.DisseminationPeriod -> Object32C;
   TestNetworkC.Send -> CollectionSenderC;
   TestNetworkC.ReadSensor -> DemoSensorC;
   TestNetworkC.RootControl -> Collector;

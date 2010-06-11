@@ -11,6 +11,13 @@ to use a mote attached to a computer as an 802.15.4 interface rather
 then an actual mote.  The actual queuing logic for copying packets is
 mostly unchanged, and it continues to make use of serial ACKs.
 
+To build, add the 'blip' make extra.  IE,
+
+$ make <platform> blip ...
+
+For more information on setting up an IPv6 network, please see the tutorial:
+http://docs.tinyos.net/index.php/BLIP_Tutorial
+
 Description of BaseStation:
 
 BaseStation is an application that acts as a simple Active Message

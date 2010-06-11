@@ -28,9 +28,9 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
  
-includes msp430usart;
+#include <msp430usart.h>
 
-interface HPLUSARTControl {
+interface HplUsartControl {
 
   command void disableSPI();
   command void setModeSPI();

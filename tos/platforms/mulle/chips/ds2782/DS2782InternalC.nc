@@ -39,19 +39,24 @@
  * 
  * @author Henrik Makitaavola <henrik.makitaavola@gmail.com>
  */
-configuration DS2782InternalC {
+configuration DS2782InternalC
+{
   provides interface StdControl;
   provides interface HplDS2782;
 }
 
-implementation {
-  components new SoftI2CBatteryMonitorRTCC() as I2C;
-  components new HplDS2782LogicP(0x68) as Logic;
-  
+implementation
+{
+  components new SoftwareI2C2C() as I2C,
+             new HplDS2782LogicP(0x68) as Logic,
+             DS2782InternalP,
+             HplM16c62pGeneralIOC as IOs;
+
   Logic.I2CPacket -> I2C;
   Logic.I2CResource -> I2C;
   HplDS2782 = Logic;
-
   StdControl = Logic;
 
+  DS2782InternalP.Pullup -> IOs.PortP75;
+  DS2782InternalP.ResourceDefaultOwner -> I2C;
 }

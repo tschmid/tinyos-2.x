@@ -224,7 +224,7 @@ implementation {
     tempVal = buf[0];
     tempVal = ((tempVal << 8) | buf[1]);
 
-    switch (mState) {
+    atomic switch (mState) {
       case STATE_READTEMP:
         signal HplDS2782.measureTemperatureDone(i2c_error,tempVal);
         break;
@@ -247,16 +247,16 @@ implementation {
 
   event void I2CResource.granted() {
     if (read) {
-      call I2CPacket.write(I2C_START,devAddr,1,mI2CBuffer);
+      call I2CPacket.write(I2C_START | I2C_STOP,devAddr,1,mI2CBuffer);
     } else {
-      call I2CPacket.write((I2C_START | I2C_STOP),devAddr,2,mI2CBuffer);
+      call I2CPacket.write(I2C_START | I2C_STOP,devAddr,2,mI2CBuffer);
     }
   }
 
   async event void I2CPacket.writeDone(error_t i2c_error, uint16_t chipAddr, uint8_t len, uint8_t *buf) {
     error_t error = i2c_error;
 
-    switch (mState) {
+    atomic switch (mState) {
       case STATE_SETCONFIG:
         call I2CResource.release();
         atomic mState = STATE_IDLE;

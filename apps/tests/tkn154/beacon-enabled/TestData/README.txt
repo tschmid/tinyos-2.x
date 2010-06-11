@@ -1,22 +1,23 @@
 README for TestData
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
 In this application one node takes the role of a PAN coordinator in a
-beacon-enabled 802.15.4 PAN; it transmits periodic beacons and waits for
-incoming DATA frames. A second node acts as a device; it first scans the
+beacon-enabled 802.15.4 PAN, it transmits periodic beacons and waits for
+incoming DATA frames. A second node acts as a device, it first scans the
 pre-defined channel for beacons from the coordinator and once it finds a beacon
 it tries to synchronize to and track all future beacons. It then starts to
 transmit DATA frames to the coordinator as fast as possible (direct
 transmission in the contention access period, CAP).
 
-The third LED (Telos: blue) is toggled whenever the coordinator has transmitted
-a beacon or whenever a device has received a beacon. On the coordinator the
-second LED (Telos: green) is toggled for every 20 received DATA frames. On a
-device the second LED is toggled for every 20 transmitted (and acknowledged)
-DATA frames. The first LED (Telos: red) is used for debugging, it denotes an
-error in the protocol stack and should never be on.
+Criteria for a successful test:
+
+Coordinator and device should both toggle LED2 about twice per second in
+unison. They should also each toggle LED1 about 5 times per second (but
+not necessarily in unison). Note: the nodes should be close to each other, 
+because the transmission power is reduced to -20 dBm.
+
 
 Tools: NONE
 

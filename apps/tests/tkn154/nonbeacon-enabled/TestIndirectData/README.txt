@@ -1,28 +1,20 @@
 README for TestIndirectData
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
 In this application one node takes the role of a PAN coordinator in a
-nonbeacon-enabled 802.15.4 PAN; it switches its radio to receive mode and
-creates a packet which is addressed to the predefined address of the device.
-This packet is marked as indirect transmissions, therefore queued and sent only
-after explicit poll of the device.  After a successful transmission another
-packet is created after a definite time.
-
-A second node acts as the device; it switches to the pre-defined channel and
-polls the coordinator in predefined intervals for outstanding indirect
+nonbeacon-enabled 802.15.4 PAN, every 3 seconds it sends a packet to a device
+using indirect transmission (i.e. the packet is buffered until it is polled by
+the device). A second node acts as the device, it switches to the pre-defined
+channel and polls the coordinator every 1 second for outstanding indirect
 transmissions.
 
-A few basic parameters of this example can be adjusted through the
-'app_profile.h' file.
+Criteria for a successful test:
 
-Leds: On the coordinator the second LED (Telos: green) flashes whenever a
-packet for an indirect transmission is created and queued.  When this packet
-has not been polled by the device within the transaction time, the packet is
-discarded which is displayed by the first led (Telos: red). On the device the
-third LED (Telos: blue) flashes when after a poll of the coordinator an
-indirect transmission arrives.
+Assuming one coordinator and one device has been installed, the coordinator
+should briefly flash LED1 every 3 seconds. The device should briefly flash 
+LED2 every 1 second. 
 
 
 Tools: NONE

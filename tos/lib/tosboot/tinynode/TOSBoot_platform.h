@@ -1,4 +1,4 @@
-// $Id: TOSBoot_platform.h,v 1.1 2009/11/10 07:03:34 rflury Exp $
+// $Id$
 
 /*
  * "Copyright (c) 2000-2005 The Regents of the University  of California.  

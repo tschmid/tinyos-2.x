@@ -62,7 +62,7 @@
 enum {
     ATM128_ADC_VREF_OFF = 0, //!< VR+ = AREF   and VR- = GND
     ATM128_ADC_VREF_AVCC = 1,//!< VR+ = AVcc   and VR- = GND
-    ATM128_ADC_VREF_RSVD,
+    ATM128_ADC_VREF_1_1 = 2,  //!< VR+ = 1.1V and VR- = GND    
     ATM128_ADC_VREF_2_56 = 3,//!< VR+ = 2.56V  and VR- = GND
 };
 

@@ -7,7 +7,6 @@ define MSP_HELP
 
    debug    : compile with minimal optimization and debug symbols
    debugopt : compile with debug symbols
-   xnp      : compile for network programming
 
  Programmer options:
 
@@ -39,7 +38,12 @@ SET_ID = tos-set-symbols
 NCC = ncc
 LIBS = -lm
 
-AMADDR = ActiveMessageAddressC\$$addr
+# Use __ as the separator - requires nesC 1.2.9 or later
+ifneq ($(filter sim,$(GOALS)),sim)
+        PFLAGS += -fnesc-separator=__
+endif
+
+AMADDR = ActiveMessageAddressC__addr
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
 MAIN_IHEX = $(BUILDDIR)/main.ihex
@@ -66,7 +70,7 @@ $(if $(PROGRAM),,$(call TOSMake_include,msp/$(DEFAULT_PROGRAM).extra))
 ifneq ($(wildcard $(VOLUME_FILE)), )
 build_storage: $(BUILDDIR)/StorageVolumes.h
 
-exe0: build_storage
+exe0: build_storage 
 
 VOLUME_ALLOCATOR_FLAGS ?= 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUME_FILE)
@@ -100,7 +104,7 @@ ihex: exe FORCE
 exe: exe0 bytes FORCE
 	@:
 
-exe0: builddir $(BUILD_EXTRA_DEPS) FORCE
+exe0: builddir $(BUILD_EXTRA_DEPS) $(COMPONENT).nc FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
 	$(NCC) -o $(MAIN_EXE) $(NCC_SAFE_TINYOS_FLAGS) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS)
 ifdef WIRING_CHECK_FILE

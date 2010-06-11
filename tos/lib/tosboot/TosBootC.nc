@@ -28,35 +28,35 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-includes Deluge;
-includes DelugePageTransfer;
-includes TOSBoot;
+#include <Deluge.h>
+#include <DelugePageTransfer.h>
+#include "TosBoot.h"
 
-configuration TOSBoot {
+configuration TosBootC {
 }
 implementation {
 
   components
-    TOSBootM,
+    TosBootP,
     ExecC,
     ExtFlashC,
     HardwareC,
     InternalFlashC as IntFlash,
     LedsC,
     PluginC,
-    ProgFlashM as ProgFlash,
+    ProgFlashC as ProgFlash,
     VoltageC;
 
-  TOSBootM.SubInit -> ExtFlashC;
-  TOSBootM.SubControl -> ExtFlashC.StdControl;
-  TOSBootM.SubControl -> PluginC;
+  TosBootP.SubInit -> ExtFlashC;
+  TosBootP.SubControl -> ExtFlashC.StdControl;
+  TosBootP.SubControl -> PluginC;
 
-  TOSBootM.Exec -> ExecC;
-  TOSBootM.ExtFlash -> ExtFlashC;
-  TOSBootM.Hardware -> HardwareC;
-  TOSBootM.IntFlash -> IntFlash;
-  TOSBootM.Leds -> LedsC;
-  TOSBootM.ProgFlash -> ProgFlash;
-  TOSBootM.Voltage -> VoltageC;
+  TosBootP.Exec -> ExecC;
+  TosBootP.ExtFlash -> ExtFlashC;
+  TosBootP.Hardware -> HardwareC;
+  TosBootP.IntFlash -> IntFlash;
+  TosBootP.Leds -> LedsC;
+  TosBootP.ProgFlash -> ProgFlash;
+  TosBootP.Voltage -> VoltageC;
 
 }

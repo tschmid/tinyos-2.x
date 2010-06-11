@@ -54,7 +54,7 @@
  * <li> Led 2 -> Resource 2
  * <br>
  *
- * @author Kevin Klues <klues@tkn.tu-berlin.de>
+ * @author Kevin Klues <klueska@cs.berkeley.edu>
  * @version  $Revision$
  * @date $Date$
  */

@@ -1,7 +1,24 @@
 These release notes are as of: $Date$
 
 Current:
+  Added support for automatic default LPL interval
+  Added platform-indepdent TOS_SLEEP_NONE for McuPowerOverride
+  Added support for mulle platform
+  Added support for epic platform
+  Added support for shimmer2 platform
+  Added DHV dissemination protocol in lib/net/dhv
+  Added 6lowpan/IP support in lib/net/blip
+  Improved CTP forwarder code to save code and RAM
+  Improved MSP430 sleep code to default to LPM4
+  Improved TOSSIM PRR curve to prevent very low SNR packets
+  Improved Queue performance by changing % to inequality test
+  Improved TOSThreads tutorials and documentation
+  Improved python sdk
+  Refactored AM layer to better support 6lowpan
+  Fixed TOSSIM bug where nodes could receive while transmitting
   Fixed TOSSIM ack bug for nodes that change their AM id at runtime
+  Fixed Trickle bugs that could cause timers to fire slightly off 
+  Fixed Pool bug that did not allow large (> 127 element) pools
 
 2.1:
   Added support for iris platform

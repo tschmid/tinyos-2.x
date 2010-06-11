@@ -90,6 +90,11 @@ class Serial:
         self.ackTimeout = ackTimeout
         self._ts = None
 
+        if port.startswith('COM') or port.startswith('com'):
+            port = int(port[3:]) - 1
+        elif port.isdigit():
+            port = int(port) - 1
+
         self._s = serial.Serial(port, int(baudrate), rtscts=0, timeout=0.5)
         self._s.flushInput()
         if flush:
@@ -443,6 +448,8 @@ class AM(SimpleAM):
         r = super(AM, self).write(packet, amId, timeout, blocking)
         while not r:
             r = super(AM, self).write(packet, amId, timeout, blocking, inc=0)
+            if timeout and not r:
+               raise Timeout
         return True
 
 

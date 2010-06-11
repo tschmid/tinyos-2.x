@@ -39,13 +39,13 @@ configuration ExtFlashC {
 implementation {
 
   components 
-    ExtFlashM,
-    HPLUSART0M;
+    ExtFlashP,
+    HplUsart0C;
 
-  Init = ExtFlashM;
-  StdControl = ExtFlashM;
-  ExtFlash = ExtFlashM;
+  Init = ExtFlashP;
+  StdControl = ExtFlashP;
+  ExtFlash = ExtFlashP;
 
-  ExtFlashM.USARTControl -> HPLUSART0M;
+  ExtFlashP.UsartControl -> HplUsart0C;
 
 }

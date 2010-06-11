@@ -36,7 +36,11 @@ NCC = ncc
 LIBS = -lm
 
 # Use __ as the separator - requires nesC 1.2.9 or later
-PFLAGS += -fnesc-separator=__
+ifneq ($(filter sim,$(GOALS)),sim)
+ifneq ($(filter sim-sf,$(GOALS)),sim-sf)
+	PFLAGS += -fnesc-separator=__
+endif
+endif
 AMADDR = ActiveMessageAddressC__addr
 BUILDDIR ?= build/$(PLATFORM)
 MAIN_EXE = $(BUILDDIR)/main.exe
@@ -64,6 +68,9 @@ else
 endif
 
 ifeq ($(PROGRAMMER),avrdude)
+  ifeq ($(findstring Darwin, $(shell uname)), Darwin)
+    AVRDUDE_CONF ?= /opt/local/etc/avrdude.conf
+  endif
   AVRDUDE_CONF ?= /etc/avrdude/avrdude.conf
   ifeq ($(shell [ -f /bin/cygwin1.dll ] && echo cygwin),cygwin)
     AVRDUDE_CONF := $(shell cygpath -m $(AVRDUDE_CONF))
@@ -93,7 +100,7 @@ $(if $(PROGRAM),,$(call TOSMake_include,avr/$(DEFAULT_PROGRAM).extra))
 ifneq ($(wildcard $(VOLUMEFILE)), )
 build_storage: $(BUILDDIR)/StorageVolumes.h
 
-exe0: build_storage
+exe0: build_storage 
 
 VOLUME_ALLOCATOR_FLAGS ?= 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
@@ -133,7 +140,7 @@ ihex: exe FORCE
 exe: exe0 bytes FORCE
 	@:
 
-exe0: builddir $(BUILD_EXTRA_DEPS) FORCE
+exe0: builddir $(BUILD_EXTRA_DEPS) $(COMPONENT).nc FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
 	$(NCC) -o $(MAIN_EXE) $(NCC_SAFE_TINYOS_FLAGS) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS)
 ifdef WIRING_CHECK_FILE

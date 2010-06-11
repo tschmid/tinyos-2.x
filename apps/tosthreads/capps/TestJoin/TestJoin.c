@@ -30,6 +30,22 @@
  */
  
 /**
+ * TestJoin is a simple application used to test the basic functionality of
+ * the join() system call for waiting on a set of threads in a TOSThreads 
+ * based application.
+ * 
+ * Upon a successful burn, you should see all LEDs toggle in the following pattern,
+ * repeating every 8 seconds:
+ * 
+ * 0s: (110) LED0  ON, LED1  ON, LED2 OFF  <br>
+ * 1s: (000) LED0 OFF, LED1 OFF, LED2 OFF  <br>
+ * 2s: (010) LED0 OFF, LED1  ON, LED2 OFF  <br>
+ * 3s: (000) LED0 OFF, LED1 OFF, LED2 OFF  <br>
+ * 4s: (111) LED0  ON, LED1  ON, LED2  ON  <br>
+ * 5s: (001) LED0 OFF, LED1 OFF, LED2  ON  <br>
+ * 6s: (011) LED0 OFF, LED1  ON, LED2  ON  <br>
+ * 7s: (001) LED0 OFF, LED1 OFF, LED2  ON  <br>
+ *
  * @author Kevin Klues (klueska@cs.stanford.edu)
  */
 
@@ -41,12 +57,10 @@
 tosthread_t init;
 tosthread_t blink0;
 tosthread_t blink1;
-tosthread_t blink2;
 
 void init_thread(void* arg);
 void blink0_thread(void* arg);
 void blink1_thread(void* arg);
-void blink2_thread(void* arg);
 
 void tosthread_main(void* arg) {
   //Use stack estimator to calculate maximum stack size
@@ -58,10 +72,9 @@ void init_thread(void* arg) {
   for(;;) {
     tosthread_create(&blink0, blink0_thread, NULL, BLINK0_STACK_SIZE);
     tosthread_create(&blink1, blink1_thread, NULL, BLINK1_STACK_SIZE);
-    tosthread_create(&blink2, blink2_thread, NULL, BLINK2_STACK_SIZE);
-    tosthread_join(&blink2);
     tosthread_join(&blink0);
     tosthread_join(&blink1);
+    led2Toggle();
   }
 }
 
@@ -81,10 +94,3 @@ void blink1_thread(void* arg) {
   }
 }
 
-void blink2_thread(void* arg) {
-  int i;
-  for(i=0; i<6; i++) {
-    led2Toggle();
-    tosthread_sleep(1000);
-  }
-}

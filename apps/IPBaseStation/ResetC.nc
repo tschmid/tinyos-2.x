@@ -1,4 +1,4 @@
-// $Id: ResetC.nc,v 1.1 2009/08/10 01:10:51 sdhsdh Exp $
+// $Id$
 
 /*									tab:4
  * "Copyright (c) 2000-2003 The Regents of the University  of California.  

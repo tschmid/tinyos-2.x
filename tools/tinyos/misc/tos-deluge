@@ -185,9 +185,23 @@ def read(imgNum, offset, length):
     return r
 
 def erase(imgNum):
+    # Note: the normal erase doesn't work properly on AT45DB. A
+    # workaround is to do the normal erase (to make happy STM25P)
+    # and then overwrite the metadata (to make happy AT45DB).
+
     sreqpkt = FMReqPacket((FM_CMD_ERASE, imgNum, 0, 0, []))
     success = am.write(sreqpkt, FM_AMID)
-    return handleResponse(success, "ERROR: Unable to erase the flash volume")
+    result = handleResponse(success, "ERROR: Unable to erase the flash volume")
+    if result: return True;
+
+    print 'Attempt the workaround for AT45DB...'
+    sreqpkt = FMReqPacket((FM_CMD_WRITE, imgNum, 0, 0, []))
+    sreqpkt.data = [0xFF] * DELUGE_IDENT_SIZE
+    sreqpkt.length = DELUGE_IDENT_SIZE
+    success = am.write(sreqpkt, FM_AMID)
+    result = handleResponse(success, "ERROR: Unable to erase the flash volume")
+    if not result: return False;
+    return sync(imgNum)
 
 def sync(imgNum):
     sreqpkt = FMReqPacket((FM_CMD_SYNC, imgNum, 0, 0, []))
@@ -402,7 +416,7 @@ if len(sys.argv) >= 3:
 
     try:
         print "Checking if node is a Deluge T2 base station ..."
-        ident(timeout=5)
+        ident(timeout=1)
     except tos.Timeout:
         print "ERROR: Timeout. Is the node a Deluge T2 base station?"
         sys.exit(-1)

@@ -26,7 +26,7 @@ OBJCOPY = m32c-elf-objcopy
 OBJDUMP = m32c-elf-objdump
 SET_ID = tos-set-symbols
 NCC = ncc
-LIBS = -lm -lc -lgcc
+LIBS = #-lm -lc -lgcc
 
 AMADDR = _ActiveMessageAddressC\$$addr
 # Uncomment the next two lines if you have a toolchain without the dollar sign
@@ -51,9 +51,8 @@ endif
 # We need a different start address for the flash in the linker script when building TOSBoot.
 # Also program the boot_args address bytes with 0xFF so that we know if they are reprogrammable.
 ifeq ($(COMPONENT),TosBootC)
-$(shell sed -e "s/0x00a0000/0x00e0000/ig" $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c.x > $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c_bootloader.x)
-$(shell sed -e "s/\/\*boot_args_address\*\//0x00f0000/ig" $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c_bootloader.x > $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c_bootloader_args.x)
-LDFLAGS += -nostartfiles -T$(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c_bootloader_args.x  $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/crt.S
+$(shell sed -e "s/0x00a0000/0x00f8000/ig" $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c.x > $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c_bootloader.x)
+LDFLAGS += -nostartfiles -T$(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c_bootloader.x  $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/crt.S
 else
 LDFLAGS += -nostartfiles -T$(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/m16c.x  $(TINYOS_MAKE_PATH)/$(THIS_FOLDER)/crt.S
 endif
@@ -72,7 +71,7 @@ $(if $(PROGRAM),,$(call TOSMake_include,$(THIS_FOLDER)/$(DEFAULT_PROGRAM).extra)
 ifneq ($(wildcard $(VOLUMEFILE)), )
 build_storage: $(BUILDDIR)/StorageVolumes.h
 
-exe0: build_storage
+exe0: build_storage 
 
 VOLUME_ALLOCATOR_FLAGS ?= 
 $(BUILDDIR)/StorageVolumes.h: $(VOLUMEFILE)
@@ -114,7 +113,7 @@ exe: exe0 FORCE bytes
 	@:
 
 
-exe0: builddir $(BUILD_EXTRA_DEPS) FORCE
+exe0: builddir $(BUILD_EXTRA_DEPS) $(COMPONENT).nc FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
 	$(NCC) -o $(MAIN_EXE) $(NCC_SAFE_TINYOS_FLAGS) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS)
 ifdef WIRING_CHECK_FILE

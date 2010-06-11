@@ -47,7 +47,7 @@
 
 .text
 	.global __vector_default
-
+	.global m32c_jsri16
 	.extern _main
 
 .section .init0,"ax",@progbits
@@ -62,8 +62,11 @@ _start:
 
 	/* Setup the FLG register to some sane defaults. */
 	ldc		#0, flg
-	fset	u
-	ldc	#_ustack, sp
+  /* Clear the U flag. This sets the stack pointer to the interrupt stack.
+     This is done so that only one stack is used by both interrupt routines
+     and other code. There would else be a problem when threads are changed
+     in interrupt routines in the tosthread library. */
+	fclr u
 
 	/* Setup interrupt vector. */
 	ldc		#%hi16(_vectors_variable), intbh
@@ -88,6 +91,25 @@ _start:
 	/* In case we return, should realy generate a reset :/ */
 	jmp.b	0
 
+m32c_jsri16:
+    add.w    #-1, sp
+    /* Read the address (16 bits) and return address (24 bits) off
+    the stack.  */
+    mov.w    4[sp], r0
+    mov.w    1[sp], r3
+    mov.b    3[sp], a0 /* This zero-extends, so the high byte has
+                          zero in it.  */
+    /* Write the return address, then new address, to the stack.  */
+    mov.w    a0, 1[sp] /* Just to get the zero in 2[sp].  */
+    mov.w    r0, 0[sp]
+    mov.w    r3, 3[sp]
+    mov.b    a0, 5[sp]
+
+    /* This "returns" to the target address, leaving the pending
+    return address on the stack.  */
+    rts
+
+
 /* We should probably not get here. */
 __vector_default:
 	jmp.a	__vector_default
@@ -109,18 +131,6 @@ _vectors_fixed:
 .long	0 /* DBC. */
 .long	0 /* NMI. */
 .long	_start /* Reset. */
-
-
-/* Boot args for tosboot. */
-.section .boot_args, "a",@progbits
-
-.size	_boot_args, 8
-.type	_boot_args, @object
-
-_boot_args:
-
-.long	0xFFFFFFFF 
-.long	0xFFFFFFFF
 
 /* Variable vector table. */
 .section .vectors_variable

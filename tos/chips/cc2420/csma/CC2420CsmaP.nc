@@ -134,7 +134,11 @@ implementation {
     }
 
     header->length = len + CC2420_SIZE;
+#ifdef CC2420_HW_SECURITY
+    header->fcf &= ((1 << IEEE154_FCF_ACK_REQ)|(1 << IEEE154_FCF_SECURITY_ENABLED));
+#else
     header->fcf &= 1 << IEEE154_FCF_ACK_REQ;
+#endif
     header->fcf |= ( ( IEEE154_TYPE_DATA << IEEE154_FCF_FRAME_TYPE ) |
 		     ( 1 << IEEE154_FCF_INTRAPAN ) |
 		     ( IEEE154_ADDR_SHORT << IEEE154_FCF_DEST_ADDR_MODE ) |
@@ -143,7 +147,7 @@ implementation {
     metadata->ack = FALSE;
     metadata->rssi = 0;
     metadata->lqi = 0;
-    metadata->timesync = FALSE;
+    //metadata->timesync = FALSE;
     metadata->timestamp = CC2420_INVALID_TIMESTAMP;
 
     ccaOn = TRUE;
@@ -156,7 +160,7 @@ implementation {
 
   command void* Send.getPayload(message_t* m, uint8_t len) {
     if (len <= call Send.maxPayloadLength()) {
-      return (void* COUNT_NOK(len))m->data;
+      return (void* COUNT_NOK(len ))(m->data);
     }
     else {
       return NULL;

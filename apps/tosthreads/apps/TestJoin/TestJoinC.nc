@@ -30,6 +30,22 @@
  */
  
 /**
+ * TestJoin is a simple application used to test the basic functionality of
+ * the join() system call for waiting on a set of threads in a TOSThreads 
+ * based application.
+ * 
+ * Upon a successful burn, you should see all LEDs toggle in the following pattern,
+ * repeating every 8 seconds:
+ * 
+ * 0s: (110) LED0  ON, LED1  ON, LED2 OFF  <br>
+ * 1s: (000) LED0 OFF, LED1 OFF, LED2 OFF  <br>
+ * 2s: (010) LED0 OFF, LED1  ON, LED2 OFF  <br>
+ * 3s: (000) LED0 OFF, LED1 OFF, LED2 OFF  <br>
+ * 4s: (111) LED0  ON, LED1  ON, LED2  ON  <br>
+ * 5s: (001) LED0 OFF, LED1 OFF, LED2  ON  <br>
+ * 6s: (011) LED0 OFF, LED1  ON, LED2  ON  <br>
+ * 7s: (001) LED0 OFF, LED1 OFF, LED2  ON  <br>
+ *
  * @author Kevin Klues (klueska@cs.stanford.edu)
  */
 
@@ -39,7 +55,6 @@ module TestJoinC {
     interface Thread as NullThread;
     interface Thread as TinyThread0;
     interface Thread as TinyThread1;
-    interface Thread as TinyThread2;
     interface Leds;
   }
 }
@@ -53,10 +68,9 @@ implementation {
     for(;;){
       call TinyThread0.start(NULL);
       call TinyThread1.start(NULL);
-      call TinyThread2.start(NULL);
-      call TinyThread1.join();
       call TinyThread0.join();
-      call TinyThread2.join();
+      call TinyThread1.join();
+      call Leds.led2Toggle();
     }
   }  
   event void TinyThread0.run(void* arg) {
@@ -71,13 +85,6 @@ implementation {
     for(i=0; i<4; i++){ 
       call Leds.led1Toggle();
       call TinyThread1.sleep(1000);
-    }
-  }
-  event void TinyThread2.run(void* arg) {
-    int i;
-    for(i=0; i<6; i++){
-      call Leds.led2Toggle();
-      call TinyThread2.sleep(1000);
     }
   }
 }

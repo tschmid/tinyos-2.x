@@ -25,14 +25,14 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-module ExtFlashM {
+module ExtFlashP {
   provides {
     interface StdControl;
     interface Init;
     interface ExtFlash;
   }
   uses {
-    interface HPLUSARTControl as USARTControl;
+    interface HplUsartControl as UsartControl;
   }
 }
 
@@ -42,7 +42,7 @@ implementation {
     TOSH_MAKE_FLASH_HOLD_OUTPUT();
     TOSH_MAKE_FLASH_CS_OUTPUT();
     TOSH_SET_FLASH_HOLD_PIN();
-    call USARTControl.setModeSPI();
+    call UsartControl.setModeSPI();
     return SUCCESS;
   }
 
@@ -54,12 +54,12 @@ implementation {
 
     TOSH_CLR_FLASH_CS_PIN();
     
-    call USARTControl.tx(0xb9);
-    while(call USARTControl.isTxEmpty() != SUCCESS);
+    call UsartControl.tx(0xb9);
+    while(call UsartControl.isTxEmpty() != SUCCESS);
 
     TOSH_SET_FLASH_CS_PIN();
 
-    call USARTControl.disableSPI();
+    call UsartControl.disableSPI();
 
     return SUCCESS; 
 
@@ -73,8 +73,8 @@ implementation {
 
     // command byte + 3 dummy bytes + signature
     for ( i = 0; i < 5; i++ ) {
-      call USARTControl.tx(0xab);
-      while(call USARTControl.isTxIntrPending() != SUCCESS);
+      call UsartControl.tx(0xab);
+      while(call UsartControl.isTxIntrPending() != SUCCESS);
     }
     
     TOSH_SET_FLASH_CS_PIN();
@@ -94,17 +94,17 @@ implementation {
 
     // address
     for ( i = 4; i > 0; i-- ) {
-      call USARTControl.tx((addr >> (i-1)*8) & 0xff);
-      while(call USARTControl.isTxIntrPending() != SUCCESS);
+      call UsartControl.tx((addr >> (i-1)*8) & 0xff);
+      while(call UsartControl.isTxIntrPending() != SUCCESS);
     }    
 
   }
 
   command uint8_t ExtFlash.readByte() {
-    call USARTControl.rx();
-    call USARTControl.tx(0);
-    while(call USARTControl.isRxIntrPending() != SUCCESS);
-    return call USARTControl.rx();
+    call UsartControl.rx();
+    call UsartControl.tx(0);
+    while(call UsartControl.isRxIntrPending() != SUCCESS);
+    return call UsartControl.rx();
   }
 
   command void ExtFlash.stopRead() {

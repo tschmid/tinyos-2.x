@@ -71,7 +71,7 @@ implementation {
   event void AMControl.startDone(error_t err) {
     if (err == SUCCESS) {
       // Note we can setup LPL before or after the radio turns on
-      call LowPowerListening.setLocalSleepInterval(1000);
+      call LowPowerListening.setLocalWakeupInterval(1000);
       call MilliTimer.startOneShot(1500);
     }
     else {
@@ -96,7 +96,7 @@ implementation {
       }
 
       rcm->counter = counter;
-      call LowPowerListening.setRxSleepInterval(&packet, 1000);
+      call LowPowerListening.setRemoteWakeupInterval(&packet, 1000);
       if (call AMSend.send(AM_BROADCAST_ADDR, &packet, sizeof(radio_count_msg_t)) == SUCCESS) {
         dbg("RadioCountToLedsC", "RadioCountToLedsC: packet sent.\n", counter);        
         locked = TRUE;

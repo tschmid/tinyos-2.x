@@ -30,7 +30,31 @@
  */
 
 /**
+ * TestCollection is a reimplementation of the Multihop Oscilloscope application
+ * using TOSThreads. It periodically samples a universal software-based SineSensor
+ * and broadcasts a message every few readings. These readings can be displayed by
+ * the Java "Oscilloscope" application found in the the TestCollection/java
+ * subdirectory. The sampling rate starts at 4Hz, but can be changed from the Java
+ * application.
+ * 
+ * At least two motes must be used by this application, with one of them installed
+ * as a base station.  Base station motes can be created by installing them with
+ * NODE_ID % 500 == 0.
+ *   i.e. make <platform> cthreads install.0
+ *        make <platform> cthreads install.500
+ *        make <platform> cthreads install.1000
+ * 
+ * All other nodes can be installed with arbitrary NODE_IDs.
+ *   make <platform> cthreads install.123
+ * 
+ * Successful running of this application is verified by all NON-base station motes
+ * periodically flashing LED1 upon sending a message, and the base station mote,
+ * flashing LED2 upon successful reception of a message.  Additionally, correct
+ * operation should be verified by running the java tool described in the following
+ * section.
+ *
  * @author Kevin Klues <klueska@cs.stanford.edu>
+ * @author Chieh-Jan Mike Liang <cliang4@cs.jhu.edu>
  */
 
 #include "tosthread.h"
@@ -40,8 +64,6 @@
 #include "tosthread_collection.h"
 #include "tosthread_sinesensor.h"
 #include "MultihopOscilloscope.h"
-
-#define MY_COLLECTION_ID 0x02
 
 void fatal_problem();
 void report_problem();
@@ -53,7 +75,12 @@ uint8_t reading = 0;   /* 0 to NREADINGS */
 message_t sendbuf;
 message_t recvbuf;
 
-void tosthread_main(void* arg) {
+enum {
+  MY_COLLECTION_ID = NEW_COLLECTION_CLIENT_ID(),   // Gets a collection sender instance
+};
+
+void tosthread_main(void* arg)
+{
   local.interval = DEFAULT_INTERVAL;
   local.id = TOS_NODE_ID;
   local.version = 0;
@@ -61,13 +88,15 @@ void tosthread_main(void* arg) {
   while ( amRadioStart() != SUCCESS );
   while ( collectionRoutingStart() != SUCCESS );
   
-  collectionSetCollectionId(AM_OSCILLOSCOPE, MY_COLLECTION_ID);
+  collectionSetCollectionId(MY_COLLECTION_ID, AM_OSCILLOSCOPE);   // Associates the collection sender
+                                                                  //  with AM_OSCILLOSCOPE collection ID
   
   if (local.id % 500 == 0) {
     while ( amSerialStart() != SUCCESS );
     collectionSetRoot();
     for (;;) {
-      if (collectionReceive(&recvbuf, 0, MY_COLLECTION_ID) == SUCCESS) {
+      // Waits for incoming packets with AM_OSCILLOSCOPE collection ID
+      if (collectionReceive(&recvbuf, 0, AM_OSCILLOSCOPE) == SUCCESS) {
         oscilloscope_t *recv_o = (oscilloscope_t *) collectionGetPayload(&recvbuf, sizeof(oscilloscope_t));
         oscilloscope_t *send_o = (oscilloscope_t *) serialGetPayload(&sendbuf, sizeof(oscilloscope_t));
         memcpy(send_o, recv_o, sizeof(oscilloscope_t));
@@ -86,7 +115,7 @@ void tosthread_main(void* arg) {
           return;
         }
         memcpy(o, &local, sizeof(local));
-        if (collectionSend(&sendbuf, sizeof(local), AM_OSCILLOSCOPE) == SUCCESS) {
+        if (collectionSend(&sendbuf, sizeof(local), MY_COLLECTION_ID) == SUCCESS) {
           local.count++;
           report_sent();
         } else {
@@ -106,7 +135,8 @@ void tosthread_main(void* arg) {
 }
   
 // Use LEDs to report various status issues.
-void fatal_problem() { 
+void fatal_problem()
+{
   led0On(); 
   led1On();
   led2On();

@@ -105,8 +105,8 @@ module TestActiveScanDeviceC
       }
     }
     if(rightCoordFound == FALSE) {
-      call Leds.led0On();
-      call Led0Timer.startOneShot(62500U); 
+      // call Leds.led0On();
+      // call Led0Timer.startOneShot(62500U); 
     }
   }
 

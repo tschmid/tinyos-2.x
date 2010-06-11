@@ -1,4 +1,4 @@
-/* $Id: DemoSensorStreamC.nc,v 1.4 2006/12/12 18:23:43 vlahan Exp $
+/* $Id$
  * Copyright (c) 2006 Intel Corporation
  * All rights reserved.
  *

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // $Id: LedsP.nc,v 1.1 2009/09/04 18:27:46 ayer1 Exp $
+=======
+// $Id$
+>>>>>>> master
 
 /*
  * "Copyright (c) 2000-2005 The Regents of the University  of California.  

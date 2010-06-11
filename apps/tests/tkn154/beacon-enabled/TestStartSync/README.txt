@@ -1,21 +1,19 @@
 README for TestStartSync
-Author/Contact: tinyos-help@millennium.berkeley.edu
+Author/Contact: Jan Hauer <hauer@tkn.tu-berlin.de>
 
 Description:
 
 In this application one node takes the role of a PAN coordinator in a
-beacon-enabled 802.15.4 PAN; it transmits periodic beacons with a frequency
-defined in the app_profile.h file. A second node acts as a device; it first
+beacon-enabled 802.15.4 PAN, it transmits periodic beacons with a frequency
+defined in the app_profile.h file. A second node acts as a device, it first
 scans all available channels for beacons from the coordinator and once it finds
 a beacon it tries to synchronize to and track all future beacons. 
 
-The third LED (Telos: blue) is toggled whenever the coordinator has transmitted
-a beacon or whenever a device has received a beacon. On the coordinator the
-second LED (Telos: green) is switched on after it has started transmitting
-beacons. On a device the second LED is switched on whenever the device is
-synchronized to the coordinator's beacons. The first LED (Telos: red) is used
-for debugging, it denotes an error in the protocol stack and should never be
-on.
+Criteria for a successful test:
+
+After a few seconds all nodes should have the LED1 turned on and LED2
+toggling in unison every second.
+
 
 Tools: NONE
 

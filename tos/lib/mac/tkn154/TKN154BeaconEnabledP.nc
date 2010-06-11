@@ -266,6 +266,7 @@ implementation
   BeaconTransmitP.GetSetRealignmentFrame -> CoordRealignmentP;
   BeaconTransmitP.IsBroadcastReady -> CoordBroadcastP.IsBroadcastReady;
   BeaconTransmitP.TimeCalc -> PibP;
+  BeaconTransmitP.Random = Random;
   BeaconTransmitP.Leds = Leds;
 
   /* ------------------ Beacon Tracking (MLME-SYNC) ------------------ */
@@ -318,6 +319,7 @@ implementation
   DisassociateP.TxFramePool -> TxFramePoolP;
   DisassociateP.TxControlPool -> TxControlPoolP;
   DisassociateP.MLME_GET -> PibP;
+  DisassociateP.MLME_SET -> PibP;
   DisassociateP.FrameUtility -> PibP;
   DisassociateP.Frame -> PibP;
   DisassociateP.LocalExtendedAddress -> PibP.GetLocalExtendedAddress;
@@ -361,7 +363,7 @@ implementation
   IndirectTxP.CoordCapTx -> CoordCapQueue.FrameTx[unique(CAP_TX_CLIENT)];
   IndirectTxP.DataRequestRx -> CoordCap.FrameRx[FC1_FRAMETYPE_CMD + CMD_FRAME_DATA_REQUEST];
   IndirectTxP.MLME_GET -> PibP;
-  IndirectTxP.FrameUtility -> PibP;
+  IndirectTxP.IEEE154Frame -> PibP;
   IndirectTxP.IndirectTxTimeout = Timer4;
   IndirectTxP.TimeCalc -> PibP;
   IndirectTxP.Leds = Leds;
@@ -422,6 +424,7 @@ implementation
   DeviceCap.TimeCalc -> PibP;
   DeviceCap.Leds = Leds;
   DeviceCap.TrackSingleBeacon -> BeaconSynchronizeP.TrackSingleBeacon;
+  DeviceCap.MLME_SYNC_LOSS -> BeaconSynchronizeP;
 
   /* ---------------------- CAP (outgoing superframe) ------------------- */
 

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // $Id: PlatformLedsC.nc,v 1.1 2009/09/04 18:27:46 ayer1 Exp $
+=======
+// $Id$
+>>>>>>> master
 
 /* "Copyright (c) 2000-2005 The Regents of the University of California.  
  * All rights reserved.
@@ -22,7 +26,11 @@
 
 /**
  * @author Joe Polastre
+<<<<<<< HEAD
  * @version $Revision: 1.1 $ $Date: 2009/09/04 18:27:46 $
+=======
+ * @version $Revision$ $Date$
+>>>>>>> master
  */
 
 #include "hardware.h"

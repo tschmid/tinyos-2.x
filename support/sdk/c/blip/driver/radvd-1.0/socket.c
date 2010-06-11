@@ -14,9 +14,9 @@
  *
  */
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
 
 /* Note: these are applicable to receiving sockopts only */
 #if defined IPV6_HOPLIMIT && !defined IPV6_RECVHOPLIMIT

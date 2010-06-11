@@ -39,4 +39,5 @@ implementation {
     signal Interrupt.fired();
   }
 
+  default async event void Interrupt.fired() { }
 }

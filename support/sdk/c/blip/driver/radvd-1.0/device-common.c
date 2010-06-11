@@ -13,10 +13,10 @@
  *
  */
 
-#include <config.h>
-#include <includes.h>
-#include <radvd.h>
-#include <defaults.h>
+#include "config.h"
+#include "includes.h"
+#include "radvd.h"
+#include "defaults.h"
 
 int
 check_device(int sock, struct Interface *iface)

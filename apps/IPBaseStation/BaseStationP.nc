@@ -65,7 +65,6 @@
  */
 
 #ifndef SIM
-#include "CC2420.h"
 #endif
 #include "AM.h"
 #include "Serial.h"
@@ -78,37 +77,29 @@ module BaseStationP {
     interface SplitControl as SerialControl;
     interface SplitControl as RadioControl;
 
-#ifndef SIM
     interface Send as UartSend;
-    interface IEEE154Send as RadioSend;
-#else
-    interface AMSend as UartSend;
-    interface AMSend as RadioSend;
-    interface AMPacket as SerialAMPacket;
-    interface Packet as SerialPacket;
-#endif
+    interface Ieee154Send as RadioSend;
 
     interface Receive as UartReceive;
     interface Receive as RadioReceive;
     interface Packet as RadioPacket;
 
-#ifndef SIM
     interface Send as ConfigureSend;
     interface Receive as ConfigureReceive;
     interface Timer<TMilli> as ConfigureTimer;
     interface IPAddress;
-#endif
 
 
-#ifndef SIM
-    interface IEEE154Packet as RadioIEEEPacket;
-#else
-    interface AMPacket as RadioIEEEPacket;
-#endif
+    interface Ieee154Packet as RadioIeeePacket;
 
     interface PacketLink;
     interface LowPowerListening;
+
+#if defined(PLATFORM_IRIS) || defined(PLATFORM_MULLE)
+    interface RadioChannel;
+#else
     interface CC2420Config;
+#endif
 
     interface Leds;
 
@@ -123,8 +114,8 @@ implementation
     RADIO_QUEUE_LEN = 10,
   };
 
-  uint16_t radioRetries = 10;
-  uint16_t radioDelay   = 30;
+  uint16_t radioRetries = BLIP_L2_RETRIES;
+  uint16_t radioDelay   = BLIP_L2_DELAY;
 
   uint16_t serial_read;
   uint16_t radio_read;
@@ -173,7 +164,7 @@ implementation
     echo_busy = TRUE;
     // delay sending the reply for a bit
     // the pc seems to usually drop the packet if we don't do this; 
-    call ConfigureTimer.startOneShot(50);
+    call ConfigureTimer.startOneShot(100);
   }
 
   event void Boot.booted() {
@@ -210,7 +201,8 @@ implementation
     if (error == SUCCESS) {
       radioFull = FALSE;
 #ifdef LPL_SLEEP_INTERVAL
-      call LowPowerListening.setLocalSleepInterval(LPL_SLEEP_INTERVAL);
+      // SDH : can actually leave the base on full time in most cases.
+      // call LowPowerListening.setLocalSleepInterval(LPL_SLEEP_INTERVAL);
 #endif
     }
   }
@@ -281,20 +273,11 @@ implementation
 
     // Since we're forwarding fully formed radio packets, we can use
     // these headers.
-#ifdef DBG_TRACK_FLOWS
-    len = call RadioPacket.payloadLength(msg) + sizeof(flow_id_t);
-#else
-    len = call RadioPacket.payloadLength(msg) - sizeof(am_header_t);
-#endif
+    len = call RadioPacket.payloadLength(msg);
 
-#ifdef SIM
-    if (call UartSend.send(call RadioIEEEPacket.source(uartQueue[uartOut]),
-                           uartQueue[uartOut], len) == SUCCESS)
-#else
-    if (call UartSend.send(uartQueue[uartOut], len) == SUCCESS)
-#endif
+    if (call UartSend.send(uartQueue[uartOut], len) == SUCCESS) {
       call Leds.led1Toggle();
-    else
+    }    else
       {
 	failBlink();
 	post uartSendTask();
@@ -314,6 +297,7 @@ implementation
 	      uartFull = FALSE;
 	  }
     post uartSendTask();
+
   }
 
   event message_t *UartReceive.receive(message_t *msg,
@@ -323,7 +307,9 @@ implementation
     bool reflectToken = FALSE;
     CHECK_NODE_ID msg;
     dbg("base", "uartreceive len %i of 0x%x\n", len, call SerialAMPacket.destination(msg));
-
+#if defined(BLIP_WATCHDOG) && (defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC))
+    WDTCTL = WDT_ARST_1000;
+#endif
     atomic
       if (!radioFull)
 	{
@@ -354,7 +340,7 @@ implementation
 
   task void radioSendTask() {
     uint8_t len;
-    hw_addr_t addr;
+    ieee154_saddr_t addr;
     message_t* msg;
     
     dbg ("base", "radioSendTask()\n");
@@ -366,24 +352,8 @@ implementation
 	}
 
     msg = radioQueue[radioOut];
-#ifndef SIM
     len = call RadioPacket.payloadLength(msg);
-    addr = call RadioIEEEPacket.destination(msg);
-#else
-#ifdef DBG_TRACK_FLOWS
-    len = call SerialPacket.payloadLength(msg) - sizeof(flow_id_t);
-#else
-    len = call SerialPacket.payloadLength(msg);
-#endif
-    { 
-      hw_addr_t source;
-      addr = call SerialAMPacket.destination(msg);
-      source = TOS_NODE_ID;
-
-      call RadioPacket.clear(msg);
-      call RadioIEEEPacket.setSource(msg, source);
-    }
-#endif
+    addr = call RadioIeeePacket.destination(msg);
 
     if (addr != 0xFFFF) {
       call PacketLink.setRetries(msg, radioRetries);
@@ -392,7 +362,7 @@ implementation
       call PacketLink.setRetries(msg, 0);
     }
 #ifdef LPL_SLEEP_INTERVAL
-    call LowPowerListening.setRxSleepInterval(msg, LPL_SLEEP_INTERVAL);
+    call LowPowerListening.setRemoteWakeupInterval(msg, LPL_SLEEP_INTERVAL);
 #endif
     dbg("base", "radio send to: 0x%x len: %i\n", addr, len);
     if (call RadioSend.send(addr, msg, len) == SUCCESS)
@@ -431,6 +401,10 @@ implementation
                                             uint8_t len) {
     config_cmd_t *cmd;
     uint8_t error = CONFIG_ERROR_OK;
+#if defined(BLIP_WATCHDOG) && (defined(PLATFORM_TELOS) || defined(PLATFORM_TELOSB) || defined(PLATFORM_EPIC))
+    WDTCTL = WDT_ARST_1000;
+#endif
+
     if (len != sizeof(config_cmd_t) || msg == NULL) return msg;
     // don't parse the message if we can't reply
 
@@ -440,16 +414,24 @@ implementation
     case CONFIG_ECHO:
       break;
     case CONFIG_SET_PARM:
+#if defined(PLATFORM_IRIS) || defined(PLATFORM_MULLE)
+      // we should check the return value, hope it works
+      call RadioChannel.setChannel(cmd->rf.channel);
+      call IPAddress.setShortAddr(cmd->rf.addr);
+#else
       call CC2420Config.setChannel(cmd->rf.channel);
       // IPAddress calls sync() for you, I think, so we'll put it second 
       call IPAddress.setShortAddr(cmd->rf.addr);
       call CC2420Config.sync();
+#endif
       radioRetries = cmd->retx.retries;
       radioDelay   = cmd->retx.delay;
       break;
     case CONFIG_REBOOT:
       call Reset.reset();
       break;
+    case CONFIG_KEEPALIVE:
+      return msg;
     }
     if (!echo_busy) {
       reply->error = error;
@@ -458,10 +440,12 @@ implementation
     return msg;
   }
 
-
+#if defined(PLATFORM_IRIS) || defined(PLATFORM_MULLE)
+  event void RadioChannel.setChannelDone() { }
+#else
   event void CC2420Config.syncDone(error_t error) {
-
   }
+#endif
 
   event void ConfigureSend.sendDone(message_t *msg, error_t error) {
     echo_busy = FALSE;

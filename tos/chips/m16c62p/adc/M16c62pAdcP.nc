@@ -1,4 +1,4 @@
-/* $Id: M16c62pAdcP.nc,v 1.1 2009/09/07 14:12:25 r-studio Exp $
+/* $Id$
  * "Copyright (c) 2000-2003 The Regents of the University  of California.  
  * All rights reserved.
  *

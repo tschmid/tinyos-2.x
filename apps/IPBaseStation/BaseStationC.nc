@@ -84,45 +84,36 @@ z * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
  * @author Philip Levis
  * @date August 10 2005
  */
+#include <Ieee154.h>
 
 configuration BaseStationC {
 }
 implementation {
+
+  enum {
+    // becasue we're the only one's using the radio, we're lazy and
+    // don't acquire the resource.  For some reason, it seems to crash
+    // occasionally if we don't do this.
+    RESOURCE_IDX = unique(IEEE154_SEND_CLIENT),
+  };
+
   components MainC, BaseStationP, LedsC;
-#ifndef SIM
-  components CC2420ActiveMessageC as Radio;
+  components Ieee154MessageC as Radio;
   components SerialDispatcherC as SerialControl, Serial802_15_4C as Serial;
-#else 
-  components ActiveMessageC as Radio;
-  components SerialActiveMessageC as Serial;
-#endif
   
   MainC.Boot <- BaseStationP;
 
   BaseStationP.RadioControl -> Radio;
-#ifndef SIM
   BaseStationP.SerialControl -> SerialControl;
   BaseStationP.UartSend -> Serial.Send;
   BaseStationP.UartReceive -> Serial.Receive;
-#else
-  BaseStationP.SerialControl -> Serial;
-  BaseStationP.UartSend -> Serial.AMSend[0];
-  BaseStationP.UartReceive -> Serial.Receive[0];
-#endif
   
 
-#ifndef SIM  
   BaseStationP.RadioSend -> Radio;
-  BaseStationP.RadioReceive -> Radio.IEEE154Receive;
-#else
-  BaseStationP.RadioSend -> Radio.AMSend[0];
-  BaseStationP.RadioReceive -> Radio.ReceiveBase[0];
-  BaseStationP.SerialAMPacket -> Serial;
-  BaseStationP.SerialPacket -> Serial;
-#endif
+  BaseStationP.RadioReceive -> Radio.Ieee154Receive;
 
-  BaseStationP.RadioPacket -> Radio.SubAMPacket;
-  BaseStationP.RadioIEEEPacket -> Radio;
+  BaseStationP.RadioPacket -> Radio.Packet;
+  BaseStationP.RadioIeeePacket -> Radio;
   
   BaseStationP.Leds -> LedsC;
 
@@ -132,7 +123,6 @@ implementation {
   components ResetC;
   BaseStationP.Reset -> ResetC;
 
-#ifndef SIM
   components SerialDevConfC as Configure;
   BaseStationP.ConfigureSend -> Configure;
   BaseStationP.ConfigureReceive -> Configure;
@@ -143,6 +133,9 @@ implementation {
   components IPAddressC;
   BaseStationP.IPAddress -> IPAddressC;
 
+#if defined(PLATFORM_IRIS) || defined(PLATFORM_MULLE)
+  BaseStationP.RadioChannel -> Radio;
+#else
   components CC2420ControlC;
   BaseStationP.CC2420Config -> CC2420ControlC;
 #endif

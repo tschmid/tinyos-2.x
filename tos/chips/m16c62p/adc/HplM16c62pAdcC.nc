@@ -1,4 +1,4 @@
-/// $Id: HplM16c62pAdcC.nc,v 1.1 2009/09/07 14:12:25 r-studio Exp $
+/// $Id$
 
 /*
  * Copyright (c) 2004-2005 Crossbow Technology, Inc.  All rights reserved.
@@ -40,4 +40,9 @@ implementation {
 
   HplM16c62pAdc = HplM16c62pAdcP;
   HplM16c62pAdcP.McuPowerState -> McuSleepC;
+  
+#ifdef THREADS
+  components PlatformInterruptC;
+    HplM16c62pAdcP.PlatformInterrupt -> PlatformInterruptC;
+#endif
 }

@@ -163,9 +163,16 @@ implementation {
   
 #ifdef _H_msp430hardware_h
   int putchar(int c) __attribute__((noinline)) @C() @spontaneous() {
-#endif
+#else
 #ifdef _H_atmega128hardware_H
   int uart_putchar(char c, FILE *stream) __attribute__((noinline)) @C() @spontaneous() {
+#else
+#ifdef __M16C62PHARDWARE_H__
+  int lowlevel_putc(int c) __attribute__((noinline)) @C() @spontaneous() {
+#else
+  int lowlevel_putc(int c) __attribute__((noinline)) @C() @spontaneous() {
+#endif
+#endif
 #endif
 #ifdef SAM3U_HARDWARE_H
   int putchar(int c) __attribute__((noinline)) @C() @spontaneous() {

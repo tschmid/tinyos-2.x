@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // $Id: RadioCountToLedsAppC.nc,v 1.1 2009/09/18 22:28:02 mmaroti Exp $
+=======
+// $Id$
+>>>>>>> master
 
 /*									tab:4
  * "Copyright (c) 2000-2005 The Regents of the University  of California.  

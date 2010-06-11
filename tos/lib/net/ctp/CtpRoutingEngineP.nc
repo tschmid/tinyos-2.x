@@ -157,6 +157,16 @@ implementation {
     error_t routingTableUpdateEntry(am_addr_t, am_addr_t , uint16_t);
     error_t routingTableEvict(am_addr_t neighbor);
 
+
+
+  /* 
+     For each interval t, you set a timer to fire between t/2 and t
+     (chooseAdvertiseTime), and you wait until t (remainingInterval). Once
+     you are at t, you double the interval (decayInterval) if you haven't
+     reached the max. For reasons such as topological inconsistency, you
+     reset the timer to a small value (resetInterval).
+  */
+
     uint32_t currentInterval = minInterval;
     uint32_t t; 
     bool tHasPassed;
@@ -166,7 +176,6 @@ implementation {
        t /= 2;
        t += call Random.rand32() % t;
        tHasPassed = FALSE;
-       call BeaconTimer.stop();
        call BeaconTimer.startOneShot(t);
     }
 
@@ -230,7 +239,6 @@ implementation {
             uint16_t nextInt;
             nextInt = call Random.rand16() % BEACON_INTERVAL;
             nextInt += BEACON_INTERVAL >> 1;
-            call BeaconTimer.startOneShot(nextInt);
         }
     } 
 
@@ -242,16 +250,9 @@ implementation {
     /* Is this quality measure better than the minimum threshold? */
     // Implemented assuming quality is EETX
     bool passLinkEtxThreshold(uint16_t etx) {
-	return TRUE;
         return (etx < ETX_THRESHOLD);
     }
 
-    /* Converts the output of the link estimator to path metric
-     * units, that can be *added* to form path metric measures */
-    uint16_t evaluateEtx(uint16_t quality) {
-        //dbg("TreeRouting","%s %d -> %d\n",__FUNCTION__,quality, quality+10);
-        return (quality + 10);
-    }
 
     /* updates the routing information, using the info that has been received
      * from neighbor beacons. Two things can cause this info to change: 
@@ -286,8 +287,8 @@ implementation {
                   i, entry->neighbor, entry->info.parent);
               continue;
             }
-            /* Compute this neighbor's path metric */
-            linkEtx = evaluateEtx(call LinkEstimator.getLinkQuality(entry->neighbor));
+
+            linkEtx = call LinkEstimator.getLinkQuality(entry->neighbor);
             dbg("TreeRouting", 
                 "routingTable[%d]: neighbor: [id: %d parent: %d etx: %d retx: %d]\n",  
                 i, entry->neighbor, entry->info.parent, linkEtx, entry->info.etx);
@@ -400,8 +401,7 @@ implementation {
             beaconMsg->etx = routeInfo.etx;
             beaconMsg->options |= CTP_OPT_PULL;
         } else {
-            beaconMsg->etx = routeInfo.etx +
-                                evaluateEtx(call LinkEstimator.getLinkQuality(routeInfo.parent));
+            beaconMsg->etx = routeInfo.etx + call LinkEstimator.getLinkQuality(routeInfo.parent);
         }
 
         dbg("TreeRouting", "%s parent: %d etx: %d\n",
@@ -544,8 +544,7 @@ implementation {
 	if (state_is_root == 1) {
 	  *etx = 0;
 	} else {
-	  // path etx = etx(parent) + etx(link to the parent)
-	  *etx = routeInfo.etx + evaluateEtx(call LinkEstimator.getLinkQuality(routeInfo.parent));
+	  *etx = routeInfo.etx + call LinkEstimator.getLinkQuality(routeInfo.parent);
 	}
         return SUCCESS;
     }
@@ -670,7 +669,6 @@ implementation {
             if (entry->neighbor == routeInfo.parent)
                 continue;
             neighEtx = entry->info.etx;
-            //neighEtx = evaluateEtx(call LinkEstimator.getLinkQuality(entry->neighbor));
             found |= (pathEtx < neighEtx); 
         }
         return found;
@@ -709,7 +707,7 @@ implementation {
     error_t routingTableUpdateEntry(am_addr_t from, am_addr_t parent, uint16_t etx)    {
         uint8_t idx;
         uint16_t  linkEtx;
-        linkEtx = evaluateEtx(call LinkEstimator.getLinkQuality(from));
+        linkEtx = call LinkEstimator.getLinkQuality(from);
 
         idx = routingTableFind(from);
         if (idx == routingTableSize) {
@@ -809,7 +807,7 @@ implementation {
     command uint16_t      CtpRoutingPacket.getEtx(message_t* msg) {
       return getHeader(msg)->etx;
     }
-    command void          CtpRoutingPacket.setEtx(message_t* msg, uint8_t etx) {
+    command void          CtpRoutingPacket.setEtx(message_t* msg, uint16_t etx) {
       getHeader(msg)->etx = etx;
     }
 

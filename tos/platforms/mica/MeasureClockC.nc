@@ -93,11 +93,11 @@ implementation
   }
 
   async command uint32_t Atm128Calibrate.calibrateMicro(uint32_t n) {
-    return scale32(n + MAGIC / 2, cycles, MAGIC);
+    return scale32(n, cycles, MAGIC);
   }
 
   async command uint32_t Atm128Calibrate.actualMicro(uint32_t n) {
-    return scale32(n + (cycles >> 1), MAGIC, cycles);
+    return scale32(n, MAGIC, cycles);
   }
 
   async command uint8_t Atm128Calibrate.adcPrescaler() {

@@ -28,7 +28,7 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-module PowerOffM {
+module PowerOffC {
   provides {
     interface Init;
     interface StdControl;
