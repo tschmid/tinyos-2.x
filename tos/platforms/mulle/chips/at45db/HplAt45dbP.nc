@@ -69,11 +69,8 @@
  *
  * @author Henrik Makitaavola <henrik.makitaavola@gmail.com>
  */
-<<<<<<< HEAD
-=======
  
 #include "m16c62p_printf.h"
->>>>>>> master
 module HplAt45dbP
 {
   provides
@@ -96,13 +93,10 @@ implementation
   // TODO(Henrik) Move init code to a SplitControl interface and
   //              change the busy wait into a TimerMilli.startOneShot.
   command error_t Init.init() {
-<<<<<<< HEAD
-=======
   	call WP.makeOutput();
   	call WP.set();
   	call RESET.makeOutput();
   	call RESET.set();
->>>>>>> master
     call Select.makeOutput();
     call Select.set();
     call VCC.makeOutput();

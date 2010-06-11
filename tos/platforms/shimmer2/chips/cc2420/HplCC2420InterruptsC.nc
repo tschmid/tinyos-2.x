@@ -34,34 +34,24 @@
  * CC2420 radio connected to a TI MSP430 processor.
  *
  * @author Jonathan Hui <jhui@archrock.com>
-<<<<<<< HEAD
- * @version $Revision: 1.1 $ $Date: 2009/10/21 18:13:22 $
-=======
  * @version $Revision$ $Date$
->>>>>>> master
  */
 /**
  * Ported to the SHIMMER platform. 
  *
  * @author Konrad Lorincz
  * @date May 14, 2008
-<<<<<<< HEAD
-=======
  * re-written to use interrupt-driven sfd capture; 
  * shimmer2 does not have sfd wired to a timer pin
  * @author Steve Ayer
  * @date January, 2010
->>>>>>> master
  */
 
 configuration HplCC2420InterruptsC {
 
   provides interface GpioCapture as CaptureSFD;
-<<<<<<< HEAD
-=======
   provides interface GpioInterrupt as InterruptSFD;
 
->>>>>>> master
   provides interface GpioInterrupt as InterruptCCA;
   provides interface GpioInterrupt as InterruptFIFOP;
 
@@ -69,24 +59,6 @@ configuration HplCC2420InterruptsC {
 
 implementation {
 
-<<<<<<< HEAD
-  components HplMsp430GeneralIOC as GeneralIOC;
-  components Msp430TimerC;
-  components new GpioCaptureC() as CaptureSFDC;
-  CaptureSFDC.Msp430TimerControl -> Msp430TimerC.ControlA1;
-  CaptureSFDC.Msp430Capture -> Msp430TimerC.CaptureA1;
-  CaptureSFDC.GeneralIO -> GeneralIOC.Port10;
-
-  components HplMsp430InterruptC;
-  components new Msp430InterruptC() as InterruptCCAC;
-  components new Msp430InterruptC() as InterruptFIFOPC;
-  InterruptCCAC.HplInterrupt -> HplMsp430InterruptC.Port27;
-  InterruptFIFOPC.HplInterrupt -> HplMsp430InterruptC.Port12;
-
-  CaptureSFD = CaptureSFDC.Capture;
-  InterruptCCA = InterruptCCAC.Interrupt;
-  InterruptFIFOP = InterruptFIFOPC.Interrupt;
-=======
   components HplMsp430InterruptC;
   components new Msp430InterruptC() as InterruptCCAC;
   components new Msp430InterruptC() as InterruptFIFOPC;
@@ -109,5 +81,4 @@ implementation {
   InterruptCCA = InterruptCCAC.Interrupt;
   InterruptFIFOP = InterruptFIFOPC.Interrupt;
   InterruptSFD = InterruptSFDC.Interrupt;
->>>>>>> master
 }

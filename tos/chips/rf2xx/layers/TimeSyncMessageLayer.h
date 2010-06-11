@@ -34,9 +34,6 @@
 typedef nx_int32_t timesync_relative_t;
 
 // this is stored in memory
-<<<<<<< HEAD
-typedef uint32_t timesync_absolute_t;
-=======
 typedef nx_uint32_t timesync_absolute_t;
 
 typedef nx_struct timesync_footer_t
@@ -47,17 +44,6 @@ typedef nx_struct timesync_footer_t
 		timesync_relative_t relative;
 		timesync_absolute_t absolute;
 	} timestamp;
-} timesync_footer_t;
->>>>>>> master
-
-typedef struct timesync_footer_t
-{
-	nx_am_id_t type;
-	union
-	{
-		timesync_relative_t relative;
-		timesync_absolute_t absolute;
-	};
 } timesync_footer_t;
 
 #endif//__TIMESYNCMESSAGELAYER_H__

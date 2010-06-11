@@ -53,23 +53,9 @@ configuration TestJoinAppC {
 }
 implementation {
   components MainC, TestJoinC,  LedsC;
-<<<<<<< HEAD
-#ifdef PLATFORM_SAM3U_EK
-  components new ThreadC(0x200) as NullThread;
-  components new ThreadC(0x200) as TinyThread0;
-  components new ThreadC(0x200) as TinyThread1;
-  components new ThreadC(0x200) as TinyThread2;
-#else
-  components new ThreadC(0x200) as NullThread;
-  components new ThreadC(0x200) as TinyThread0;
-  components new ThreadC(0x200) as TinyThread1;
-  components new ThreadC(0x200) as TinyThread2;
-#endif
-=======
   components new ThreadC(100) as NullThread;
   components new ThreadC(100) as TinyThread0;
   components new ThreadC(100) as TinyThread1;
->>>>>>> master
 
   MainC.Boot <- TestJoinC;
   TestJoinC.NullThread -> NullThread;

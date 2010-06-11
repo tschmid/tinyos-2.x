@@ -41,11 +41,7 @@
  */
 
 #include "hardware.h"
-<<<<<<< HEAD
-#
-=======
 
->>>>>>> master
 configuration PlatformC
 {
   provides interface Init;
@@ -61,26 +57,16 @@ implementation
     M16c62pControlC,
     new StopModeControlC();
 
-<<<<<<< HEAD
-  Init = PlatformP;
-=======
   Init = PlatformP.Init;
->>>>>>> master
   SubInit = PlatformP.SubInit;
   PlatformP.M16c62pControl -> M16c62pControlC;
 
   PlatformP.StopModeControl -> StopModeControlC;
 
 #ifdef ENABLE_STOP_MODE
-<<<<<<< HEAD
-  components RV8564C, DS2782InternalC, MainC;
-  PlatformP.Boot -> MainC;
-  PlatformP.RTC -> RV8564C;
-=======
   components HplRV8564C, DS2782InternalC, RealMainP;
   RealMainP.SoftwareInit -> PlatformP.StopModeInit;
   PlatformP.RTC -> HplRV8564C;
->>>>>>> master
   PlatformP.HplDS2782 -> DS2782InternalC;
   PlatformP.DS2782Control -> DS2782InternalC;
 #endif

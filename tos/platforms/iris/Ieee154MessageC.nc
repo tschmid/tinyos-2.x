@@ -38,10 +38,7 @@ configuration Ieee154MessageC
 		interface PacketAcknowledgements;
 		interface LowPowerListening;
 		interface PacketLink;
-<<<<<<< HEAD
-=======
 		interface RadioChannel;
->>>>>>> master
 
 		interface PacketTimeStamp<TMicro, uint32_t> as PacketTimeStampMicro;
 		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
@@ -65,10 +62,7 @@ implementation
 	PacketAcknowledgements = MessageC;
 	LowPowerListening = MessageC;
 	PacketLink = MessageC;
-<<<<<<< HEAD
-=======
 	RadioChannel = MessageC;
->>>>>>> master
 
 	PacketTimeStampMilli = MessageC;
 	PacketTimeStampMicro = MessageC;

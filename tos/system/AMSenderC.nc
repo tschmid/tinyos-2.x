@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 // $Id$
-=======
-// $Id: AMSenderC.nc,v 1.5 2009/09/16 00:51:51 razvanm Exp $
->>>>>>> Big commit of the default lpl. These changes deprecate TEP105.
 /*
  * "Copyright (c) 2006 Stanford University. All rights reserved.
  *

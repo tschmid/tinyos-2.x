@@ -45,15 +45,9 @@ interface HplM16c62pFlash
    * Erases a block in the program flash.
    *
    * @param block The block that should be erased.
-<<<<<<< HEAD
-   * @return False if the erase failed.
-   */
-  command bool FlashRead(unsigned long flash_addr_in);
-=======
    * @return SUCCESS if the erase succeeded without errors else FAIL.
    */
   command error_t erase(unsigned char block);
->>>>>>> master
   
   /**
    * Writes bytes into the program flash.
@@ -61,12 +55,6 @@ interface HplM16c62pFlash
    * @param flash_addr The program flash address where the write should begin. This MUST be an EVEN address.
    * @param buffer_addr The bytes that should be written to the address.
    * @param bytes The number of bytes that should be written. This MUST be an EVEN number.
-<<<<<<< HEAD
-   * @return 1 if the flash control register reported an error. 2 if the parameters that where passed contained an error.
-   */
-  command uint8_t FlashErase(unsigned char block);
-  
-=======
    * @return FAIL if the flash control reported an error. EINVAL if the parameters that where passed contained an error
    * 		 if everything went ok it returns SUCCESS.
    */
@@ -74,19 +62,11 @@ interface HplM16c62pFlash
                         unsigned int* buffer_addr,
                         unsigned int bytes);
                               
->>>>>>> master
   /**
    * Reads the byte at am address using a LDE instruction.
    *
    * @param address The address that a byte should be read from.
    * @return Byte read.
    */
-<<<<<<< HEAD
-  command uint8_t FlashWrite(unsigned long flash_addr_in,
-                              unsigned int* buffer_addr,
-                              unsigned int bytes);
-}
-=======
   command uint8_t read(unsigned long flash_addr_in);
 }
->>>>>>> master

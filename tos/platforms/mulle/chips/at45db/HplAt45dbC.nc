@@ -66,9 +66,5 @@ implementation
 
   HplAt45dbP.FlashSpi -> Spi;
   HplAt45dbP.BusyWait -> BusyWaitMicroC;
-<<<<<<< HEAD
-  RealMainP.PlatformInit -> HplAt45dbP.Init;
-=======
   RealMainP.SoftwareInit -> HplAt45dbP.Init;
->>>>>>> master
 }

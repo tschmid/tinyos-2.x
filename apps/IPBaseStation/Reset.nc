@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 // $Id$
-=======
-// $Id: Reset.nc,v 1.2 2009/08/09 23:36:05 sdhsdh Exp $
->>>>>>> commit svn HEAD of blip into core to start merge testing
 
 /*									tab:4
  * "Copyright (c) 2000-2003 The Regents of the University  of California.  
