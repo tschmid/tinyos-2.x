@@ -40,6 +40,8 @@
  * @version $Revision$ $Date$
  */
 
+#include"Adg715.h" 
+ 
 configuration HplSensirionSht11C {
   provides interface Resource[ uint8_t id ];
   provides interface GeneralIO as DATA;
@@ -71,9 +73,9 @@ implementation {
 	SplitControlPowerManagerC.ArbiterInfo -> Arbiter.ArbiterInfo;
 	SplitControlPowerManagerC.ResourceDefaultOwner -> Arbiter.ResourceDefaultOwner;
 	
-	components Adg715CommC;
-	HplSensirionSht11P.ChannelHumidityClock->Adg715CommC.ChannelHumidityClock;
-	HplSensirionSht11P.ChannelHumidityData->Adg715CommC.ChannelHumidityData;
-	components Adg715PowerC; 
-	HplSensirionSht11P.ChannelHumidityPower->Adg715PowerC.ChannelHumidityPower;
+	components Adg715C;
+	HplSensirionSht11P.ChannelHumidityClock->Adg715C.ChannelHumidityClock;
+	HplSensirionSht11P.ChannelHumidityData->Adg715C.ChannelHumidityData;
+	HplSensirionSht11P.ChannelHumidityPower->Adg715C.ChannelHumidityPower;
+	HplSensirionSht11P.Resource->Adg715C.Resource[ unique(UQ_ADG715)];
 }
