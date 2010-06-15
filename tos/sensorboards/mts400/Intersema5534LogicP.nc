@@ -34,9 +34,9 @@
  */
 
 
-#include "Intersema5543.h"
+#include "Intersema5534.h"
 
-generic module Intersema5543LogicP()
+generic module Intersema5534LogicP()
 {
 	provides interface Read<uint16_t> as Temp;
 	provides interface Read<uint16_t> as Press;
@@ -100,25 +100,31 @@ implementation
 	task void SPITask() {
 		uint8_t i;
 		if(state==CALIB){
-			for (i = 0; i < 4; i++) {
-				// reset the device
-				spi_reset();
-				calibration[i] = spi_word(i+1);
+			atomic {
+				for (i = 0; i < 4; i++) {
+					// reset the device
+					spi_reset();
+					calibration[i] = spi_word(i+1);
+				}
 			}
 			// send the calibration data up to the application
 			state = IDLE; 
 			signal Cal.dataReady(SUCCESS, calibration);
 		}else{
-			// reset the device
-			spi_reset();
-			// grab the sensor reading and store it locally
-			sense();
+			atomic {
+				// reset the device
+				spi_reset();
+				// grab the sensor reading and store it locally
+				sense();
+			}
 		}
 	}
 	
 	void task gotInterrupt() {
 		uint16_t l_reading;
-		reading = data_read();
+		atomic {
+			reading = data_read();
+		}
 		l_reading = reading;
 
 		// give the application the sensor data
