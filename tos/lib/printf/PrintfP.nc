@@ -174,12 +174,6 @@ implementation {
 #endif
 #endif
 #endif
-#ifdef SAM3U_HARDWARE_H
-  int putchar(int c) __attribute__((noinline)) @C() @spontaneous() {
-#endif
-#ifdef __M16C62PHARDWARE_H__
-  int lowlevel_putc(int c) __attribute__((noinline)) @C() @spontaneous() {
-#endif
     if((state == S_STARTED) && (call Queue.size() >= ((PRINTF_BUFFER_SIZE)/2))) {
       state = S_FLUSHING;
       sendNext();

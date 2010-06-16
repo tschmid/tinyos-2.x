@@ -20,26 +20,29 @@
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  */
-
-/*
- * @author Jonathan Hui <jwhui@cs.berkeley.edu>
+/**
+ *
+ * The basic TinyOS LEDs abstraction.
+ *
+ * @author Phil Buonadonna
+ * @author David Gay
+ * @author Philip Levis
+ * @author Joe Polastre
+ *
  */
 
-module ExecC {
-  provides {
-    interface Exec;
-  }
-}
 
+configuration LedsC {
+  provides interface Leds;
+}
 implementation {
+  components LedsP, PlatformLedsC;
 
-  command void Exec.exec() {
+  Leds = LedsP;
 
-    //goto *(void*)(TOSBOOT_END);
-
-    typedef void __attribute__((noreturn)) (*tosboot_exec)();
-    ((tosboot_exec)TOSBOOT_END)();
-
-  }
-
+  LedsP.Init <- PlatformLedsC.Init;
+  LedsP.Led0 -> PlatformLedsC.Led0;
+  LedsP.Led1 -> PlatformLedsC.Led1;
+  LedsP.Led2 -> PlatformLedsC.Led2;
 }
+

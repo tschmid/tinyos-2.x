@@ -1,7 +1,5 @@
-// $Id$
-
-/*
- * "Copyright (c) 2000-2005 The Regents of the University  of California.  
+/* $Id$
+ * "Copyright (c) 2005 The Regents of the University  of California.  
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -19,27 +17,43 @@
  * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Copyright (c) 2002-2005 Intel Corporation
+ * All rights reserved.
+ *
+ * This file is distributed under the terms in the attached INTEL-LICENSE     
+ * file. If you do not find these files, copies can be found by writing to
+ * Intel Research Berkeley, 2150 Shattuck Avenue, Suite 1300, Berkeley, CA, 
+ * 94704.  Attention:  Intel License Inquiry.
  */
 
-/*
- * @author Jonathan Hui <jwhui@cs.berkeley.edu>
+/**
+ * Defining the platform-independently named packet structures to be the
+ * chip-specific CC1000 packet structures.
+ *
+ * @author Philip Levis
+ * @version $Revision$ $Date$
  */
 
-module ExecC {
-  provides {
-    interface Exec;
-  }
-}
 
-implementation {
+#ifndef PLATFORM_MESSAGE_H
+#define PLATFORM_MESSAGE_H
 
-  command void Exec.exec() {
+#include <CC2420.h>
+#include <Serial.h>
 
-    //goto *(void*)(TOSBOOT_END);
+typedef union message_header {
+  cc2420_header_t cc2420;
+  serial_header_t serial;
+} message_header_t;
 
-    typedef void __attribute__((noreturn)) (*tosboot_exec)();
-    ((tosboot_exec)TOSBOOT_END)();
+typedef union TOSRadioFooter {
+  cc2420_footer_t cc2420;
+} message_footer_t;
 
-  }
+typedef union TOSRadioMetadata {
+  cc2420_metadata_t cc2420;
+  serial_metadata_t serial;
+} message_metadata_t;
 
-}
+#endif

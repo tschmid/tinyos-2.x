@@ -24,9 +24,7 @@
  * @author Joe Polastre
  * @version $Revision$ $Date$
  */
-/*
- * one-led hacks for span, sma 6/2010
- */
+
 #include "hardware.h"
 
 configuration PlatformLedsC {
@@ -48,11 +46,13 @@ implementation
   Init = PlatformP.LedsInit;
 
   Led0 = Led0Impl;
-  Led0Impl -> GeneralIOC.Port43;
+  Led0Impl -> GeneralIOC.Port40;
 
   Led1 = Led1Impl;
+  Led1Impl -> GeneralIOC.Port42;
 
   Led2 = Led2Impl;
+  Led2Impl -> GeneralIOC.Port43;
 
 }
 

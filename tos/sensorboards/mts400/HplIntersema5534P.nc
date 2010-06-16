@@ -31,14 +31,16 @@
 * Author: Zoltan Kincses
 */
 
-#include"Taos2550.h"
-
-module HplTaos2550P {
+module HplIntersema5534P {
 	provides interface SplitControl;
-	uses interface Channel as ChannelLightPower;
-	uses interface Timer<TMilli> as Timer;
-	uses interface I2CPacket<TI2CBasicAddr>;
-	uses interface Resource as I2CResource;
+	uses interface Channel as ChannelPressurePower;
+	uses interface Channel as ChannelPressureClock;
+	uses interface Channel as ChannelPressureDin;
+	uses interface Channel as ChannelPressureDout;
+	uses interface Timer<TMilli>;
+	uses interface GeneralIO as SPI_CLK;
+	uses interface GeneralIO as SPI_SI;
+	uses interface GeneralIO as SPI_SO;
 	uses interface Resource;
 }
 implementation {
@@ -48,12 +50,7 @@ implementation {
 		START,
 		STOP,
 	};
-	norace uint8_t state=IDLE;
-	uint8_t cmd=TAOS_START;
-	
-	task void failTask();
-	task void startTimer();
-	
+	uint8_t state=IDLE;
 	
 	command error_t SplitControl.start() {
 		state=START;
@@ -63,11 +60,11 @@ implementation {
 	event void Resource.granted(){
 		error_t err;
 		if(state==START){
-			if((err=call ChannelLightPower.open())==SUCCESS){
+			if((err=call ChannelPressurePower.open())==SUCCESS){
 				return;
 			}
 		}else{
-			if((err=call ChannelLightPower.close())==SUCCESS){
+			if((err=call ChannelPressurePower.close())==SUCCESS){
 				return;
 			}
 		}
@@ -75,10 +72,10 @@ implementation {
 		call Resource.release();
 		signal SplitControl.startDone(err);
 	}
-	
-	event void ChannelLightPower.openDone(error_t err){
+  
+	event void ChannelPressurePower.openDone(error_t err){
 		if(err==SUCCESS){
-			if((err=call I2CResource.request())==SUCCESS){
+			if((err=call ChannelPressureClock.open())==SUCCESS){
 				return;
 			}
 		}
@@ -87,25 +84,40 @@ implementation {
 		signal SplitControl.startDone(err);
 	}
 	
-	event void I2CResource.granted(){
-		error_t err;
-		if((err=call I2CPacket.write(0x03,TAOS_I2C_ADDR,1,&cmd))!=SUCCESS){
-			state=IDLE;
-			call Resource.release();
-			call I2CResource.release();
-			signal SplitControl.startDone(err);
+	event void ChannelPressureClock.openDone(error_t err){
+		if(err==SUCCESS){
+			if((err=call ChannelPressureDin.open())==SUCCESS){
+				return;
+			}
 		}
-	}
-	
-	async event void I2CPacket.writeDone(error_t error, uint16_t addr,uint8_t length, uint8_t* data){
 		state=IDLE;
 		call Resource.release();
-		call I2CResource.release();
-		if(error!=SUCCESS){
-			post failTask();
-		}else{
-			post startTimer();
+		signal SplitControl.startDone(err);
+	}
+	
+	event void ChannelPressureDin.openDone(error_t err){
+		if(err==SUCCESS){
+			if((err=call ChannelPressureDout.open())==SUCCESS){
+				return;
+			}
 		}
+		state=IDLE;
+		call Resource.release();
+		signal SplitControl.startDone(err);
+	}
+	
+	event void ChannelPressureDout.openDone(error_t err){
+		state=IDLE;
+		call Resource.release();
+		if(err==SUCCESS){
+			call SPI_CLK.makeOutput();
+			call SPI_SI.makeInput();
+			call SPI_SI.set();
+			call SPI_SO.makeOutput();
+			call Timer.startOneShot(300);
+			return;
+		}
+		signal SplitControl.startDone(err);
 	}
 	
 	event void Timer.fired(){
@@ -114,22 +126,45 @@ implementation {
 	
 	command error_t SplitControl.stop() {
 		state=STOP;
-		return  call Resource.request();
+		return call Resource.request();
 	}
 	
-	event void ChannelLightPower.closeDone(error_t err)	{
+	event void ChannelPressurePower.closeDone(error_t err){
+		if(err==SUCCESS){
+			if((err=call ChannelPressureClock.close())==SUCCESS){
+				return;
+			}
+		}
 		state=IDLE;
 		call Resource.release();
 		signal SplitControl.stopDone(err);
 	}
 	
-	task void failTask(){
-		signal SplitControl.startDone(FAIL);
+	event void ChannelPressureClock.closeDone(error_t err){
+		if(err==SUCCESS){
+			if((err=call ChannelPressureDin.close())==SUCCESS){
+				return;
+			}
+		}
+		state=IDLE;
+		call Resource.release();
+		signal SplitControl.stopDone(err);
 	}
 	
-	task void startTimer(){
-		call Timer.startOneShot(WARM_UP_TIME);
+	event void ChannelPressureDin.closeDone(error_t err){
+		if(err==SUCCESS){
+			if((err=call ChannelPressureDout.close())==SUCCESS){
+				return;
+			}
+		}
+		state=IDLE;
+		call Resource.release();
+		signal SplitControl.stopDone(err);
 	}
 	
-	async event void I2CPacket.readDone(error_t error, uint16_t addr,uint8_t length, uint8_t* data){}
+	event void ChannelPressureDout.closeDone(error_t err){
+		state=IDLE;
+		call Resource.release();
+		signal SplitControl.stopDone(err);
+	}
 }

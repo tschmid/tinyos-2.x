@@ -28,7 +28,7 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
-module ProgFlashM {
+module ProgFlashC {
   provides {
     interface ProgFlash;
   }

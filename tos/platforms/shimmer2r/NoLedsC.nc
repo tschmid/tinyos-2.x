@@ -21,25 +21,37 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  */
 
-/*
- * @author Jonathan Hui <jwhui@cs.berkeley.edu>
+/**
+ * A null operation replacement for the LedsC component. As many
+ * components might concurrently signal information through LEDs,
+ * using LedsC and NoLedsC allows an application builder to select
+ * which components control the LEDs.
+ *
+ * @author Philip Levis
+ * @date   March 19, 2005
+ *
  */
 
-module ExecC {
-  provides {
-    interface Exec;
-  }
+module NoLedsC {
+  provides interface Init;
+  provides interface Leds;
 }
-
 implementation {
 
-  command void Exec.exec() {
+  command error_t Init.init() {return SUCCESS;}
 
-    //goto *(void*)(TOSBOOT_END);
+  async command void Leds.led0On() {}
+  async command void Leds.led0Off() {}
+  async command void Leds.led0Toggle() {}
 
-    typedef void __attribute__((noreturn)) (*tosboot_exec)();
-    ((tosboot_exec)TOSBOOT_END)();
+  async command void Leds.led1On() {}
+  async command void Leds.led1Off() {}
+  async command void Leds.led1Toggle() {}
 
-  }
+  async command void Leds.led2On() {}
+  async command void Leds.led2Off() {}
+  async command void Leds.led2Toggle() {}
 
+  async command uint8_t Leds.get() {return 0;}
+  async command void Leds.set(uint8_t val) {}
 }
