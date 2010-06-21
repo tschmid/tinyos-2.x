@@ -61,7 +61,7 @@ implementation {
   //Thread queue for keeping track of threads waiting to run
   thread_queue_t ready_queue;
 
-#ifdef PLATFORM_SAM3U_EK
+#if defined(PLATFORM_SAM3U_EK) || defined(PLATFORM_OPAL)
   void context_switch() __attribute__((noinline));
   void restore_tcb() __attribute__((noinline));
 #endif
@@ -104,7 +104,7 @@ implementation {
  * same handler aliased. For this distinction, see the macro
  * SWITCH_CONTEXTS() in chip_thread.h.
  */
-#ifdef PLATFORM_SAM3U_EK
+#if defined(PLATFORM_SAM3U_EK) || defined(PLATFORM_OPAL)
 /**
  * The two context switch exception handlers are naked to keep the compiler
  * from using the stack. We need a manually defined stack layout here, which

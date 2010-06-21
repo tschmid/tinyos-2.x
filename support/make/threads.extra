@@ -148,6 +148,9 @@ endif
 ifneq ($(filter sam3u_ek,$(MAKECMDGOALS)),)
   CFLAGS += $(THREADS_SAM3U_INCLUDE_DIRS)
 endif
+ifneq ($(filter opal,$(MAKECMDGOALS)),)
+  CFLAGS += $(THREADS_SAM3U_INCLUDE_DIRS)
+endif
 ifneq ($(filter mulle,$(MAKECMDGOALS)),)
   CFLAGS += $(THREADS_M16C62P_INCLUDE_DIRS)
   CFLAGS += $(THREADS_RF230_INCLUDE_DIRS)
