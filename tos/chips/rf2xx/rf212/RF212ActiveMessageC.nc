@@ -86,6 +86,6 @@ implementation
 	PacketRSSI = RF212RadioC.PacketRSSI;
 
 	LocalTimeRadio = RF212RadioC;
-	PacketTimeStampMilli = RF212RadioC;
-	PacketTimeStampRadio = RF212RadioC;
+	PacketTimeStampMilli = RF212RadioC.PacketTimeStampMilli;
+	PacketTimeStampRadio = RF212RadioC.PacketTimeStampRadio;
 }

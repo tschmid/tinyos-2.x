@@ -41,12 +41,12 @@ implementation
 {
 	components TimeStampingLayerP, LocalTimeMilliC;
 
-	PacketTimeStampMilli = TimeStampingLayerP;
-	PacketTimeStampRadio = TimeStampingLayerP;
+	PacketTimeStampMilli = TimeStampingLayerP.PacketTimeStampMilli;
+	PacketTimeStampRadio = TimeStampingLayerP.PacketTimeStampRadio;
 	RadioPacket = TimeStampingLayerP.RadioPacket;
 	SubPacket = TimeStampingLayerP.SubPacket;
 
-	LocalTimeRadio = TimeStampingLayerP;
+	LocalTimeRadio = TimeStampingLayerP.LocalTimeRadio;
 	TimeStampingLayerP.LocalTimeMilli -> LocalTimeMilliC;
 
 	components new MetadataFlagC() as TimeStampFlagC;

@@ -79,7 +79,7 @@ implementation
 
 	RF212RadioP.Ieee154PacketLayer -> Ieee154PacketLayerC;
 	RF212RadioP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
-	RF212RadioP.PacketTimeStamp -> TimeStampingLayerC;
+	RF212RadioP.PacketTimeStamp -> TimeStampingLayerC.PacketTimeStampRadio;
 	RF212RadioP.RF212Packet -> RF212DriverLayerC;
 
 // -------- Active Message
@@ -236,8 +236,8 @@ implementation
 	components TimeStampingLayerC;
 	TimeStampingLayerC.LocalTimeRadio -> RF212DriverLayerC;
 	TimeStampingLayerC.SubPacket -> MetadataFlagsLayerC;
-	PacketTimeStampRadio = TimeStampingLayerC;
-	PacketTimeStampMilli = TimeStampingLayerC;
+	PacketTimeStampRadio = TimeStampingLayerC.PacketTimeStampRadio;
+	PacketTimeStampMilli = TimeStampingLayerC.PacketTimeStampMilli;
 
 // -------- MetadataFlags
 
@@ -248,7 +248,7 @@ implementation
 
 	components RF212DriverLayerC;
 	RF212DriverLayerC.Config -> RF212RadioP;
-	RF212DriverLayerC.PacketTimeStamp -> TimeStampingLayerC;
+	RF212DriverLayerC.PacketTimeStamp -> TimeStampingLayerC.PacketTimeStampRadio;
 	PacketTransmitPower = RF212DriverLayerC.PacketTransmitPower;
 	PacketLinkQuality = RF212DriverLayerC.PacketLinkQuality;
 	PacketRSSI = RF212DriverLayerC.PacketRSSI;
