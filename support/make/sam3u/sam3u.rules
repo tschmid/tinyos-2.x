@@ -32,7 +32,8 @@ PFLAGS += -finline-limit=100000
 PFLAGS += -board=$(SENSORBOARD)
 
 # can be overridden by MP-enabled linker file (see mpu.extra)
-LINKERFILE ?= sam3u-ek-flash.x
+LINKERFILE_PREFIX ?= sam3u-ek-flash
+LINKERFILE ?= $(LINKERFILE_PREFIX).x
 LDFLAGS += -L$(INCLUDE_DIRS) -T $(LINKERFILE)
 
 BUILDLESS_DEPS += bytes

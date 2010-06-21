@@ -1,3 +1,4 @@
 # use special linker file to provide symbols and alignment for memory protection
 
-LINKERFILE = sam3u-ek-flash-mp.x
+LINKERFILE_PREFIX ?= sam3u-ek-flash
+LINKERFILE ?= $(LINKERFILE_PREFIX)-mp.x
