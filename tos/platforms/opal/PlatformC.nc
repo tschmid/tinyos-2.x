@@ -1,22 +1,59 @@
-// $Id: PlatformC.nc,v 1.4 2006/12/12 18:23:44 vlahan Exp $
 /*
- * Copyright (c) 2005-2006 Intel Corporation
+ * Copyright (c) 2009 Stanford University.
  * All rights reserved.
  *
- * This file is distributed under the terms in the attached INTEL-LICENSE     
- * file. If you do not find these files, copies can be found by writing to
- * Intel Research Berkeley, 2150 Shattuck Avenue, Suite 1300, Berkeley, CA, 
- * 94704.  Attention:  Intel License Inquiry.
- */
-/**
- * Dummy implementation to support the null platform.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in the
+ *   documentation and/or other materials provided with the
+ *   distribution.
+ * - Neither the name of the Stanford University nor the names of
+ *   its contributors may be used to endorse or promote products derived
+ *   from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL STANFORD
+ * UNIVERSITY OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module PlatformC { 
-  provides interface Init;
+/**
+ * @author Wanja Hofer <wanja@cs.fau.de>
+ */
+
+#include "hardware.h"
+
+configuration PlatformC
+{
+	provides
+	{
+		/* Called after platform_bootstrap() and Scheduler.init() (see TEP 107)
+		 * I/O pin configuration, clock calibration, and LED configuration */
+		interface Init;
+	}
 }
-implementation {
-  command error_t Init.init() {
-    return SUCCESS;
-  }
+
+implementation
+{
+    components PlatformP, MoteClockC, HplSam3uTCC as MoteTimerC;
+    components BusyWaitMicroC, HplSam3uClockC;
+
+    Init = PlatformP;
+
+    BusyWaitMicroC.Clk -> HplSam3uClockC;
+    PlatformP.MoteClockInit -> MoteClockC;
+    PlatformP.IRQInit -> MoteClockC;
+    PlatformP.MoteTimerInit -> MoteTimerC;
 }

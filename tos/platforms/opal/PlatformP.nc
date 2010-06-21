@@ -30,26 +30,43 @@
  */
 
 /**
- * Definitions of stuff specific to the SAM3U-EK board.
- * Includes definitions for the SAM3U MCU.
- *
  * @author Wanja Hofer <wanja@cs.fau.de>
  */
 
-#ifndef HARDWARE_H
-#define HARDWARE_H
+#include "hardware.h"
 
-#include "sam3uhardware.h"
+module PlatformP
+{
+    provides
+	{
+        interface Init;
+    }
+	uses
+	{
+		interface Init as LedsInit;
+        interface Init as MoteClockInit;
+        interface Init as IRQInit;
+        interface Init as MoteTimerInit;
+	}
+}
 
-#define PLATFORM_BAUDRATE (9600)
+implementation
+{
+	command error_t Init.init()
+	{
+		/* I/O pin configuration, clock calibration, and LED configuration
+		 * (see TEP 107)
+		 */
+		call IRQInit.init();
+        call MoteClockInit.init();
+        call MoteTimerInit.init();
+		call LedsInit.init();
 
-#define IRQ_PRIO_UART (0x88)
-#define IRQ_PRIO_SPI (0x87)
-#define IRQ_PRIO_PIO (0x86)
-#define IRQ_PRIO_ADC12B (0x85)
-#define IRQ_PRIO_DMAC (0x84)
-#define IRQ_PRIO_TWI0 (0x83)
-#define IRQ_PRIO_TWI1 (0x82)
-#define IRQ_PRIO_HSMCI (0x89)
+		return SUCCESS;
+	}
 
-#endif // HARDWARE_H
+	default command error_t LedsInit.init()
+	{
+		return SUCCESS;
+	}
+}

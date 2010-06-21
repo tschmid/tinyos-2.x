@@ -1,5 +1,5 @@
 /*
- * "Copyright (c) 2004-2005 The Regents of the University  of California.  
+ * "Copyright (c) 2000-2003 The Regents of the University  of California.  
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -18,7 +18,7 @@
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
  *
- * Copyright (c) 2004-2005 Intel Corporation
+ * Copyright (c) 2002-2006 Intel Corporation
  * All rights reserved.
  *
  * This file is distributed under the terms in the attached INTEL-LICENSE     
@@ -26,50 +26,33 @@
  * Intel Research Berkeley, 2150 Shattuck Avenue, Suite 1300, Berkeley, CA, 
  * 94704.  Attention:  Intel License Inquiry.
  */
-/*
- *
- * Authors:		Philip Levis
- *
- */
-
 /**
- *
- * The Active Message layer on the opal platform. This is a naming wrapper
- * around the RF212 Active Message layer.
- *
- * @author Philip Levis
- * @author Kevin Klues (adapted to opal)
+ * Busy wait component as per TEP102. 
  */
-#include "Timer.h"
-
-configuration ActiveMessageC {
-  provides {
-    interface SplitControl;
-
-    interface AMSend[am_id_t id];
-    interface Receive[am_id_t id];
-    interface Receive as Snoop[am_id_t id];
-
-    interface Packet;
-    interface AMPacket;
-    interface PacketAcknowledgements;
-    interface PacketTimeStamp<TRadio, uint32_t> as PacketTimeStampRadio;
-    interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
-  }
+module BusyWaitMicroC @safe()
+{
+    provides interface BusyWait<TMicro,uint16_t>;
+    uses interface HplSam3uClock as Clk;
 }
-implementation {
-  components RF212ActiveMessageC as AM;
+implementation
+{
+    async command void BusyWait.wait(uint16_t dt) __attribute__((noinline)) {
+        // based on the current rate we have to adjust the steps
+        if (dt > 1){
+            // calculate the cycles we should burn 
+            volatile uint32_t cyc = (dt * (call Clk.getMainClockSpeed()))/12000;
+            //volatile uint32_t cyc = (dt * (call Clk.getMainClockSpeed()))/12000;
+            //volatile uint32_t cyc = 12000;
+            
+            // one cycle in this while loop takes 12 CPU cycles
+            atomic {
+            while(cyc > 0){
+                asm volatile ("    nop\n");
+                cyc--;
+            }
+            }
+        }
+    }
 
-  SplitControl = AM;
-  
-  AMSend       = AM;
-  Receive      = AM.Receive;
-  Snoop        = AM.Snoop;
-  Packet       = AM;
-  AMPacket     = AM;
-  PacketAcknowledgements = AM;
-
-  PacketTimeStampRadio = AM.PacketTimeStampRadio;
-  PacketTimeStampMilli = AM.PacketTimeStampMilli;
+    async event void Clk.mainClockChanged(){};
 }
-
