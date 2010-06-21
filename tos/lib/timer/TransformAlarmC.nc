@@ -122,7 +122,7 @@ implementation
       {
 	m_t0 = now + MAX_DELAY;
 	m_dt = remaining - MAX_DELAY;
-	remaining = MAX_DELAY;
+	remaining = (to_size_type)MAX_DELAY;
       }
     else
       {
