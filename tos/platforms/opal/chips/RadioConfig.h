@@ -21,16 +21,17 @@
  * Author: Miklos Maroti
  */
 /*
- * Adjusted for CSIRO fleck3c, 2009
+ * Adjusted for CSIRO opal platform
  *
- * Christian.Richter@csiro.au
+ * Kevin.Klues@csiro.au
  */
 #ifndef __RADIOCONFIG_H__
 #define __RADIOCONFIG_H__
 
-
 #include <RF212DriverLayer.h>
+#include <RF231DriverLayer.h>
 
+#include <crc.h>
 
 /* See the README in the TOSROOT/chips/rf2xx folder */
 //#define LOW_POWER_LISTENING
@@ -42,32 +43,64 @@ enum
 	 * which configures the output pin currents and the CLKM clock
 	 */
 	RF212_TRX_CTRL_0_VALUE = 0,
+	RF231_TRX_CTRL_0_VALUE = 0,
 
 	/**
 	 * This is the default value of the CCA_MODE field in the PHY_CC_CCA register
 	 * which is used to configure the default mode of the clear channel assesment
 	 */
 	RF212_CCA_MODE_VALUE = RF212_CCA_MODE_3,
+	RF231_CCA_MODE_VALUE = RF231_CCA_MODE_3,
 
 	/**
 	 * This is the value of the CCA_THRES register that controls the
 	 * energy levels used for clear channel assesment
 	 */
 	RF212_CCA_THRES_VALUE = 0xC7,
+	RF231_CCA_THRES_VALUE = 0xC7,
 };
 
 /* This is the default value of the TX_PWR field of the PHY_TX_PWR register. */
 #ifndef RF212_DEF_RFPOWER
-#define RF212_DEF_RFPOWER	0xc0
+#define RF212_DEF_RFPOWER   0xc0
+#endif
+#ifndef RF231_DEF_RFPOWER
+#define RF231_DEF_RFPOWER   0x00
 #endif
 
 
 /* This is the default value of the CHANNEL field of the PHY_CC_CCA register. */
 #ifndef RF212_DEF_CHANNEL
-#define RF212_DEF_CHANNEL	6
+#define RF212_DEF_CHANNEL  6
 #warning "RF212 Channel is 6"
 #endif
+#ifndef RF231_DEF_CHANNEL
+#define RF231_DEF_CHANNEL  11
+#warning "RF231 Channel is 11"
+#endif
 
+/*
+ * This is the command used to calculate the CRC for the RF212 chip. 
+ * TODO: Check why the default crcByte implementation is in a different endianness
+ */
+inline uint16_t RF212_CRCBYTE_COMMAND(uint16_t crc, uint8_t data)
+{
+	return crcByte(crc, data);
+}
+
+/*
+ * This is the command used to calculate the CRC for the RF231 chip. 
+ * TODO: Check why the default crcByte implementation is in a different endianness
+ */
+inline uint16_t RF231_CRCBYTE_COMMAND(uint16_t crc, uint8_t data)
+{
+    return crcByte(crc, data);
+}
+
+
+/**
+ * This is the timer type of the radio alarm interface
+ */
 typedef TMilli TRadio;
 
 
@@ -83,3 +116,4 @@ typedef TMilli TRadio;
 #define RADIO_ALARM_MILLI_EXP	(5)
 
 #endif//__RADIOCONFIG_H__
+

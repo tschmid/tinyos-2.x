@@ -6,6 +6,7 @@
 push ( @includes, qw(
 
   %T/platforms/opal
+  %T/platforms/opal/chips
   %T/platforms/opal/spi
   %T/platforms/opal/chips/rf212
   %T/platforms/opal/chips/rf231
