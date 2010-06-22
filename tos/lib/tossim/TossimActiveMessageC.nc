@@ -72,7 +72,7 @@ implementation {
     header->dest = addr;
     header->src = call AMPacket.address();
     header->length = len;
-    err = call Model.send((int)addr, amsg, len + sizeof(tossim_header_t));
+    err = call Model.send((int)addr, amsg, len + sizeof(tossim_header_t) + sizeof(tossim_footer_t));
     return err;
   }
 

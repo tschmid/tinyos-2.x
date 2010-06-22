@@ -246,7 +246,7 @@ implementation {
     sim_time_t duration;
     tossim_metadata_t* metadata = getMetadata(sending);
 
-    duration = 8 * (sendingLength + sim_packet_header_length());
+    duration = 8 * sendingLength;
     duration /= sim_csma_bits_per_symbol();
     duration += sim_csma_preamble_length();
     
