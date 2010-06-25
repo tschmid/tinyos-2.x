@@ -40,10 +40,10 @@ module PlatformP
     provides
 	{
         interface Init;
-    }
+	}
 	uses
 	{
-		interface Init as LedsInit;
+	interface Init as LedsInit;
         interface Init as MoteClockInit;
         interface Init as IRQInit;
         interface Init as MoteTimerInit;
@@ -58,8 +58,8 @@ implementation
 		 * (see TEP 107)
 		 */
 		call IRQInit.init();
-        call MoteClockInit.init();
-        call MoteTimerInit.init();
+        	call MoteClockInit.init();
+        	call MoteTimerInit.init();
 		call LedsInit.init();
 
 		return SUCCESS;

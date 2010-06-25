@@ -64,7 +64,7 @@ implementation
 	Led2Pin.In -> IO.PioC8; // Pin C8 = Yellow LED, active high
 
 	Led0 = Led0Pin.Out;
-	Led1 = Led2Pin.Out;
+	Led1 = Led1Pin.Out;
 	Led2 = Led2Pin.Out;
 }
 
