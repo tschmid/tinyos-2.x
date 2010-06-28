@@ -1,0 +1,4 @@
+COMPONENT=SimpleRadioTestAppC
+
+include $(MAKERULES)
+
