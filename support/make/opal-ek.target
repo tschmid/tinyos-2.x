@@ -1,0 +1,9 @@
+#-*-Makefile-*- vim:syntax=make
+PLATFORM = opal-ek
+
+LINKERFILE_PREFIX = opal-flash
+
+$(call TOSMake_include_platform,sam3u)
+
+opal-ek: $(BUILD_DEPS)
+	@:

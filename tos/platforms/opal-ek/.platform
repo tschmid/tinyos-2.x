@@ -1,0 +1,59 @@
+# Includes that should take precedence come first.  Platforms come before
+# chips because they may override files.  These must be specified as
+# @includes instead of -I's to @opts, otherwise the %T won't be processed
+# by ncc.  
+
+push ( @includes, qw(
+
+  %T/platforms/opal
+  %T/platforms/opal/chips
+  %T/platforms/opal/spi
+  %T/platforms/opal/chips/rf212
+  %T/platforms/opal/chips/rf231
+  %T/platforms/opal/chips/at45db
+  %T/platforms/opal/chips/sd
+  %T/platforms/opal-ek
+  %T/chips/sam3u
+  %T/chips/sam3u/pins
+  %T/chips/sam3u/timer
+  %T/chips/sam3u/nvic
+  %T/chips/sam3u/uart
+  %T/chips/sam3u/supc
+  %T/chips/sam3u/pmc
+  %T/chips/sam3u/eefc
+  %T/chips/sam3u/wdtc
+  %T/chips/sam3u/matrix
+  %T/chips/sam3u/mpu
+  %T/chips/sam3u/spi
+  %T/chips/sam3u/smc
+  %T/chips/sam3u/adc12b
+  %T/chips/sam3u/dma
+  %T/chips/sam3u/pdc
+  %T/chips/sam3u/twi
+  %T/chips/sam3u/hsmci
+  %T/chips/rf2xx/rf230
+  %T/chips/rf2xx/rf231
+  %T/chips/rf2xx/rf212
+  %T/chips/rf2xx/layers
+  %T/chips/rf2xx/util
+  %T/chips/at45db
+  %T/chips/mcp9800
+  %T/lib/timer
+  %T/lib/serial
+
+) );
+
+@opts = qw(
+
+  -gcc=arm-none-eabi-gcc
+  -mcpu=cortex-m3
+  -nostartfiles
+  -fnesc-target=env
+  -fnesc-no-debug
+
+);
+
+push @opts, "-fnesc-scheduler=TinySchedulerC,TinySchedulerC.TaskBasic,TaskBasic,TaskBasic,runTask,postTask" if !$with_scheduler_flag;
+push @opts, "-mingw-gcc" if $cygwin;
+
+$ENV{NESC_MACHINE} = "structure_size_boundary=32, pointer=4,4 float=4,4 double=8,4 long_double=8,4 short=2,2 int=4,4 long=4,4 long_long=8,4 int1248_align=1,2,4,4 wchar_size_size=4,4 char_wchar_signed=false,true";
