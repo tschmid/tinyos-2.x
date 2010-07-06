@@ -37,21 +37,15 @@ implementation {
   App.Boot -> MainC.Boot;
   App.Leds -> LedsC;
 
-  components RealMainP;
-  RealMainP.Leds -> LedsC;
-
-  components LedsP;
-  RealMainP.LedsInit -> LedsP;
-
-//  components ActiveMessageC;
-//  App.AMControl -> ActiveMessageC;
-//  components new AMSenderC(25);
-//  components new AMReceiverC(25);
-//  components new TimerMilliC();
-//  App.Receive -> AMReceiverC;
-//  App.AMSend -> AMSenderC;
-//  App.MilliTimer -> TimerMilliC;
-//  App.Packet -> AMSenderC;
+  components ActiveMessageC;
+  components new AMSenderC(25);
+  components new AMReceiverC(25);
+  components new TimerMilliC();
+  App.AMControl -> ActiveMessageC;
+  App.Receive -> AMReceiverC;
+  App.AMSend -> AMSenderC;
+  App.MilliTimer -> TimerMilliC;
+  App.Packet -> AMSenderC;
 }
 
 

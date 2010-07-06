@@ -37,67 +37,44 @@ module SimpleRadioTestC {
   uses {
     interface Leds;
     interface Boot;
-//    interface SplitControl as AMControl;
-//    interface Receive;
-//    interface AMSend;
-//    interface Timer<TMilli> as MilliTimer;
-//    interface Packet;
+    interface SplitControl as AMControl;
+    interface Receive;
+    interface AMSend;
+    interface Timer<TMilli> as MilliTimer;
+    interface Packet;
   }
 }
 implementation {
 
-task void testTask0() {
-}
-task void testTask1() {
-}
-task void testTask2() {
-}
-//task void testTask3() {
-//}
-//task void testTask4() {
-//}
-//task void testTask5() {
-//}
-//task void testTask6() {
-//}
-//task void testTask7() {
-//}
-//task void testTask8() {
-//}
-
-//  message_t packet;
+  message_t packet;
 
   event void Boot.booted() {
-    call Leds.led0On();
-//    call AMControl.start();
+    call AMControl.start();
   }
 
-//  event void AMControl.startDone(error_t err) {
-//    call Leds.led0On();
-//    call MilliTimer.startPeriodic(250);
-//  }
+  event void AMControl.startDone(error_t err) {
+    call Leds.led0On();
+    call MilliTimer.startPeriodic(250);
+  }
 
-//  event void AMControl.stopDone(error_t err) {
+  event void AMControl.stopDone(error_t err) {
     // do nothing
-//  }
+  }
   
-//  event void MilliTimer.fired() {
-//    if (call AMSend.send(AM_BROADCAST_ADDR, &packet, 0) == SUCCESS)
-//      call Leds.led0Toggle();
-//  }
-//
-//  event message_t* Receive.receive(message_t* bufPtr, 
-//				   void* payload, uint8_t len) {
-//    call Leds.led2Toggle();
-//    return bufPtr;
-//  }
-//
-//  event void AMSend.sendDone(message_t* bufPtr, error_t error) {
-//    call Leds.led1Toggle();
-//  }
-//
+  event void MilliTimer.fired() {
+    if (call AMSend.send(AM_BROADCAST_ADDR, &packet, 0) == SUCCESS)
+      call Leds.led0Toggle();
+  }
+
+  event message_t* Receive.receive(message_t* bufPtr, 
+				   void* payload, uint8_t len) {
+    call Leds.led1Toggle();
+    return bufPtr;
+  }
+
+  event void AMSend.sendDone(message_t* bufPtr, error_t error) {
+    call Leds.led0Off();
+  }
+
 }
-
-
-
 
