@@ -75,6 +75,7 @@ module RF230DriverLayerP
 #ifdef RADIO_DEBUG
 		interface DiagMsg;
 #endif
+		interface Leds;
 	}
 }
 

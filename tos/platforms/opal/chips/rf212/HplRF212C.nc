@@ -25,25 +25,26 @@ configuration HplRF212C
 implementation
 {
     // Wire the pin interfaces
-    components HilSam3uSpiC, HplSam3uGeneralIOC;
-    components FastSpiSam3uC;
+    components HplSam3uGeneralIOC;
     RSTN = HplSam3uGeneralIOC.PioC1;
     SLP_TR = HplSam3uGeneralIOC.PioC2;
     SELN = HplSam3uGeneralIOC.PioC3;
     IRQ = HplSam3uGeneralIOC.CapturePioB0;
 
     // SPI resource
+    components HilSam3uSpiC;
     SpiResource = HilSam3uSpiC.Resource;
     
     // Fast Spi byte
+    components FastSpiSam3uC;
     FastSpiByte = FastSpiSam3uC.FastSpiByte;
 
     // Timestamping
-    components HilTimerMilliC;
-    LocalTimeRadio = HilTimerMilliC.LocalTime;
+    components LocalTimeMicroC;
+    LocalTimeRadio = LocalTimeMicroC;
 
     // Radio alarm
-    components new AlarmMilli16C(), RealMainP;
-    Alarm = AlarmMilli16C.Alarm;
+    components new AlarmTMicro16C(), RealMainP;
+    Alarm = AlarmTMicro16C.Alarm;
 }
 

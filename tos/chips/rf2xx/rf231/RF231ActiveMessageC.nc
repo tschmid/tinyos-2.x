@@ -61,31 +61,31 @@ configuration RF231ActiveMessageC
 
 implementation
 {
-	components RF231RadioC;
+	components RF230RadioC as RFRadioC;
 
-	SplitControl = RF231RadioC;
+	SplitControl = RFRadioC;
 
-	AMSend = RF231RadioC;
-	Receive = RF231RadioC.Receive;
-	Snoop = RF231RadioC.Snoop;
-	SendNotifier = RF231RadioC;
+	AMSend = RFRadioC;
+	Receive = RFRadioC.Receive;
+	Snoop = RFRadioC.Snoop;
+	SendNotifier = RFRadioC;
 
-	Packet = RF231RadioC.PacketForActiveMessage;
-	AMPacket = RF231RadioC;
+	Packet = RFRadioC.PacketForActiveMessage;
+	AMPacket = RFRadioC;
 
-	PacketAcknowledgements = RF231RadioC;
-	LowPowerListening = RF231RadioC;
+	PacketAcknowledgements = RFRadioC;
+	LowPowerListening = RFRadioC;
 #ifdef PACKET_LINK
-	PacketLink = RF231RadioC;
+	PacketLink = RFRadioC;
 #endif
 
-	RadioChannel = RF231RadioC;
+	RadioChannel = RFRadioC;
 
-	PacketLinkQuality = RF231RadioC.PacketLinkQuality;
-	PacketTransmitPower = RF231RadioC.PacketTransmitPower;
-	PacketRSSI = RF231RadioC.PacketRSSI;
+	PacketLinkQuality = RFRadioC.PacketLinkQuality;
+	PacketTransmitPower = RFRadioC.PacketTransmitPower;
+	PacketRSSI = RFRadioC.PacketRSSI;
 
-	LocalTimeRadio = RF231RadioC;
-	PacketTimeStampMilli = RF231RadioC;
-	PacketTimeStampRadio = RF231RadioC;
+	LocalTimeRadio = RFRadioC;
+	PacketTimeStampMilli = RFRadioC;
+	PacketTimeStampRadio = RFRadioC;
 }

@@ -30,6 +30,7 @@ push ( @includes, qw(
   %T/chips/sam3u/pdc
   %T/chips/sam3u/twi
   %T/chips/sam3u/hsmci
+  %T/chips/rf2xx/rf230
   %T/chips/rf2xx/rf231
   %T/chips/rf2xx/rf212
   %T/chips/rf2xx/layers

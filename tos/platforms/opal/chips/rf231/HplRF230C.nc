@@ -21,47 +21,44 @@
  * Author: Miklos Maroti
  */
 
-#ifndef __RF231RADIO_H__
-#define __RF231RADIO_H__
-
 #include <RadioConfig.h>
-#include <TinyosNetworkLayer.h>
-#include <Ieee154PacketLayer.h>
-#include <ActiveMessageLayer.h>
-#include <MetadataFlagsLayer.h>
-#include <RF231DriverLayer.h>
-#include <TimeStampingLayer.h>
-#include <LowPowerListeningLayer.h>
-#include <PacketLinkLayer.h>
 
-typedef nx_struct rf231packet_header_t
+configuration HplRF230C
 {
-	rf231_header_t rf231;
-	ieee154_header_t ieee154;
-#ifndef TFRAMES_ENABLED
-	network_header_t network;
-#endif
-#ifndef IEEE154FRAMES_ENABLED
-	activemessage_header_t am;
-#endif
-} rf231packet_header_t;
+	provides
+	{
+		interface GeneralIO as SELN;
+		interface Resource as SpiResource;
+		interface FastSpiByte;
 
-typedef nx_struct rf231packet_footer_t
+		interface GeneralIO as SLP_TR;
+		interface GeneralIO as RSTN;
+
+		interface GpioCapture as IRQ;
+		interface Alarm<TRadio, uint16_t> as Alarm;
+		interface LocalTime<TRadio> as LocalTimeRadio;
+	}
+}
+
+implementation
 {
-	// the time stamp is not recorded here, time stamped messaged cannot have max length
-} rf231packet_footer_t;
+	components HilSam3uSpiC as SpiC;
+	//SpiResource = SpiC.Resource[unique("Sam3uSpi.Resource")];
+	SpiResource = SpiC.Resource;
+	FastSpiByte = SpiC;
 
-typedef struct rf231packet_metadata_t
-{
-#ifdef LOW_POWER_LISTENING
-	lpl_metadata_t lpl;
-#endif
-#ifdef PACKET_LINK
-	link_metadata_t link;
-#endif
-	timestamp_metadata_t timestamp;
-	flags_metadata_t flags;
-	rf231_metadata_t rf231;
-} rf231packet_metadata_t;
+	components HplSam3uGeneralIOC as IO;
+	SLP_TR = IO.PioC22;
+	RSTN = IO.PioC21;
+	SELN = IO.PioC4;
 
-#endif//__RF231RADIO_H__
+	components HplSam3uGeneralIOC;
+	IRQ = HplSam3uGeneralIOC.CapturePioB1;
+	
+	components new AlarmTMicro16C() as AlarmC;
+	Alarm = AlarmC;
+
+	components LocalTimeMicroC;
+	LocalTimeRadio = LocalTimeMicroC;
+}
+

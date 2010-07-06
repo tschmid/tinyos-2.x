@@ -51,6 +51,7 @@ module HilSam3uSpiP
         interface HplSam3uGeneralIOPin as SpiPinNPCS;
         interface HplSam3uPeripheralClockCntl as SpiClockControl;
         interface HplSam3uClock as ClockConfig;
+	interface Leds;
     }
 }
 implementation
@@ -73,7 +74,9 @@ implementation
         // Can be set up to 8MHz.
         // clock speed = mck / cd
         // here, cd = mck/speed
-        cd = (uint8_t) (mck / 500); // mck is in kHz!
+        //cd = (uint8_t) (mck / 500); // mck is in kHz!
+        //cd = (uint8_t) (mck / 4);
+	cd = 10;
 
         call HplSam3uSpiChipSelConfig.setBaud(cd);
     }
@@ -94,13 +97,12 @@ implementation
         call SpiPinMosi.selectPeripheralA();
         call SpiPinSpck.disablePioControl();
         call SpiPinSpck.selectPeripheralA();
-        /*
+/*
         call SpiPinNPCS.enablePullUpResistor();
         call SpiPinNPCS.disablePioControl();
         call SpiPinNPCS.selectPeripheralB();
         call SpiPinNPCS.disableInterrupt();
-        */
-
+*/
         call HplSam3uSpiControl.resetSpi();
 
         // configure for master
@@ -122,8 +124,8 @@ implementation
         //call HplSam3uSpiChipSelConfig.disableCSActive(); 
 
         call HplSam3uSpiChipSelConfig.setBitsPerTransfer(SPI_CSR_BITS_8);
-        call HplSam3uSpiChipSelConfig.setTxDelay(20);
-        call HplSam3uSpiChipSelConfig.setClkDelay(20);
+        call HplSam3uSpiChipSelConfig.setTxDelay(0);
+        call HplSam3uSpiChipSelConfig.setClkDelay(0);
 
         // do we really have to start it??? It seems that the CC2420 driver
         // doesn't do that!
@@ -163,7 +165,7 @@ implementation
         uint8_t byte;
 
         //call HplSam3uSpiChipSelConfig.enableCSActive();
-        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 3, FALSE);
+        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 1, FALSE);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
         return byte;

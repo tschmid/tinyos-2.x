@@ -93,6 +93,7 @@ class samba:
 
             print "Programmer Found!"
 
+            #print "Programming..."
             print "Remove JP1 and hit [Enter]"
             a = raw_input()
 
