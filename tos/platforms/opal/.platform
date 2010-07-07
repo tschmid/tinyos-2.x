@@ -39,7 +39,7 @@ push ( @includes, qw(
   %T/chips/mcp9800
   %T/lib/timer
   %T/lib/serial
-
+  %T/lib/power
 ) );
 
 @opts = qw(

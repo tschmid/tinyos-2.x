@@ -1,3 +1,6 @@
+/*
+*/
+
 #include <RadioConfig.h>
 
 configuration HplRF212C

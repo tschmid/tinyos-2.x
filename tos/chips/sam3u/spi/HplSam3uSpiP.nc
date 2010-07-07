@@ -31,14 +31,46 @@ module HplSam3uSpiP
 {
     provides
     {
-       interface HplSam3uSpiConfig; 
-       interface HplSam3uSpiControl; 
-       interface HplSam3uSpiInterrupts; 
-       interface HplSam3uSpiStatus; 
+        interface AsyncStdControl;
+        interface HplSam3uSpiConfig; 
+        interface HplSam3uSpiControl; 
+        interface HplSam3uSpiInterrupts; 
+        interface HplSam3uSpiStatus; 
+    }
+    uses
+    {
+        interface HplSam3uPeripheralClockCntl as SpiClockControl;
+        interface HplSam3uClock as ClockConfig;
     }
 }
 implementation
 {
+
+    async command error_t AsyncStdControl.start()
+    {
+        // enable peripheral clock
+        call SpiClockControl.enable();
+  
+        // enable SPI
+        call HplSam3uSpiControl.enableSpi();
+  
+        // enable SPI IRQ (Byte is a busy wait!)
+        //call HplSam3uSpiInterrupts.enableRxFullIrq();
+
+        return SUCCESS;
+    }
+
+    async command error_t AsyncStdControl.stop()
+    {
+        // stop the SPI
+        call HplSam3uSpiControl.disableSpi();
+
+        // stop the peripheral clock
+        call SpiClockControl.disable();
+
+        return SUCCESS;
+    }
+
     /**
      * Set the SPI interface to Master mode (default).
      */
@@ -481,6 +513,7 @@ implementation
     {
         return (SPI->sr.bits.spiens == 1);
     }
+    async event void ClockConfig.mainClockChanged() {};
 }
 
 

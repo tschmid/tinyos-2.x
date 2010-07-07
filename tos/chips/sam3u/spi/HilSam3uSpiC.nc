@@ -24,13 +24,13 @@
  * point. Byte interface performs busy wait!
  *
  * @author Thomas Schmid
+ * @author Kevin Klues
  */
 
 configuration HilSam3uSpiC
 {
     provides
     {
-        interface StdControl;
         interface Resource[uint8_t];
         interface SpiByte[uint8_t];
 	interface FastSpiByte[uint8_t];
@@ -47,7 +47,6 @@ implementation
     components HilSam3uSpiP;
     components HplSam3uSpiC;
     MainC.SoftwareInit -> HilSam3uSpiP.Init;
-    StdControl = HilSam3uSpiP;
     HilSam3uSpiP.ArbiterInfo -> HplSam3uSpiC;
     MainC.SoftwareInit = SpiChipInit[0];
     MainC.SoftwareInit = SpiChipInit[1];
@@ -100,8 +99,4 @@ implementation
 
     components HplNVICC;
     HilSam3uSpiP.SpiIrqControl -> HplNVICC.SPI0Interrupt;
-
-    components HplSam3uClockC;
-    HilSam3uSpiP.SpiClockControl -> HplSam3uClockC.SPI0PPCntl;
-    HilSam3uSpiP.ClockConfig -> HplSam3uClockC;
 }

@@ -48,6 +48,10 @@ configuration HplSam3uSpiC
 }
 implementation
 {
+    enum {
+        NUM_CSN_RESOURCES = uniqueN(SAM3U_HPLSPI_RESOURCE, 4)
+    };
+
     components HplSam3uSpiP;
 
     HplSam3uSpiConfig = HplSam3uSpiP;
@@ -57,10 +61,16 @@ implementation
     
     components new FcfsArbiterC( SAM3U_HPLSPI_RESOURCE ) as ArbiterC;
     ArbiterInfo = ArbiterC;
-    ResourceCS0 = ArbiterC.Resource[0];
+    ResourceCS0 = ArbiterC.Resource[0]; 
     ResourceCS1 = ArbiterC.Resource[1];
     ResourceCS2 = ArbiterC.Resource[2];
     ResourceCS3 = ArbiterC.Resource[3];
+
+    //components new StdControlDeferredPowerManagerC(10) as PM;
+    components new AsyncStdControlPowerManagerC() as PM;
+    PM.AsyncStdControl -> HplSam3uSpiP;
+    PM.ArbiterInfo -> ArbiterC.ArbiterInfo;
+    PM.ResourceDefaultOwner -> ArbiterC.ResourceDefaultOwner;
 
     components
         new HplSam3uSpiChipSelP(0x40008030) as CS0,
@@ -72,6 +82,10 @@ implementation
     HplSam3uSpiChipSelConfig1 = CS1;
     HplSam3uSpiChipSelConfig2 = CS2;
     HplSam3uSpiChipSelConfig3 = CS3;
+
+    components HplSam3uClockC;
+    HplSam3uSpiP.SpiClockControl -> HplSam3uClockC.SPI0PPCntl;
+    HplSam3uSpiP.ClockConfig -> HplSam3uClockC;
 }
 
 

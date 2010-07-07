@@ -24,6 +24,7 @@
  * point. Byte interface performs busy wait!
  *
  * @author Thomas Schmid
+ * @author Kevin Klues
  */
 
 #include "sam3uspihardware.h"
@@ -33,20 +34,18 @@ module HilSam3uSpiP
     provides
     {
         interface Init;
-        interface StdControl;
         interface SpiByte[uint8_t];
         interface SpiPacket[uint8_t]; // not supported yet
     }
     uses
     {
+///        interface StdControl as SpiControl;
 	interface ArbiterInfo;
         interface HplSam3uSpiConfig;
         interface HplSam3uSpiControl;
         interface HplSam3uSpiInterrupts;
         interface HplSam3uSpiStatus;
         interface HplNVICInterruptCntl as SpiIrqControl;
-        interface HplSam3uPeripheralClockCntl as SpiClockControl;
-        interface HplSam3uClock as ClockConfig;
         interface HplSam3uGeneralIOPin as SpiPinMiso;
         interface HplSam3uGeneralIOPin as SpiPinMosi;
         interface HplSam3uGeneralIOPin as SpiPinSpck;
@@ -90,47 +89,21 @@ implementation
         //call HplSam3uSpiConfig.setVariableCS(); // CS needs to be configured for each message sent!
         call HplSam3uSpiConfig.setDirectCS(); // CS pins are not multiplexed
 
-        // do we really have to start it??? It seems that the CC2420 driver
-        // doesn't do that!
-        // the grant/release should take care of this!
-        call StdControl.start();
-
-        return SUCCESS;
-    }
-
-    command error_t StdControl.start()
-    {
-        // enable peripheral clock
-        call SpiClockControl.enable();
-
-        // enable SPI
-        call HplSam3uSpiControl.enableSpi();
-
-        // enable SPI IRQ (Byte is a busy wait!)
-        //call HplSam3uSpiInterrupts.enableRxFullIrq();
-
-        return SUCCESS;
-    }
-
-    command error_t StdControl.stop()
-    {
-        // stop the SPI
-        call HplSam3uSpiControl.disableSpi();
-
-        // stop the peripheral clock
-        call SpiClockControl.disable();
-
+//        call SpiControl.start();
         return SUCCESS;
     }
 
     async command uint8_t SpiByte.write[uint8_t device]( uint8_t tx)
     {
         uint8_t byte;
-
+        if(!(call ArbiterInfo.userId() == device))
+            return -1;
+        
         //call HplSam3uSpiChipSelConfig.enableCSActive();
         call HplSam3uSpiStatus.setDataToTransmitCS(tx, device, FALSE);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
+
         return byte;
     }
 
@@ -138,6 +111,9 @@ implementation
     {
         uint16_t m_len = len;
         uint16_t m_pos = 0;
+
+        if(!(call ArbiterInfo.userId() == device))
+            return -1;
 
         if(len)
         {
@@ -183,6 +159,5 @@ implementation
                                     uint8_t* rx_buf, uint16_t len, error_t error) {}
 
     async event void HplSam3uSpiInterrupts.receivedData(uint16_t data) {};
-    async event void ClockConfig.mainClockChanged() {};
 }
 
