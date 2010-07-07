@@ -165,7 +165,7 @@ implementation
         uint8_t byte;
 
         //call HplSam3uSpiChipSelConfig.enableCSActive();
-        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 1, FALSE);
+        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 2, FALSE);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
         return byte;

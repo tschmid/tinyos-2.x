@@ -55,9 +55,9 @@ implementation
     HilSam3uSpiP.HplSam3uSpiControl -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiInterrupts -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiStatus -> HplSam3uSpiC;
-    HilSam3uSpiP.HplSam3uSpiChipSelConfig -> HplSam3uSpiC.HplSam3uSpiChipSelConfig1;
-    Resource = HplSam3uSpiC.ResourceCS1;
-    CSN = HplSam3uSpiC.CSN1;
+    HilSam3uSpiP.HplSam3uSpiChipSelConfig -> HplSam3uSpiC.HplSam3uSpiChipSelConfig2;
+    Resource = HplSam3uSpiC.ResourceCS2;
+    CSN = HplSam3uSpiC.CSN2;
 
     components MainC;
     MainC.SoftwareInit -> HilSam3uSpiP.Init;
@@ -69,7 +69,7 @@ implementation
     HilSam3uSpiP.SpiPinMiso -> HplSam3uGeneralIOC.HplPioA13;
     HilSam3uSpiP.SpiPinMosi -> HplSam3uGeneralIOC.HplPioA14;
     HilSam3uSpiP.SpiPinSpck -> HplSam3uGeneralIOC.HplPioA15;
-    HilSam3uSpiP.SpiPinNPCS -> HplSam3uGeneralIOC.HplPioC3;
+    HilSam3uSpiP.SpiPinNPCS -> HplSam3uGeneralIOC.HplPioC4;
 
     components HplSam3uClockC;
     HilSam3uSpiP.SpiClockControl -> HplSam3uClockC.SPI0PPCntl;
