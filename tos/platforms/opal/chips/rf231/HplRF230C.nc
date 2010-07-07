@@ -43,9 +43,11 @@ configuration HplRF230C
 implementation
 {
 	components HilSam3uSpiC as SpiC;
-	//SpiResource = SpiC.Resource[unique("Sam3uSpi.Resource")];
-	SpiResource = SpiC.Resource;
-	FastSpiByte = SpiC;
+	components RF230SpiInitC as RadioSpiInitC;
+	SpiResource = SpiC.Resource[2];
+	FastSpiByte = SpiC.FastSpiByte[2];
+	RadioSpiInitC -> SpiC.HplSam3uSpiChipSelConfig[2];
+	SpiC.SpiChipInit[2] -> RadioSpiInitC;
 
 	components HplSam3uGeneralIOC as IO;
 	SLP_TR = IO.PioC22;

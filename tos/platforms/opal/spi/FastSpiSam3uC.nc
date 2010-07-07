@@ -1,7 +1,7 @@
 /**
  * Emulate fast spi with SpiByte
  */
-module FastSpiSam3uC
+generic module FastSpiSam3uC()
 {
     provides
     {
@@ -55,5 +55,4 @@ implementation
     async command uint8_t FastSpiByte.write(uint8_t data){
         return call SpiByte.write(data);
     }
-
 }

@@ -35,29 +35,16 @@ configuration HplSam3uSpiC
        interface HplSam3uSpiControl; 
        interface HplSam3uSpiInterrupts; 
        interface HplSam3uSpiStatus; 
+       interface ArbiterInfo;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig0;
        interface Resource as ResourceCS0;
-       interface GeneralIO as CSN0;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig1;
        interface Resource as ResourceCS1;
-       interface GeneralIO as CSN1;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig2;
        interface Resource as ResourceCS2;
-       interface GeneralIO as CSN2;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig3;
        interface Resource as ResourceCS3;
-       interface GeneralIO as CSN3;
     }
-    /*
-    uses
-    {
-        // hack to make the SPI interface TinyOS compatible...
-       interface GeneralIO as CS0;
-       interface GeneralIO as CS1;
-       interface GeneralIO as CS2;
-       interface GeneralIO as CS3;
-    }
-    */
 }
 implementation
 {
@@ -69,6 +56,7 @@ implementation
     HplSam3uSpiStatus = HplSam3uSpiP;
     
     components new FcfsArbiterC( SAM3U_HPLSPI_RESOURCE ) as ArbiterC;
+    ArbiterInfo = ArbiterC;
     ResourceCS0 = ArbiterC.Resource[0];
     ResourceCS1 = ArbiterC.Resource[1];
     ResourceCS2 = ArbiterC.Resource[2];
@@ -79,20 +67,11 @@ implementation
         new HplSam3uSpiChipSelP(0x40008034) as CS1,
         new HplSam3uSpiChipSelP(0x40008038) as CS2,
         new HplSam3uSpiChipSelP(0x4000803C) as CS3;
-    components LedsC;
 
     HplSam3uSpiChipSelConfig0 = CS0;
-    CS0.Leds -> LedsC;
-    CSN0 = CS0;
     HplSam3uSpiChipSelConfig1 = CS1;
-    CS1.Leds -> LedsC;
-    CSN1 = CS1;
     HplSam3uSpiChipSelConfig2 = CS2;
-    CS2.Leds -> LedsC;
-    CSN2 = CS2;
     HplSam3uSpiChipSelConfig3 = CS3;
-    CS3.Leds -> LedsC;
-    CSN3 = CS3;
 }
 
 

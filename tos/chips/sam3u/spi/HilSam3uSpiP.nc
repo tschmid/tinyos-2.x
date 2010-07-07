@@ -34,24 +34,22 @@ module HilSam3uSpiP
     {
         interface Init;
         interface StdControl;
-        interface SpiByte;
-        interface SpiPacket; // not supported yet
+        interface SpiByte[uint8_t];
+        interface SpiPacket[uint8_t]; // not supported yet
     }
     uses
     {
+	interface ArbiterInfo;
         interface HplSam3uSpiConfig;
         interface HplSam3uSpiControl;
         interface HplSam3uSpiInterrupts;
         interface HplSam3uSpiStatus;
-        interface HplSam3uSpiChipSelConfig;
         interface HplNVICInterruptCntl as SpiIrqControl;
+        interface HplSam3uPeripheralClockCntl as SpiClockControl;
+        interface HplSam3uClock as ClockConfig;
         interface HplSam3uGeneralIOPin as SpiPinMiso;
         interface HplSam3uGeneralIOPin as SpiPinMosi;
         interface HplSam3uGeneralIOPin as SpiPinSpck;
-        interface HplSam3uGeneralIOPin as SpiPinNPCS;
-        interface HplSam3uPeripheralClockCntl as SpiClockControl;
-        interface HplSam3uClock as ClockConfig;
-	interface Leds;
     }
 }
 implementation
@@ -63,23 +61,6 @@ implementation
     uint8_t* globalTxBuf;
     uint8_t* globalRxBuf;
     uint16_t globalLen;
-
-    void setClockDivisor()
-    {
-        uint32_t mck;
-        uint16_t cd;
-
-        mck = call ClockConfig.getMainClockSpeed(); // in kHz (e.g., 48,000)
-
-        // Can be set up to 8MHz.
-        // clock speed = mck / cd
-        // here, cd = mck/speed
-        //cd = (uint8_t) (mck / 500); // mck is in kHz!
-        //cd = (uint8_t) (mck / 4);
-	cd = 10;
-
-        call HplSam3uSpiChipSelConfig.setBaud(cd);
-    }
 
     command error_t Init.init()
     {
@@ -97,12 +78,8 @@ implementation
         call SpiPinMosi.selectPeripheralA();
         call SpiPinSpck.disablePioControl();
         call SpiPinSpck.selectPeripheralA();
-/*
-        call SpiPinNPCS.enablePullUpResistor();
-        call SpiPinNPCS.disablePioControl();
-        call SpiPinNPCS.selectPeripheralB();
-        call SpiPinNPCS.disableInterrupt();
-*/
+
+        // reset the SPI configuration
         call HplSam3uSpiControl.resetSpi();
 
         // configure for master
@@ -112,20 +89,6 @@ implementation
         call HplSam3uSpiConfig.setFixedCS(); // CS needs to be configured for each message sent!
         //call HplSam3uSpiConfig.setVariableCS(); // CS needs to be configured for each message sent!
         call HplSam3uSpiConfig.setDirectCS(); // CS pins are not multiplexed
-
-        // configure clock
-        setClockDivisor();
-        call HplSam3uSpiChipSelConfig.setClockPolarity(0); // logic zero is inactive
-        call HplSam3uSpiChipSelConfig.setClockPhase(1);    // out on rising, in on falling
-        call HplSam3uSpiChipSelConfig.disableAutoCS();     // disable automatic rising of CS after each transfer
-        //call HplSam3uSpiChipSelConfig.enableAutoCS();
-
-        call HplSam3uSpiChipSelConfig.enableCSActive();    // if the CS line is not risen automatically after the last tx. The lastxfer bit has to be used.
-        //call HplSam3uSpiChipSelConfig.disableCSActive(); 
-
-        call HplSam3uSpiChipSelConfig.setBitsPerTransfer(SPI_CSR_BITS_8);
-        call HplSam3uSpiChipSelConfig.setTxDelay(0);
-        call HplSam3uSpiChipSelConfig.setClkDelay(0);
 
         // do we really have to start it??? It seems that the CC2420 driver
         // doesn't do that!
@@ -160,18 +123,18 @@ implementation
         return SUCCESS;
     }
 
-    async command uint8_t SpiByte.write( uint8_t tx)
+    async command uint8_t SpiByte.write[uint8_t device]( uint8_t tx)
     {
         uint8_t byte;
 
         //call HplSam3uSpiChipSelConfig.enableCSActive();
-        call HplSam3uSpiStatus.setDataToTransmitCS(tx, 2, FALSE);
+        call HplSam3uSpiStatus.setDataToTransmitCS(tx, device, FALSE);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
         return byte;
     }
 
-    async command error_t SpiPacket.send( uint8_t* txBuf, uint8_t* rxBuf, uint16_t len)
+    async command error_t SpiPacket.send[uint8_t device](uint8_t* txBuf, uint8_t* rxBuf, uint16_t len)
     {
         uint16_t m_len = len;
         uint16_t m_pos = 0;
@@ -188,7 +151,7 @@ implementation
                 else
                     call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 3, FALSE);
                     */
-                call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], 3, FALSE);
+                call HplSam3uSpiStatus.setDataToTransmitCS(txBuf[m_pos], device, FALSE);
 
                 while(!call HplSam3uSpiStatus.isRxFull());
                 rxBuf[m_pos] = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
@@ -211,11 +174,13 @@ implementation
 
 
     void signalDone() {
-        signal SpiPacket.sendDone( globalTxBuf, globalRxBuf, globalLen, SUCCESS );
+        uint8_t device = call ArbiterInfo.userId();
+        signal SpiPacket.sendDone[device](globalTxBuf, globalRxBuf, globalLen, SUCCESS);
     }
 
 
-    default async event void SpiPacket.sendDone(uint8_t* tx_buf, uint8_t* rx_buf, uint16_t len, error_t error) {}
+    default async event void SpiPacket.sendDone[uint8_t device](uint8_t* tx_buf, 
+                                    uint8_t* rx_buf, uint16_t len, error_t error) {}
 
     async event void HplSam3uSpiInterrupts.receivedData(uint16_t data) {};
     async event void ClockConfig.mainClockChanged() {};

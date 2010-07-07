@@ -58,7 +58,7 @@ configuration ActiveMessageC {
   }
 }
 implementation {
-  components RF231ActiveMessageC as AM;
+  components RF212ActiveMessageC as AM;
 
   SplitControl = AM;
   
