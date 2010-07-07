@@ -73,7 +73,8 @@ implementation {
   }
 
   event void AMSend.sendDone(message_t* bufPtr, error_t error) {
-    call Leds.led0Off();
+    if(error == SUCCESS)
+	call Leds.led0Off();
   }
 
 }
