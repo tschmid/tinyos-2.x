@@ -1,9 +1,16 @@
 
 
-module RF212SpiInitC 
+module RF230SpiConfigC 
 {
-    provides interface Init;
-    uses interface HplSam3uSpiChipSelConfig;
+    provides 
+    {
+        interface Init;
+        interface ResourceConfigure;
+    }
+    uses {
+        interface HplSam3uSpiChipSelConfig;
+        interface HplSam3uSpiConfig;
+    }
 }
 implementation {
 
@@ -23,5 +30,13 @@ implementation {
         call HplSam3uSpiChipSelConfig.setTxDelay(0); 
         call HplSam3uSpiChipSelConfig.setClkDelay(0); 
         return SUCCESS;
+    }
+
+    async command void ResourceConfigure.configure() {
+        // Do stuff here
+    }
+    
+    async command void ResourceConfigure.unconfigure() {
+        // Do stuff here...
     }
 }

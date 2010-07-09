@@ -1,6 +1,3 @@
-/*
-*/
-
 #include <RadioConfig.h>
 
 configuration HplRF212C
@@ -27,12 +24,14 @@ configuration HplRF212C
 
 implementation
 {
-    components HilSam3uSpiC as SpiC;
-    components RF212SpiInitC as RadioSpiInitC;
-    SpiResource = SpiC.Resource[1];
-    FastSpiByte = SpiC.FastSpiByte[1];
-    RadioSpiInitC -> SpiC.HplSam3uSpiChipSelConfig[1];
-    SpiC.SpiChipInit[1] -> RadioSpiInitC;
+    components new Sam3uSpi1C() as SpiC;
+    SpiResource = SpiC;
+    FastSpiByte = SpiC;
+
+    components RF212SpiConfigC as RadioSpiConfigC;
+    RadioSpiConfigC.Init <- SpiC;
+    RadioSpiConfigC.ResourceConfigure <- SpiC;
+    RadioSpiConfigC.HplSam3uSpiChipSelConfig -> SpiC;
      
     // Wire the pin interfaces
     components HplSam3uGeneralIOC;

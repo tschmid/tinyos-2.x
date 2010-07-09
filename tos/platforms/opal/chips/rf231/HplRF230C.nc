@@ -25,42 +25,44 @@
 
 configuration HplRF230C
 {
-	provides
-	{
-		interface GeneralIO as SELN;
-		interface Resource as SpiResource;
-		interface FastSpiByte;
+    provides
+    {
+        interface GeneralIO as SELN;
+        interface Resource as SpiResource;
+        interface FastSpiByte;
 
-		interface GeneralIO as SLP_TR;
-		interface GeneralIO as RSTN;
+        interface GeneralIO as SLP_TR;
+        interface GeneralIO as RSTN;
 
-		interface GpioCapture as IRQ;
-		interface Alarm<TRadio, uint16_t> as Alarm;
-		interface LocalTime<TRadio> as LocalTimeRadio;
-	}
+        interface GpioCapture as IRQ;
+        interface Alarm<TRadio, uint16_t> as Alarm;
+        interface LocalTime<TRadio> as LocalTimeRadio;
+    }
 }
 
 implementation
 {
-	components HilSam3uSpiC as SpiC;
-	components RF230SpiInitC as RadioSpiInitC;
-	SpiResource = SpiC.Resource[2];
-	FastSpiByte = SpiC.FastSpiByte[2];
-	RadioSpiInitC -> SpiC.HplSam3uSpiChipSelConfig[2];
-	SpiC.SpiChipInit[2] -> RadioSpiInitC;
+    components new Sam3uSpi2C() as SpiC;
+    SpiResource = SpiC;
+    FastSpiByte = SpiC;
 
-	components HplSam3uGeneralIOC as IO;
-	SLP_TR = IO.PioC22;
-	RSTN = IO.PioC21;
-	SELN = IO.PioC4;
+    components RF230SpiConfigC as RadioSpiConfigC;
+    RadioSpiConfigC.Init <- SpiC;
+    RadioSpiConfigC.ResourceConfigure <- SpiC;
+    RadioSpiConfigC.HplSam3uSpiChipSelConfig -> SpiC;
 
-	components HplSam3uGeneralIOC;
-	IRQ = HplSam3uGeneralIOC.CapturePioB1;
-	
-	components new AlarmTMicro16C() as AlarmC;
-	Alarm = AlarmC;
-
-	components LocalTimeMicroC;
-	LocalTimeRadio = LocalTimeMicroC;
+    components HplSam3uGeneralIOC as IO;
+    SLP_TR = IO.PioC22;
+    RSTN = IO.PioC21;
+    SELN = IO.PioC4;
+    
+    components HplSam3uGeneralIOC;
+    IRQ = HplSam3uGeneralIOC.CapturePioB1;
+    
+    components new AlarmTMicro16C() as AlarmC;
+    Alarm = AlarmC;
+    
+    components LocalTimeMicroC;
+    LocalTimeRadio = LocalTimeMicroC;
 }
 

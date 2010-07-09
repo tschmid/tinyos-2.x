@@ -100,7 +100,7 @@ implementation
             return -1;
         
         //call HplSam3uSpiChipSelConfig.enableCSActive();
-        call HplSam3uSpiStatus.setDataToTransmitCS(tx, device, FALSE);
+        call HplSam3uSpiStatus.setDataToTransmit(tx);
         while(!call HplSam3uSpiStatus.isRxFull());
         byte = (uint8_t)call HplSam3uSpiStatus.getReceivedData();
 

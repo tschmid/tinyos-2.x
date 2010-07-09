@@ -31,47 +31,26 @@ configuration HplSam3uSpiC
 {
     provides
     {
+       interface AsyncStdControl;
        interface HplSam3uSpiConfig; 
        interface HplSam3uSpiControl; 
        interface HplSam3uSpiInterrupts; 
        interface HplSam3uSpiStatus; 
-       interface ArbiterInfo;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig0;
-       interface Resource as ResourceCS0;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig1;
-       interface Resource as ResourceCS1;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig2;
-       interface Resource as ResourceCS2;
        interface HplSam3uSpiChipSelConfig as HplSam3uSpiChipSelConfig3;
-       interface Resource as ResourceCS3;
     }
 }
 implementation
 {
-    enum {
-        NUM_CSN_RESOURCES = uniqueN(SAM3U_HPLSPI_RESOURCE, 4)
-    };
-
     components HplSam3uSpiP;
-
+    AsyncStdControl = HplSam3uSpiP;
     HplSam3uSpiConfig = HplSam3uSpiP;
     HplSam3uSpiControl = HplSam3uSpiP;
     HplSam3uSpiInterrupts = HplSam3uSpiP;
     HplSam3uSpiStatus = HplSam3uSpiP;
     
-    components new FcfsArbiterC( SAM3U_HPLSPI_RESOURCE ) as ArbiterC;
-    ArbiterInfo = ArbiterC;
-    ResourceCS0 = ArbiterC.Resource[0]; 
-    ResourceCS1 = ArbiterC.Resource[1];
-    ResourceCS2 = ArbiterC.Resource[2];
-    ResourceCS3 = ArbiterC.Resource[3];
-
-    //components new StdControlDeferredPowerManagerC(10) as PM;
-    components new AsyncStdControlPowerManagerC() as PM;
-    PM.AsyncStdControl -> HplSam3uSpiP;
-    PM.ArbiterInfo -> ArbiterC.ArbiterInfo;
-    PM.ResourceDefaultOwner -> ArbiterC.ResourceDefaultOwner;
-
     components
         new HplSam3uSpiChipSelP(0x40008030) as CS0,
         new HplSam3uSpiChipSelP(0x40008034) as CS1,
@@ -87,5 +66,4 @@ implementation
     HplSam3uSpiP.SpiClockControl -> HplSam3uClockC.SPI0PPCntl;
     HplSam3uSpiP.ClockConfig -> HplSam3uClockC;
 }
-
 
