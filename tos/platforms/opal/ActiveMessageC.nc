@@ -26,16 +26,11 @@
  * Intel Research Berkeley, 2150 Shattuck Avenue, Suite 1300, Berkeley, CA, 
  * 94704.  Attention:  Intel License Inquiry.
  */
-/*
- *
- * Authors:		Philip Levis
- *
- */
 
 /**
  *
  * The Active Message layer on the opal platform. This is a naming wrapper
- * around the RF212 Active Message layer.
+ * around the multiple radio abstractions on the opal paltform.
  *
  * @author Philip Levis
  * @author Kevin Klues (adapted to opal)
@@ -58,18 +53,18 @@ configuration ActiveMessageC {
   }
 }
 implementation {
-  components RF212ActiveMessageC as AM;
+  components MultiRadioActiveMessageC as AM;
 
-  SplitControl = AM;
+  SplitControl = AM.DefaultSplitControl;
   
-  AMSend       = AM;
-  Receive      = AM.Receive;
-  Snoop        = AM.Snoop;
-  Packet       = AM;
-  AMPacket     = AM;
-  PacketAcknowledgements = AM;
+  AMSend       = AM.DefaultAMSend;
+  Receive      = AM.DefaultReceive;
+  Snoop        = AM.DefaultSnoop;
+  Packet       = AM.DefaultPacket;
+  AMPacket     = AM.DefaultAMPacket;
+  PacketAcknowledgements = AM.DefaultPacketAcknowledgements;
 
-  PacketTimeStampRadio = AM.PacketTimeStampRadio;
-  PacketTimeStampMilli = AM.PacketTimeStampMilli;
+  PacketTimeStampRadio = AM.DefaultPacketTimeStampRadio;
+  PacketTimeStampMilli = AM.DefaultPacketTimeStampMilli;
 }
 
