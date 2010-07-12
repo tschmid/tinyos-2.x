@@ -35,7 +35,7 @@
 #include <Tasklet.h>
 #include <RadioAssert.h>
 
-module RadioAlarmP
+generic module RadioAlarmP()
 {
 	provides
 	{

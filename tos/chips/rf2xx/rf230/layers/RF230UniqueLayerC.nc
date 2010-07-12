@@ -32,34 +32,37 @@
  * Author: Miklos Maroti
  */
 
-configuration TimeStampingLayerC
+configuration RF230UniqueLayerC
 {
 	provides
 	{
-		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
-		interface PacketTimeStamp<TRadio, uint32_t> as PacketTimeStampRadio;
-		interface RadioPacket;
+		// NOTE, this is a combined layer, should be hooked up at two places
+		interface BareSend as Send;
+		interface RadioReceive;
 	}
-
 	uses
 	{
-		interface LocalTime<TRadio> as LocalTimeRadio;
-		interface RadioPacket as SubPacket;
+		interface BareSend as SubSend;
+		interface RadioReceive as SubReceive;
+
+		interface UniqueConfig as Config;
 	}
 }
 
 implementation
 {
-	components TimeStampingLayerP, LocalTimeMilliC;
+	components new UniqueLayerP(), MainC, 
+	           RF230NeighborhoodC as NeighborhoodC, 
+	           new RF230NeighborhoodFlagC() as NeighborhoodFlagC;
 
-	PacketTimeStampMilli = TimeStampingLayerP.PacketTimeStampMilli;
-	PacketTimeStampRadio = TimeStampingLayerP.PacketTimeStampRadio;
-	RadioPacket = TimeStampingLayerP.RadioPacket;
-	SubPacket = TimeStampingLayerP.SubPacket;
+	MainC.SoftwareInit -> UniqueLayerP;
+	UniqueLayerP.Neighborhood -> NeighborhoodC;
+	UniqueLayerP.NeighborhoodFlag -> NeighborhoodFlagC;
 
-	LocalTimeRadio = TimeStampingLayerP.LocalTimeRadio;
-	TimeStampingLayerP.LocalTimeMilli -> LocalTimeMilliC;
+	Send = UniqueLayerP;
+	SubSend = UniqueLayerP;
 
-	components new MetadataFlagC() as TimeStampFlagC;
-	TimeStampingLayerP.TimeStampFlag -> TimeStampFlagC;
+	RadioReceive = UniqueLayerP;
+	SubReceive = UniqueLayerP;
+	Config = UniqueLayerP;
 }

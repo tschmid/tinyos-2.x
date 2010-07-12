@@ -35,7 +35,7 @@
 #include <Tasklet.h>
 #include <RadioAssert.h>
 
-module CsmaLayerP
+generic module RF212CsmaLayerP()
 {
 	provides
 	{

@@ -34,7 +34,7 @@
 
 #include <Neighborhood.h>
 
-module NeighborhoodP
+generic module NeighborhoodP()
 {
 	provides
 	{

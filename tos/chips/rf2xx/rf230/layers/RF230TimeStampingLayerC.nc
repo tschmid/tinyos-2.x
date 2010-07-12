@@ -32,36 +32,34 @@
  * Author: Miklos Maroti
  */
 
-configuration MessageBufferLayerC
+configuration RF230TimeStampingLayerC
 {
 	provides
 	{
-		interface SplitControl;
-		interface BareSend as Send;
-		interface BareReceive as Receive;
-		interface RadioChannel;
+		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
+		interface PacketTimeStamp<TRadio, uint32_t> as PacketTimeStampRadio;
+		interface RadioPacket;
 	}
+
 	uses
 	{
-		interface RadioState;
-		interface RadioSend;
-		interface RadioReceive;
+		interface LocalTime<TRadio> as LocalTimeRadio;
+		interface RadioPacket as SubPacket;
 	}
 }
 
 implementation
 {
-	components MessageBufferLayerP, MainC, TaskletC;
+	components new TimeStampingLayerP(), LocalTimeMilliC;
 
-	MainC.SoftwareInit -> MessageBufferLayerP;
+	PacketTimeStampMilli = TimeStampingLayerP.PacketTimeStampMilli;
+	PacketTimeStampRadio = TimeStampingLayerP.PacketTimeStampRadio;
+	RadioPacket = TimeStampingLayerP.RadioPacket;
+	SubPacket = TimeStampingLayerP.SubPacket;
 
-	SplitControl = MessageBufferLayerP;
-	Send = MessageBufferLayerP;
-	Receive = MessageBufferLayerP;
-	RadioChannel = MessageBufferLayerP;
+	LocalTimeRadio = TimeStampingLayerP.LocalTimeRadio;
+	TimeStampingLayerP.LocalTimeMilli -> LocalTimeMilliC;
 
-	RadioState = MessageBufferLayerP;
-	MessageBufferLayerP.Tasklet -> TaskletC;
-	RadioSend = MessageBufferLayerP;
-	RadioReceive = MessageBufferLayerP;
+	components new RF230MetadataFlagC() as TimeStampFlagC;
+	TimeStampingLayerP.TimeStampFlag -> TimeStampFlagC;
 }

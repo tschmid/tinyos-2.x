@@ -32,37 +32,50 @@
  * Author: Miklos Maroti
  */
 
-configuration SlottedCollisionLayerC
+configuration LowPowerListeningLayerC
 {
 	provides
 	{
-		interface RadioSend;
-		interface RadioReceive;
+		interface SplitControl;
+		interface BareSend as Send;
+		interface BareReceive as Receive;
+		interface RadioPacket;
+
+		interface LowPowerListening;
 	}
 	uses
 	{
-		interface RadioSend as SubSend;
-		interface RadioReceive as SubReceive;
-		interface SlottedCollisionConfig as Config;
+		interface SplitControl as SubControl;
+		interface BareSend as SubSend;
+		interface BareReceive as SubReceive;
+		interface RadioPacket as SubPacket;
+
+		interface LowPowerListeningConfig as Config;
+		interface PacketAcknowledgements;
 	}
 }
 
 implementation
 {
-	components SlottedCollisionLayerP, MainC, RadioAlarmC, RandomC;
+	components new LowPowerListeningLayerP(), new TimerMilliC();
+	components SystemLowPowerListeningC;
 
-	RadioSend = SlottedCollisionLayerP;
-	RadioReceive = SlottedCollisionLayerP;
-	SubSend = SlottedCollisionLayerP;
-	SubReceive = SlottedCollisionLayerP;
-	Config = SlottedCollisionLayerP;
+	SplitControl = LowPowerListeningLayerP;
+	Send = LowPowerListeningLayerP;
+	Receive = LowPowerListeningLayerP;
+	RadioPacket = LowPowerListeningLayerP;
+	LowPowerListening = LowPowerListeningLayerP;
+
+	SubControl = LowPowerListeningLayerP;
+	SubSend = LowPowerListeningLayerP;
+	SubReceive = LowPowerListeningLayerP;
+	SubPacket = LowPowerListeningLayerP;
+	Config = LowPowerListeningLayerP;
+	PacketAcknowledgements = LowPowerListeningLayerP;
 	
-	SlottedCollisionLayerP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
-	SlottedCollisionLayerP.Random -> RandomC;
-	MainC.SoftwareInit -> SlottedCollisionLayerP;
+	LowPowerListeningLayerP.Timer -> TimerMilliC;
+	LowPowerListeningLayerP.SystemLowPowerListening -> SystemLowPowerListeningC;
 
-#ifdef RADIO_DEBUG
-	components DiagMsgC;
-	SlottedCollisionLayerP.DiagMsg -> DiagMsgC;
-#endif
+	components NoLedsC as LedsC;
+	LowPowerListeningLayerP.Leds -> LedsC;
 }

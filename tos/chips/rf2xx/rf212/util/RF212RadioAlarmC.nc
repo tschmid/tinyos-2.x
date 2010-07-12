@@ -32,36 +32,24 @@
  * Author: Miklos Maroti
  */
 
-configuration SoftwareAckLayerC
+configuration RF212RadioAlarmC
 {
 	provides
 	{
-		interface RadioSend;
-		interface RadioReceive;
-
-		interface PacketAcknowledgements;
+		interface RadioAlarm[uint8_t id]; // use unique("RadioAlarm")
 	}
 
 	uses
 	{
-		interface RadioSend as SubSend;
-		interface RadioReceive as SubReceive;
-
-		interface SoftwareAckConfig as Config;
+		interface Alarm<TRadio, uint16_t> @exactlyonce();
 	}
 }
 
 implementation
 {
-	components SoftwareAckLayerP, RadioAlarmC, new MetadataFlagC();
+	components new RadioAlarmP(), RF212TaskletC as TaskletC;
 
-	RadioSend = SoftwareAckLayerP;
-	RadioReceive = SoftwareAckLayerP;
-	SubSend = SoftwareAckLayerP;
-	SubReceive = SoftwareAckLayerP;
-	Config = SoftwareAckLayerP;
-	PacketAcknowledgements = SoftwareAckLayerP;
-
-	SoftwareAckLayerP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
-	SoftwareAckLayerP.AckReceivedFlag -> MetadataFlagC;
+	RadioAlarm = RadioAlarmP;
+	Alarm = RadioAlarmP;
+	RadioAlarmP.Tasklet -> TaskletC;
 }

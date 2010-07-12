@@ -32,24 +32,17 @@
  * Author: Miklos Maroti
  */
 
-configuration RadioAlarmC
+configuration RF230NeighborhoodC
 {
-	provides
-	{
-		interface RadioAlarm[uint8_t id]; // use unique("RadioAlarm")
-	}
-
-	uses
-	{
-		interface Alarm<TRadio, uint16_t> @exactlyonce();
-	}
+	provides interface Neighborhood;
+	provides interface NeighborhoodFlag[uint8_t];
 }
 
 implementation
 {
-	components RadioAlarmP, TaskletC;
+	components new NeighborhoodP(), MainC;
 
-	RadioAlarm = RadioAlarmP;
-	Alarm = RadioAlarmP;
-	RadioAlarmP.Tasklet -> TaskletC;
+	Neighborhood = NeighborhoodP;
+	NeighborhoodFlag = NeighborhoodP;
+	MainC.SoftwareInit -> NeighborhoodP;
 }

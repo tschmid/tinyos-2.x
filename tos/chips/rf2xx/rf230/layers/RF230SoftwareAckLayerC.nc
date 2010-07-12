@@ -32,35 +32,38 @@
  * Author: Miklos Maroti
  */
 
-configuration UniqueLayerC
+configuration RF230SoftwareAckLayerC
 {
 	provides
 	{
-		// NOTE, this is a combined layer, should be hooked up at two places
-		interface BareSend as Send;
+		interface RadioSend;
 		interface RadioReceive;
+
+		interface PacketAcknowledgements;
 	}
+
 	uses
 	{
-		interface BareSend as SubSend;
+		interface RadioSend as SubSend;
 		interface RadioReceive as SubReceive;
 
-		interface UniqueConfig as Config;
+		interface SoftwareAckConfig as Config;
 	}
 }
 
 implementation
 {
-	components UniqueLayerP, MainC, NeighborhoodC, new NeighborhoodFlagC();
+	components new SoftwareAckLayerP(), 
+	           RF230RadioAlarmC as RadioAlarmC, 
+	           new RF230MetadataFlagC() as MetadataFlagC;
 
-	MainC.SoftwareInit -> UniqueLayerP;
-	UniqueLayerP.Neighborhood -> NeighborhoodC;
-	UniqueLayerP.NeighborhoodFlag -> NeighborhoodFlagC;
+	RadioSend = SoftwareAckLayerP;
+	RadioReceive = SoftwareAckLayerP;
+	SubSend = SoftwareAckLayerP;
+	SubReceive = SoftwareAckLayerP;
+	Config = SoftwareAckLayerP;
+	PacketAcknowledgements = SoftwareAckLayerP;
 
-	Send = UniqueLayerP;
-	SubSend = UniqueLayerP;
-
-	RadioReceive = UniqueLayerP;
-	SubReceive = UniqueLayerP;
-	Config = UniqueLayerP;
+	SoftwareAckLayerP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
+	SoftwareAckLayerP.AckReceivedFlag -> MetadataFlagC;
 }

@@ -32,15 +32,38 @@
  * Author: Miklos Maroti
  */
 
-configuration NeighborhoodC
+configuration SlottedCollisionLayerC
 {
-	provides interface Neighborhood;
+	provides
+	{
+		interface RadioSend;
+		interface RadioReceive;
+	}
+	uses
+	{
+		interface RadioSend as SubSend;
+		interface RadioReceive as SubReceive;
+		interface SlottedCollisionConfig as Config;
+	}
 }
 
 implementation
 {
-	components NeighborhoodP, MainC;
+	components new SlottedCollisionLayerP(), MainC, RandomC;
+	           RF212RadioAlarmC as RadioAlarmC;
 
-	Neighborhood = NeighborhoodP;
-	MainC.SoftwareInit -> NeighborhoodP;
+	RadioSend = SlottedCollisionLayerP;
+	RadioReceive = SlottedCollisionLayerP;
+	SubSend = SlottedCollisionLayerP;
+	SubReceive = SlottedCollisionLayerP;
+	Config = SlottedCollisionLayerP;
+	
+	SlottedCollisionLayerP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
+	SlottedCollisionLayerP.Random -> RandomC;
+	MainC.SoftwareInit -> SlottedCollisionLayerP;
+
+#ifdef RADIO_DEBUG
+	components DiagMsgC;
+	SlottedCollisionLayerP.DiagMsg -> DiagMsgC;
+#endif
 }

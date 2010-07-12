@@ -32,27 +32,32 @@
  * Author: Miklos Maroti
  */
 
-configuration CsmaLayerC
+configuration RF212RandomCollisionLayerC
 {
 	provides
 	{
 		interface RadioSend;
+		interface RadioReceive;
 	}
 	uses
 	{
 		interface RadioSend as SubSend;
-		interface RadioCCA as SubCCA;
-
-		interface CsmaConfig as Config;
+		interface RadioReceive as SubReceive;
+		interface RandomCollisionConfig as Config;
 	}
 }
 
 implementation
 {
-	components CsmaLayerP;
+	components new RandomCollisionLayerP(), 
+	           RF212RadioAlarmC as RadioAlarmC, RandomC;
 
-	RadioSend = CsmaLayerP;
-	SubSend = CsmaLayerP;
-	SubCCA = CsmaLayerP;
-	Config = CsmaLayerP;
+	RadioSend = RandomCollisionLayerP;
+	SubSend = RandomCollisionLayerP;
+	Config = RandomCollisionLayerP;
+	RadioReceive = RandomCollisionLayerP;
+	SubReceive = RandomCollisionLayerP;
+
+	RandomCollisionLayerP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
+	RandomCollisionLayerP.Random -> RandomC;
 }

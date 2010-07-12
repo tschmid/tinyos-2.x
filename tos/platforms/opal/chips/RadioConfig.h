@@ -61,6 +61,10 @@ enum
 	RF230_CCA_THRES_VALUE = 0xC7,
 };
 
+#define RF212_SEND_RESOURCE "RF212_SEND_RESOURCE"
+#define RF230_SEND_RESOURCE "RF230_SEND_RESOURCE"
+#define RF231_SEND_RESOURCE "RF231_SEND_RESOURCE"
+
 /* This is the default value of the TX_PWR field of the PHY_TX_PWR register. */
 #ifndef RF212_DEF_RFPOWER
 #define RF212_DEF_RFPOWER   0xc0

@@ -82,7 +82,7 @@ configuration RF230RadioC
 
 implementation
 {
-	components RF230RadioP, RadioAlarmC;
+	components RF230RadioP, RF230RadioAlarmC as RadioAlarmC;
 
 #ifdef RADIO_DEBUG
 	components AssertC;
@@ -96,7 +96,7 @@ implementation
 // -------- Active Message
 
 #ifndef IEEE154FRAMES_ENABLED
-	components ActiveMessageLayerC;
+	components RF230ActiveMessageLayerC as ActiveMessageLayerC;
 	ActiveMessageLayerC.Config -> RF230RadioP;
 	ActiveMessageLayerC.SubSend -> AutoResourceAcquireLayerC;
 	ActiveMessageLayerC.SubReceive -> TinyosNetworkLayerC.TinyosReceive;
@@ -115,7 +115,7 @@ implementation
 #ifndef IEEE154FRAMES_ENABLED
 #ifndef TFRAMES_ENABLED
 	components new AutoResourceAcquireLayerC();
-	AutoResourceAcquireLayerC.Resource -> SendResourceC.Resource[unique(RADIO_SEND_RESOURCE)];
+	AutoResourceAcquireLayerC.Resource -> SendResourceC.Resource[unique(RF230_SEND_RESOURCE)];
 #else
 	components new DummyLayerC() as AutoResourceAcquireLayerC;
 #endif
@@ -125,12 +125,12 @@ implementation
 // -------- RadioSend Resource
 
 #ifndef TFRAMES_ENABLED
-	components new SimpleFcfsArbiterC(RADIO_SEND_RESOURCE) as SendResourceC;
+	components new SimpleFcfsArbiterC(RF230_SEND_RESOURCE) as SendResourceC;
 	SendResource = SendResourceC;
 
 // -------- Ieee154 Message
 
-	components Ieee154MessageLayerC;
+	components new Ieee154MessageLayerC();
 	Ieee154MessageLayerC.Ieee154PacketLayer -> Ieee154PacketLayerC;
 	Ieee154MessageLayerC.Ieee154Packet -> Ieee154PacketLayerC;
 	Ieee154MessageLayerC.SubSend -> TinyosNetworkLayerC.Ieee154Send;
@@ -146,7 +146,7 @@ implementation
 
 // -------- Tinyos Network
 
-	components TinyosNetworkLayerC;
+	components new TinyosNetworkLayerC();
 
 	TinyosNetworkLayerC.SubSend -> UniqueLayerC;
 	TinyosNetworkLayerC.SubReceive -> LowPowerListeningLayerC;
@@ -154,12 +154,12 @@ implementation
 
 // -------- IEEE 802.15.4 Packet
 
-	components Ieee154PacketLayerC;
+	components RF230Ieee154PacketLayerC as Ieee154PacketLayerC;
 	Ieee154PacketLayerC.SubPacket -> LowPowerListeningLayerC;
 
 // -------- UniqueLayer Send part (wired twice)
 
-	components UniqueLayerC;
+	components RF230UniqueLayerC as UniqueLayerC;
 	UniqueLayerC.Config -> RF230RadioP;
 	UniqueLayerC.SubSend -> LowPowerListeningLayerC;
 
@@ -167,7 +167,7 @@ implementation
 
 #ifdef LOW_POWER_LISTENING
 	#warning "*** USING LOW POWER LISTENING LAYER"
-	components LowPowerListeningLayerC;
+	components RF230LowPowerListeningLayerC as LowPowerListeningLayerC;
 	LowPowerListeningLayerC.Config -> RF230RadioP;
 #ifdef RF230_HARDWARE_ACK
 	LowPowerListeningLayerC.PacketAcknowledgements -> RF230DriverLayerC;
@@ -175,7 +175,7 @@ implementation
 	LowPowerListeningLayerC.PacketAcknowledgements -> SoftwareAckLayerC;
 #endif
 #else	
-	components LowPowerListeningDummyC as LowPowerListeningLayerC;
+	components RF230LowPowerListeningDummyC as LowPowerListeningLayerC;
 #endif
 	LowPowerListeningLayerC.SubControl -> MessageBufferLayerC;
 	LowPowerListeningLayerC.SubSend -> PacketLinkLayerC;
@@ -187,7 +187,7 @@ implementation
 // -------- Packet Link
 
 #ifdef PACKET_LINK
-	components PacketLinkLayerC;
+	components RF230PacketLinkLayerC as PacketLinkLayerC;
 	PacketLink = PacketLinkLayerC;
 #ifdef RF230_HARDWARE_ACK
 	PacketLinkLayerC.PacketAcknowledgements -> RF230DriverLayerC;
@@ -202,7 +202,7 @@ implementation
 
 // -------- MessageBuffer
 
-	components MessageBufferLayerC;
+	components RF230MessageBufferLayerC as MessageBufferLayerC;
 	MessageBufferLayerC.RadioSend -> TrafficMonitorLayerC;
 	MessageBufferLayerC.RadioReceive -> UniqueLayerC;
 	MessageBufferLayerC.RadioState -> TrafficMonitorLayerC;
@@ -215,7 +215,7 @@ implementation
 // -------- Traffic Monitor
 
 #ifdef TRAFFIC_MONITOR
-	components TrafficMonitorLayerC;
+	components RF230TrafficMonitorLayerC as TrafficMonitorLayerC;
 #else
 	components new DummyLayerC() as TrafficMonitorLayerC;
 #endif
@@ -227,9 +227,9 @@ implementation
 // -------- CollisionAvoidance
 
 #ifdef SLOTTED_MAC
-	components SlottedCollisionLayerC as CollisionAvoidanceLayerC;
+	components RF230SlottedCollisionLayerC as CollisionAvoidanceLayerC;
 #else
-	components RandomCollisionLayerC as CollisionAvoidanceLayerC;
+	components RF230RandomCollisionLayerC as CollisionAvoidanceLayerC;
 #endif
 	CollisionAvoidanceLayerC.Config -> RF230RadioP;
 #ifdef RF230_HARDWARE_ACK
@@ -243,7 +243,7 @@ implementation
 // -------- SoftwareAcknowledgement
 
 #ifndef RF230_HARDWARE_ACK
-	components SoftwareAckLayerC;
+	components RF230SoftwareAckLayerC as SoftwareAckLayerC;
 	SoftwareAckLayerC.Config -> RF230RadioP;
 	SoftwareAckLayerC.SubSend -> CsmaLayerC;
 	SoftwareAckLayerC.SubReceive -> RF230DriverLayerC;
@@ -259,7 +259,7 @@ implementation
 
 // -------- TimeStamping
 
-	components TimeStampingLayerC;
+	components RF230TimeStampingLayerC as TimeStampingLayerC;
 	TimeStampingLayerC.LocalTimeRadio -> RF230DriverLayerC;
 	TimeStampingLayerC.SubPacket -> MetadataFlagsLayerC;
 	PacketTimeStampRadio = TimeStampingLayerC;
@@ -267,7 +267,7 @@ implementation
 
 // -------- MetadataFlags
 
-	components MetadataFlagsLayerC;
+	components RF230MetadataFlagsLayerC as MetadataFlagsLayerC;
 	MetadataFlagsLayerC.SubPacket -> RF230DriverLayerC;
 
 // -------- RF230 Driver

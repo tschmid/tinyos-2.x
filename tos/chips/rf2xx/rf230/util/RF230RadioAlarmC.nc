@@ -32,31 +32,24 @@
  * Author: Miklos Maroti
  */
 
-configuration RandomCollisionLayerC
+configuration RF230RadioAlarmC
 {
 	provides
 	{
-		interface RadioSend;
-		interface RadioReceive;
+		interface RadioAlarm[uint8_t id]; // use unique("RadioAlarm")
 	}
+
 	uses
 	{
-		interface RadioSend as SubSend;
-		interface RadioReceive as SubReceive;
-		interface RandomCollisionConfig as Config;
+		interface Alarm<TRadio, uint16_t> @exactlyonce();
 	}
 }
 
 implementation
 {
-	components RandomCollisionLayerP, RadioAlarmC, RandomC;
+	components new RadioAlarmP(), RF230TaskletC as TaskletC;
 
-	RadioSend = RandomCollisionLayerP;
-	SubSend = RandomCollisionLayerP;
-	Config = RandomCollisionLayerP;
-	RadioReceive = RandomCollisionLayerP;
-	SubReceive = RandomCollisionLayerP;
-
-	RandomCollisionLayerP.RadioAlarm -> RadioAlarmC.RadioAlarm[unique("RadioAlarm")];
-	RandomCollisionLayerP.Random -> RandomC;
+	RadioAlarm = RadioAlarmP;
+	Alarm = RadioAlarmP;
+	RadioAlarmP.Tasklet -> TaskletC;
 }

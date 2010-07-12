@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Vanderbilt University
+ * Copyright (c) 2007, Vanderbilt University
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,33 +32,15 @@
  * Author: Miklos Maroti
  */
 
-configuration LowPowerListeningDummyC
+generic configuration RF230NeighborhoodFlagC()
 {
-	provides
-	{
-		interface SplitControl;
-		interface BareSend as Send;
-		interface BareReceive as Receive;
-		interface RadioPacket;
-
-		interface LowPowerListening;
-	}
-	uses
-	{
-		interface SplitControl as SubControl;
-		interface BareSend as SubSend;
-		interface BareReceive as SubReceive;
-		interface RadioPacket as SubPacket;
-	}
+	provides interface NeighborhoodFlag;
 }
 
 implementation
 {
-	SplitControl = SubControl;
-	Send = SubSend;
-	Receive = SubReceive;
-	RadioPacket = SubPacket;
+	components RF230NeighborhoodC as NeighborhoodC;
 
-	components LowPowerListeningDummyP;
-	LowPowerListening = LowPowerListeningDummyP;
+	// TODO: make sure that no more than 8 flags are used at a time
+	NeighborhoodFlag = NeighborhoodC.NeighborhoodFlag[unique("RF230NeighborhoodFlag")];
 }

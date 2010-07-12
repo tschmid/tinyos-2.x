@@ -65,7 +65,7 @@ configuration TimeSyncMessageLayerC
 
 implementation
 {
-	components TimeSyncMessageLayerP, LocalTimeMilliC;
+	components new TimeSyncMessageLayerP(), LocalTimeMilliC;
 
 	AMPacket = TimeSyncMessageLayerP;
 	Packet = TimeSyncMessageLayerP;
@@ -80,12 +80,12 @@ implementation
 	TimeSyncPacketMilli = TimeSyncMessageLayerP;
 
 	// Ok, we use the AMSenderC infrastructure to avoid concurrent send clashes
-	components new AMSenderC(AM_TIMESYNCMSG);
+	components new RF212AMSenderC(AM_TIMESYNCMSG) as AMSenderC;
 	TimeSyncMessageLayerP.SubAMSend -> AMSenderC;
 	TimeSyncMessageLayerP.SubAMPacket -> AMSenderC;
 	TimeSyncMessageLayerP.SubPacket -> AMSenderC;
 
-	components ActiveMessageC;
+	components RF212ActiveMessageC as ActiveMessageC;
 	TimeSyncMessageLayerP.SubReceive -> ActiveMessageC.Receive[AM_TIMESYNCMSG];
 	TimeSyncMessageLayerP.SubSnoop -> ActiveMessageC.Snoop[AM_TIMESYNCMSG];;
 

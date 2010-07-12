@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Vanderbilt University
+ * Copyright (c) 2007, Vanderbilt University
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,41 +32,27 @@
  * Author: Miklos Maroti
  */
 
-configuration ActiveMessageLayerC
+#include <MetadataFlagsLayer.h>
+
+configuration RF230MetadataFlagsLayerC
 {
-	provides
+	provides 
 	{
-		interface AMPacket;
-		interface Packet;
-		interface AMSend[am_id_t id];
-		interface Receive[am_id_t id];
-		interface Receive as Snoop[am_id_t id];	
-		interface SendNotifier[am_id_t id];
+		interface PacketFlag[uint8_t bit];
+		interface RadioPacket;
 	}
 
 	uses
 	{
 		interface RadioPacket as SubPacket;
-		interface BareSend as SubSend;
-		interface BareReceive as SubReceive;
-		interface ActiveMessageConfig as Config;
 	}
 }
 
 implementation
 {
-	components ActiveMessageLayerP, ActiveMessageAddressC;
-	ActiveMessageLayerP.ActiveMessageAddress -> ActiveMessageAddressC;
-
-	AMPacket = ActiveMessageLayerP;
-	Packet = ActiveMessageLayerP;
-	AMSend = ActiveMessageLayerP;
-	Receive = ActiveMessageLayerP.Receive;
-	Snoop = ActiveMessageLayerP.Snoop;
-	SendNotifier = ActiveMessageLayerP;
-	
-	SubPacket = ActiveMessageLayerP;
-	SubSend = ActiveMessageLayerP;
-	SubReceive = ActiveMessageLayerP;
-	Config = ActiveMessageLayerP;
+	components new MetadataFlagsLayerC();
+	PacketFlag = MetadataFlagsLayerC;
+	RadioPacket = MetadataFlagsLayerC;
+	SubPacket = MetadataFlagsLayerC;
 }
+

@@ -35,7 +35,7 @@
 #include <Tasklet.h>
 #include <RadioAssert.h>
 
-module TaskletC
+generic module TaskletC()
 {
 	provides interface Tasklet;
 }

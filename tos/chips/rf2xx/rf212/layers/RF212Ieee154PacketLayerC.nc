@@ -32,44 +32,28 @@
  * Author: Miklos Maroti
  */
 
-configuration TrafficMonitorLayerC
+configuration RF212Ieee154PacketLayerC
 {
 	provides
 	{
-		interface RadioSend;
-		interface RadioReceive;
-		interface RadioState;
+		interface Ieee154PacketLayer;
+		interface Ieee154Packet;
+		interface RadioPacket;
 	}
+
 	uses
 	{
-		interface RadioSend as SubSend;
-		interface RadioReceive as SubReceive;
-		interface RadioState as SubState;
-
-		interface TrafficMonitorConfig as Config;
+		interface RadioPacket as SubPacket;
 	}
 }
 
 implementation
 {
-	components TrafficMonitorLayerP, new TimerMilliC() as UpdateTimerC; 
-	components NeighborhoodC, new NeighborhoodFlagC(), TaskletC;
+	components new Ieee154PacketLayerP(), ActiveMessageAddressC;
+	Ieee154PacketLayerP.ActiveMessageAddress -> ActiveMessageAddressC;
 
-	RadioSend = TrafficMonitorLayerP;
-	RadioReceive = TrafficMonitorLayerP;
-	RadioState = TrafficMonitorLayerP;
-	SubSend = TrafficMonitorLayerP;
-	SubReceive = TrafficMonitorLayerP;
-	SubState = TrafficMonitorLayerP;
-	Config = TrafficMonitorLayerP;
-
-	TrafficMonitorLayerP.Timer -> UpdateTimerC;
-	TrafficMonitorLayerP.Neighborhood -> NeighborhoodC;
-	TrafficMonitorLayerP.NeighborhoodFlag -> NeighborhoodFlagC;
-	TrafficMonitorLayerP.Tasklet -> TaskletC;
-
-#ifdef RADIO_DEBUG
-	components DiagMsgC;
-	TrafficMonitorLayerP.DiagMsg -> DiagMsgC;
-#endif
+	Ieee154PacketLayer = Ieee154PacketLayerP;
+	Ieee154Packet = Ieee154PacketLayerP;
+	RadioPacket = Ieee154PacketLayerP;
+	SubPacket = Ieee154PacketLayerP;
 }

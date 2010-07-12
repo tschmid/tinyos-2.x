@@ -32,15 +32,28 @@
  * Author: Miklos Maroti
  */
 
-generic configuration NeighborhoodFlagC()
+configuration RF230Ieee154PacketLayerC
 {
-	provides interface NeighborhoodFlag;
+	provides
+	{
+		interface Ieee154PacketLayer;
+		interface Ieee154Packet;
+		interface RadioPacket;
+	}
+
+	uses
+	{
+		interface RadioPacket as SubPacket;
+	}
 }
 
 implementation
 {
-	components NeighborhoodP;
+	components new Ieee154PacketLayerP(), ActiveMessageAddressC;
+	Ieee154PacketLayerP.ActiveMessageAddress -> ActiveMessageAddressC;
 
-	// TODO: make sure that no more than 8 flags are used at a time
-	NeighborhoodFlag = NeighborhoodP.NeighborhoodFlag[unique("NeighborhoodFlag")];
+	Ieee154PacketLayer = Ieee154PacketLayerP;
+	Ieee154Packet = Ieee154PacketLayerP;
+	RadioPacket = Ieee154PacketLayerP;
+	SubPacket = Ieee154PacketLayerP;
 }

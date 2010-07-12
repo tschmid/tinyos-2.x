@@ -32,28 +32,50 @@
  * Author: Miklos Maroti
  */
 
-configuration Ieee154PacketLayerC
+configuration LowPowerListeningLayerC
 {
 	provides
 	{
-		interface Ieee154PacketLayer;
-		interface Ieee154Packet;
+		interface SplitControl;
+		interface BareSend as Send;
+		interface BareReceive as Receive;
 		interface RadioPacket;
-	}
 
+		interface LowPowerListening;
+	}
 	uses
 	{
+		interface SplitControl as SubControl;
+		interface BareSend as SubSend;
+		interface BareReceive as SubReceive;
 		interface RadioPacket as SubPacket;
+
+		interface LowPowerListeningConfig as Config;
+		interface PacketAcknowledgements;
 	}
 }
 
 implementation
 {
-	components Ieee154PacketLayerP, ActiveMessageAddressC;
-	Ieee154PacketLayerP.ActiveMessageAddress -> ActiveMessageAddressC;
+	components new LowPowerListeningLayerP(), new TimerMilliC();
+	components SystemLowPowerListeningC;
 
-	Ieee154PacketLayer = Ieee154PacketLayerP;
-	Ieee154Packet = Ieee154PacketLayerP;
-	RadioPacket = Ieee154PacketLayerP;
-	SubPacket = Ieee154PacketLayerP;
+	SplitControl = LowPowerListeningLayerP;
+	Send = LowPowerListeningLayerP;
+	Receive = LowPowerListeningLayerP;
+	RadioPacket = LowPowerListeningLayerP;
+	LowPowerListening = LowPowerListeningLayerP;
+
+	SubControl = LowPowerListeningLayerP;
+	SubSend = LowPowerListeningLayerP;
+	SubReceive = LowPowerListeningLayerP;
+	SubPacket = LowPowerListeningLayerP;
+	Config = LowPowerListeningLayerP;
+	PacketAcknowledgements = LowPowerListeningLayerP;
+	
+	LowPowerListeningLayerP.Timer -> TimerMilliC;
+	LowPowerListeningLayerP.SystemLowPowerListening -> SystemLowPowerListeningC;
+
+	components NoLedsC as LedsC;
+	LowPowerListeningLayerP.Leds -> LedsC;
 }

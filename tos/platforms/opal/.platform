@@ -30,11 +30,23 @@ push ( @includes, qw(
   %T/chips/sam3u/pdc
   %T/chips/sam3u/twi
   %T/chips/sam3u/hsmci
-  %T/chips/rf2xx/rf230
-  %T/chips/rf2xx/rf231
-  %T/chips/rf2xx/rf212
+#  %T/chips/rf2xx
+#  %T/chips/rf2xx/layers
+#  %T/chips/rf2xx/util
+#  %T/chips/rf2xx/rf212
+#  %T/chips/rf2xx/rf230
+#  %T/chips/rf2xx/rf231
+  %T/chips/rf2xx
+  %T/chips/rf2xx/interfaces
   %T/chips/rf2xx/layers
   %T/chips/rf2xx/util
+  %T/chips/rf2xx/rf212/layers
+  %T/chips/rf2xx/rf212/util
+  %T/chips/rf2xx/rf212
+  %T/chips/rf2xx/rf230/layers
+  %T/chips/rf2xx/rf230/util
+  %T/chips/rf2xx/rf230
+  %T/chips/rf2xx/rf231
   %T/chips/at45db
   %T/chips/mcp9800
   %T/lib/timer
