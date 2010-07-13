@@ -9,11 +9,13 @@ push( @includes, qw(
   %P
   %P/chips
   %P/chips/rf212
-  %P/chips/rf230
-  %P/chips/ds1722
-  %P/chips/atm128/spi
-  %P/chips/atm128/i2c
-  %P/chips/at45db
+  %P/../fleck3c
+  %P/../fleck3c/chips
+  %P/../fleck3c/chips/rf230
+  %P/../fleck3c/chips/ds1722
+  %P/../fleck3c/chips/atm128/spi
+  %P/../fleck3c/chips/atm128/i2c
+  %P/../fleck3c/chips/at45db
   %T/platforms/iris
   %T/platforms/micaz
   %T/platforms/mica
@@ -23,9 +25,6 @@ push( @includes, qw(
   %T/chips/rf2xx/rf230
   %T/chips/rf2xx/rf230/layers
   %T/chips/rf2xx/rf230/util
-  %T/chips/rf2xx/rf212
-  %T/chips/rf2xx/rf212/layers
-  %T/chips/rf2xx/rf212/util
   %T/platforms/mica2/chips/at45db
   %T/platforms/mica/chips/at45db
   %T/chips/at45db

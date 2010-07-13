@@ -21,53 +21,39 @@
  * Author: Miklos Maroti
  */
 
-#include "hardware.h"
+#include <RadioConfig.h>
 
-configuration ActiveMessageC
+configuration TimeSyncMessageC
 {
 	provides
 	{
 		interface SplitControl;
 
-		interface AMSend[uint8_t id];
 		interface Receive[uint8_t id];
-		interface Receive as Snoop[uint8_t id];
+		interface Receive as Snoop[am_id_t id];
 		interface Packet;
 		interface AMPacket;
 
-		interface PacketAcknowledgements;
-		interface LowPowerListening;
-#ifdef PACKET_LINK
-		interface PacketLink;
-#endif
+		interface TimeSyncAMSend<TRadio, uint32_t> as TimeSyncAMSendRadio[am_id_t id];
+		interface TimeSyncPacket<TRadio, uint32_t> as TimeSyncPacketRadio;
 
-		interface PacketTimeStamp<TMicro, uint32_t> as PacketTimeStampMicro;
-		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
+		interface TimeSyncAMSend<TMilli, uint32_t> as TimeSyncAMSendMilli[am_id_t id];
+		interface TimeSyncPacket<TMilli, uint32_t> as TimeSyncPacketMilli;
 	}
 }
 
 implementation
 {
-#if NUM_RADIOS == 1
-#if defined(USE_RF212_RADIO)
-	components RF212ActiveMessageC as MAC;
-#else
-	components RF230ActiveMessageC as MAC;
-#endif /* USE_RF212_RADIO */
-#else
-	components RF212RF230ActiveMessageC as MAC;
-#endif
-	SplitControl = MAC;
-	AMSend       = MAC;
-	Receive      = MAC.Receive;
-	Snoop        = MAC.Snoop;
-	Packet       = MAC;
-	AMPacket     = MAC;
-#ifdef PACKET_LINK
-	PacketLink	= MAC;
-#endif
-	PacketAcknowledgements	= MAC;
-	LowPowerListening		= MAC;
-	PacketTimeStampMilli	= MAC;
-	PacketTimeStampMicro	= MAC;
+	components RF212TimeSyncMessageC as MAC;
+
+	SplitControl	= MAC;
+  	Receive		= MAC.Receive;
+	Snoop		= MAC.Snoop;
+	Packet		= MAC;
+	AMPacket	= MAC;
+
+	TimeSyncAMSendRadio	= MAC;
+	TimeSyncPacketRadio	= MAC;
+	TimeSyncAMSendMilli	= MAC;
+	TimeSyncPacketMilli	= MAC;
 }

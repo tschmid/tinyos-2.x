@@ -48,15 +48,7 @@ configuration ActiveMessageC
 
 implementation
 {
-#if NUM_RADIOS == 1
-#if defined(USE_RF212_RADIO)
-	components RF212ActiveMessageC as MAC;
-#else
 	components RF230ActiveMessageC as MAC;
-#endif /* USE_RF212_RADIO */
-#else
-	components RF212RF230ActiveMessageC as MAC;
-#endif
 	SplitControl = MAC;
 	AMSend       = MAC;
 	Receive      = MAC.Receive;

@@ -34,7 +34,6 @@
 
 #include <MicaTimer.h>
 
-#include <RF212DriverLayer.h>
 #include <RF230DriverLayer.h>
 
 #include <util/crc16.h>
@@ -48,31 +47,24 @@ enum
 	 * This is the value of the TRX_CTRL_0 register
 	 * which configures the output pin currents and the CLKM clock
 	 */
-	RF212_TRX_CTRL_0_VALUE = 0,
     RF230_TRX_CTRL_0_VALUE = 0,
 
 	/**
 	 * This is the default value of the CCA_MODE field in the PHY_CC_CCA register
 	 * which is used to configure the default mode of the clear channel assesment
 	 */
-	RF212_CCA_MODE_VALUE = RF212_CCA_MODE_3,
     RF230_CCA_MODE_VALUE = RF230_CCA_MODE_3,
 
 	/**
 	 * This is the value of the CCA_THRES register that controls the
 	 * energy levels used for clear channel assesment
 	 */
-	RF212_CCA_THRES_VALUE = 0xC7,
     RF230_CCA_THRES_VALUE = 0xC7,
 };
 
 #define RF230_SEND_RESOURCE "RF230_SEND_RESOURCE"
 
 /* This is the default value of the TX_PWR field of the PHY_TX_PWR register. */
-#ifndef RF212_DEF_RFPOWER
-#define RF212_DEF_RFPOWER	0xc0 //10dbm
-//#define RF212_DEF_RFPOWER	0x23    //0dbm 
-#endif
 #ifndef RF230_DEF_RFPOWER
 #define RF230_DEF_RFPOWER   0x00  //3dbm
 //#define RF230_DEF_RFPOWER    0x06    //-0.2dbm
@@ -80,23 +72,10 @@ enum
 
 
 /* This is the default value of the CHANNEL field of the PHY_CC_CCA register. */
-#if defined(USE_RF212_RADIO) && !defined(RF212_DEF_CHANNEL)
-#define RF212_DEF_CHANNEL	6
-#warning "RF212 Channel is 6"
-#endif
-#if defined(USE_RF230_RADIO) && !defined(RF230_DEF_CHANNEL)
+#if !defined(RF230_DEF_CHANNEL)
 #define RF230_DEF_CHANNEL   21
 #warning "RF230 Channel is 21"
 #endif
-
-/*
- * This is the command used to calculate the CRC for the RF212 chip. 
- * TODO: Check why the default crcByte implementation is in a different endianness
- */
-inline uint16_t RF212_CRCBYTE_COMMAND(uint16_t crc, uint8_t data)
-{
-	return _crc_ccitt_update(crc, data);
-}
 
 /*
  * This is the command used to calculate the CRC for the RF230 chip. 

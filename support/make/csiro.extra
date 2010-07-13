@@ -1,0 +1,25 @@
+# include all dirs from $TOSDIR_CSIRO/chips - doesn't work through .platform file at the moment
+# also include directories for libs (like serial) to be included in most applications
+#              directories for libs used only by some apps to be included directly by the app (eg. ftsp)
+
+ifeq ($(PLATFORM),fleck3c)
+  PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/chips/rf2xx -type d|grep -v "\.svn"))
+
+  # include atm128 mods
+	PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/chips/atm128 -type d|grep -v "\.svn"))
+	PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/chips/atm1281 -type d|grep -v "\.svn"))
+  
+	# include fast serial driver
+	PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/lib/serial -type d|grep -v "\.svn"))
+
+else ifeq ($(PLATFORM),fleck3z)
+  PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/chips/rf2xx -type d|grep -v "\.svn"))
+
+  # include atm128 mods
+	PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/chips/atm128 -type d|grep -v "\.svn"))
+	PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/chips/atm1281 -type d|grep -v "\.svn"))
+  
+	# include fast serial driver
+	PFLAGS := $(PFLAGS) $(patsubst $(TOSDIR_CSIRO)/%, -I$(TOSDIR_CSIRO)/%, $(shell find $(TOSDIR_CSIRO)/lib/serial -type d|grep -v "\.svn"))
+
+endif

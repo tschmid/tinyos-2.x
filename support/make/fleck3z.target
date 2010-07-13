@@ -1,0 +1,39 @@
+#-*-Makefile-*- vim:syntax=make
+
+PLATFORM = fleck3z
+SENSORBOARD ?= 
+PROGRAMMER ?= avrdude
+DEFAULT_PROGRAM = avrispmkii
+AVRISPMKII = usb
+
+ifdef FLECK3Z_INIT
+ifeq ($(PROGRAMMER),avrdude)
+  PROGRAMMER_PART ?= -pm1281 -U efuse:w:0xff:m -B 500 -U hfuse:w:0xd9:m -U lfuse:w:0xff:m
+endif
+else
+ifeq ($(PROGRAMMER),avrdude)
+  PROGRAMMER_PART ?= -pm1281 -U efuse:w:0xff:m -B 1
+endif
+endif
+
+ifeq ($(PROGRAMMER),uisp)
+  PROGRAMMER_PART ?= -dpart=ATmega1281 --wr_fuse_e=ff
+endif
+
+#Setting Fusebits as default
+AVR_FUSE_H ?= 0xD9
+AVR_FUSE_L ?= 0xFF
+
+ifdef RF212_CHANNEL
+PFLAGS += -DRF212_DEF_CHANNEL=$(RF212_CHANNEL)
+endif
+
+# only o1, as with o2 we get some strange gcc errors
+OPTFLAGS += -O1
+PFLAGS += -I$(TOSROOT_CSIRO)/tos/platforms/fleck3z
+PFLAGS += -I$(TOSROOT_CSIRO)/tos/platforms/fleck3c
+$(call TOSMake_include,csiro.extra)
+$(call TOSMake_include_platform,avr)
+
+fleck3z: $(BUILD_DEPS)
+	@:

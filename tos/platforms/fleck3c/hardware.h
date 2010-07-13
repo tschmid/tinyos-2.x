@@ -59,23 +59,25 @@
 #define PLATFORM_BAUDRATE 57600L
 #endif
 
-#ifndef USE_RF230_RADIO
-#ifndef USE_RF212_RADIO
-#define USE_RF230_RADIO
+#if !defined(USE_RF230_RADIO) && !defined(USE_RF212_RADIO)
 	#warning !!!!!!!!!!!!!!!!!!!!!    default radio (rf230) used     !!!!!!!!!!!!!!!!!!!!!!!
+#define USE_RF230_RADIO
 #endif
+#define NUM_RADIOS 1
+#if defined(USE_RF230_RADIO) && defined(USE_RF212_RADIO)
+#undef NUM_RADIOS
+#define NUM_RADIOS 2
 #endif
-
 
 #ifndef UQ_R534_RADIO
 #define UQ_R534_RADIO "Unique_R534_Radio"
 #endif
 enum {
-#ifdef USE_RF212_RADIO
-  RF212_RADIO_ID = unique( UQ_R534_RADIO ),
-#endif
 #ifdef USE_RF230_RADIO
   RF230_RADIO_ID = unique( UQ_R534_RADIO ),
+#endif
+#ifdef USE_RF212_RADIO
+  RF212_RADIO_ID = unique( UQ_R534_RADIO ),
 #endif
 };
 

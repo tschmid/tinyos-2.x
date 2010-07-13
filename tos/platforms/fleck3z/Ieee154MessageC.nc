@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Vanderbilt University
+ * Copyright (c) 2009, Vanderbilt University
  * All rights reserved.
  *
  * Permission to use, copy, modify, and distribute this software and its
@@ -21,25 +21,24 @@
  * Author: Miklos Maroti
  */
 
-#include "hardware.h"
-
-configuration ActiveMessageC
+configuration Ieee154MessageC
 {
 	provides
 	{
 		interface SplitControl;
 
-		interface AMSend[uint8_t id];
-		interface Receive[uint8_t id];
-		interface Receive as Snoop[uint8_t id];
+		interface Ieee154Send;
+		interface Receive as Ieee154Receive;
+		interface SendNotifier;
+
 		interface Packet;
-		interface AMPacket;
+		interface Ieee154Packet;
+		interface Resource as SendResource[uint8_t clint];
 
 		interface PacketAcknowledgements;
 		interface LowPowerListening;
-#ifdef PACKET_LINK
 		interface PacketLink;
-#endif
+		interface RadioChannel;
 
 		interface PacketTimeStamp<TMicro, uint32_t> as PacketTimeStampMicro;
 		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
@@ -48,26 +47,22 @@ configuration ActiveMessageC
 
 implementation
 {
-#if NUM_RADIOS == 1
-#if defined(USE_RF212_RADIO)
-	components RF212ActiveMessageC as MAC;
-#else
-	components RF230ActiveMessageC as MAC;
-#endif /* USE_RF212_RADIO */
-#else
-	components RF212RF230ActiveMessageC as MAC;
-#endif
-	SplitControl = MAC;
-	AMSend       = MAC;
-	Receive      = MAC.Receive;
-	Snoop        = MAC.Snoop;
-	Packet       = MAC;
-	AMPacket     = MAC;
-#ifdef PACKET_LINK
-	PacketLink	= MAC;
-#endif
-	PacketAcknowledgements	= MAC;
-	LowPowerListening		= MAC;
-	PacketTimeStampMilli	= MAC;
-	PacketTimeStampMicro	= MAC;
+	components RF212Ieee154MessageC as MessageC;
+	SplitControl = MessageC;
+
+	Ieee154Send = MessageC;
+	Ieee154Receive = MessageC;
+	SendNotifier = MessageC;
+
+	Packet = MessageC;
+	Ieee154Packet = MessageC;
+	SendResource = MessageC;
+
+	PacketAcknowledgements = MessageC;
+	LowPowerListening = MessageC;
+	PacketLink = MessageC;
+	RadioChannel = MessageC;
+
+	PacketTimeStampMilli = MessageC;
+	PacketTimeStampMicro = MessageC;
 }

@@ -55,22 +55,23 @@
 #include <Atm128Adc.h>
 #include <MicaTimer.h>
 
-enum {
-  PLATFORM_BAUDRATE = 57600L
-};
-
-/* define which radio. TODO: both at the same time should be possible */
-//#define USE_RF212_RADIO
-//#define USE_RF230_RADIO
+#ifndef PLATFORM_BAUDRATE
+#define PLATFORM_BAUDRATE 57600L
+#endif
 
 #ifndef UQ_R534_RADIO
 #define UQ_R534_RADIO "Unique_R534_Radio"
 #endif
+
+#ifndef USE_RF212_RADIO
+#define USE_RF212_RADIO
+#endif
+
 enum {
-  RF230_RADIO_ID = unique( UQ_R534_RADIO ),
+#ifdef USE_RF212_RADIO
   RF212_RADIO_ID = unique( UQ_R534_RADIO ),
+#endif
 };
-#define NUM_RADIOS 2
 
 typedef uint8_t radio_id_t;
 

@@ -20,48 +20,57 @@
  *
  * Author: Miklos Maroti
  */
-
+/*
+ * Adjusted for CSIRO fleck3c, Christian.Richter@csiro.au
+ */
 #include <RadioConfig.h>
 
-configuration TimeSyncMessageC
+configuration HplRF212C
 {
 	provides
 	{
-		interface SplitControl;
+		interface GeneralIO as SELN;
+		interface Resource as SpiResource;
+		interface FastSpiByte;
 
-		interface Receive[uint8_t id];
-		interface Receive as Snoop[am_id_t id];
-		interface Packet;
-		interface AMPacket;
+		interface GeneralIO as SLP_TR;
+		interface GeneralIO as RSTN;
 
-		interface TimeSyncAMSend<TRadio, uint32_t> as TimeSyncAMSendRadio[am_id_t id];
-		interface TimeSyncPacket<TRadio, uint32_t> as TimeSyncPacketRadio;
-
-		interface TimeSyncAMSend<TMilli, uint32_t> as TimeSyncAMSendMilli[am_id_t id];
-		interface TimeSyncPacket<TMilli, uint32_t> as TimeSyncPacketMilli;
+		interface GpioCapture as IRQ;
+		interface Alarm<TRadio, uint16_t> as Alarm;
+		interface LocalTime<TRadio> as LocalTimeRadio;
 	}
 }
 
 implementation
 {
-#if NUM_RADIOS > 1
-	components RF212RF230TimeSyncMessageC as MAC;
-#else
-#if defined(USE_RF212_RADIO)
-	components RF212TimeSyncMessageC as MAC;
-#else /* USE_RF212_RADIO */
-	components RF230TimeSyncMessageC as MAC;
-#endif /* USE_RF212_RADIO */
-#endif
+	components HplRF212P;
+	IRQ = HplRF212P.IRQ;
 
-	SplitControl	= MAC;
-  	Receive		= MAC.Receive;
-	Snoop		= MAC.Snoop;
-	Packet		= MAC;
-	AMPacket	= MAC;
+/*	HplRF212P.PortCLKM -> IO.PortB5; RF212_TRX_CTRL_0_VALUE=0 this is useless*/
+	HplRF212P.PortIRQ -> IO.PortE6;
+	
+	components Atm128SpiC as SpiC;
+	SpiResource = SpiC.Resource[unique("Atm128SpiC.Resource")];
+	FastSpiByte = SpiC;
 
-	TimeSyncAMSendRadio	= MAC;
-	TimeSyncPacketRadio	= MAC;
-	TimeSyncAMSendMilli	= MAC;
-	TimeSyncPacketMilli	= MAC;
+	components HplAtm128GeneralIOC as IO;
+	SLP_TR = IO.PortG0;
+	RSTN = IO.PortG1;
+	SELN = IO.PortA6;
+
+	components HplAtm128InterruptC;
+    HplRF212P.Interrupt -> HplAtm128InterruptC.Int6;
+
+	components HplAtm128Timer1C as TimerC;
+	HplRF212P.Timer -> TimerC;
+
+	components new AlarmOne16C() as AlarmC;
+	Alarm = AlarmC;
+
+	components RealMainP;
+	RealMainP.PlatformInit -> HplRF212P.PlatformInit;
+
+	components LocalTimeMicroC;
+	LocalTimeRadio = LocalTimeMicroC;
 }

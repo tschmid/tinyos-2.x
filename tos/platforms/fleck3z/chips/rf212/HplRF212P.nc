@@ -20,54 +20,61 @@
  *
  * Author: Miklos Maroti
  */
-
-#include "hardware.h"
-
-configuration ActiveMessageC
+/*
+ * Adjusted for CSIRO fleck3c, Christian.Richter@csiro.au
+ */
+module HplRF212P
 {
 	provides
 	{
-		interface SplitControl;
+		interface GpioCapture as IRQ;
+		interface Init as PlatformInit;
+	}
 
-		interface AMSend[uint8_t id];
-		interface Receive[uint8_t id];
-		interface Receive as Snoop[uint8_t id];
-		interface Packet;
-		interface AMPacket;
-
-		interface PacketAcknowledgements;
-		interface LowPowerListening;
-#ifdef PACKET_LINK
-		interface PacketLink;
-#endif
-
-		interface PacketTimeStamp<TMicro, uint32_t> as PacketTimeStampMicro;
-		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
+	uses
+	{
+		interface HplAtm128Interrupt as Interrupt;
+/*		interface GeneralIO as PortCLKM; as RF212_TRX_CTRL_0_VALUE is 0... . */
+		interface GeneralIO as PortIRQ;
+		interface HplAtm128Timer<uint16_t> as Timer;
 	}
 }
 
 implementation
 {
-#if NUM_RADIOS == 1
-#if defined(USE_RF212_RADIO)
-	components RF212ActiveMessageC as MAC;
-#else
-	components RF230ActiveMessageC as MAC;
-#endif /* USE_RF212_RADIO */
-#else
-	components RF212RF230ActiveMessageC as MAC;
-#endif
-	SplitControl = MAC;
-	AMSend       = MAC;
-	Receive      = MAC.Receive;
-	Snoop        = MAC.Snoop;
-	Packet       = MAC;
-	AMPacket     = MAC;
-#ifdef PACKET_LINK
-	PacketLink	= MAC;
-#endif
-	PacketAcknowledgements	= MAC;
-	LowPowerListening		= MAC;
-	PacketTimeStampMilli	= MAC;
-	PacketTimeStampMicro	= MAC;
+	command error_t PlatformInit.init()
+	{
+#warning "Using fleck3z hpl"
+/*		call PortCLKM.makeInput();
+		call PortCLKM.clr();*/
+		call PortIRQ.makeInput();
+		call PortIRQ.clr();
+		return SUCCESS;
+	}
+	
+	async event void Interrupt.fired() {
+		uint16_t time = call Timer.get();
+		signal IRQ.captured(time);
+	}
+	
+	async command error_t IRQ.captureRisingEdge()
+	{
+		call Interrupt.edge(TRUE);
+		call Interrupt.enable();
+	
+		return SUCCESS;
+	}
+
+	async command error_t IRQ.captureFallingEdge()
+	{
+		// falling edge comes when the IRQ_STATUS register of the RF212 is read
+		return FAIL;	
+	}
+
+	async command void IRQ.disable()
+	{
+		call Interrupt.disable();
+	}
+
+	async event void Timer.overflow() {}
 }

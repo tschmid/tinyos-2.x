@@ -38,6 +38,7 @@ configuration Ieee154MessageC
 		interface PacketAcknowledgements;
 		interface LowPowerListening;
 		interface PacketLink;
+		interface RadioChannel;
 
 		interface PacketTimeStamp<TMicro, uint32_t> as PacketTimeStampMicro;
 		interface PacketTimeStamp<TMilli, uint32_t> as PacketTimeStampMilli;
@@ -46,13 +47,15 @@ configuration Ieee154MessageC
 
 implementation
 {
-#if defined(USE_RF212_RADIO)
-//	components RF212Ieee154MessageC as MessageC;
-# else /* USE_RF212_RADIO */
-//	components RF230Ieee154MessageC as MessageC;
-#endif
+#if NUM_RADIOS > 1
 	components RF212RF230Ieee154MessageC as MessageC;
-
+#else
+#if defined(USE_RF212_RADIO)
+	components RF212Ieee154MessageC as MessageC;
+# else /* USE_RF212_RADIO */
+	components RF230Ieee154MessageC as MessageC;
+#endif
+#endif
 	SplitControl = MessageC;
 
 	Ieee154Send = MessageC;
@@ -66,6 +69,7 @@ implementation
 	PacketAcknowledgements = MessageC;
 	LowPowerListening = MessageC;
 	PacketLink = MessageC;
+	RadioChannel = MessageC;
 
 	PacketTimeStampMilli = MessageC;
 	PacketTimeStampMicro = MessageC;
