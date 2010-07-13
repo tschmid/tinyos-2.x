@@ -66,23 +66,23 @@ configuration MultiRadioActiveMessageC {
     interface PacketTimeStamp<TMilli, uint32_t> as Radio0PacketTimeStampMilli;
     
     // Radio 1 Interface
-//    interface SplitControl as Radio1SplitControl;
-//
-//    interface AMSend as Radio1AMSend[am_id_t id];
-//    interface Receive as Radio1Receive[am_id_t id];
-//    interface Receive as Radio1Snoop[am_id_t id];
-//
-//    interface Packet as Radio1Packet;
-//    interface AMPacket as Radio1AMPacket;
-//    interface PacketAcknowledgements as Radio1PacketAcknowledgements;
-//    interface PacketTimeStamp<TRadio, uint32_t> as Radio1PacketTimeStampRadio;
-//    interface PacketTimeStamp<TMilli, uint32_t> as Radio1PacketTimeStampMilli;
+    interface SplitControl as Radio1SplitControl;
+
+    interface AMSend as Radio1AMSend[am_id_t id];
+    interface Receive as Radio1Receive[am_id_t id];
+    interface Receive as Radio1Snoop[am_id_t id];
+
+    interface Packet as Radio1Packet;
+    interface AMPacket as Radio1AMPacket;
+    interface PacketAcknowledgements as Radio1PacketAcknowledgements;
+    interface PacketTimeStamp<TRadio, uint32_t> as Radio1PacketTimeStampRadio;
+    interface PacketTimeStamp<TMilli, uint32_t> as Radio1PacketTimeStampMilli;
   }
 }
 implementation {
   // The radios on this platform
   components RF212ActiveMessageC as Radio0AM;
-//  components RF231ActiveMessageC as Radio1AM;
+  components RF231ActiveMessageC as Radio1AM;
   
   // Default Radio
   DefaultSplitControl = Radio0AM.SplitControl;
@@ -111,16 +111,16 @@ implementation {
   Radio0PacketTimeStampMilli = Radio0AM.PacketTimeStampMilli;
   
   // Radio 1
-//  Radio1SplitControl = Radio1AM.SplitControl;
-// 
-//  Radio1AMSend       = Radio1AM.AMSend;
-//  Radio1Receive      = Radio1AM.Receive;
-//  Radio1Snoop        = Radio1AM.Snoop;
-//  Radio1Packet       = Radio1AM.Packet;
-//  Radio1AMPacket     = Radio1AM.AMPacket;
-//  Radio1PacketAcknowledgements = Radio1AM.PacketAcknowledgements;
-//
-//  Radio1PacketTimeStampRadio = Radio1AM.PacketTimeStampRadio;
-//  Radio1PacketTimeStampMilli = Radio1AM.PacketTimeStampMilli;
+  Radio1SplitControl = Radio1AM.SplitControl;
+ 
+  Radio1AMSend       = Radio1AM.AMSend;
+  Radio1Receive      = Radio1AM.Receive;
+  Radio1Snoop        = Radio1AM.Snoop;
+  Radio1Packet       = Radio1AM.Packet;
+  Radio1AMPacket     = Radio1AM.AMPacket;
+  Radio1PacketAcknowledgements = Radio1AM.PacketAcknowledgements;
+
+  Radio1PacketTimeStampRadio = Radio1AM.PacketTimeStampRadio;
+  Radio1PacketTimeStampMilli = Radio1AM.PacketTimeStampMilli;
 }
 
