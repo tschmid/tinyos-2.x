@@ -35,7 +35,7 @@ configuration HplRF230C
 
 		interface GeneralIO as SLP_TR;
 		interface GeneralIO as RSTN;
-		interface GeneralIO as RF_ANT_SW;
+		//interface GeneralIO as RF_ANT_SW;
 
 		interface GpioCapture as IRQ;
 		interface Alarm<TRadio, uint16_t> as Alarm;
@@ -59,7 +59,7 @@ implementation
 	SLP_TR = IO.PortG0;
 	RSTN = IO.PortG1;
 	SELN = IO.PortA6;
-	RF_ANT_SW = IO.PortA2;
+	//RF_ANT_SW = IO.PortA2;
 
 	components HplAtm128InterruptC;
 	HplRF230P.Interrupt -> HplAtm128InterruptC.Int6;

@@ -59,6 +59,7 @@ module RF212DriverLayerP
 
 	uses
 	{
+		interface Leds;
 		interface GeneralIO as SELN;
 		interface Resource as SpiResource;
 
@@ -586,7 +587,8 @@ implementation
 
 		// read the length byte
 		length = call FastSpiByte.write(0);
-
+		
+		//call Leds.led1Toggle();
 		// if correct length
 		if( length >= 3 && length <= call RadioPacket.maxPayloadLength() + 2 )
 		{
@@ -617,6 +619,8 @@ implementation
 			{
 				while( length-- != 0 )
 					*(data++) = call FastSpiByte.splitReadWrite(0);
+    
+
 
 				call FastSpiByte.splitReadWrite(0);	// two CRC bytes
 				call FastSpiByte.splitReadWrite(0);

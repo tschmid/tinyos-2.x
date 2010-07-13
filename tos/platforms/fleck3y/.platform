@@ -8,7 +8,7 @@
 push( @includes, qw(
   %P
   %P/chips
-  %P/chips/rf212
+  %P/chips/rf230
   %P/../fleck3c
   %P/../fleck3c/chips
   %P/../fleck3c/chips/rf230
