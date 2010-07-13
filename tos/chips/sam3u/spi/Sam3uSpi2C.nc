@@ -46,10 +46,8 @@ implementation
       CLIENT_ID = unique(SAM3U_SPI_BUS),
     };
 
-    components MainC;
-    MainC.SoftwareInit = SpiInit;
-
     components HilSam3uSpiC as SpiC;
+    SpiC.SpiChipInit = SpiInit;
     Resource = SpiC.Resource[CLIENT_ID];
     SpiByte = SpiC.SpiByte[CLIENT_ID];
     FastSpiByte = SpiC.FastSpiByte[CLIENT_ID];

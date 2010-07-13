@@ -39,7 +39,7 @@ module HilSam3uSpiP
     }
     uses
     {
-///        interface StdControl as SpiControl;
+        interface Init as SpiChipInit;
 	interface ArbiterInfo;
         interface HplSam3uSpiConfig;
         interface HplSam3uSpiControl;
@@ -89,7 +89,7 @@ implementation
         //call HplSam3uSpiConfig.setVariableCS(); // CS needs to be configured for each message sent!
         call HplSam3uSpiConfig.setDirectCS(); // CS pins are not multiplexed
 
-//        call SpiControl.start();
+        call SpiChipInit.init();
         return SUCCESS;
     }
 

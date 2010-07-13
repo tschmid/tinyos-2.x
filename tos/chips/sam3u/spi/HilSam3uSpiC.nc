@@ -41,16 +41,18 @@ configuration HilSam3uSpiC
 	interface HplSam3uSpiConfig;
     }
     uses {
+        interface Init as SpiChipInit;
         interface ResourceConfigure[uint8_t];
     }
 }
 implementation
 {
-    components MainC;
-    MainC.SoftwareInit -> HilSam3uSpiP.Init;
+    components RealMainP;
+    RealMainP.PlatformInit -> HilSam3uSpiP.Init;
 
     components HplSam3uSpiC;
     HplSam3uSpiConfig = HplSam3uSpiC;
+    HilSam3uSpiP.SpiChipInit = SpiChipInit;
     HilSam3uSpiP.HplSam3uSpiConfig -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiControl -> HplSam3uSpiC;
     HilSam3uSpiP.HplSam3uSpiStatus -> HplSam3uSpiC;

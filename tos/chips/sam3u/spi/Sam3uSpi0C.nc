@@ -46,8 +46,8 @@ implementation
       CLIENT_ID = unique(SAM3U_SPI_BUS),
     };
 
-    components MainC;
-    MainC.SoftwareInit = SpiInit;
+    components RealMainP;
+    RealMainP.PlatformInit = SpiInit;
 
     components HilSam3uSpiC as SpiC;
     Resource = SpiC.Resource[CLIENT_ID];
