@@ -54,6 +54,16 @@ implementation {
 
   message_t packet[2];
 
+  task void radio0SendTask() {
+    if (call Radio0AMSend.send(AM_BROADCAST_ADDR, &packet[0], 0) != SUCCESS)
+      post radio0SendTask();
+  }
+
+  task void radio1SendTask() {
+    if (call Radio1AMSend.send(AM_BROADCAST_ADDR, &packet[1], 0) != SUCCESS)
+      post radio1SendTask();
+  }
+
   event void Boot.booted() {
     call Radio0AMControl.start();
   }
@@ -63,7 +73,8 @@ implementation {
   }
 
   event void Radio1AMControl.startDone(error_t err) {
-    call MilliTimer.startPeriodic(250);
+    post radio1SendTask();
+    post radio0SendTask();
   }
 
   event void Radio0AMControl.stopDone(error_t err) {
@@ -75,9 +86,7 @@ implementation {
   }
 
   event void MilliTimer.fired() {
-    call Leds.led2Toggle();
-    if (call Radio0AMSend.send(AM_BROADCAST_ADDR, &packet[0], 0) == SUCCESS);
-    if (call Radio1AMSend.send(AM_BROADCAST_ADDR, &packet[1], 0) == SUCCESS);
+//    post radio1SendTask();
   }
 
   event message_t* Radio0Receive.receive(message_t* bufPtr, 
@@ -93,9 +102,16 @@ implementation {
   }
 
   event void Radio0AMSend.sendDone(message_t* bufPtr, error_t error) {
+//    if(error == SUCCESS)
+//      call Leds.led0Toggle();
+    post radio0SendTask();
   }
   
   event void Radio1AMSend.sendDone(message_t* bufPtr, error_t error) {
+//    if(error == SUCCESS)
+//      call Leds.led1Toggle();
+//    call MilliTimer.startOneShot(20);
+    post radio1SendTask();
   }
 
 }

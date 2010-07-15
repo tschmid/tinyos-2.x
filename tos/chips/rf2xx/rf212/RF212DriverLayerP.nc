@@ -59,7 +59,6 @@ module RF212DriverLayerP
 
 	uses
 	{
-		interface Leds;
 		interface GeneralIO as SELN;
 		interface Resource as SpiResource;
 
@@ -87,6 +86,7 @@ module RF212DriverLayerP
 #ifdef RADIO_DEBUG
 		interface DiagMsg;
 #endif
+		interface Leds;
 	}
 }
 
@@ -135,6 +135,7 @@ implementation
 		CMD_CHANNEL = 7,		// changing the channel
 		CMD_SIGNAL_DONE = 8,		// signal the end of the state transition
 		CMD_DOWNLOAD = 9,		// download the received message
+		CMD_RETRY_SEND = 10,		// Retry sending if SPI bus wasnt yet aquired
 	};
 
 	norace bool radioIrq;
@@ -142,6 +143,7 @@ implementation
 	tasklet_norace uint8_t txPower;
 	tasklet_norace uint8_t channel;
 
+	tasklet_norace message_t* txMsg;
 	tasklet_norace message_t* rxMsg;
 	message_t rxMsgBuffer;
 
@@ -435,8 +437,15 @@ implementation
 		uint32_t time32;
 		void* timesync;
 
-		if( cmd != CMD_NONE || state != STATE_RX_ON || ! isSpiAcquired() || radioIrq )
+		if( cmd != CMD_NONE || state != STATE_RX_ON || radioIrq )
 			return EBUSY;
+
+		if(!isSpiAcquired()) 
+		{
+			txMsg = msg;
+			cmd = CMD_RETRY_SEND;
+			return SUCCESS;
+		}
 
 		length = call PacketTransmitPower.isSet(msg) ?
 			call PacketTransmitPower.get(msg) : RF212_DEF_RFPOWER;
@@ -461,8 +470,8 @@ implementation
 		if( (readRegister(RF212_TRX_STATUS) & RF212_TRX_STATUS_MASK) != RF212_PLL_ON )
 		{
 			ASSERT( (readRegister(RF212_TRX_STATUS) & RF212_TRX_STATUS_MASK) == RF212_BUSY_RX );
-
-			state = STATE_PLL_ON_2_RX_ON;
+			writeRegister(RF212_TRX_STATE, RF212_RX_ON);
+			//state = STATE_PLL_ON_2_RX_ON;
 			return EBUSY;
 		}
 
@@ -588,7 +597,6 @@ implementation
 		// read the length byte
 		length = call FastSpiByte.write(0);
 		
-		//call Leds.led1Toggle();
 		// if correct length
 		if( length >= 3 && length <= call RadioPacket.maxPayloadLength() + 2 )
 		{
@@ -843,7 +851,14 @@ implementation
 				changeState();
 			else if( cmd == CMD_CHANNEL )
 				changeChannel();
-			
+			else if( cmd == CMD_RETRY_SEND ) 
+			{
+				error_t e;
+				cmd = CMD_NONE;
+				if((e = call RadioSend.send(txMsg)) != SUCCESS)
+					signal RadioSend.sendDone(e);
+				return;
+			}
 			if( cmd == CMD_SIGNAL_DONE )
 			{
 				cmd = CMD_NONE;

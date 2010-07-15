@@ -135,6 +135,7 @@ implementation
 		CMD_CHANNEL = 7,		// changing the channel
 		CMD_SIGNAL_DONE = 8,		// signal the end of the state transition
 		CMD_DOWNLOAD = 9,		// download the received message
+		CMD_RETRY_SEND = 10,		// Retry sending if SPI bus wasnt yet aquired
 	};
 
 	norace bool radioIrq;
@@ -142,6 +143,7 @@ implementation
 	tasklet_norace uint8_t txPower;
 	tasklet_norace uint8_t channel;
 
+	tasklet_norace message_t* txMsg;
 	tasklet_norace message_t* rxMsg;
 	message_t rxMsgBuffer;
 
@@ -435,8 +437,16 @@ implementation
 		uint32_t time32;
 		void* timesync;
 
-		if( cmd != CMD_NONE || state != STATE_RX_ON || ! isSpiAcquired() || radioIrq )
+
+		if( cmd != CMD_NONE || state != STATE_RX_ON || radioIrq )
 			return EBUSY;
+
+		if(!isSpiAcquired()) 
+		{
+			txMsg = msg;
+			cmd = CMD_RETRY_SEND;
+			return SUCCESS;
+		}
 
 		length = (call PacketTransmitPower.isSet(msg) ?
 			call PacketTransmitPower.get(msg) : RF230_DEF_RFPOWER) & RF230_TX_PWR_MASK;
@@ -462,7 +472,8 @@ implementation
 		{
 			ASSERT( (readRegister(RF230_TRX_STATUS) & RF230_TRX_STATUS_MASK) == RF230_BUSY_RX );
 
-			state = STATE_PLL_ON_2_RX_ON;
+			writeRegister(RF230_TRX_STATE, RF230_RX_ON);
+			//state = STATE_PLL_ON_2_RX_ON;
 			return EBUSY;
 		}
 
@@ -854,6 +865,14 @@ implementation
 				changeState();
 			else if( cmd == CMD_CHANNEL )
 				changeChannel();
+			else if( cmd == CMD_RETRY_SEND ) 
+			{
+				error_t e;
+				cmd = CMD_NONE;
+				if((e = call RadioSend.send(txMsg)) != SUCCESS)
+					signal RadioSend.sendDone(e);
+				return;
+			}
 			
 			if( cmd == CMD_SIGNAL_DONE )
 			{

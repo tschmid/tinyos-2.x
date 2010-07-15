@@ -62,7 +62,7 @@ configuration RF230DriverLayerC
 
 implementation
 {
-	components RF230DriverLayerP, HplRF230C, BusyWaitMicroC, MainC,
+	components RF230DriverLayerP, HplRF230C, BusyWaitMicroC, MainC, LedsC,
 	           RF230TaskletC as TaskletC, RF230RadioAlarmC as RadioAlarmC;
 
 	RadioState = RF230DriverLayerP;
@@ -112,6 +112,7 @@ implementation
 #endif
 
 	MainC.SoftwareInit -> RF230DriverLayerP.SoftwareInit;
+	RF230DriverLayerP.Leds -> LedsC;
 
 	components RealMainP;
 	RealMainP.PlatformInit -> RF230DriverLayerP.PlatformInit;

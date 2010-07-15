@@ -62,7 +62,7 @@ configuration RF212DriverLayerC
 
 implementation
 {
-	components RF212DriverLayerP, HplRF212C, BusyWaitMicroC, MainC,
+	components RF212DriverLayerP, HplRF212C, BusyWaitMicroC, MainC, LedsC,
 	           RF212TaskletC as TaskletC, RF212RadioAlarmC as RadioAlarmC;
 
 	RadioState = RF212DriverLayerP;
@@ -112,6 +112,7 @@ implementation
 #endif
 
 	MainC.SoftwareInit -> RF212DriverLayerP.SoftwareInit;
+	RF212DriverLayerP.Leds -> LedsC;
 
 	components RealMainP;
 	RealMainP.PlatformInit -> RF212DriverLayerP.PlatformInit;
