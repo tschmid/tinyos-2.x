@@ -39,58 +39,7 @@
 #ifndef SAM3U_HARDWARE_H
 #define SAM3U_HARDWARE_H
 
-typedef uint32_t __nesc_atomic_t;
-
-inline __nesc_atomic_t __nesc_atomic_start() @spontaneous() __attribute__((always_inline))
-{
-	__nesc_atomic_t oldState = 0;
-	__nesc_atomic_t newState = 1;
-	asm volatile(
-		"mrs %[old], primask\n"
-		"msr primask, %[new]\n"
-		: [old] "=&r" (oldState) // output, assure write only!
-		: [new] "r"  (newState)  // input
-        : "cc", "memory"         // clobber condition code flag and memory
-	);
-	return oldState;
-}
- 
-inline void __nesc_atomic_end(__nesc_atomic_t oldState) @spontaneous() __attribute__((always_inline))
-{
-	asm volatile("" : : : "memory"); // memory barrier
- 
-	asm volatile(
-		"msr primask, %[old]"
-		:                      // no output
-		: [old] "r" (oldState) // input
-	);
-}
-
-// See definitive guide to Cortex-M3, p. 141, 142
-// Enables all exceptions except hard fault and NMI
-inline void __nesc_enable_interrupt() __attribute__((always_inline))
-{
-	__nesc_atomic_t newState = 0;
-
-	asm volatile(
-		"msr primask, %0"
-		: // output
-		: "r" (newState) // input
-	);
-}
-
-// See definitive guide to Cortex-M3, p. 141, 142
-// Disables all exceptions except hard fault and NMI
-inline void __nesc_disable_interrupt() __attribute__((always_inline))
-{
-	__nesc_atomic_t newState = 1;
-
-	asm volatile(
-		"msr primask, %0"
-		: // output
-		: "r" (newState) // input
-	);
-}
+#include <cortexm3hardware.h>
 
 // Peripheral ID definitions for the SAM3U
 //  Defined in AT91 ARM Cortex-M3 based Microcontrollers, SAM3U Series, Preliminary, p. 41

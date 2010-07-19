@@ -9,24 +9,27 @@ push ( @includes, qw(
   %T/platforms/sam3u_ek/spi
   %T/platforms/sam3u_ek/lcd
   %T/platforms/sam3u_ek/chips/cc2420
-  %T/chips/cortex/m3/sam/3u
-  %T/chips/cortex/m3/sam/3u/pins
-  %T/chips/cortex/m3/sam/3u/timer
-  %T/chips/cortex/m3/sam/3u/nvic
-  %T/chips/cortex/m3/sam/3u/uart
-  %T/chips/cortex/m3/sam/3u/supc
-  %T/chips/cortex/m3/sam/3u/pmc
-  %T/chips/cortex/m3/sam/3u/eefc
-  %T/chips/cortex/m3/sam/3u/wdtc
-  %T/chips/cortex/m3/sam/3u/matrix
-  %T/chips/cortex/m3/sam/3u/mpu
-  %T/chips/cortex/m3/sam/3u/spi
-  %T/chips/cortex/m3/sam/3u/smc
-  %T/chips/cortex/m3/sam/3u/adc12b
-  %T/chips/cortex/m3/sam/3u/dma
-  %T/chips/cortex/m3/sam/3u/pdc
-  %T/chips/cortex/m3/sam/3u/twi
-  %T/chips/cortex/m3/sam/3u/hsmci
+  %T/chips/cortex/
+  %T/chips/cortex/m3
+  %T/chips/cortex/m3/sam3
+  %T/chips/cortex/m3/sam3/u
+  %T/chips/cortex/m3/sam3/u/pins
+  %T/chips/cortex/m3/sam3/u/timer
+  %T/chips/cortex/m3/sam3/u/nvic
+  %T/chips/cortex/m3/sam3/u/uart
+  %T/chips/cortex/m3/sam3/u/supc
+  %T/chips/cortex/m3/sam3/u/pmc
+  %T/chips/cortex/m3/sam3/u/eefc
+  %T/chips/cortex/m3/sam3/u/wdtc
+  %T/chips/cortex/m3/sam3/u/matrix
+  %T/chips/cortex/m3/sam3/u/mpu
+  %T/chips/cortex/m3/sam3/u/spi
+  %T/chips/cortex/m3/sam3/u/smc
+  %T/chips/cortex/m3/sam3/u/adc12b
+  %T/chips/cortex/m3/sam3/u/dma
+  %T/chips/cortex/m3/sam3/u/pdc
+  %T/chips/cortex/m3/sam3/u/twi
+  %T/chips/cortex/m3/sam3/u/hsmci
   %T/chips/cc2420
   %T/chips/cc2420/alarm
   %T/chips/cc2420/control
